@@ -1,0 +1,92 @@
+subject,exam_board,level,title,parent_title,order_index
+Mathematics,Edexcel,1,Paper 1 and Paper 2: Pure Mathematics,,1
+Mathematics,Edexcel,2,Mathematical Proof,Paper 1 and Paper 2: Pure Mathematics,1
+Mathematics,Edexcel,3,Proof by Deduction,Mathematical Proof,1
+Mathematics,Edexcel,3,Proof by Exhaustion,Mathematical Proof,2
+Mathematics,Edexcel,3,Disproof by Counter-Example,Mathematical Proof,3
+Mathematics,Edexcel,3,Proof by Contradiction,Mathematical Proof,4
+Mathematics,Edexcel,2,Algebra and Functions,Paper 1 and Paper 2: Pure Mathematics,2
+Mathematics,Edexcel,3,Indices and Surds,Algebra and Functions,1
+Mathematics,Edexcel,3,Quadratic Equations and the Discriminant,Algebra and Functions,2
+Mathematics,Edexcel,3,Applications of Quadratics and Simultaneous Equations,Algebra and Functions,3
+Mathematics,Edexcel,3,Solving and Representing Inequalities,Algebra and Functions,4
+Mathematics,Edexcel,3,Polynomials: Factor Theorem and Division,Algebra and Functions,5
+Mathematics,Edexcel,3,Rational Expressions and Partial Fractions,Algebra and Functions,6
+Mathematics,Edexcel,3,"Sketching Polynomial, Modulus, and Reciprocal Graphs",Algebra and Functions,7
+Mathematics,Edexcel,3,Proportionality and Graphical Solutions,Algebra and Functions,8
+Mathematics,Edexcel,3,Composite and Inverse Functions,Algebra and Functions,9
+Mathematics,Edexcel,3,Graph Transformations,Algebra and Functions,10
+Mathematics,Edexcel,3,Modelling with Functions,Algebra and Functions,11
+Mathematics,Edexcel,2,Coordinate Geometry,Paper 1 and Paper 2: Pure Mathematics,3
+Mathematics,Edexcel,3,Equations of Straight Lines and Models,Coordinate Geometry,1
+Mathematics,Edexcel,3,Coordinate Geometry of the Circle,Coordinate Geometry,2
+Mathematics,Edexcel,3,Parametric Equations,Coordinate Geometry,3
+Mathematics,Edexcel,3,Modelling with Parametric Equations,Coordinate Geometry,4
+Mathematics,Edexcel,2,Sequences and Series,Paper 1 and Paper 2: Pure Mathematics,4
+Mathematics,Edexcel,3,Binomial Expansion (n ∈ ℕ),Sequences and Series,1
+Mathematics,Edexcel,3,Binomial Expansion (n ∈ ℚ) and Approximations,Sequences and Series,2
+Mathematics,Edexcel,3,Types of Sequences and Recurrence Relations,Sequences and Series,3
+Mathematics,Edexcel,3,Arithmetic Series and Sigma Notation,Sequences and Series,4
+Mathematics,Edexcel,3,Geometric Series and Sum to Infinity,Sequences and Series,5
+Mathematics,Edexcel,3,Modelling with Series,Sequences and Series,6
+Mathematics,Edexcel,2,Trigonometry,Paper 1 and Paper 2: Pure Mathematics,5
+Mathematics,Edexcel,3,Radians and Triangle Geometry,Trigonometry,1
+Mathematics,Edexcel,3,Trigonometric and Inverse Trigonometric Functions,Trigonometry,2
+Mathematics,Edexcel,3,Trigonometric Identities,Trigonometry,3
+Mathematics,Edexcel,3,Solving Equations with R-formulae,Trigonometry,4
+Mathematics,Edexcel,3,Small Angle Approximations,Trigonometry,5
+Mathematics,Edexcel,3,Trigonometric Proofs and Modelling,Trigonometry,6
+Mathematics,Edexcel,2,Exponentials and Logarithms,Paper 1 and Paper 2: Pure Mathematics,6
+Mathematics,Edexcel,3,Exponential and Logarithmic Functions and Graphs,Exponentials and Logarithms,1
+Mathematics,Edexcel,3,Using Laws of Logarithms to Solve Equations,Exponentials and Logarithms,2
+Mathematics,Edexcel,3,Modelling with Exponentials and Logarithms,Exponentials and Logarithms,3
+Mathematics,Edexcel,2,Differentiation,Paper 1 and Paper 2: Pure Mathematics,7
+Mathematics,Edexcel,3,Introduction to Differentiation,Differentiation,1
+Mathematics,Edexcel,3,Differentiating Standard Functions,Differentiation,2
+Mathematics,Edexcel,3,Rules of Differentiation,Differentiation,3
+Mathematics,Edexcel,3,Further Differentiation Techniques,Differentiation,4
+Mathematics,Edexcel,3,Applications of the First Derivative,Differentiation,5
+Mathematics,Edexcel,3,Applications of the Second Derivative,Differentiation,6
+Mathematics,Edexcel,3,Modelling with Differentiation,Differentiation,7
+Mathematics,Edexcel,2,Integration,Paper 1 and Paper 2: Pure Mathematics,8
+Mathematics,Edexcel,3,Fundamental Concepts of Integration,Integration,1
+Mathematics,Edexcel,3,Standard Integration and Area Calculation,Integration,2
+Mathematics,Edexcel,3,Integration by Substitution and by Parts,Integration,3
+Mathematics,Edexcel,3,Integration using Partial Fractions,Integration,4
+Mathematics,Edexcel,3,Introduction to Differential Equations,Integration,5
+Mathematics,Edexcel,2,Numerical Methods,Paper 1 and Paper 2: Pure Mathematics,9
+Mathematics,Edexcel,3,Solving Equations Numerically,Numerical Methods,1
+Mathematics,Edexcel,3,Numerical Integration,Numerical Methods,2
+Mathematics,Edexcel,3,Numerical Methods in Context,Numerical Methods,3
+Mathematics,Edexcel,2,Vectors,Paper 1 and Paper 2: Pure Mathematics,10
+Mathematics,Edexcel,3,Vector Basics: Representation and Algebra,Vectors,1
+Mathematics,Edexcel,3,Position Vectors and Geometric Problems,Vectors,2
+Mathematics,Edexcel,1,Paper 3: Statistics and Mechanics,,2
+Mathematics,Edexcel,2,Section A: Statistics - Statistical Sampling,Paper 3: Statistics and Mechanics,1
+Mathematics,Edexcel,3,"Populations, Sampling, and Techniques",Section A: Statistics - Statistical Sampling,1
+Mathematics,Edexcel,2,Section A: Statistics - Data Presentation and Interpretation,Paper 3: Statistics and Mechanics,2
+Mathematics,Edexcel,3,Representing and Interpreting Data,Section A: Statistics - Data Presentation and Interpretation,1
+Mathematics,Edexcel,3,Measures of Location and Spread,Section A: Statistics - Data Presentation and Interpretation,2
+Mathematics,Edexcel,3,"Correlation, Causation, and Outliers",Section A: Statistics - Data Presentation and Interpretation,3
+Mathematics,Edexcel,2,Section A: Statistics - Probability,Paper 3: Statistics and Mechanics,3
+Mathematics,Edexcel,3,Calculating with Probability,Section A: Statistics - Probability,1
+Mathematics,Edexcel,3,Modelling with Probability,Section A: Statistics - Probability,2
+Mathematics,Edexcel,2,Section A: Statistics - Statistical Distributions,Paper 3: Statistics and Mechanics,4
+Mathematics,Edexcel,3,The Binomial Distribution,Section A: Statistics - Statistical Distributions,1
+Mathematics,Edexcel,3,The Normal Distribution,Section A: Statistics - Statistical Distributions,2
+Mathematics,Edexcel,3,Using and Approximating Distributions,Section A: Statistics - Statistical Distributions,3
+Mathematics,Edexcel,2,Section A: Statistics - Statistical Hypothesis Testing,Paper 3: Statistics and Mechanics,5
+Mathematics,Edexcel,3,Principles of Hypothesis Testing,Section A: Statistics - Statistical Hypothesis Testing,1
+Mathematics,Edexcel,3,Binomial and Correlation Hypothesis Tests,Section A: Statistics - Statistical Hypothesis Testing,2
+Mathematics,Edexcel,3,Normal Distribution Hypothesis Tests,Section A: Statistics - Statistical Hypothesis Testing,3
+Mathematics,Edexcel,2,Section B: Mechanics - Quantities and Units,Paper 3: Statistics and Mechanics,6
+Mathematics,Edexcel,3,Fundamental and Derived Quantities and Units,Section B: Mechanics - Quantities and Units,1
+Mathematics,Edexcel,2,Section B: Mechanics - Kinematics,Paper 3: Statistics and Mechanics,7
+Mathematics,Edexcel,3,Kinematics: Graphs and Calculus,Section B: Mechanics - Kinematics,1
+Mathematics,Edexcel,3,Kinematics: Constant Acceleration and Projectiles,Section B: Mechanics - Kinematics,2
+Mathematics,Edexcel,2,Section B: Mechanics - Forces and Newton's Laws,Paper 3: Statistics and Mechanics,8
+Mathematics,Edexcel,3,Newton's Laws of Motion,Section B: Mechanics - Forces and Newton's Laws,1
+Mathematics,Edexcel,3,Forces in Equilibrium and Dynamics,Section B: Mechanics - Forces and Newton's Laws,2
+Mathematics,Edexcel,3,Friction,Section B: Mechanics - Forces and Newton's Laws,3
+Mathematics,Edexcel,2,Section B: Mechanics - Moments,Paper 3: Statistics and Mechanics,9
+Mathematics,Edexcel,3,Moments and Static Equilibrium,Section B: Mechanics - Moments,1

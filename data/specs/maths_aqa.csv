@@ -1,0 +1,213 @@
+subject,exam_board,level,title,parent_title,order_index
+Mathematics,AQA,1,Pure Mathematics,,1
+Mathematics,AQA,2,Mathematical Thinking and Problem Solving,Pure Mathematics,1
+Mathematics,AQA,3,The Mathematical Problem Solving Cycle,Mathematical Thinking and Problem Solving,1
+Mathematics,AQA,3,Recognising and Simplifying Problem Structure,Mathematical Thinking and Problem Solving,2
+Mathematics,AQA,3,Using Diagrams in Problem Solving,Mathematical Thinking and Problem Solving,3
+Mathematics,AQA,3,Solving Unstructured Problems,Mathematical Thinking and Problem Solving,4
+Mathematics,AQA,3,Interpreting and Communicating Solutions,Mathematical Thinking and Problem Solving,5
+Mathematics,AQA,2,Mathematical Argument and Proof,Pure Mathematics,2
+Mathematics,AQA,3,Using Precise Mathematical Language and Symbols,Mathematical Argument and Proof,1
+Mathematics,AQA,3,Understanding Mathematical Syntax,Mathematical Argument and Proof,2
+Mathematics,AQA,3,Arguments using Diagrams and Deduction,Mathematical Argument and Proof,3
+Mathematics,AQA,3,The Structure of Mathematical Proof,Mathematical Argument and Proof,4
+Mathematics,AQA,3,Proof by Deduction and Exhaustion,Mathematical Argument and Proof,5
+Mathematics,AQA,3,Disproof by Counter-example,Mathematical Argument and Proof,6
+Mathematics,AQA,3,Proof by Contradiction,Mathematical Argument and Proof,7
+Mathematics,AQA,3,Applying Proof by Contradiction,Mathematical Argument and Proof,8
+Mathematics,AQA,3,Critiquing Mathematical Arguments and Proofs,Mathematical Argument and Proof,9
+Mathematics,AQA,2,Algebra: Expressions and Polynomials,Pure Mathematics,3
+Mathematics,AQA,3,Indices with Rational Exponents,Algebra: Expressions and Polynomials,1
+Mathematics,AQA,3,Manipulating and Rationalising Surds,Algebra: Expressions and Polynomials,2
+Mathematics,AQA,3,Manipulating and Factorising Polynomials,Algebra: Expressions and Polynomials,3
+Mathematics,AQA,3,Algebraic Division and the Factor Theorem,Algebra: Expressions and Polynomials,4
+Mathematics,AQA,3,Simplifying Rational Expressions,Algebra: Expressions and Polynomials,5
+Mathematics,AQA,3,Decomposing into Partial Fractions,Algebra: Expressions and Polynomials,6
+Mathematics,AQA,2,"Quadratics, Inequalities and Sets",Pure Mathematics,4
+Mathematics,AQA,3,Graphs of Quadratic Functions,"Quadratics, Inequalities and Sets",1
+Mathematics,AQA,3,Solving Quadratics by Completing the Square,"Quadratics, Inequalities and Sets",2
+Mathematics,AQA,3,The Discriminant and Nature of Roots,"Quadratics, Inequalities and Sets",3
+Mathematics,AQA,3,Solving Disguised Quadratic Equations,"Quadratics, Inequalities and Sets",4
+Mathematics,AQA,3,Solving Linear and Quadratic Simultaneous Equations,"Quadratics, Inequalities and Sets",5
+Mathematics,AQA,3,Solving Linear and Quadratic Inequalities,"Quadratics, Inequalities and Sets",6
+Mathematics,AQA,3,Introduction to Set Theory Language,"Quadratics, Inequalities and Sets",7
+Mathematics,AQA,3,Applying Set Theory to Problems,"Quadratics, Inequalities and Sets",8
+Mathematics,AQA,3,Representing Solutions with Set Notation,"Quadratics, Inequalities and Sets",9
+Mathematics,AQA,3,Representing Inequalities Graphically,"Quadratics, Inequalities and Sets",10
+Mathematics,AQA,2,Functions and Graph Sketching,Pure Mathematics,5
+Mathematics,AQA,3,"Definition of a Function, Domain and Range",Functions and Graph Sketching,1
+Mathematics,AQA,3,Sketching Polynomials and Modulus Functions,Functions and Graph Sketching,2
+Mathematics,AQA,3,Sketching Reciprocal Functions and Asymptote,Functions and Graph Sketching,3
+Mathematics,AQA,3,Proportional Relationships and Graphs,Functions and Graph Sketching,4
+Mathematics,AQA,3,Solving Equations using Graph Intersections,Functions and Graph Sketching,5
+Mathematics,AQA,3,Working with Composite and Inverse Functions,Functions and Graph Sketching,6
+Mathematics,AQA,2,Graph Transformations,Pure Mathematics,6
+Mathematics,AQA,3,Vertical Translations and Stretches,Graph Transformations,1
+Mathematics,AQA,3,Horizontal Translations and Stretches,Graph Transformations,2
+Mathematics,AQA,3,Combining Graph Transformations,Graph Transformations,3
+Mathematics,AQA,2,Coordinate Geometry,Pure Mathematics,7
+Mathematics,AQA,3,Forms of the Equation of a Straight Line,Coordinate Geometry,1
+Mathematics,AQA,3,Parallel and Perpendicular Lines,Coordinate Geometry,2
+Mathematics,AQA,3,The Equation of a Circle,Coordinate Geometry,3
+Mathematics,AQA,3,Finding Centre and Radius by Completing the Square,Coordinate Geometry,4
+Mathematics,AQA,3,Circle Properties: Semicircles and Chords,Coordinate Geometry,5
+Mathematics,AQA,3,Circle Properties: Tangents and Radii,Coordinate Geometry,6
+Mathematics,AQA,3,Modelling with Straight Lines,Coordinate Geometry,7
+Mathematics,AQA,2,Parametric Equations,Pure Mathematics,8
+Mathematics,AQA,3,Introduction to Parametric Equations,Parametric Equations,1
+Mathematics,AQA,3,Contextual Modelling with Parametric Equations,Parametric Equations,2
+Mathematics,AQA,2,Sequences and Series,Pure Mathematics,9
+Mathematics,AQA,3,Summation using Sigma Notation,Sequences and Series,1
+Mathematics,AQA,3,Defining Sequences,Sequences and Series,2
+Mathematics,AQA,3,Types of Sequences,Sequences and Series,3
+Mathematics,AQA,3,Arithmetic Progressions,Sequences and Series,4
+Mathematics,AQA,3,Geometric Progressions,Sequences and Series,5
+Mathematics,AQA,3,Sum to Infinity of Convergent Geometric Series,Sequences and Series,6
+Mathematics,AQA,3,Applying Sequences and Series in Modelling,Sequences and Series,7
+Mathematics,AQA,2,Binomial Expansion,Pure Mathematics,10
+Mathematics,AQA,3,Binomial Expansion for Positive Integers,Binomial Expansion,1
+Mathematics,AQA,3,Binomial Expansion for Rational Exponents,Binomial Expansion,2
+Mathematics,AQA,3,Validity of the Binomial Expansion,Binomial Expansion,3
+Mathematics,AQA,2,Trigonometry: Fundamentals,Pure Mathematics,11
+Mathematics,AQA,3,"Definitions of Sine, Cosine and Tangent",Trigonometry: Fundamentals,1
+Mathematics,AQA,3,"Radian Measure, Arc Length and Sector Area",Trigonometry: Fundamentals,2
+Mathematics,AQA,3,The Sine and Cosine Rules,Trigonometry: Fundamentals,3
+Mathematics,AQA,3,Area of a Triangle using Sine,Trigonometry: Fundamentals,4
+Mathematics,AQA,3,Graphs and Properties of Trigonometric Functions,Trigonometry: Fundamentals,5
+Mathematics,AQA,3,Exact Trigonometric Values,Trigonometry: Fundamentals,6
+Mathematics,AQA,3,Reciprocal Trigonometric Functions and their Graphs,Trigonometry: Fundamentals,7
+Mathematics,AQA,3,Inverse Trigonometric Functions and their Graphs,Trigonometry: Fundamentals,8
+Mathematics,AQA,2,Trigonometry: Identities and Equations,Pure Mathematics,12
+Mathematics,AQA,3,Using Small Angle Approximations,Trigonometry: Identities and Equations,1
+Mathematics,AQA,3,Fundamental Trigonometric Identities,Trigonometry: Identities and Equations,2
+Mathematics,AQA,3,Pythagorean Identities for Reciprocal Functions,Trigonometry: Identities and Equations,3
+Mathematics,AQA,3,Addition and Double Angle Formulae,Trigonometry: Identities and Equations,4
+Mathematics,AQA,3,Geometrical Proofs of Addition Formulae,Trigonometry: Identities and Equations,5
+Mathematics,AQA,3,Harmonic Form (R-alpha),Trigonometry: Identities and Equations,6
+Mathematics,AQA,3,Solving Trigonometric Equations,Trigonometry: Identities and Equations,7
+Mathematics,AQA,3,Constructing Trigonometric Proofs,Trigonometry: Identities and Equations,8
+Mathematics,AQA,2,Exponentials and Logarithms,Pure Mathematics,13
+Mathematics,AQA,3,The Functions aˣ and eˣ and their Graphs,Exponentials and Logarithms,1
+Mathematics,AQA,3,Definition and Properties of Logarithms,Exponentials and Logarithms,2
+Mathematics,AQA,3,The Natural Logarithm and its Graph,Exponentials and Logarithms,3
+Mathematics,AQA,3,Applying the Laws of Logarithms,Exponentials and Logarithms,4
+Mathematics,AQA,3,Solving Equations of the form aˣ = b,Exponentials and Logarithms,5
+Mathematics,AQA,3,Estimating Parameters using Logarithmic Graphs,Exponentials and Logarithms,6
+Mathematics,AQA,2,Differentiation: Core Concepts,Pure Mathematics,14
+Mathematics,AQA,3,The Derivative as a Gradient and Rate of Change,Differentiation: Core Concepts,1
+Mathematics,AQA,3,The Derivative as a Limit,Differentiation: Core Concepts,2
+Mathematics,AQA,3,Differentiation from First Principles,Differentiation: Core Concepts,3
+Mathematics,AQA,3,Differentiating Powers of x,Differentiation: Core Concepts,4
+Mathematics,AQA,3,Differentiating Exponential and Trigonometric Functions,Differentiation: Core Concepts,5
+Mathematics,AQA,3,Differentiating the Natural Logarithm,Differentiation: Core Concepts,6
+Mathematics,AQA,3,The Gradient of eˣ,Differentiation: Core Concepts,7
+Mathematics,AQA,2,Differentiation: Applications and Advanced Rules,Pure Mathematics,15
+Mathematics,AQA,3,"The Product, Quotient and Chain Rules",Differentiation: Applications and Advanced Rules,1
+Mathematics,AQA,3,Applications: Connected Rates of Change,Differentiation: Applications and Advanced Rules,2
+Mathematics,AQA,3,Implicit and Parametric Differentiation,Differentiation: Applications and Advanced Rules,3
+Mathematics,AQA,3,"Gradients, Tangents and Normals",Differentiation: Applications and Advanced Rules,4
+Mathematics,AQA,3,Stationary Points and Points of Inflection,Differentiation: Applications and Advanced Rules,5
+Mathematics,AQA,3,Identifying Increasing and Decreasing Functions,Differentiation: Applications and Advanced Rules,6
+Mathematics,AQA,3,"The Second Derivative, Convexity and Concavity",Differentiation: Applications and Advanced Rules,7
+Mathematics,AQA,3,Sketching the Gradient Function,Differentiation: Applications and Advanced Rules,8
+Mathematics,AQA,2,Integration: Techniques,Pure Mathematics,16
+Mathematics,AQA,3,Introduction to the Fundamental Theorem of Calculus,Integration: Techniques,1
+Mathematics,AQA,3,Integrating Powers of x,Integration: Techniques,2
+Mathematics,AQA,3,Integrating Standard Functions,Integration: Techniques,3
+Mathematics,AQA,3,Integration by Substitution,Integration: Techniques,4
+Mathematics,AQA,3,Choosing Substitutions for Integration,Integration: Techniques,5
+Mathematics,AQA,3,Integration by Parts,Integration: Techniques,6
+Mathematics,AQA,3,Repeated Integration by Parts,Integration: Techniques,7
+Mathematics,AQA,3,Using Partial Fractions for Integration,Integration: Techniques,8
+Mathematics,AQA,2,Integration: Applications and Differential Equations,Pure Mathematics,17
+Mathematics,AQA,3,Evaluating Definite Integrals and Finding Areas,Integration: Applications and Differential Equations,1
+Mathematics,AQA,3,Understanding Integration as the Limit of a Sum,Integration: Applications and Differential Equations,2
+Mathematics,AQA,3,Constructing Simple Differential Equations,Integration: Applications and Differential Equations,3
+Mathematics,AQA,3,Solving First Order Differential Equations,Integration: Applications and Differential Equations,4
+Mathematics,AQA,3,Interpreting Solutions to Differential Equations,Integration: Applications and Differential Equations,5
+Mathematics,AQA,2,Numerical Methods,Pure Mathematics,18
+Mathematics,AQA,3,Introduction to Numerical Methods,Numerical Methods,1
+Mathematics,AQA,3,Locating Roots by Change of Sign,Numerical Methods,2
+Mathematics,AQA,3,Failures of the Change of Sign Method,Numerical Methods,3
+Mathematics,AQA,3,Fixed Point Iteration,Numerical Methods,4
+Mathematics,AQA,3,The Newton-Raphson Method,Numerical Methods,5
+Mathematics,AQA,3,Failures of Iterative Methods,Numerical Methods,6
+Mathematics,AQA,3,Numerical Integration: The Trapezium Rule,Numerical Methods,7
+Mathematics,AQA,3,Applying Numerical Methods to Problems,Numerical Methods,8
+Mathematics,AQA,3,Evaluating the Accuracy of Solutions,Numerical Methods,9
+Mathematics,AQA,2,Vectors,Pure Mathematics,19
+Mathematics,AQA,3,Introduction to 2D and 3D Vectors,Vectors,1
+Mathematics,AQA,3,Vector Addition and Scalar Multiplication,Vectors,2
+Mathematics,AQA,3,Calculating Magnitude and Direction,Vectors,3
+Mathematics,AQA,3,Using Position Vectors and Calculating Distance,Vectors,4
+Mathematics,AQA,2,Mathematical Modelling,Pure Mathematics,20
+Mathematics,AQA,3,Creating Mathematical Models,Mathematical Modelling,1
+Mathematics,AQA,3,Using Mathematical Models,Mathematical Modelling,2
+Mathematics,AQA,3,Interpreting Model Outputs,Mathematical Modelling,3
+Mathematics,AQA,3,Refining and Evaluating Models,Mathematical Modelling,4
+Mathematics,AQA,3,Understanding Modelling Assumptions,Mathematical Modelling,5
+Mathematics,AQA,3,Applying Functions in Modelling,Mathematical Modelling,6
+Mathematics,AQA,3,Modelling Exponential Growth and Decay,Mathematical Modelling,7
+Mathematics,AQA,3,Limitations of Exponential Models,Mathematical Modelling,8
+Mathematics,AQA,1,Statistics,,2
+Mathematics,AQA,2,Data Collection and Presentation,Statistics,1
+Mathematics,AQA,3,"Populations, Samples and Inferences",Data Collection and Presentation,1
+Mathematics,AQA,3,Simple Random Sampling,Data Collection and Presentation,2
+Mathematics,AQA,3,Opportunity Sampling,Data Collection and Presentation,3
+Mathematics,AQA,3,Critiquing Sampling Techniques,Data Collection and Presentation,4
+Mathematics,AQA,3,Interpreting Diagrams and Histograms,Data Collection and Presentation,5
+Mathematics,AQA,3,Critiquing Data Presentation,Data Collection and Presentation,6
+Mathematics,AQA,2,Analysing and Cleaning Data,Statistics,2
+Mathematics,AQA,3,Interpreting Measures of Location and Spread,Analysing and Cleaning Data,1
+Mathematics,AQA,3,Calculating Standard Deviation,Analysing and Cleaning Data,2
+Mathematics,AQA,3,Interpreting Scatter Diagrams and Regression,Analysing and Cleaning Data,3
+Mathematics,AQA,3,Understanding Correlation and Causation,Analysing and Cleaning Data,4
+Mathematics,AQA,3,Identifying and Interpreting Outliers,Analysing and Cleaning Data,5
+Mathematics,AQA,3,Data Cleaning Techniques,Analysing and Cleaning Data,6
+Mathematics,AQA,2,Working with a Large Data Set,Statistics,3
+Mathematics,AQA,3,Introduction to the Large Data Set,Working with a Large Data Set,1
+Mathematics,AQA,3,Building Familiarity with the Data Set,Working with a Large Data Set,2
+Mathematics,AQA,3,Using Technology to Explore Data,Working with a Large Data Set,3
+Mathematics,AQA,3,Analysing Data Subsets with a Calculator,Working with a Large Data Set,4
+Mathematics,AQA,3,Investigating Questions with Real Data,Working with a Large Data Set,5
+Mathematics,AQA,2,Probability,Statistics,4
+Mathematics,AQA,3,Mutually Exclusive and Independent Events,Probability,1
+Mathematics,AQA,3,Conditional Probability using Diagrams,Probability,2
+Mathematics,AQA,3,The Conditional Probability Formula,Probability,3
+Mathematics,AQA,3,Modelling with Probability,Probability,4
+Mathematics,AQA,2,Statistical Distributions,Statistics,5
+Mathematics,AQA,3,Introduction to Discrete Probability Distributions,Statistical Distributions,1
+Mathematics,AQA,3,The Binomial Distribution,Statistical Distributions,2
+Mathematics,AQA,3,Linking Binomial Expansion to Probability,Statistical Distributions,3
+Mathematics,AQA,3,The Normal Distribution,Statistical Distributions,4
+Mathematics,AQA,3,Choosing an Appropriate Probability Distribution,Statistical Distributions,5
+Mathematics,AQA,2,Hypothesis Testing,Statistics,6
+Mathematics,AQA,3,Core Concepts of Hypothesis Testing,Hypothesis Testing,1
+Mathematics,AQA,3,"Regions, p-values and Tails",Hypothesis Testing,2
+Mathematics,AQA,3,Hypothesis Testing for a Binomial Proportion,Hypothesis Testing,3
+Mathematics,AQA,3,Hypothesis Testing for the Mean of a Normal Distribution,Hypothesis Testing,4
+Mathematics,AQA,3,Hypothesis Testing with Correlation Coefficients,Hypothesis Testing,5
+Mathematics,AQA,1,Mechanics,,3
+Mathematics,AQA,2,Kinematics,Mechanics,1
+Mathematics,AQA,3,Fundamental SI Quantities and Units,Kinematics,1
+Mathematics,AQA,3,Derived Quantities and Units in Mechanics,Kinematics,2
+Mathematics,AQA,3,"Position, Displacement, Velocity and Acceleration",Kinematics,3
+Mathematics,AQA,3,Interpreting Kinematics Graphs,Kinematics,4
+Mathematics,AQA,3,Constant Acceleration Equations (SUVAT),Kinematics,5
+Mathematics,AQA,3,Modelling Motion Under Gravity (Projectiles),Kinematics,6
+Mathematics,AQA,3,Kinematics using Differentiation,Kinematics,7
+Mathematics,AQA,3,Kinematics using Integration,Kinematics,8
+Mathematics,AQA,2,Forces and Newton's Laws,Mechanics,2
+Mathematics,AQA,3,The Concept of a Force and Newton's First Law,Forces and Newton's Laws,1
+Mathematics,AQA,3,Applying Newton's Second Law,Forces and Newton's Laws,2
+Mathematics,AQA,3,Resolving Forces with Newton's Second Law,Forces and Newton's Laws,3
+Mathematics,AQA,3,Weight and Motion Under Gravity,Forces and Newton's Laws,4
+Mathematics,AQA,3,Newton's Third Law,Forces and Newton's Laws,5
+Mathematics,AQA,3,Resultant Forces and Dynamics in a Plane,Forces and Newton's Laws,6
+Mathematics,AQA,3,Modelling with Friction,Forces and Newton's Laws,7
+Mathematics,AQA,2,Applications of Forces and Vectors,Mechanics,3
+Mathematics,AQA,3,Connected Particles and Pulleys,Applications of Forces and Vectors,1
+Mathematics,AQA,3,Equilibrium of a Particle with Coplanar Forces,Applications of Forces and Vectors,2
+Mathematics,AQA,3,Understanding and Using Moments,Applications of Forces and Vectors,3
+Mathematics,AQA,3,Solving Problems with Vectors in Mechanics,Applications of Forces and Vectors,4
+Mathematics,AQA,3,Applying Trigonometry in Mechanics,Applications of Forces and Vectors,5

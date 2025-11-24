@@ -1,0 +1,111 @@
+subject,exam_board,level,title,parent_title,order_index
+Economics,AQA,1,"Individuals, firms, markets and market failure",,1
+Economics,AQA,2,Foundations of Economics: Methodology and the Economic Problem,"Individuals, firms, markets and market failure",1
+Economics,AQA,3,The Nature of Economics and its Methodology,Foundations of Economics: Methodology and the Economic Problem,1
+Economics,AQA,3,The Purpose of Economic Activity,Foundations of Economics: Methodology and the Economic Problem,2
+Economics,AQA,3,"Scarcity, Choice and Opportunity Cost",Foundations of Economics: Methodology and the Economic Problem,3
+Economics,AQA,3,Economic Resources,Foundations of Economics: Methodology and the Economic Problem,4
+Economics,AQA,3,Production Possibility Diagrams,Foundations of Economics: Methodology and the Economic Problem,5
+Economics,AQA,2,Understanding Individual Economic Decision Making,"Individuals, firms, markets and market failure",2
+Economics,AQA,3,Rationality and Utility Theory,Understanding Individual Economic Decision Making,1
+Economics,AQA,3,Imperfect and Asymmetric Information,Understanding Individual Economic Decision Making,2
+Economics,AQA,3,Introduction to Behavioural Economics,Understanding Individual Economic Decision Making,3
+Economics,AQA,3,Behavioural Economics and Nudge Theory,Understanding Individual Economic Decision Making,4
+Economics,AQA,2,Price Determination in Competitive Markets,"Individuals, firms, markets and market failure",3
+Economics,AQA,3,The Demand Curve,Price Determination in Competitive Markets,1
+Economics,AQA,3,"Price, Income, and Cross Elasticities of Demand",Price Determination in Competitive Markets,2
+Economics,AQA,3,Using Price Elasticity of Demand,Price Determination in Competitive Markets,3
+Economics,AQA,3,The Supply Curve,Price Determination in Competitive Markets,4
+Economics,AQA,3,Price Elasticity of Supply,Price Determination in Competitive Markets,5
+Economics,AQA,3,Market Equilibrium and Disequilibrium,Price Determination in Competitive Markets,6
+Economics,AQA,3,Interrelated Markets,Price Determination in Competitive Markets,7
+Economics,AQA,2,"The Economics of Production, Costs, and Revenue","Individuals, firms, markets and market failure",4
+Economics,AQA,3,"Production, Productivity, and Specialisation","The Economics of Production, Costs, and Revenue",1
+Economics,AQA,3,Diminishing Returns and Returns to Scale,"The Economics of Production, Costs, and Revenue",2
+Economics,AQA,3,Short-Run and Long-Run Costs of Production,"The Economics of Production, Costs, and Revenue",3
+Economics,AQA,3,Economies and Diseconomies of Scale,"The Economics of Production, Costs, and Revenue",4
+Economics,AQA,3,The Long-Run Average Cost Curve (LRAC),"The Economics of Production, Costs, and Revenue",5
+Economics,AQA,3,"Firm’s Revenue: TR, AR, MR","The Economics of Production, Costs, and Revenue",6
+Economics,AQA,3,Profit: Normal and Supernormal,"The Economics of Production, Costs, and Revenue",7
+Economics,AQA,3,The Impact of Technological Change,"The Economics of Production, Costs, and Revenue",8
+Economics,AQA,2,Market Structures: From Perfect Competition to Monopoly,"Individuals, firms, markets and market failure",5
+Economics,AQA,3,Introduction to Market Structures & Profit Maximisation,Market Structures: From Perfect Competition to Monopoly,1
+Economics,AQA,3,Alternative Objectives of the Firm,Market Structures: From Perfect Competition to Monopoly,2
+Economics,AQA,3,Perfect Competition,Market Structures: From Perfect Competition to Monopoly,3
+Economics,AQA,3,Monopolistic Competition,Market Structures: From Perfect Competition to Monopoly,4
+Economics,AQA,3,Oligopoly: Characteristics and Concentration,Market Structures: From Perfect Competition to Monopoly,5
+Economics,AQA,3,Oligopoly: Collusive Behaviour,Market Structures: From Perfect Competition to Monopoly,6
+Economics,AQA,3,Oligopoly: Non-Collusive Behaviour and Interdependence,Market Structures: From Perfect Competition to Monopoly,7
+Economics,AQA,3,Monopoly,Market Structures: From Perfect Competition to Monopoly,8
+Economics,AQA,3,Price Discrimination,Market Structures: From Perfect Competition to Monopoly,9
+Economics,AQA,3,The Dynamics of Competition and Creative Destruction,Market Structures: From Perfect Competition to Monopoly,10
+Economics,AQA,3,Contestable Markets,Market Structures: From Perfect Competition to Monopoly,11
+Economics,AQA,3,Static and Dynamic Efficiency,Market Structures: From Perfect Competition to Monopoly,12
+Economics,AQA,3,Consumer and Producer Surplus,Market Structures: From Perfect Competition to Monopoly,13
+Economics,AQA,2,Analysing the Labour Market,"Individuals, firms, markets and market failure",6
+Economics,AQA,3,The Demand for Labour,Analysing the Labour Market,1
+Economics,AQA,3,The Supply of Labour,Analysing the Labour Market,2
+Economics,AQA,3,Wage Determination in a Competitive Labour Market,Analysing the Labour Market,3
+Economics,AQA,3,Monopsony in the Labour Market,Analysing the Labour Market,4
+Economics,AQA,3,The Role of Trade Unions,Analysing the Labour Market,5
+Economics,AQA,3,The National Minimum Wage,Analysing the Labour Market,6
+Economics,AQA,3,Discrimination in the Labour Market,Analysing the Labour Market,7
+Economics,AQA,2,"Income Distribution, Wealth, Poverty, and Inequality","Individuals, firms, markets and market failure",7
+Economics,AQA,3,Measuring Income and Wealth Distribution,"Income Distribution, Wealth, Poverty, and Inequality",1
+Economics,AQA,3,Absolute and Relative Poverty,"Income Distribution, Wealth, Poverty, and Inequality",2
+Economics,AQA,3,Policies to Reduce Poverty and Inequality,"Income Distribution, Wealth, Poverty, and Inequality",3
+Economics,AQA,2,Market Failure and Government Intervention,"Individuals, firms, markets and market failure",8
+Economics,AQA,3,The Price Mechanism,Market Failure and Government Intervention,1
+Economics,AQA,3,Introduction to Market Failure,Market Failure and Government Intervention,2
+Economics,AQA,3,Public Goods and the Tragedy of the Commons,Market Failure and Government Intervention,3
+Economics,AQA,3,Externalities and Property Rights,Market Failure and Government Intervention,4
+Economics,AQA,3,Merit and Demerit Goods,Market Failure and Government Intervention,5
+Economics,AQA,3,Other Market Imperfections,Market Failure and Government Intervention,6
+Economics,AQA,3,Government Intervention in Markets,Market Failure and Government Intervention,7
+Economics,AQA,3,Competition Policy,Market Failure and Government Intervention,8
+Economics,AQA,3,"Public Ownership, Privatisation, and Regulation",Market Failure and Government Intervention,9
+Economics,AQA,3,Government Failure,Market Failure and Government Intervention,10
+Economics,AQA,1,The national and international economy,,2
+Economics,AQA,2,Measuring Macroeconomic Performance,The national and international economy,1
+Economics,AQA,3,Objectives of Macroeconomic Policy,Measuring Macroeconomic Performance,1
+Economics,AQA,3,Key Macroeconomic Indicators,Measuring Macroeconomic Performance,2
+Economics,AQA,3,Calculating and Using Index Numbers,Measuring Macroeconomic Performance,3
+Economics,AQA,3,National Income Data and Living Standards,Measuring Macroeconomic Performance,4
+Economics,AQA,2,How the Macroeconomy Works: Models and Concepts,The national and international economy,2
+Economics,AQA,3,The Circular Flow of Income,How the Macroeconomy Works: Models and Concepts,1
+Economics,AQA,3,Introduction to Aggregate Demand and Supply,How the Macroeconomy Works: Models and Concepts,2
+Economics,AQA,3,Components of Aggregate Demand,How the Macroeconomy Works: Models and Concepts,3
+Economics,AQA,3,The Multiplier Effect,How the Macroeconomy Works: Models and Concepts,4
+Economics,AQA,3,Short-Run Aggregate Supply (SRAS),How the Macroeconomy Works: Models and Concepts,5
+Economics,AQA,3,Long-Run Aggregate Supply (LRAS),How the Macroeconomy Works: Models and Concepts,6
+Economics,AQA,2,Analysing Economic Performance,The national and international economy,3
+Economics,AQA,3,Economic Growth,Analysing Economic Performance,1
+Economics,AQA,3,The Economic Cycle and Output Gaps,Analysing Economic Performance,2
+Economics,AQA,3,Measuring and Classifying Unemployment,Analysing Economic Performance,3
+Economics,AQA,3,The Natural Rate of Unemployment,Analysing Economic Performance,4
+Economics,AQA,3,Causes of Inflation and Deflation,Analysing Economic Performance,5
+Economics,AQA,3,Consequences of Inflation and Deflation,Analysing Economic Performance,6
+Economics,AQA,3,Policy Conflicts and the Phillips Curve,Analysing Economic Performance,7
+Economics,AQA,2,Financial Markets and Monetary Policy,The national and international economy,4
+Economics,AQA,3,The Role and Structure of Financial Markets,Financial Markets and Monetary Policy,1
+Economics,AQA,3,Understanding Financial Assets: Bonds and Shares,Financial Markets and Monetary Policy,2
+Economics,AQA,3,Commercial Banks and Credit Creation,Financial Markets and Monetary Policy,3
+Economics,AQA,3,The Central Bank and Monetary Policy,Financial Markets and Monetary Policy,4
+Economics,AQA,3,The Monetary Policy Transmission Mechanism,Financial Markets and Monetary Policy,5
+Economics,AQA,2,Fiscal and Supply-Side Policies,The national and international economy,5
+Economics,AQA,3,Introduction to Fiscal Policy,Fiscal and Supply-Side Policies,1
+Economics,AQA,3,Government Spending and Taxation,Fiscal and Supply-Side Policies,2
+Economics,AQA,3,The Budget Balance and National Debt,Fiscal and Supply-Side Policies,3
+Economics,AQA,3,Introduction to Supply-Side Policies,Fiscal and Supply-Side Policies,4
+Economics,AQA,3,Evaluating Supply-Side Policies,Fiscal and Supply-Side Policies,5
+Economics,AQA,2,The International Economy,The national and international economy,6
+Economics,AQA,3,The Causes and Consequences of Globalisation,The International Economy,1
+Economics,AQA,3,The Theory of Comparative Advantage,The International Economy,2
+Economics,AQA,3,Protectionism and Patterns of Trade,The International Economy,3
+Economics,AQA,3,Trading Blocs and the WTO,The International Economy,4
+Economics,AQA,3,The Structure of the Balance of Payments,The International Economy,5
+Economics,AQA,3,Exchange Rate Determination,The International Economy,6
+Economics,AQA,3,Correcting a Balance of Payments Imbalance,The International Economy,7
+Economics,AQA,3,The Consequences of Current Account Imbalance,The International Economy,8
+Economics,AQA,3,Economic Growth vs. Economic Development,The International Economy,9
+Economics,AQA,3,Barriers to and Policies for Development,The International Economy,10

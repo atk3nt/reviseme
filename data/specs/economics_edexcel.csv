@@ -1,0 +1,153 @@
+subject,exam_board,level,title,parent_title,order_index
+Economics,Edexcel,1,Theme 1: Introduction to markets and market failure,,1
+Economics,Edexcel,2,The Nature of Economics,Theme 1: Introduction to markets and market failure,1
+Economics,Edexcel,3,The Economic Method,The Nature of Economics,1
+Economics,Edexcel,3,Positive and Normative Statements,The Nature of Economics,2
+Economics,Edexcel,3,The Fundamental Economic Problem,The Nature of Economics,3
+Economics,Edexcel,3,Introduction to Production Possibility Frontiers (PF),The Nature of Economics,4
+Economics,Edexcel,3,Analysing PPFs,The Nature of Economics,5
+Economics,Edexcel,3,Specialisation and the Division of Labour,The Nature of Economics,6
+Economics,Edexcel,3,"Specialisation, Trade, and Money",The Nature of Economics,7
+Economics,Edexcel,3,Types of Economic Systems,The Nature of Economics,8
+Economics,Edexcel,3,Evaluating Economic Systems,The Nature of Economics,9
+Economics,Edexcel,2,How Markets Work,Theme 1: Introduction to markets and market failure,2
+Economics,Edexcel,3,Rationality and Demand,How Markets Work,1
+Economics,Edexcel,3,Shifts in Demand and Marginal Utility,How Markets Work,2
+Economics,Edexcel,3,Supply and its Determinants,How Markets Work,3
+Economics,Edexcel,3,Market Equilibrium,How Markets Work,4
+Economics,Edexcel,3,Changes in Market Equilibrium,How Markets Work,5
+Economics,Edexcel,3,The Price Mechanism,How Markets Work,6
+Economics,Edexcel,3,Consumer and Producer Surplus,How Markets Work,7
+Economics,Edexcel,3,Introduction to Elasticities of Demand,How Markets Work,8
+Economics,Edexcel,3,Price Elasticity of Demand (PED) and Revenue,How Markets Work,9
+Economics,Edexcel,3,Income and Cross Elasticity of Demand (YED & XED),How Markets Work,10
+Economics,Edexcel,3,Determinants and Significance of Demand Elasticity,How Markets Work,11
+Economics,Edexcel,3,Price Elasticity of Supply (PES),How Markets Work,12
+Economics,Edexcel,3,Determinants of PES and Time Periods,How Markets Work,13
+Economics,Edexcel,3,Analysing Indirect Taxes and Subsidies,How Markets Work,14
+Economics,Edexcel,3,Alternative Views of Consumer Behaviour,How Markets Work,15
+Economics,Edexcel,2,Understanding Market Failure,Theme 1: Introduction to markets and market failure,3
+Economics,Edexcel,3,Market Failure and Externalities,Understanding Market Failure,1
+Economics,Edexcel,3,Negative Externalities,Understanding Market Failure,2
+Economics,Edexcel,3,Positive Externalities,Understanding Market Failure,3
+Economics,Edexcel,3,Public Goods and Impacts of Externalities,Understanding Market Failure,4
+Economics,Edexcel,3,Information Gaps,Understanding Market Failure,5
+Economics,Edexcel,2,Government Intervention,Theme 1: Introduction to markets and market failure,4
+Economics,Edexcel,3,Intervention: Indirect Taxes and Subsidies,Government Intervention,1
+Economics,Edexcel,3,Intervention: Price Controls,Government Intervention,2
+Economics,Edexcel,3,Other Forms of Government Intervention,Government Intervention,3
+Economics,Edexcel,3,Government Failure,Government Intervention,4
+Economics,Edexcel,1,Theme 2: The UK economy – performance and policies,,2
+Economics,Edexcel,2,Measures of Economic Performance,Theme 2: The UK economy – performance and policies,1
+Economics,Edexcel,3,Measuring Economic Growth,Measures of Economic Performance,1
+Economics,Edexcel,3,Comparing Growth and Living Standards,Measures of Economic Performance,2
+Economics,Edexcel,3,National Happiness and Wellbeing,Measures of Economic Performance,3
+Economics,Edexcel,3,Measuring Inflation,Measures of Economic Performance,4
+Economics,Edexcel,3,Evaluating Inflation Measures,Measures of Economic Performance,5
+Economics,Edexcel,3,Causes and Effects of Inflation,Measures of Economic Performance,6
+Economics,Edexcel,3,Measuring Unemployment,Measures of Economic Performance,7
+Economics,Edexcel,3,Types and Causes of Unemployment,Measures of Economic Performance,8
+Economics,Edexcel,3,Migration and the Effects of Unemployment,Measures of Economic Performance,9
+Economics,Edexcel,3,The Balance of Payments: Current Account,Measures of Economic Performance,10
+Economics,Edexcel,2,Aggregate Demand (AD),Theme 2: The UK economy – performance and policies,2
+Economics,Edexcel,3,Introduction to Aggregate Demand (AD),Aggregate Demand (AD),1
+Economics,Edexcel,3,Consumption (C),Aggregate Demand (AD),2
+Economics,Edexcel,3,Investment (I),Aggregate Demand (AD),3
+Economics,Edexcel,3,Government Spending (G) and Net Trade (X-M),Aggregate Demand (AD),4
+Economics,Edexcel,2,Aggregate Supply (AS),Theme 2: The UK economy – performance and policies,3
+Economics,Edexcel,3,Short-Run Aggregate Supply (SRAS),Aggregate Supply (AS),1
+Economics,Edexcel,3,Long-Run Aggregate Supply (LRAS),Aggregate Supply (AS),2
+Economics,Edexcel,2,National Income Determination,Theme 2: The UK economy – performance and policies,4
+Economics,Edexcel,3,The Circular Flow of Income,National Income Determination,1
+Economics,Edexcel,3,Equilibrium National Income,National Income Determination,2
+Economics,Edexcel,3,The Multiplier Process and its Significance,National Income Determination,3
+Economics,Edexcel,3,Marginal Propensities and Multiplier Calculation,National Income Determination,4
+Economics,Edexcel,2,Understanding Economic Growth,Theme 2: The UK economy – performance and policies,5
+Economics,Edexcel,3,Sources of Economic Growth,Understanding Economic Growth,1
+Economics,Edexcel,3,Output Gaps and the Trade Cycle,Understanding Economic Growth,2
+Economics,Edexcel,3,The Impact of Economic Growth,Understanding Economic Growth,3
+Economics,Edexcel,2,Macroeconomic Objectives and Policies,Theme 2: The UK economy – performance and policies,6
+Economics,Edexcel,3,Macroeconomic Objectives,Macroeconomic Objectives and Policies,1
+Economics,Edexcel,3,Monetary Policy,Macroeconomic Objectives and Policies,2
+Economics,Edexcel,3,Fiscal Policy,Macroeconomic Objectives and Policies,3
+Economics,Edexcel,3,Applying and Evaluating Demand-Side Policies,Macroeconomic Objectives and Policies,4
+Economics,Edexcel,3,Demand-Side Policies in Historical Context,Macroeconomic Objectives and Policies,5
+Economics,Edexcel,3,Types of Supply-Side Policies,Macroeconomic Objectives and Policies,6
+Economics,Edexcel,3,Applying and Evaluating Supply-Side Policies,Macroeconomic Objectives and Policies,7
+Economics,Edexcel,3,Policy Conflicts and Trade-offs,Macroeconomic Objectives and Policies,8
+Economics,Edexcel,1,Theme 3: Business behaviour and the labour market,,3
+Economics,Edexcel,2,Business Growth,Theme 3: Business behaviour and the labour market,1
+Economics,Edexcel,3,"Firm Size, Ownership and Objectives",Business Growth,1
+Economics,Edexcel,3,Methods of Business Growth,Business Growth,2
+Economics,Edexcel,3,Evaluating Growth Strategies and Constraints,Business Growth,3
+Economics,Edexcel,3,Demergers,Business Growth,4
+Economics,Edexcel,2,Business Objectives,Theme 3: Business behaviour and the labour market,2
+Economics,Edexcel,3,Theories of Business Objectives,Business Objectives,1
+Economics,Edexcel,3,Diagrams for Business Objectives,Business Objectives,2
+Economics,Edexcel,2,"Revenues, Costs and Profits",Theme 3: Business behaviour and the labour market,3
+Economics,Edexcel,3,Revenue,"Revenues, Costs and Profits",1
+Economics,Edexcel,3,Costs of Production,"Revenues, Costs and Profits",2
+Economics,Edexcel,3,Short-Run and Long-Run Cost Curves,"Revenues, Costs and Profits",3
+Economics,Edexcel,3,Economies and Diseconomies of Scale,"Revenues, Costs and Profits",4
+Economics,Edexcel,3,Profits and Shutdown Conditions,"Revenues, Costs and Profits",5
+Economics,Edexcel,2,Market Structures,Theme 3: Business behaviour and the labour market,4
+Economics,Edexcel,3,Types of Economic Efficiency,Market Structures,1
+Economics,Edexcel,3,Perfect Competition,Market Structures,2
+Economics,Edexcel,3,Monopolistic Competition,Market Structures,3
+Economics,Edexcel,3,Characteristics of Oligopoly,Market Structures,4
+Economics,Edexcel,3,Oligopoly: Collusion and Game Theory,Market Structures,5
+Economics,Edexcel,3,Pricing and Non-Price Competition in Oligopoly,Market Structures,6
+Economics,Edexcel,3,Monopoly,Market Structures,7
+Economics,Edexcel,3,Price Discrimination,Market Structures,8
+Economics,Edexcel,3,Costs and Benefits of Monopoly,Market Structures,9
+Economics,Edexcel,3,Monopsony,Market Structures,10
+Economics,Edexcel,3,Contestable Markets,Market Structures,11
+Economics,Edexcel,2,The Labour Market,Theme 3: Business behaviour and the labour market,5
+Economics,Edexcel,3,Demand for and Supply of Labour,The Labour Market,1
+Economics,Edexcel,3,Wage Determination,The Labour Market,2
+Economics,Edexcel,3,Labour Market Imperfections and Elasticities,The Labour Market,3
+Economics,Edexcel,3,Government Intervention in the Labour Market,The Labour Market,4
+Economics,Edexcel,2,Government Intervention in Markets,Theme 3: Business behaviour and the labour market,6
+Economics,Edexcel,3,Controlling Monopolies and Mergers,Government Intervention in Markets,1
+Economics,Edexcel,3,Promoting Competition,Government Intervention in Markets,2
+Economics,Edexcel,3,"Protecting Suppliers, Employees and Nationalisation",Government Intervention in Markets,3
+Economics,Edexcel,3,Impact and Limits of Government Intervention,Government Intervention in Markets,4
+Economics,Edexcel,1,Theme 4: A global perspective,,4
+Economics,Edexcel,2,International Economics,Theme 4: A global perspective,1
+Economics,Edexcel,3,Globalisation,International Economics,1
+Economics,Edexcel,3,Comparative Advantage,International Economics,2
+Economics,Edexcel,3,International Specialisation and Trade,International Economics,3
+Economics,Edexcel,3,Pattern and Terms of Trade,International Economics,4
+Economics,Edexcel,3,Trading Blocs and the WTO,International Economics,5
+Economics,Edexcel,3,Monetary Unions and Evaluating Trading Blocs,International Economics,6
+Economics,Edexcel,3,Reasons for and Types of Protectionism,International Economics,7
+Economics,Edexcel,3,Impact of Protectionism,International Economics,8
+Economics,Edexcel,3,The Balance of Payments and Global Imbalances,International Economics,9
+Economics,Edexcel,3,Exchange Rate Systems,International Economics,10
+Economics,Edexcel,3,Factors Influencing Exchange Rates,International Economics,11
+Economics,Edexcel,3,Impact of Exchange Rate Changes,International Economics,12
+Economics,Edexcel,3,International Competitiveness,International Economics,13
+Economics,Edexcel,2,Poverty and Inequality,Theme 4: A global perspective,2
+Economics,Edexcel,3,Poverty,Poverty and Inequality,1
+Economics,Edexcel,3,Measuring Inequality,Poverty and Inequality,2
+Economics,Edexcel,3,Causes and Consequences of Inequality,Poverty and Inequality,3
+Economics,Edexcel,2,Emerging and Developing Economies,Theme 4: A global perspective,3
+Economics,Edexcel,3,Measures of Development,Emerging and Developing Economies,1
+Economics,Edexcel,3,Financial Barriers to Development,Emerging and Developing Economies,2
+Economics,Edexcel,3,Structural and Institutional Barriers to Development,Emerging and Developing Economies,3
+Economics,Edexcel,3,Market-Orientated Strategies for Development,Emerging and Developing Economies,4
+Economics,Edexcel,3,Interventionist Strategies for Development,Emerging and Developing Economies,5
+Economics,Edexcel,3,Other Strategies for Development,Emerging and Developing Economies,6
+Economics,Edexcel,3,The Role of International Institutions and NGOs,Emerging and Developing Economies,7
+Economics,Edexcel,2,The Financial Sector,Theme 4: A global perspective,4
+Economics,Edexcel,3,The Role of Financial Markets,The Financial Sector,1
+Economics,Edexcel,3,Market Failure in the Financial Sector,The Financial Sector,2
+Economics,Edexcel,3,The Role of Central Banks,The Financial Sector,3
+Economics,Edexcel,2,The Role of the State in the Macroeconomy,Theme 4: A global perspective,5
+Economics,Edexcel,3,Public Expenditure,The Role of the State in the Macroeconomy,1
+Economics,Edexcel,3,Taxation and its Economic Effects,The Role of the State in the Macroeconomy,2
+Economics,Edexcel,3,Understanding Fiscal Deficits and National Debt,The Role of the State in the Macroeconomy,3
+Economics,Edexcel,3,Analysing Fiscal Deficits and National Debt,The Role of the State in the Macroeconomy,4
+Economics,Edexcel,3,Policies for Domestic Macroeconomic Issues,The Role of the State in the Macroeconomy,5
+Economics,Edexcel,3,Policies for Global Economic Issues,The Role of the State in the Macroeconomy,6
+Economics,Edexcel,3,Challenges for Macroeconomic Policy,The Role of the State in the Macroeconomy,7

@@ -1,0 +1,120 @@
+subject,Edexcel,level,title,parent_title,order_index
+Psychology,Edexcel,1,Paper 1: Foundations in psychology,,1
+Psychology,Edexcel,2,Understanding Social Behaviour: Obedience and Prejudice,Paper 1: Foundations in psychology,1
+Psychology,Edexcel,3,Theories of Obedience,Understanding Social Behaviour: Obedience and Prejudice,1
+Psychology,Edexcel,3,Milgram’s Research into Obedience and Dissent,Understanding Social Behaviour: Obedience and Prejudice,2
+Psychology,Edexcel,3,Factors Affecting Obedience and Dissent,Understanding Social Behaviour: Obedience and Prejudice,3
+Psychology,Edexcel,3,Theories of Prejudice,Understanding Social Behaviour: Obedience and Prejudice,4
+Psychology,Edexcel,3,Factors Affecting Prejudice,Understanding Social Behaviour: Obedience and Prejudice,5
+Psychology,Edexcel,3,Individual and Developmental Factors in Social Behaviour,Understanding Social Behaviour: Obedience and Prejudice,6
+Psychology,Edexcel,3,Research Methods: Self-Report Design,Understanding Social Behaviour: Obedience and Prejudice,7
+Psychology,Edexcel,3,Research Methods: Hypotheses and Sampling,Understanding Social Behaviour: Obedience and Prejudice,8
+Psychology,Edexcel,3,Research Methods: Data Analysis,Understanding Social Behaviour: Obedience and Prejudice,9
+Psychology,Edexcel,3,Research Methods: Ethical Guidelines,Understanding Social Behaviour: Obedience and Prejudice,10
+Psychology,Edexcel,3,Classic Study: Sherif’s Robbers Cave Experiment,Understanding Social Behaviour: Obedience and Prejudice,11
+Psychology,Edexcel,3,Contemporary Studies in Social Psychology,Understanding Social Behaviour: Obedience and Prejudice,12
+Psychology,Edexcel,3,Applying Social Psychology to Society,Understanding Social Behaviour: Obedience and Prejudice,13
+Psychology,Edexcel,3,Practical Investigation: Questionnaire Design & Analysis,Understanding Social Behaviour: Obedience and Prejudice,14
+Psychology,Edexcel,3,Issues and Debates in Social Psychology,Understanding Social Behaviour: Obedience and Prejudice,15
+Psychology,Edexcel,2,Exploring the Mind: Memory and Cognition,Paper 1: Foundations in psychology,2
+Psychology,Edexcel,3,The Multi-Store Model of Memory,Exploring the Mind: Memory and Cognition,1
+Psychology,Edexcel,3,The Working Memory Model,Exploring the Mind: Memory and Cognition,2
+Psychology,Edexcel,3,Long-Term and Reconstructive Memory,Exploring the Mind: Memory and Cognition,3
+Psychology,Edexcel,3,Individual and Developmental Differences in Memory,Exploring the Mind: Memory and Cognition,4
+Psychology,Edexcel,3,Research Methods: Designing Experiments,Exploring the Mind: Memory and Cognition,5
+Psychology,Edexcel,3,Research Methods: Hypotheses and Experimental Design,Exploring the Mind: Memory and Cognition,6
+Psychology,Edexcel,3,Research Methods: Controlling Variables,Exploring the Mind: Memory and Cognition,7
+Psychology,Edexcel,3,"Research Methods: Validity, Reliability and Bias",Exploring the Mind: Memory and Cognition,8
+Psychology,Edexcel,3,Research Methods: Quantitative Data Analysis,Exploring the Mind: Memory and Cognition,9
+Psychology,Edexcel,3,Research Methods: Inferential Statistics,Exploring the Mind: Memory and Cognition,10
+Psychology,Edexcel,3,Research Methods: The Case Study of HM,Exploring the Mind: Memory and Cognition,11
+Psychology,Edexcel,3,Classic Study: Baddeley (1966b),Exploring the Mind: Memory and Cognition,12
+Psychology,Edexcel,3,Contemporary Studies in Cognitive Psychology,Exploring the Mind: Memory and Cognition,13
+Psychology,Edexcel,3,Applying Cognitive Psychology to Society,Exploring the Mind: Memory and Cognition,14
+Psychology,Edexcel,3,Practical Investigation: Experimental Design & Analysis,Exploring the Mind: Memory and Cognition,15
+Psychology,Edexcel,3,Issues and Debates in Cognitive Psychology,Exploring the Mind: Memory and Cognition,16
+Psychology,Edexcel,2,The Brain and Behaviour: Biological Psychology,Paper 1: Foundations in psychology,3
+Psychology,Edexcel,3,Neurons and Synaptic Transmission,The Brain and Behaviour: Biological Psychology,1
+Psychology,Edexcel,3,The Effect of Recreational Drugs on the CNS,The Brain and Behaviour: Biological Psychology,2
+Psychology,Edexcel,3,Brain Structure and Aggression,The Brain and Behaviour: Biological Psychology,3
+Psychology,Edexcel,3,Hormonal and Evolutionary Explanations of Aggression,The Brain and Behaviour: Biological Psychology,4
+Psychology,Edexcel,3,Freud's Psychodynamic Explanation of Aggression,The Brain and Behaviour: Biological Psychology,5
+Psychology,Edexcel,3,Individual and Developmental Factors in Biological Psychology,The Brain and Behaviour: Biological Psychology,6
+Psychology,Edexcel,3,Research Methods: Correlational Research,The Brain and Behaviour: Biological Psychology,7
+Psychology,Edexcel,3,Research Methods: Analysing Correlational Data,The Brain and Behaviour: Biological Psychology,8
+Psychology,Edexcel,3,Research Methods: Brain Scanning and Genetic Studies,The Brain and Behaviour: Biological Psychology,9
+Psychology,Edexcel,3,Classic Study: Raine et al. (1997),The Brain and Behaviour: Biological Psychology,10
+Psychology,Edexcel,3,Contemporary Studies in Biological Psychology,The Brain and Behaviour: Biological Psychology,11
+Psychology,Edexcel,3,Applying Biological Psychology to Society,The Brain and Behaviour: Biological Psychology,12
+Psychology,Edexcel,3,Practical Investigation: Correlational Study,The Brain and Behaviour: Biological Psychology,13
+Psychology,Edexcel,3,Issues and Debates in Biological Psychology,The Brain and Behaviour: Biological Psychology,14
+Psychology,Edexcel,2,How We Learn: Theories and Applications,Paper 1: Foundations in psychology,4
+Psychology,Edexcel,3,Classical Conditioning,How We Learn: Theories and Applications,1
+Psychology,Edexcel,3,Operant Conditioning,How We Learn: Theories and Applications,2
+Psychology,Edexcel,3,Social Learning Theory,How We Learn: Theories and Applications,3
+Psychology,Edexcel,3,Learning Theories and Phobias,How We Learn: Theories and Applications,4
+Psychology,Edexcel,3,Individual and Developmental Perspectives on Learning,How We Learn: Theories and Applications,5
+Psychology,Edexcel,3,Research Methods: Observation and Content Analysis,How We Learn: Theories and Applications,6
+Psychology,Edexcel,3,Research Methods: Animal Studies and Ethics,How We Learn: Theories and Applications,7
+Psychology,Edexcel,3,Data Analysis and the Scientific Status of Psychology,How We Learn: Theories and Applications,8
+Psychology,Edexcel,3,Classic Study: Watson and Rayner (1920) Little Albert,How We Learn: Theories and Applications,9
+Psychology,Edexcel,3,Contemporary Studies in Learning Theories,How We Learn: Theories and Applications,10
+Psychology,Edexcel,3,Applying Learning Theories to Society,How We Learn: Theories and Applications,11
+Psychology,Edexcel,3,Practical Investigation: Observational Study,How We Learn: Theories and Applications,12
+Psychology,Edexcel,3,Issues and Debates in Learning Theories,How We Learn: Theories and Applications,13
+Psychology,Edexcel,1,Paper 2: Applications of psychology,,2
+Psychology,Edexcel,2,Understanding and Treating Mental Health: Clinical Psychology,Paper 2: Applications of psychology,1
+Psychology,Edexcel,3,Diagnosis and Classification of Mental Disorders,Understanding and Treating Mental Health: Clinical Psychology,1
+Psychology,Edexcel,3,Understanding Schizophrenia: Symptoms and Explanations,Understanding and Treating Mental Health: Clinical Psychology,2
+Psychology,Edexcel,3,"Understanding a Second Disorder (e.g., OCD/Depression)",Understanding and Treating Mental Health: Clinical Psychology,3
+Psychology,Edexcel,3,Treatments for Schizophrenia and Another Disorder,Understanding and Treating Mental Health: Clinical Psychology,4
+Psychology,Edexcel,3,Individual and Developmental Factors in Clinical Psychology,Understanding and Treating Mental Health: Clinical Psychology,5
+Psychology,Edexcel,3,Research Methods and Professional Guidelines,Understanding and Treating Mental Health: Clinical Psychology,6
+Psychology,Edexcel,3,Using Case Studies and Interviews in Clinical Research,Understanding and Treating Mental Health: Clinical Psychology,7
+Psychology,Edexcel,3,Data Analysis in Clinical Psychology,Understanding and Treating Mental Health: Clinical Psychology,8
+Psychology,Edexcel,3,Classic Study: Rosenhan (1973),Understanding and Treating Mental Health: Clinical Psychology,9
+Psychology,Edexcel,3,Contemporary Study: Schizophrenia (Carlsson et al.),Understanding and Treating Mental Health: Clinical Psychology,10
+Psychology,Edexcel,3,Contemporary Studies on Other Mental Health Disorders,Understanding and Treating Mental Health: Clinical Psychology,11
+Psychology,Edexcel,3,Applying Clinical Psychology to Society,Understanding and Treating Mental Health: Clinical Psychology,12
+Psychology,Edexcel,3,Practical Investigation: Content Analysis of Mental Disorders,Understanding and Treating Mental Health: Clinical Psychology,13
+Psychology,Edexcel,3,Issues and Debates in Clinical Psychology,Understanding and Treating Mental Health: Clinical Psychology,14
+Psychology,Edexcel,2,Psychology and Crime: Criminological Psychology,Paper 2: Applications of psychology,2
+Psychology,Edexcel,3,Biological and Social Explanations of Crime,Psychology and Crime: Criminological Psychology,1
+Psychology,Edexcel,3,Understanding Offenders: Interviews and Formulation,Psychology and Crime: Criminological Psychology,2
+Psychology,Edexcel,3,Treatments for Offending Behaviour,Psychology and Crime: Criminological Psychology,3
+Psychology,Edexcel,3,Factors Affecting the Criminal Justice System,Psychology and Crime: Criminological Psychology,4
+Psychology,Edexcel,3,Individual and Developmental Perspectives on Crime,Psychology and Crime: Criminological Psychology,5
+Psychology,Edexcel,3,Research Methods and Sampling in Criminology,Psychology and Crime: Criminological Psychology,6
+Psychology,Edexcel,3,Data Analysis and Methodological Issues,Psychology and Crime: Criminological Psychology,7
+Psychology,Edexcel,3,Ethical Guidelines for Criminological Psychologists,Psychology and Crime: Criminological Psychology,8
+Psychology,Edexcel,3,Classic Study: Loftus and Palmer (1974),Psychology and Crime: Criminological Psychology,9
+Psychology,Edexcel,3,Contemporary Studies in Criminology,Psychology and Crime: Criminological Psychology,10
+Psychology,Edexcel,3,Applying Criminological Psychology to Society,Psychology and Crime: Criminological Psychology,11
+Psychology,Edexcel,3,Practical Investigation in Criminology,Psychology and Crime: Criminological Psychology,12
+Psychology,Edexcel,3,Issues and Debates in Criminological Psychology,Psychology and Crime: Criminological Psychology,13
+Psychology,Edexcel,2,"Mind, Body, and Health: Health Psychology",Paper 2: Applications of psychology,4
+Psychology,Edexcel,3,Understanding Addiction,"Mind, Body, and Health: Health Psychology",1
+Psychology,Edexcel,3,Explanations of Addiction,"Mind, Body, and Health: Health Psychology",2
+Psychology,Edexcel,3,Treating Addiction and Prevention Campaigns,"Mind, Body, and Health: Health Psychology",3
+Psychology,Edexcel,3,Individual and Developmental Factors in Addiction,"Mind, Body, and Health: Health Psychology",4
+Psychology,Edexcel,3,Research Methods in Health Psychology,"Mind, Body, and Health: Health Psychology",5
+Psychology,Edexcel,3,Data Analysis in Health Psychology,"Mind, Body, and Health: Health Psychology",6
+Psychology,Edexcel,3,Classic Study: Olds and Milner (1954),"Mind, Body, and Health: Health Psychology",7
+Psychology,Edexcel,3,Contemporary Studies in Health Psychology,"Mind, Body, and Health: Health Psychology",8
+Psychology,Edexcel,3,Applying Health Psychology to Society,"Mind, Body, and Health: Health Psychology",9
+Psychology,Edexcel,3,Practical Investigation in Health Psychology,"Mind, Body, and Health: Health Psychology",10
+Psychology,Edexcel,3,Issues and Debates in Health Psychology,"Mind, Body, and Health: Health Psychology",11
+Psychology,Edexcel,1,Paper 3: Psychological skills,,3
+Psychology,Edexcel,2,Core Methodological and Synoptic Skills,Paper 3: Psychological skills,1
+Psychology,Edexcel,3,Foundational Concepts: Data and Sampling,Core Methodological and Synoptic Skills,1
+Psychology,Edexcel,3,Research Design and Hypotheses,Core Methodological and Synoptic Skills,2
+Psychology,Edexcel,3,Data Collection: Self-Report Methods,Core Methodological and Synoptic Skills,3
+Psychology,Edexcel,3,Data Collection: Experimental and Observational Methods,Core Methodological and Synoptic Skills,4
+Psychology,Edexcel,3,Specialist Research Methods,Core Methodological and Synoptic Skills,5
+Psychology,Edexcel,3,Ensuring Control in Research,Core Methodological and Synoptic Skills,6
+Psychology,Edexcel,3,Summarising Data: Descriptive Statistics,Core Methodological and Synoptic Skills,7
+Psychology,Edexcel,3,Drawing Conclusions: Inferential Statistics,Core Methodological and Synoptic Skills,8
+Psychology,Edexcel,3,Quality and Reporting in Research,Core Methodological and Synoptic Skills,9
+Psychology,Edexcel,3,Ethical Considerations in Research,Core Methodological and Synoptic Skills,10
+Psychology,Edexcel,3,Synoptic Review of Classic Studies,Core Methodological and Synoptic Skills,11
+Psychology,Edexcel,3,Synoptic Review of Issues and Debates,Core Methodological and Synoptic Skills,12

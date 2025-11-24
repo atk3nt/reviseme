@@ -7,23 +7,31 @@
     "build": "next build",
     "postbuild": "next-sitemap",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate-csvs": "node scripts/generate-csvs.js",
+    "import-specs": "tsx scripts/import-specs.ts",
+    "verify-supabase": "tsx scripts/verify-supabase.ts",
+    "drop-study-blocks": "tsx scripts/drop-study-blocks.ts",
+    "drop-study-blocks-direct": "tsx scripts/drop-study-blocks-direct.ts",
+    "create-dev-user": "tsx scripts/create-dev-user.ts",
+    "clear-dev-blocks": "node scripts/clear-dev-blocks.js"
   },
   "dependencies": {
-    "@auth/mongodb-adapter": "^3.7.4",
+    "@auth/supabase-adapter": "^1.11.0",
     "@headlessui/react": "^2.2.0",
+    "@supabase/ssr": "^0.7.0",
+    "@supabase/supabase-js": "^2.75.0",
     "axios": "^1.7.9",
     "crisp-sdk-web": "^1.0.25",
     "eslint": "^9.17.0",
     "eslint-config-next": "^15.1.3",
     "form-data": "^4.0.1",
-    "mongodb": "^6.12.0",
-    "mongoose": "^8.8.4",
-    "next": "^15.1.3",
-    "next-auth": "5.0.0-beta.25",
+    "next": "^16.0.3",
+    "next-auth": "^5.0.0-beta.30",
     "next-sitemap": "^4.2.3",
     "nextjs-toploader": "^3.7.15",
-    "nodemailer": "^6.9.16",
+    "nodemailer": "^7.0.10",
+    "openai": "^6.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hot-toast": "^2.4.1",
@@ -34,7 +42,10 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4.0.0",
     "daisyui": "^5.0.50",
+    "dotenv": "^17.2.3",
     "postcss": "^8.4.49",
-    "tailwindcss": "^4.0.0"
+    "tailwindcss": "^4.0.0",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
   }
 }

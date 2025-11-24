@@ -1,0 +1,243 @@
+subject,exam_board,level,title,parent_title,order_index
+Chemistry,Edexcel,1,Atomic Structure and the Periodic Table,,1
+Chemistry,Edexcel,2,Atomic Structure and Isotopes,Atomic Structure and the Periodic Table,1
+Chemistry,Edexcel,3,Fundamental Particles,Atomic Structure and Isotopes,1
+Chemistry,Edexcel,3,Calculating Particles and Isotopes,Atomic Structure and Isotopes,2
+Chemistry,Edexcel,2,Relative Mass and Mass Spectrometry,Atomic Structure and the Periodic Table,2
+Chemistry,Edexcel,3,Relative Masses,Relative Mass and Mass Spectrometry,1
+Chemistry,Edexcel,3,Mass Spectrometry: RAM and RMM,Relative Mass and Mass Spectrometry,2
+Chemistry,Edexcel,3,Mass Spectra of Diatomic Molecules,Relative Mass and Mass Spectrometry,3
+Chemistry,Edexcel,2,Ionisation Energy,Atomic Structure and the Periodic Table,3
+Chemistry,Edexcel,3,Ionisation Energy: Definitions and Factors,Ionisation Energy,1
+Chemistry,Edexcel,3,Trends in First Ionisation Energy,Ionisation Energy,2
+Chemistry,Edexcel,3,Evidence for Electronic Structure,Ionisation Energy,3
+Chemistry,Edexcel,2,Electronic Configuration,Atomic Structure and the Periodic Table,4
+Chemistry,Edexcel,3,Quantum Shells and Orbitals,Electronic Configuration,1
+Chemistry,Edexcel,3,Writing Electronic Configurations,Electronic Configuration,2
+Chemistry,Edexcel,2,Periodicity and Periodic Trends,Atomic Structure and the Periodic Table,5
+Chemistry,Edexcel,3,Classifying Elements and Periodicity,Periodicity and Periodic Trends,1
+Chemistry,Edexcel,3,Periodic Trends,Periodicity and Periodic Trends,2
+Chemistry,Edexcel,1,Bonding and Structure,,2
+Chemistry,Edexcel,2,Ionic Bonding,Bonding and Structure,1
+Chemistry,Edexcel,3,Ionic Bonding,Ionic Bonding,1
+Chemistry,Edexcel,3,Ionic Diagrams and Radii,Ionic Bonding,2
+Chemistry,Edexcel,2,Covalent Bonding,Bonding and Structure,2
+Chemistry,Edexcel,3,Evidence for Ions and Covalent Bonding,Covalent Bonding,1
+Chemistry,Edexcel,3,Representing Covalent Bonds,Covalent Bonding,2
+Chemistry,Edexcel,2,Molecular Shapes (VSEPR),Bonding and Structure,3
+Chemistry,Edexcel,3,Shapes of Molecules (VSEPR),Molecular Shapes (VSEPR),1
+Chemistry,Edexcel,3,Predicting Molecular Shapes,Molecular Shapes (VSEPR),2
+Chemistry,Edexcel,2,Electronegativity and Polarity,Bonding and Structure,4
+Chemistry,Edexcel,3,Electronegativity and Bond Polarity,Electronegativity and Polarity,1
+Chemistry,Edexcel,3,Polar Molecules,Electronegativity and Polarity,2
+Chemistry,Edexcel,2,Intermolecular Forces,Bonding and Structure,5
+Chemistry,Edexcel,3,Intermolecular Forces,Intermolecular Forces,1
+Chemistry,Edexcel,3,Hydrogen Bonding,Intermolecular Forces,2
+Chemistry,Edexcel,3,Anomalous Properties of Water,Intermolecular Forces,3
+Chemistry,Edexcel,3,Relating IMFs to Physical Properties,Intermolecular Forces,4
+Chemistry,Edexcel,3,Solubility,Intermolecular Forces,5
+Chemistry,Edexcel,2,Structure and Physical Properties,Bonding and Structure,6
+Chemistry,Edexcel,3,Giant Lattices,Structure and Physical Properties,1
+Chemistry,Edexcel,3,Structure Types and Predictions,Structure and Physical Properties,2
+Chemistry,Edexcel,1,Introduction to Redox Reactions,,3
+Chemistry,Edexcel,2,Fundamentals of Redox,Introduction to Redox Reactions,1
+Chemistry,Edexcel,3,Assigning Oxidation Numbers,Fundamentals of Redox,1
+Chemistry,Edexcel,3,Defining Redox,Fundamentals of Redox,2
+Chemistry,Edexcel,3,Disproportionation,Fundamentals of Redox,3
+Chemistry,Edexcel,2,Constructing Redox Equations,Introduction to Redox Reactions,2
+Chemistry,Edexcel,3,Constructing Redox Equations,Constructing Redox Equations,1
+Chemistry,Edexcel,1,Inorganic Chemistry and the Periodic Table,,4
+Chemistry,Edexcel,2,Group 2 Chemistry,Inorganic Chemistry and the Periodic Table,1
+Chemistry,Edexcel,3,Group 2: Trends and Reactions,Group 2 Chemistry,1
+Chemistry,Edexcel,3,Group 2 Compounds: Reactions and Solubility,Group 2 Chemistry,2
+Chemistry,Edexcel,3,Thermal Stability of Group 1 & 2 Compounds,Group 2 Chemistry,3
+Chemistry,Edexcel,2,Flame Tests,Inorganic Chemistry and the Periodic Table,2
+Chemistry,Edexcel,3,Flame Tests,Flame Tests,1
+Chemistry,Edexcel,2,Group 7: The Halogens,Inorganic Chemistry and the Periodic Table,3
+Chemistry,Edexcel,3,Group 7: Physical and Chemical Trends,Group 7: The Halogens,1
+Chemistry,Edexcel,3,Halogen Displacement Reactions,Group 7: The Halogens,2
+Chemistry,Edexcel,3,Reactions of the Halogens,Group 7: The Halogens,3
+Chemistry,Edexcel,2,Reactions of Halide Ions,Inorganic Chemistry and the Periodic Table,4
+Chemistry,Edexcel,3,Reactions of Halides,Reactions of Halide Ions,1
+Chemistry,Edexcel,2,Qualitative Analysis,Inorganic Chemistry and the Periodic Table,5
+Chemistry,Edexcel,3,Predictions and Qualitative Analysis,Qualitative Analysis,1
+Chemistry,Edexcel,1,"Formulae, Equations and Amounts of Substance",,5
+Chemistry,Edexcel,2,"Formulae, Equations and Moles","Formulae, Equations and Amounts of Substance",1
+Chemistry,Edexcel,3,The Mole and Avogadro's Constant,"Formulae, Equations and Moles",1
+Chemistry,Edexcel,3,Empirical and Molecular Formulae,"Formulae, Equations and Moles",2
+Chemistry,Edexcel,3,Balancing Equations,"Formulae, Equations and Moles",3
+Chemistry,Edexcel,2,Quantitative Chemistry and Titrations,"Formulae, Equations and Amounts of Substance",2
+Chemistry,Edexcel,3,Reacting Mass and Volume Calculations,Quantitative Chemistry and Titrations,1
+Chemistry,Edexcel,3,Core Practical 1: Molar Volume of a Gas,Quantitative Chemistry and Titrations,2
+Chemistry,Edexcel,3,Solution Calculations and Titrations,Quantitative Chemistry and Titrations,3
+Chemistry,Edexcel,3,Core Practical 2: Preparing a Standard Solution,Quantitative Chemistry and Titrations,4
+Chemistry,Edexcel,3,Core Practical 3: Finding an Acid Concentration,Quantitative Chemistry and Titrations,5
+Chemistry,Edexcel,2,Errors and Uncertainty in Measurements,"Formulae, Equations and Amounts of Substance",3
+Chemistry,Edexcel,3,Errors and Uncertainty,Errors and Uncertainty in Measurements,1
+Chemistry,Edexcel,2,Yield and Atom Economy,"Formulae, Equations and Amounts of Substance",4
+Chemistry,Edexcel,3,Yield and Atom Economy,Yield and Atom Economy,1
+Chemistry,Edexcel,2,Practical Skills and Safety,"Formulae, Equations and Amounts of Substance",5
+Chemistry,Edexcel,3,Observations and Practical Safety,Practical Skills and Safety,1
+Chemistry,Edexcel,1,Organic Chemistry I,,6
+Chemistry,Edexcel,2,Introduction to Organic Chemistry,Organic Chemistry I,1
+Chemistry,Edexcel,3,Introduction to Organic Chemistry,Introduction to Organic Chemistry,1
+Chemistry,Edexcel,3,Nomenclature and Isomerism,Introduction to Organic Chemistry,2
+Chemistry,Edexcel,3,Classifying Reactions,Introduction to Organic Chemistry,3
+Chemistry,Edexcel,2,Alkanes and Combustion,Organic Chemistry I,2
+Chemistry,Edexcel,3,Alkanes and Crude Oil,Alkanes and Combustion,1
+Chemistry,Edexcel,3,Combustion and Pollution,Alkanes and Combustion,2
+Chemistry,Edexcel,2,Radical Substitution,Organic Chemistry I,3
+Chemistry,Edexcel,3,Radical Reactions,Radical Substitution,1
+Chemistry,Edexcel,3,Radical Substitution,Radical Substitution,2
+Chemistry,Edexcel,2,Alkenes and Electrophilic Addition,Organic Chemistry I,4
+Chemistry,Edexcel,3,Alkenes: Structure and Bonding,Alkenes and Electrophilic Addition,1
+Chemistry,Edexcel,3,Addition Reactions of Alkenes,Alkenes and Electrophilic Addition,2
+Chemistry,Edexcel,3,Electrophilic Addition Mechanism,Alkenes and Electrophilic Addition,3
+Chemistry,Edexcel,2,Addition Polymerisation,Organic Chemistry I,5
+Chemistry,Edexcel,3,Polymers from Alkenes,Addition Polymerisation,1
+Chemistry,Edexcel,3,Sustainable Use of Polymers,Addition Polymerisation,2
+Chemistry,Edexcel,2,Halogenoalkanes,Organic Chemistry I,6
+Chemistry,Edexcel,3,Halogenoalkanes: Substitution and Elimination,Halogenoalkanes,1
+Chemistry,Edexcel,3,Rates of Hydrolysis of Halogenoalkanes,Halogenoalkanes,2
+Chemistry,Edexcel,3,Reactivity and Mechanisms of Halogenoalkanes,Halogenoalkanes,3
+Chemistry,Edexcel,2,Alcohols and Organic Synthesis Techniques,Organic Chemistry I,7
+Chemistry,Edexcel,3,Alcohols: Classification and Reactions,Alcohols and Organic Synthesis Techniques,1
+Chemistry,Edexcel,3,Organic Purification Techniques,Alcohols and Organic Synthesis Techniques,2
+Chemistry,Edexcel,3,Core Practical 5 & 6: Reactions of Alcohols,Alcohols and Organic Synthesis Techniques,3
+Chemistry,Edexcel,1,Modern Analytical Techniques I,,7
+Chemistry,Edexcel,2,Mass Spectrometry,Modern Analytical Techniques I,1
+Chemistry,Edexcel,3,Mass Spectrometry for Organic Analysis,Mass Spectrometry,1
+Chemistry,Edexcel,2,Infrared Spectroscopy,Modern Analytical Techniques I,2
+Chemistry,Edexcel,3,Infrared Spectroscopy,Infrared Spectroscopy,1
+Chemistry,Edexcel,2,Practical Analysis of Unknowns,Modern Analytical Techniques I,3
+Chemistry,Edexcel,3,Core Practical 7: Analysis of Unknowns,Practical Analysis of Unknowns,1
+Chemistry,Edexcel,1,Energetics I,,8
+Chemistry,Edexcel,2,Enthalpy Change Definitions,Energetics I,1
+Chemistry,Edexcel,3,Enthalpy Changes,Enthalpy Change Definitions,1
+Chemistry,Edexcel,3,Standard Enthalpy Change Definitions,Enthalpy Change Definitions,2
+Chemistry,Edexcel,2,Hess's Law and Calorimetry,Energetics I,2
+Chemistry,Edexcel,3,Calorimetry,Hess's Law and Calorimetry,1
+Chemistry,Edexcel,3,Hess's Law and Enthalpy Cycles,Hess's Law and Calorimetry,2
+Chemistry,Edexcel,3,Core Practical 8: Using Hess's Law,Hess's Law and Calorimetry,3
+Chemistry,Edexcel,2,Bond Enthalpies,Energetics I,3
+Chemistry,Edexcel,3,Bond Enthalpies,Bond Enthalpies,1
+Chemistry,Edexcel,1,Kinetics I,,9
+Chemistry,Edexcel,2,Collision Theory and Rates of Reaction,Kinetics I,1
+Chemistry,Edexcel,3,Collision Theory,Collision Theory and Rates of Reaction,1
+Chemistry,Edexcel,3,Measuring Reaction Rates,Collision Theory and Rates of Reaction,2
+Chemistry,Edexcel,2,Catalysis and the Maxwell–Boltzmann Distribution,Kinetics I,2
+Chemistry,Edexcel,3,The Maxwell–Boltzmann Distribution,Catalysis and the Maxwell–Boltzmann Distribution,1
+Chemistry,Edexcel,3,Catalysis,Catalysis and the Maxwell–Boltzmann Distribution,2
+Chemistry,Edexcel,3,Industrial Catalysis,Catalysis and the Maxwell–Boltzmann Distribution,3
+Chemistry,Edexcel,1,Equilibrium I,,10
+Chemistry,Edexcel,2,Dynamic Equilibrium,Equilibrium I,1
+Chemistry,Edexcel,3,Dynamic Equilibrium,Dynamic Equilibrium,1
+Chemistry,Edexcel,2,Le Châtelier's Principle,Equilibrium I,2
+Chemistry,Edexcel,3,Le Châtelier's Principle,Le Châtelier's Principle,1
+Chemistry,Edexcel,2,"The Equilibrium Constant, Kc",Equilibrium I,3
+Chemistry,Edexcel,3,Industrial Processes and Kc,"The Equilibrium Constant, Kc",1
+Chemistry,Edexcel,1,Equilibrium II,,11
+Chemistry,Edexcel,2,"The Equilibrium Constant, Kp",Equilibrium II,1
+Chemistry,Edexcel,3,"The Equilibrium Constant, Kp","The Equilibrium Constant, Kp",1
+Chemistry,Edexcel,2,Equilibrium Calculations,Equilibrium II,2
+Chemistry,Edexcel,3,Calculating Equilibrium Constants,Equilibrium Calculations,1
+Chemistry,Edexcel,2,Factors Affecting Equilibrium Constants,Equilibrium II,3
+Chemistry,Edexcel,3,Factors Affecting the Equilibrium Constant,Factors Affecting Equilibrium Constants,1
+Chemistry,Edexcel,1,Acid-base Equilibria,,12
+Chemistry,Edexcel,2,"Acids, Bases and pH",Acid-base Equilibria,1
+Chemistry,Edexcel,3,Brønsted-Lowry Theory,"Acids, Bases and pH",1
+Chemistry,Edexcel,3,pH Calculations,"Acids, Bases and pH",2
+Chemistry,Edexcel,2,Weak Acids and Bases,Acid-base Equilibria,2
+Chemistry,Edexcel,3,Strong and Weak Acids,Weak Acids and Bases,1
+Chemistry,Edexcel,3,"Water, Strong Bases and pKa",Weak Acids and Bases,2
+Chemistry,Edexcel,3,Experimental Analysis of Acids and Bases,Weak Acids and Bases,3
+Chemistry,Edexcel,2,Titration Curves and Buffer Solutions,Acid-base Equilibria,3
+Chemistry,Edexcel,3,Titration Curves and Indicators,Titration Curves and Buffer Solutions,1
+Chemistry,Edexcel,3,Buffer Solutions,Titration Curves and Buffer Solutions,2
+Chemistry,Edexcel,3,Applications of Acid-Base Chemistry,Titration Curves and Buffer Solutions,3
+Chemistry,Edexcel,3,Core Practical 9: Finding the Ka value,Titration Curves and Buffer Solutions,4
+Chemistry,Edexcel,1,Energetics II,,13
+Chemistry,Edexcel,2,Lattice Energy and Born–Haber Cycles,Energetics II,1
+Chemistry,Edexcel,3,Lattice Energy and Born–Haber Cycles,Lattice Energy and Born–Haber Cycles,1
+Chemistry,Edexcel,3,Polarisation and Covalent Character,Lattice Energy and Born–Haber Cycles,2
+Chemistry,Edexcel,2,Enthalpies of Solution and Hydration,Energetics II,2
+Chemistry,Edexcel,3,Enthalpies of Solution and Hydration,Enthalpies of Solution and Hydration,1
+Chemistry,Edexcel,2,Entropy,Energetics II,3
+Chemistry,Edexcel,3,Entropy,Entropy,1
+Chemistry,Edexcel,3,Calculating Entropy Changes,Entropy,2
+Chemistry,Edexcel,2,Gibbs Free Energy and Feasibility,Energetics II,4
+Chemistry,Edexcel,3,Gibbs Free Energy and Feasibility,Gibbs Free Energy and Feasibility,1
+Chemistry,Edexcel,1,Redox II,,14
+Chemistry,Edexcel,2,Electrode Potentials and Electrochemical Cells,Redox II,1
+Chemistry,Edexcel,3,Standard Electrode Potentials,Electrode Potentials and Electrochemical Cells,1
+Chemistry,Edexcel,3,Measuring Electrode Potentials,Electrode Potentials and Electrochemical Cells,2
+Chemistry,Edexcel,3,Core Practical 10: Electrochemical Cells,Electrode Potentials and Electrochemical Cells,3
+Chemistry,Edexcel,2,Using Electrode Potentials,Redox II,2
+Chemistry,Edexcel,3,Electrochemical Cells and Feasibility,Using Electrode Potentials,1
+Chemistry,Edexcel,3,Limitations and Applications of E°,Using Electrode Potentials,2
+Chemistry,Edexcel,2,Applications: Storage and Fuel Cells,Redox II,3
+Chemistry,Edexcel,3,Storage and Fuel Cells,Applications: Storage and Fuel Cells,1
+Chemistry,Edexcel,2,Redox Titrations,Redox II,4
+Chemistry,Edexcel,3,Redox Titrations,Redox Titrations,1
+Chemistry,Edexcel,1,Transition Metals,,15
+Chemistry,Edexcel,2,Properties of Transition Metals and Complex Ions,Transition Metals,1
+Chemistry,Edexcel,3,Introduction to Transition Metals,Properties of Transition Metals and Complex Ions,1
+Chemistry,Edexcel,3,Complex Ions and Ligands,Properties of Transition Metals and Complex Ions,2
+Chemistry,Edexcel,3,Colour of Transition Metal Complexes,Properties of Transition Metals and Complex Ions,3
+Chemistry,Edexcel,2,Shapes and Types of Complex Ions,Transition Metals,2
+Chemistry,Edexcel,3,Shapes of Complex Ions,Shapes and Types of Complex Ions,1
+Chemistry,Edexcel,3,Advanced Complex Ions,Shapes and Types of Complex Ions,2
+Chemistry,Edexcel,2,Redox Chemistry of Transition Metals,Transition Metals,3
+Chemistry,Edexcel,3,Redox Reactions of Vanadium and Chromium,Redox Chemistry of Transition Metals,1
+Chemistry,Edexcel,2,Ligand Exchange and Precipitation Reactions,Transition Metals,4
+Chemistry,Edexcel,3,Precipitation and Ligand Exchange Reactions,Ligand Exchange and Precipitation Reactions,1
+Chemistry,Edexcel,2,Catalysis and Stability of Complexes,Transition Metals,5
+Chemistry,Edexcel,3,The Chelate Effect and Catalysis,Catalysis and Stability of Complexes,1
+Chemistry,Edexcel,3,Heterogeneous and Homogeneous Catalysis,Catalysis and Stability of Complexes,2
+Chemistry,Edexcel,3,Core Practical 12: Preparation of a Transition Metal Complex,Catalysis and Stability of Complexes,3
+Chemistry,Edexcel,1,Kinetics II,,16
+Chemistry,Edexcel,2,Rate Equations and Experimental Methods,Kinetics II,1
+Chemistry,Edexcel,3,Key Terms in Kinetics,Rate Equations and Experimental Methods,1
+Chemistry,Edexcel,3,Rate Equations and Experimental Techniques,Rate Equations and Experimental Methods,2
+Chemistry,Edexcel,2,Determining Reaction Order,Kinetics II,2
+Chemistry,Edexcel,3,Methods for Investigating Reaction Rate,Determining Reaction Order,1
+Chemistry,Edexcel,3,Deducing Order from Experimental Data,Determining Reaction Order,2
+Chemistry,Edexcel,2,Reaction Mechanisms,Kinetics II,3
+Chemistry,Edexcel,3,Deducing Reaction Mechanisms,Reaction Mechanisms,1
+Chemistry,Edexcel,2,Activation Energy and Practical Kinetics,Kinetics II,4
+Chemistry,Edexcel,3,Activation Energy and the Arrhenius Equation,Activation Energy and Practical Kinetics,1
+Chemistry,Edexcel,3,Core Practical 13a & 13b: Rates of Reaction,Activation Energy and Practical Kinetics,2
+Chemistry,Edexcel,3,Core Practical 14: Finding Activation Energy,Activation Energy and Practical Kinetics,3
+Chemistry,Edexcel,1,Organic Chemistry II,,17
+Chemistry,Edexcel,2,Stereoisomerism,Organic Chemistry II,1
+Chemistry,Edexcel,3,Optical Isomerism,Stereoisomerism,1
+Chemistry,Edexcel,3,Using Optical Activity to Support Mechanisms,Stereoisomerism,2
+Chemistry,Edexcel,2,Aldehydes and Ketones,Organic Chemistry II,2
+Chemistry,Edexcel,3,Carbonyl Compounds: Properties and Reaction,Aldehydes and Ketones,1
+Chemistry,Edexcel,2,Carboxylic Acids,Organic Chemistry II,3
+Chemistry,Edexcel,3,Carboxylic Acids: Properties and Preparation,Carboxylic Acids,1
+Chemistry,Edexcel,3,Reactions of Carboxylic Acids,Carboxylic Acids,2
+Chemistry,Edexcel,2,Carboxylic Acid Derivatives,Organic Chemistry II,4
+Chemistry,Edexcel,3,Acyl Chlorides and Esters,Carboxylic Acid Derivatives,1
+Chemistry,Edexcel,1,Organic Chemistry III,,18
+Chemistry,Edexcel,2,Arenes: Benzene and Phenol,Organic Chemistry III,1
+Chemistry,Edexcel,3,Arenes: Benzene Structure and Reactivity,Arenes: Benzene and Phenol,1
+Chemistry,Edexcel,3,Reactions of Benzene and Phenol,Arenes: Benzene and Phenol,2
+Chemistry,Edexcel,2,Nitrogen-Containing Compounds,Organic Chemistry III,2
+Chemistry,Edexcel,3,"Amines, Amides and Amino Acids",Nitrogen-Containing Compounds,1
+Chemistry,Edexcel,3,Preparation of Amines and Amides,Nitrogen-Containing Compounds,2
+Chemistry,Edexcel,2,Condensation Polymers and Amino Acids,Organic Chemistry III,3
+Chemistry,Edexcel,3,Polymers and Amino Acid Properties,Condensation Polymers and Amino Acids,1
+Chemistry,Edexcel,2,Organic Synthesis and Analysis,Organic Chemistry III,4
+Chemistry,Edexcel,3,Core Practical 15: Analysis of Unknowns,Organic Synthesis and Analysis,1
+Chemistry,Edexcel,3,Organic Synthesis and Purification,Organic Synthesis and Analysis,2
+Chemistry,Edexcel,3,Core Practical 16: Preparation of Aspirin,Organic Synthesis and Analysis,3
+Chemistry,Edexcel,1,Modern Analytical Techniques II,,19
+Chemistry,Edexcel,2,High Resolution Mass Spectrometry,Modern Analytical Techniques II,1
+Chemistry,Edexcel,3,High Resolution Mass Spectrometry,High Resolution Mass Spectrometry,1
+Chemistry,Edexcel,2,¹³C NMR Spectroscopy,Modern Analytical Techniques II,2
+Chemistry,Edexcel,3,¹³C NMR Spectroscopy,¹³C NMR Spectroscopy,1
+Chemistry,Edexcel,2,¹H NMR Spectroscopy,Modern Analytical Techniques II,3
+Chemistry,Edexcel,3,¹H NMR Spectroscopy,¹H NMR Spectroscopy,1
+Chemistry,Edexcel,2,Chromatography,Modern Analytical Techniques II,4
+Chemistry,Edexcel,3,Chromatography,Chromatography,1

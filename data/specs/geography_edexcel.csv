@@ -1,0 +1,166 @@
+subject,exam_board,level,title,parent_title,order_index
+Geography,Edexcel,1,Area of study 1: Dynamic Landscapes,,1
+Geography,Edexcel,2,Tectonic Processes and Hazards,Area of study 1: Dynamic Landscapes,1
+Geography,Edexcel,3,Global Distribution and Causes of Tectonic Hazards,Tectonic Processes and Hazards,1
+Geography,Edexcel,3,The Theory of Plate Tectonics,Tectonic Processes and Hazards,2
+Geography,Edexcel,3,Processes at Plate Margins and Intra-plate Tectonics,Tectonic Processes and Hazards,3
+Geography,Edexcel,3,Earthquake Characteristics and Hazards,Tectonic Processes and Hazards,4
+Geography,Edexcel,3,Volcanic and Tsunami Hazards,Tectonic Processes and Hazards,5
+Geography,Edexcel,3,"Defining Hazards, Disasters, and Resilience",Tectonic Processes and Hazards,6
+Geography,Edexcel,3,Measuring and Profiling Tectonic Hazards,Tectonic Processes and Hazards,7
+Geography,Edexcel,3,Socio-Economic Impacts and Event Profiles,Tectonic Processes and Hazards,8
+Geography,Edexcel,3,Factors Influencing Vulnerability and Resilience,Tectonic Processes and Hazards,9
+Geography,Edexcel,3,Contrasting Hazard Events and Disaster Trends,Tectonic Processes and Hazards,10
+Geography,Edexcel,3,Mega-Disasters and Multiple-Hazard Zones,Tectonic Processes and Hazards,11
+Geography,Edexcel,3,"Prediction, Forecasting and The Hazard Management Cycle",Tectonic Processes and Hazards,12
+Geography,Edexcel,3,Modelling Hazard Response: Park’s Model,Tectonic Processes and Hazards,13
+Geography,Edexcel,3,Strategies for Modifying the Event and Vulnerability,Tectonic Processes and Hazards,14
+Geography,Edexcel,3,Strategies for Modifying Loss,Tectonic Processes and Hazards,15
+Geography,Edexcel,2,Glaciated Landscapes and Change,Area of study 1: Dynamic Landscapes,2
+Geography,Edexcel,3,Glacial and Interglacial Periods,Glaciated Landscapes and Change,1
+Geography,Edexcel,3,The Cryosphere and Ice Distribution,Glaciated Landscapes and Change,2
+Geography,Edexcel,3,"Periglacial Landscapes, Processes, and Landforms",Glaciated Landscapes and Change,3
+Geography,Edexcel,3,The Glacial Mass Balance System,Glaciated Landscapes and Change,4
+Geography,Edexcel,3,Glacial Movement,Glaciated Landscapes and Change,5
+Geography,Edexcel,3,"Glacial Processes: Erosion, Transport, Deposition",Glaciated Landscapes and Change,6
+Geography,Edexcel,3,Erosional Landforms of Glaciers and Ice Sheets,Glaciated Landscapes and Change,7
+Geography,Edexcel,3,Glacial Depositional Features and Landscape Reconstruction,Glaciated Landscapes and Change,8
+Geography,Edexcel,3,Fluvio-glacial Systems and Landforms,Glaciated Landscapes and Change,9
+Geography,Edexcel,3,Value of Glaciated Landscapes,Glaciated Landscapes and Change,10
+Geography,Edexcel,3,Biodiversity and Threats to Glaciated Landscapes,Glaciated Landscapes and Change,11
+Geography,Edexcel,3,Climate Change Impacts and Management Challenges,Glaciated Landscapes and Change,12
+Geography,Edexcel,3,Stakeholders and Legislative Frameworks for Management,Glaciated Landscapes and Change,13
+Geography,Edexcel,2,Coastal Landscapes and Change,Area of study 1: Dynamic Landscapes,3
+Geography,Edexcel,3,The Littoral Zone and Coastal Classification,Coastal Landscapes and Change,1
+Geography,Edexcel,3,Geological Structure and Coastal Morphology,Coastal Landscapes and Change,2
+Geography,Edexcel,3,"Lithology, Cliff Profiles, and Vegetation",Coastal Landscapes and Change,3
+Geography,Edexcel,3,Wave Processes and Erosional Landforms,Coastal Landscapes and Change,4
+Geography,Edexcel,3,Sediment Transport and Depositional Landforms,Coastal Landscapes and Change,5
+Geography,Edexcel,3,The Sediment Cell System and Subaerial Processes,Coastal Landscapes and Change,6
+Geography,Edexcel,3,Sea Level Change and Resulting Coastlines,Coastal Landscapes and Change,7
+Geography,Edexcel,3,Rapid Coastal Recession: Causes and Factors,Coastal Landscapes and Change,8
+Geography,Edexcel,3,Coastal Flooding and Storm Surges,Coastal Landscapes and Change,9
+Geography,Edexcel,3,Consequences of Coastal Change,Coastal Landscapes and Change,10
+Geography,Edexcel,3,Hard Engineering Coastal Management,Coastal Landscapes and Change,11
+Geography,Edexcel,3,Soft Engineering and Sustainable Management,Coastal Landscapes and Change,12
+Geography,Edexcel,3,Integrated Coastal Zone Management (ICZM),Coastal Landscapes and Change,13
+Geography,Edexcel,3,Shoreline Management Policy and Decision Making,Coastal Landscapes and Change,14
+Geography,Edexcel,1,Area of study 2: Dynamic Places,,2
+Geography,Edexcel,2,Globalisation,Area of study 2: Dynamic Places,1
+Geography,Edexcel,3,Defining Globalisation and its Accelerants,Globalisation,1
+Geography,Edexcel,3,The Role of International Organisations and Governments,Globalisation,2
+Geography,Edexcel,3,Measuring Globalisation and the Role of TNCs,Globalisation,3
+Geography,Edexcel,3,Switched-Off Places,Globalisation,4
+Geography,Edexcel,3,The Global Shift: Impacts on Developing Countries,Globalisation,5
+Geography,Edexcel,3,The Global Shift: Impacts on Developed Countries,Globalisation,6
+Geography,Edexcel,3,Globalisation and Migration: Megacities and Global Hubs,Globalisation,7
+Geography,Edexcel,3,Costs and Benefits of International Migration,Globalisation,8
+Geography,Edexcel,3,Cultural Diffusion and Erosion,Globalisation,9
+Geography,Edexcel,3,Opposition to Globalisation and Measuring Development,Globalisation,10
+Geography,Edexcel,3,"Globalisation, Inequality, and Environmental Management",Globalisation,11
+Geography,Edexcel,3,Tensions and Attempts to Control Globalisation,Globalisation,12
+Geography,Edexcel,3,Sustainable Responses: Local Sourcing and Fair Trade,Globalisation,13
+Geography,Edexcel,3,Sustainable Responses: Recycling,Globalisation,14
+Geography,Edexcel,2,Regenerating Places,Area of study 2: Dynamic Places,2
+Geography,Edexcel,3,Economic and Social Characteristics of Places,Regenerating Places,1
+Geography,Edexcel,3,Drivers and Measurement of Change in Places,Regenerating Places,2
+Geography,Edexcel,3,"External Influences, Representations, and Lived Experiences",Regenerating Places,3
+Geography,Edexcel,3,Successful vs. Unsuccessful Regions,Regenerating Places,4
+Geography,Edexcel,3,The Need for Regeneration and Community Engagement,Regenerating Places,5
+Geography,Edexcel,3,Evaluating the Need for Regeneration in a Local Area,Regenerating Places,6
+Geography,Edexcel,3,National Government’s Role in Regeneration,Regenerating Places,7
+Geography,Edexcel,3,Local Government and Interest Groups in Regeneration,Regenerating Places,8
+Geography,Edexcel,3,Urban and Rural Regeneration Strategies,Regenerating Places,9
+Geography,Edexcel,3,Rebranding and Re-imaging Places,Regenerating Places,10
+Geography,Edexcel,3,Assessing the Success of Regeneration,Regenerating Places,11
+Geography,Edexcel,3,Urban Regeneration Case Study: Strategies and Context,Regenerating Places,12
+Geography,Edexcel,3,Urban Regeneration Case Study: Judging Success,Regenerating Places,13
+Geography,Edexcel,3,Rural Regeneration Case Study: Strategies and Context,Regenerating Places,14
+Geography,Edexcel,3,Rural Regeneration Case Study: Judging Success,Regenerating Places,15
+Geography,Edexcel,2,Diverse Places,Area of study 2: Dynamic Places,3
+Geography,Edexcel,3,Population Change and Structure in the UK,Diverse Places,1
+Geography,Edexcel,3,Cultural Diversity and its Drivers,Diverse Places,2
+Geography,Edexcel,3,"External Influences, Representations, and Lived Experiences",Diverse Places,3
+Geography,Edexcel,3,Perceptions of Urban Places,Diverse Places,4
+Geography,Edexcel,3,Perceptions of Rural Places,Diverse Places,5
+Geography,Edexcel,3,Evaluating Place Image in a Local Context,Diverse Places,6
+Geography,Edexcel,3,Migration and its Impact on UK Diversity,Diverse Places,7
+Geography,Edexcel,3,Characteristics of Diverse Urban Spaces,Diverse Places,8
+Geography,Edexcel,3,Tensions Over Diversity and Community Impact,Diverse Places,9
+Geography,Edexcel,3,Measuring the Success of Managing Diverse Places,Diverse Places,10
+Geography,Edexcel,3,Urban Case Study: Managing Diverse Communities,Diverse Places,11
+Geography,Edexcel,3,Urban Case Study: Judging Success,Diverse Places,12
+Geography,Edexcel,3,Rural Case Study: Managing Diverse Communities,Diverse Places,13
+Geography,Edexcel,3,Rural Case Study: Judging Success,Diverse Places,14
+Geography,Edexcel,1,Area of study 3: Physical Systems and Sustainability,,3
+Geography,Edexcel,2,The Water Cycle and Water Insecurity,Area of study 3: Physical Systems and Sustainability,1
+Geography,Edexcel,3,The Global Hydrological Cycle,The Water Cycle and Water Insecurity,1
+Geography,Edexcel,3,The Drainage Basin System,The Water Cycle and Water Insecurity,2
+Geography,Edexcel,3,Water Budgets and River Regimes,The Water Cycle and Water Insecurity,3
+Geography,Edexcel,3,Storm Hydrographs and Influencing Factors,The Water Cycle and Water Insecurity,4
+Geography,Edexcel,3,Causes and Impacts of Drought,The Water Cycle and Water Insecurity,5
+Geography,Edexcel,3,Causes and Impacts of Flooding,The Water Cycle and Water Insecurity,6
+Geography,Edexcel,3,Climate Change and the Hydrological Cycle,The Water Cycle and Water Insecurity,7
+Geography,Edexcel,3,Global Patterns of Water Insecurity,The Water Cycle and Water Insecurity,8
+Geography,Edexcel,3,Pressures on Water Resources and Price,The Water Cycle and Water Insecurity,9
+Geography,Edexcel,3,"Water Supply, Development, and Conflict",The Water Cycle and Water Insecurity,10
+Geography,Edexcel,3,Hard Engineering for Water Management,The Water Cycle and Water Insecurity,11
+Geography,Edexcel,3,Sustainable Water Management,The Water Cycle and Water Insecurity,12
+Geography,Edexcel,3,Integrated Water Resource Management (IWRM),The Water Cycle and Water Insecurity,13
+Geography,Edexcel,2,The Carbon Cycle and Energy Security,Area of study 3: Physical Systems and Sustainability,2
+Geography,Edexcel,3,The Biogeochemical Carbon Cycle,The Carbon Cycle and Energy Security,1
+Geography,Edexcel,3,The Slow Carbon Cycle: Weathering and Sequestration,The Carbon Cycle and Energy Security,2
+Geography,Edexcel,3,The Fast Carbon Cycle: Oceanic and Terrestrial Processes,The Carbon Cycle and Energy Security,3
+Geography,Edexcel,3,The Role of Carbon in Earth’s Systems,The Carbon Cycle and Energy Security,4
+Geography,Edexcel,3,Fossil Fuels and the Energy Mix,The Carbon Cycle and Energy Security,5
+Geography,Edexcel,3,"Energy Players, Pathways, and Security",The Carbon Cycle and Energy Security,6
+Geography,Edexcel,3,Unconventional and Alternative Energy Sources,The Carbon Cycle and Energy Security,7
+Geography,Edexcel,3,"Renewable, Recyclable, and Radical Energy Technologies",The Carbon Cycle and Energy Security,8
+Geography,Edexcel,3,Human Impacts on Carbon Stores,The Carbon Cycle and Energy Security,9
+Geography,Edexcel,3,Climate Change Impacts on Ecosystems,The Carbon Cycle and Energy Security,10
+Geography,Edexcel,3,Inter-relationships between Carbon and Water Cycles,The Carbon Cycle and Energy Security,11
+Geography,Edexcel,3,Future Climate Uncertainty and Feedback Mechanisms,The Carbon Cycle and Energy Security,12
+Geography,Edexcel,3,Climate Change Adaptation Strategies,The Carbon Cycle and Energy Security,13
+Geography,Edexcel,3,Climate Change Mitigation Strategies,The Carbon Cycle and Energy Security,14
+Geography,Edexcel,1,Area of study 4: Human Systems and Geopolitics,,4
+Geography,Edexcel,2,Superpowers,Area of study 4: Human Systems and Geopolitics,1
+Geography,Edexcel,3,Defining Superpowers and Mechanisms of Power,Superpowers,1
+Geography,Edexcel,3,Historical and Changing Patterns of Power,Superpowers,2
+Geography,Edexcel,3,The Rise of Emerging Powers,Superpowers,3
+Geography,Edexcel,3,Theories of Development and Power,Superpowers,4
+Geography,Edexcel,3,Economic and Cultural Influence of Superpowers,Superpowers,5
+Geography,Edexcel,3,Superpower Roles in Global Governance and Alliances,Superpowers,6
+Geography,Edexcel,3,Environmental Impacts of Superpowers,Superpowers,7
+Geography,Edexcel,3,Tensions over Resources and Intellectual Property,Superpowers,8
+Geography,Edexcel,3,Geopolitical Tensions and Spheres of Influence,Superpowers,9
+Geography,Edexcel,3,"Emerging Powers, Developing Nations, and Regional Tensions",Superpowers,10
+Geography,Edexcel,3,Tensions in the Middle East,Superpowers,11
+Geography,Edexcel,3,Challenges for Existing Superpowers,Superpowers,12
+Geography,Edexcel,3,The Future Balance of Global Power,Superpowers,13
+Geography,Edexcel,2,"Health, Human Rights and Intervention",Area of study 4: Human Systems and Geopolitics,2
+Geography,Edexcel,3,Contested Concepts of Human Development,"Health, Human Rights and Intervention",1
+Geography,Edexcel,3,Global Variations in Health and Life Expectancy,"Health, Human Rights and Intervention",2
+Geography,Edexcel,3,The Role of Governments and IGOs in Development,"Health, Human Rights and Intervention",3
+Geography,Edexcel,3,International Human Rights Frameworks,"Health, Human Rights and Intervention",4
+Geography,Edexcel,3,"Human Rights, Democracy, and Corruption","Health, Human Rights and Intervention",5
+Geography,Edexcel,3,Group-based Disparities in Rights and Development,"Health, Human Rights and Intervention",6
+Geography,Edexcel,3,Geopolitical Intervention: Forms and Justifications,"Health, Human Rights and Intervention",7
+Geography,Edexcel,3,Development Aid: Forms and Contested Impacts,"Health, Human Rights and Intervention",8
+Geography,Edexcel,3,Negative Impacts of Economic Development on Health and Rights,"Health, Human Rights and Intervention",9
+Geography,Edexcel,3,Military Aid and Intervention,"Health, Human Rights and Intervention",10
+Geography,Edexcel,3,Measuring the Success of Interventions,"Health, Human Rights and Intervention",11
+Geography,Edexcel,3,Evaluating the Record of Development Aid,"Health, Human Rights and Intervention",12
+Geography,Edexcel,3,"Evaluating Military, Non-Military, and Non-Intervention Approaches","Health, Human Rights and Intervention",13
+Geography,Edexcel,2,"Migration, Identity and Sovereignty",Area of study 4: Human Systems and Geopolitics,3
+Geography,Edexcel,3,Globalisation and Changing Patterns of Migration,"Migration, Identity and Sovereignty",1
+Geography,Edexcel,3,"Economic Theory, Integration, and Tensions of Migration","Migration, Identity and Sovereignty",2
+Geography,Edexcel,3,Variations in Migratory Ability and Nation State Unity,"Migration, Identity and Sovereignty",3
+Geography,Edexcel,3,The Formation of Borders and Contested States,"Migration, Identity and Sovereignty",4
+Geography,Edexcel,3,Nationalism and the Emergence of Post-Colonial States,"Migration, Identity and Sovereignty",5
+Geography,Edexcel,3,"Globalisation, Tax Havens, and Alternative Economies","Migration, Identity and Sovereignty",6
+Geography,Edexcel,3,The Role of the UN in Global Governance,"Migration, Identity and Sovereignty",7
+Geography,Edexcel,3,The Role of Financial IGOs in Global Governance,"Migration, Identity and Sovereignty",8
+Geography,Edexcel,3,IGOs and Global Environmental Governance,"Migration, Identity and Sovereignty",9
+Geography,Edexcel,3,Nationalism and National Identity,"Migration, Identity and Sovereignty",10
+Geography,Edexcel,3,Challenges to National Identity in a Globalised World,"Migration, Identity and Sovereignty",11
+Geography,Edexcel,3,Contemporary Challenges to the Nation State,"Migration, Identity and Sovereignty",12

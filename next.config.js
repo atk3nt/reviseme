@@ -34,6 +34,9 @@ const nextConfig = {
     
     return config;
   },
+  // Add empty turbopack config to silence the warning
+  // Next.js 16 uses Turbopack by default, but we're keeping webpack config for MongoDB
+  turbopack: {},
 };
 
 module.exports = nextConfig;

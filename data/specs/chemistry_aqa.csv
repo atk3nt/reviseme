@@ -1,0 +1,132 @@
+subject,exam_board,level,title,parent_title,order_index
+Chemistry,AQA,1,Physical chemistry,,1
+Chemistry,AQA,2,Understanding Atomic Structure,Physical chemistry,1
+Chemistry,AQA,3,Atomic Structure and Isotopes,Understanding Atomic Structure,1
+Chemistry,AQA,3,Time-of-Flight Mass Spectrometry,Understanding Atomic Structure,2
+Chemistry,AQA,3,Electron Configuration,Understanding Atomic Structure,3
+Chemistry,AQA,3,Ionisation Energies,Understanding Atomic Structure,4
+Chemistry,AQA,2,Understanding Amount of Substance,Physical chemistry,2
+Chemistry,AQA,3,The Mole and Concentration,Understanding Amount of Substance,1
+Chemistry,AQA,3,The Ideal Gas Equation,Understanding Amount of Substance,2
+Chemistry,AQA,3,Empirical and Molecular Formulae,Understanding Amount of Substance,3
+Chemistry,AQA,3,Stoichiometric Calculations,Understanding Amount of Substance,4
+Chemistry,AQA,3,Required Practical 1: Volumetric Analysis,Understanding Amount of Substance,5
+Chemistry,AQA,2,Understanding Bonding,Physical chemistry,3
+Chemistry,AQA,3,Ionic and Metallic Bonding,Understanding Bonding,1
+Chemistry,AQA,3,Covalent and Dative Covalent Bonding,Understanding Bonding,2
+Chemistry,AQA,3,Crystal Structures,Understanding Bonding,3
+Chemistry,AQA,3,Shapes of Molecules (VSEPR),Understanding Bonding,4
+Chemistry,AQA,3,Electronegativity and Bond Polarity,Understanding Bonding,5
+Chemistry,AQA,3,Intermolecular Forces,Understanding Bonding,6
+Chemistry,AQA,2,Understanding Energetics,Physical chemistry,4
+Chemistry,AQA,3,Enthalpy Change Definitions,Understanding Energetics,1
+Chemistry,AQA,3,Calorimetry and Practical Measurement,Understanding Energetics,2
+Chemistry,AQA,3,Hess’s Law,Understanding Energetics,3
+Chemistry,AQA,3,Bond Enthalpies,Understanding Energetics,4
+Chemistry,AQA,2,Understanding Kinetics,Physical chemistry,5
+Chemistry,AQA,3,Collision Theory and Maxwell–Boltzmann Distribution,Understanding Kinetics,1
+Chemistry,AQA,3,Effect of Temperature and Practical Investigation,Understanding Kinetics,2
+Chemistry,AQA,3,Effect of Concentration and Pressure,Understanding Kinetics,3
+Chemistry,AQA,3,Catalysts,Understanding Kinetics,4
+Chemistry,AQA,2,"Understanding Chemical Equilibria, Le Chatelier’s Principle and Kc",Physical chemistry,6
+Chemistry,AQA,3,Chemical Equilibria and Le Chatelier’s Principle,"Understanding Chemical Equilibria, Le Chatelier’s Principle and Kc",1
+Chemistry,AQA,3,"The Equilibrium Constant, Kc","Understanding Chemical Equilibria, Le Chatelier’s Principle and Kc",2
+Chemistry,AQA,2,"Understanding Oxidation, Reduction and Redox Equations",Physical chemistry,7
+Chemistry,AQA,3,"Oxidation, Reduction and Redox Equations","Understanding Oxidation, Reduction and Redox Equations",1
+Chemistry,AQA,2,Understanding Thermodynamics,Physical chemistry,8
+Chemistry,AQA,3,Born–Haber Cycles and Lattice Enthalpy,Understanding Thermodynamics,1
+Chemistry,AQA,3,Solution and Hydration Enthalpies,Understanding Thermodynamics,2
+Chemistry,AQA,3,"Entropy, Gibbs Free Energy and Feasibility",Understanding Thermodynamics,3
+Chemistry,AQA,2,Understanding Rate Equations,Physical chemistry,9
+Chemistry,AQA,3,Rate Equations and Order of Reaction,Understanding Rate Equations,1
+Chemistry,AQA,3,Determining Rate Equations Experimentally,Understanding Rate Equations,2
+Chemistry,AQA,3,The Arrhenius Equation and Temperature Effect,Understanding Rate Equations,3
+Chemistry,AQA,3,Required Practical 7: Measuring Reaction Rates,Understanding Rate Equations,4
+Chemistry,AQA,2,Understanding the Equilibrium Constant Kp,Physical chemistry,10
+Chemistry,AQA,3,"The Equilibrium Constant, Kp",Understanding the Equilibrium Constant Kp,1
+Chemistry,AQA,2,Understanding Electrode Potentials and Electrochemical Cells,Physical chemistry,11
+Chemistry,AQA,3,Standard Electrode Potentials and EMF,Understanding Electrode Potentials and Electrochemical Cells,1
+Chemistry,AQA,3,Commercial Cells and Fuel Cells,Understanding Electrode Potentials and Electrochemical Cells,2
+Chemistry,AQA,3,Required Practical 8: Measuring the EMF of an Electrochemical Cell,Understanding Electrode Potentials and Electrochemical Cells,3
+Chemistry,AQA,2,Understanding Acids and Bases,Physical chemistry,12
+Chemistry,AQA,3,"Acids, Bases and pH",Understanding Acids and Bases,1
+Chemistry,AQA,3,Kw and Weak Acids,Understanding Acids and Bases,2
+Chemistry,AQA,3,Titration Curves and Indicators,Understanding Acids and Bases,3
+Chemistry,AQA,3,Buffer Solutions,Understanding Acids and Bases,4
+Chemistry,AQA,3,Required Practical 9: Investigating pH Changes,Understanding Acids and Bases,5
+Chemistry,AQA,1,Inorganic chemistry,,2
+Chemistry,AQA,2,Understanding Periodicity,Inorganic chemistry,1
+Chemistry,AQA,3,Periodicity and Period 3 Trends,Understanding Periodicity,1
+Chemistry,AQA,2,"Understanding Group 2, the Alkaline Earth Metals",Inorganic chemistry,2
+Chemistry,AQA,3,Trends in Group 2 Properties,"Understanding Group 2, the Alkaline Earth Metals",1
+Chemistry,AQA,3,Reactions and Uses of Group 2 Elements,"Understanding Group 2, the Alkaline Earth Metals",2
+Chemistry,AQA,3,Solubility and Uses of Group 2 Compounds,"Understanding Group 2, the Alkaline Earth Metals",3
+Chemistry,AQA,2,"Understanding Group 7 (17), the Halogens",Inorganic chemistry,3
+Chemistry,AQA,3,Group 7 Trends and Redox Properties,"Understanding Group 7 (17), the Halogens",1
+Chemistry,AQA,3,Reactions of Halogens and Halides,"Understanding Group 7 (17), the Halogens",2
+Chemistry,AQA,3,Required Practical 4: Identifying Cations and Anions,"Understanding Group 7 (17), the Halogens",3
+Chemistry,AQA,2,Understanding Properties of Period 3 Elements and Their Oxides,Inorganic chemistry,4
+Chemistry,AQA,3,Reactions of Period 3 Elements,Understanding Properties of Period 3 Elements and Their Oxides,1
+Chemistry,AQA,3,Period 3 Oxides: Properties and Trends,Understanding Properties of Period 3 Elements and Their Oxides,2
+Chemistry,AQA,2,Understanding Transition Metals,Inorganic chemistry,5
+Chemistry,AQA,3,Properties of Transition Metals and Complex Ions,Understanding Transition Metals,1
+Chemistry,AQA,3,Ligand Substitution and the Chelate Effect,Understanding Transition Metals,2
+Chemistry,AQA,3,Shapes of Complexes and Isomerism,Understanding Transition Metals,3
+Chemistry,AQA,3,Origin of Colour in Transition Metal Ions,Understanding Transition Metals,4
+Chemistry,AQA,3,Variable Oxidation States and Redox Reactions,Understanding Transition Metals,5
+Chemistry,AQA,3,Catalytic Activity of Transition Metals,Understanding Transition Metals,6
+Chemistry,AQA,2,Understanding Reactions of Ions in Aqueous Solution,Inorganic chemistry,6
+Chemistry,AQA,3,Reactions of Metal–Aqua Ions,Understanding Reactions of Ions in Aqueous Solution,1
+Chemistry,AQA,3,Required Practical 11: Identifying Transition Metal Ions,Understanding Reactions of Ions in Aqueous Solution,2
+Chemistry,AQA,1,Organic chemistry,,3
+Chemistry,AQA,2,Introduction to Organic Chemistry,Organic chemistry,1
+Chemistry,AQA,3,Nomenclature and Representation,Introduction to Organic Chemistry,1
+Chemistry,AQA,3,Introduction to Reaction Mechanisms,Introduction to Organic Chemistry,2
+Chemistry,AQA,3,Isomerism,Introduction to Organic Chemistry,3
+Chemistry,AQA,2,Understanding Alkanes,Organic chemistry,2
+Chemistry,AQA,3,Crude Oil: Separation and Processing,Understanding Alkanes,1
+Chemistry,AQA,3,Combustion of Alkanes and Pollution,Understanding Alkanes,2
+Chemistry,AQA,3,Free-Radical Substitution,Understanding Alkanes,3
+Chemistry,AQA,2,Understanding Halogenoalkanes,Organic chemistry,3
+Chemistry,AQA,3,Nucleophilic Substitution and Elimination,Understanding Halogenoalkanes,1
+Chemistry,AQA,3,Environmental Impact: Ozone Depletion,Understanding Halogenoalkanes,2
+Chemistry,AQA,2,Understanding Alkenes,Organic chemistry,4
+Chemistry,AQA,3,Electrophilic Addition,Understanding Alkenes,1
+Chemistry,AQA,3,Addition Polymerisation,Understanding Alkenes,2
+Chemistry,AQA,2,Understanding Alcohols,Organic chemistry,5
+Chemistry,AQA,3,Production and Uses of Alcohols,Understanding Alcohols,1
+Chemistry,AQA,3,Oxidation of Alcohols and Distillation,Understanding Alcohols,2
+Chemistry,AQA,3,Elimination Reactions of Alcohols,Understanding Alcohols,3
+Chemistry,AQA,2,Understanding Organic Analysis,Organic chemistry,6
+Chemistry,AQA,3,Identifying Functional Groups with Test-Tube Reactions,Understanding Organic Analysis,1
+Chemistry,AQA,3,Analysis by Mass Spectrometry,Understanding Organic Analysis,2
+Chemistry,AQA,3,Analysis by Infrared Spectroscopy,Understanding Organic Analysis,3
+Chemistry,AQA,2,Understanding Optical Isomerism,Organic chemistry,7
+Chemistry,AQA,3,Optical Isomerism,Understanding Optical Isomerism,1
+Chemistry,AQA,2,Understanding Aldehydes and Ketones,Organic chemistry,8
+Chemistry,AQA,3,Reactions of Carbonyl Compounds,Understanding Aldehydes and Ketones,1
+Chemistry,AQA,3,Nucleophilic Addition Mechanisms,Understanding Aldehydes and Ketones,2
+Chemistry,AQA,2,Understanding Carboxylic Acids and Derivatives,Organic chemistry,9
+Chemistry,AQA,3,Carboxylic Acids and Esters,Understanding Carboxylic Acids and Derivatives,1
+Chemistry,AQA,3,Acylation Reactions,Understanding Carboxylic Acids and Derivatives,2
+Chemistry,AQA,3,Required Practical 10: Organic Preparation,Understanding Carboxylic Acids and Derivatives,3
+Chemistry,AQA,2,Understanding Aromatic Chemistry,Organic chemistry,10
+Chemistry,AQA,3,Bonding and Stability of Benzene,Understanding Aromatic Chemistry,1
+Chemistry,AQA,3,Electrophilic Substitution,Understanding Aromatic Chemistry,2
+Chemistry,AQA,2,Understanding Amines,Organic chemistry,11
+Chemistry,AQA,3,Preparation and Basicity of Amines,Understanding Amines,1
+Chemistry,AQA,3,Nucleophilic Reactions of Amines,Understanding Amines,2
+Chemistry,AQA,2,Understanding Polymers,Organic chemistry,12
+Chemistry,AQA,3,Condensation Polymerisation,Understanding Polymers,1
+Chemistry,AQA,3,Polymer Properties and Disposal,Understanding Polymers,2
+Chemistry,AQA,2,"Understanding Amino Acids, Proteins and DNA",Organic chemistry,13
+Chemistry,AQA,3,Amino Acids and Protein Structure,"Understanding Amino Acids, Proteins and DNA",1
+Chemistry,AQA,3,Analysis of Proteins and Amino Acids,"Understanding Amino Acids, Proteins and DNA",2
+Chemistry,AQA,3,Enzymes as Protein Catalysts,"Understanding Amino Acids, Proteins and DNA",3
+Chemistry,AQA,3,DNA Structure and Anticancer Drugs,"Understanding Amino Acids, Proteins and DNA",4
+Chemistry,AQA,2,Understanding Nuclear Magnetic Resonance Spectroscopy,Organic chemistry,15
+Chemistry,AQA,3,Principles of NMR Spectroscopy,Understanding Nuclear Magnetic Resonance Spectroscopy,1
+Chemistry,AQA,3,Interpretation of NMR Spectra,Understanding Nuclear Magnetic Resonance Spectroscopy,2
+Chemistry,AQA,2,Understanding Chromatography,Organic chemistry,16
+Chemistry,AQA,3,Principles of Chromatography,Understanding Chromatography,1
+Chemistry,AQA,3,Analysis by Chromatography and Practical Applications,Understanding Chromatography,2

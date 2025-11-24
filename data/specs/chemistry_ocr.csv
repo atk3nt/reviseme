@@ -1,0 +1,156 @@
+subject,exam_board,level,title,parent_title,order_index
+Chemistry,OCR,1,Foundations in chemistry,,1
+Chemistry,OCR,2,"Atomic Structure, Moles, and Reactions",Foundations in chemistry,1
+Chemistry,OCR,3,Atomic Structure and Isotopes,"Atomic Structure, Moles, and Reactions",1
+Chemistry,OCR,3,Relative Mass and Mass Spectrometry,"Atomic Structure, Moles, and Reactions",2
+Chemistry,OCR,3,Formulae and Chemical Equations,"Atomic Structure, Moles, and Reactions",3
+Chemistry,OCR,3,The Mole Concept and Avogadro Constant,"Atomic Structure, Moles, and Reactions",4
+Chemistry,OCR,3,Determining Chemical Formulae,"Atomic Structure, Moles, and Reactions",5
+Chemistry,OCR,3,Reacting Quantity Calculations,"Atomic Structure, Moles, and Reactions",6
+Chemistry,OCR,3,The Ideal Gas Equation and Stoichiometry,"Atomic Structure, Moles, and Reactions",7
+Chemistry,OCR,3,"Yield, Atom Economy, and Sustainability","Atomic Structure, Moles, and Reactions",8
+Chemistry,OCR,3,"Acids, Bases and Neutralisation","Atomic Structure, Moles, and Reactions",9
+Chemistry,OCR,3,Acid-Base Titrations and Calculations,"Atomic Structure, Moles, and Reactions",10
+Chemistry,OCR,3,Assigning Oxidation Numbers,"Atomic Structure, Moles, and Reactions",11
+Chemistry,OCR,3,Redox Reactions,"Atomic Structure, Moles, and Reactions",12
+Chemistry,OCR,2,"Electron Configuration, Bonding, and Structure",Foundations in chemistry,2
+Chemistry,OCR,3,"Electron Shells, Sub-shells, and Orbitals","Electron Configuration, Bonding, and Structure",1
+Chemistry,OCR,3,Electron Configuration and Orbital Filling,"Electron Configuration, Bonding, and Structure",2
+Chemistry,OCR,3,Ionic Bonding and Giant Ionic Lattices,"Electron Configuration, Bonding, and Structure",3
+Chemistry,OCR,3,Properties of Ionic Compounds,"Electron Configuration, Bonding, and Structure",4
+Chemistry,OCR,3,Covalent and Dative Bonding,"Electron Configuration, Bonding, and Structure",5
+Chemistry,OCR,3,Average Bond Enthalpy,"Electron Configuration, Bonding, and Structure",6
+Chemistry,OCR,3,VSEPR Theory and Molecular Shapes,"Electron Configuration, Bonding, and Structure",7
+Chemistry,OCR,3,Electronegativity and Bond Polarity,"Electron Configuration, Bonding, and Structure",8
+Chemistry,OCR,3,Intermolecular Forces (van der Waals),"Electron Configuration, Bonding, and Structure",9
+Chemistry,OCR,3,Hydrogen Bonding,"Electron Configuration, Bonding, and Structure",10
+Chemistry,OCR,3,Structures and Properties of Covalent Compounds,"Electron Configuration, Bonding, and Structure",11
+Chemistry,OCR,1,Periodic table and energy,,2
+Chemistry,OCR,2,The Periodic Table and Periodicity,Periodic table and energy,1
+Chemistry,OCR,3,Structure of the Periodic Table,The Periodic Table and Periodicity,1
+Chemistry,OCR,3,Periodic Trends in Electron Configuration,The Periodic Table and Periodicity,2
+Chemistry,OCR,3,Trends in Ionisation Energy,The Periodic Table and Periodicity,3
+Chemistry,OCR,3,Periodic Trends in Bonding and Structure,The Periodic Table and Periodicity,4
+Chemistry,OCR,3,Trends in Physical Properties and Melting Points,The Periodic Table and Periodicity,5
+Chemistry,OCR,3,Group 2: Reactivity and Ionisation Energy Trends,The Periodic Table and Periodicity,6
+Chemistry,OCR,3,Reactions and Uses of Group 2 Compounds,The Periodic Table and Periodicity,7
+Chemistry,OCR,3,Halogens: Physical Properties and Redox Reactions,The Periodic Table and Periodicity,8
+Chemistry,OCR,3,Reactivity Trends of the Halogens,The Periodic Table and Periodicity,9
+Chemistry,OCR,3,Disproportionation and Uses of Chlorine,The Periodic Table and Periodicity,10
+Chemistry,OCR,3,Testing for Halide Ions,The Periodic Table and Periodicity,11
+Chemistry,OCR,3,Qualitative Analysis of Ions,The Periodic Table and Periodicity,12
+Chemistry,OCR,2,"Energy, Rates, and Equilibrium",Periodic table and energy,2
+Chemistry,OCR,3,Enthalpy Changes and Activation Energy,"Energy, Rates, and Equilibrium",1
+Chemistry,OCR,3,Standard Enthalpy Change Definitions,"Energy, Rates, and Equilibrium",2
+Chemistry,OCR,3,Experimental Determination of Enthalpy Changes,"Energy, Rates, and Equilibrium",3
+Chemistry,OCR,3,Bond Enthalpy Calculations,"Energy, Rates, and Equilibrium",4
+Chemistry,OCR,3,Hess's Law and Enthalpy Cycles,"Energy, Rates, and Equilibrium",5
+Chemistry,OCR,3,Reaction Rates and Collision Theory,"Energy, Rates, and Equilibrium",6
+Chemistry,OCR,3,How Catalysts Work,"Energy, Rates, and Equilibrium",7
+Chemistry,OCR,3,Catalysts in Industry and Lab Investigations,"Energy, Rates, and Equilibrium",8
+Chemistry,OCR,3,The Boltzmann Distribution,"Energy, Rates, and Equilibrium",9
+Chemistry,OCR,3,Dynamic Equilibrium and Le Chatelier's Principle,"Energy, Rates, and Equilibrium",10
+Chemistry,OCR,3,Equilibrium and Industrial Processes,"Energy, Rates, and Equilibrium",11
+Chemistry,OCR,3,"The Equilibrium Constant, Kc","Energy, Rates, and Equilibrium",12
+Chemistry,OCR,1,Core organic chemistry,,3
+Chemistry,OCR,2,Fundamentals of Organic Chemistry and Hydrocarbons,Core organic chemistry,1
+Chemistry,OCR,3,IUPAC Nomenclature,Fundamentals of Organic Chemistry and Hydrocarbons,1
+Chemistry,OCR,3,Representing Organic Molecules,Fundamentals of Organic Chemistry and Hydrocarbons,2
+Chemistry,OCR,3,Homologous Series and Functional Groups,Fundamentals of Organic Chemistry and Hydrocarbons,3
+Chemistry,OCR,3,Classifying Organic Compounds,Fundamentals of Organic Chemistry and Hydrocarbons,4
+Chemistry,OCR,3,Structural Isomerism,Fundamentals of Organic Chemistry and Hydrocarbons,5
+Chemistry,OCR,3,Introduction to Reaction Mechanisms,Fundamentals of Organic Chemistry and Hydrocarbons,6
+Chemistry,OCR,3,Using Curly Arrows in Mechanisms,Fundamentals of Organic Chemistry and Hydrocarbons,7
+Chemistry,OCR,3,Structure and Bonding in Alkanes,Fundamentals of Organic Chemistry and Hydrocarbons,8
+Chemistry,OCR,3,Physical Properties and Reactivity of Alkanes,Fundamentals of Organic Chemistry and Hydrocarbons,9
+Chemistry,OCR,3,Combustion of Alkanes,Fundamentals of Organic Chemistry and Hydrocarbons,10
+Chemistry,OCR,3,Radical Substitution of Alkanes,Fundamentals of Organic Chemistry and Hydrocarbons,11
+Chemistry,OCR,3,Structure and Bonding in Alkenes,Fundamentals of Organic Chemistry and Hydrocarbons,12
+Chemistry,OCR,3,Stereoisomerism in Alkenes (E/Z Isomerism),Fundamentals of Organic Chemistry and Hydrocarbons,13
+Chemistry,OCR,3,Addition Reactions: Hydrogenation and Halogenation,Fundamentals of Organic Chemistry and Hydrocarbons,14
+Chemistry,OCR,3,Addition Reactions: Hydration and Hydrohalogenation,Fundamentals of Organic Chemistry and Hydrocarbons,15
+Chemistry,OCR,3,The Electrophilic Addition Mechanism,Fundamentals of Organic Chemistry and Hydrocarbons,16
+Chemistry,OCR,3,Addition Polymerisation,Fundamentals of Organic Chemistry and Hydrocarbons,17
+Chemistry,OCR,3,Sustainability and Disposal of Polymers,Fundamentals of Organic Chemistry and Hydrocarbons,18
+Chemistry,OCR,2,"Alcohols, Haloalkanes, and Analysis",Core organic chemistry,2
+Chemistry,OCR,3,Properties and Classification of Alcohols,"Alcohols, Haloalkanes, and Analysis",1
+Chemistry,OCR,3,Combustion and Oxidation of Alcohols,"Alcohols, Haloalkanes, and Analysis",2
+Chemistry,OCR,3,Elimination and Substitution Reactions of Alcohols,"Alcohols, Haloalkanes, and Analysis",3
+Chemistry,OCR,3,Rates of Hydrolysis of Haloalkanes,"Alcohols, Haloalkanes, and Analysis",4
+Chemistry,OCR,3,Nucleophilic Substitution in Haloalkanes,"Alcohols, Haloalkanes, and Analysis",5
+Chemistry,OCR,3,Environmental Impact of Organohalogens,"Alcohols, Haloalkanes, and Analysis",6
+Chemistry,OCR,3,Practical Techniques for Organic Synthesis,"Alcohols, Haloalkanes, and Analysis",7
+Chemistry,OCR,3,Designing Two-Stage Synthetic Routes,"Alcohols, Haloalkanes, and Analysis",8
+Chemistry,OCR,3,Principles of Infrared Spectroscopy,"Alcohols, Haloalkanes, and Analysis",9
+Chemistry,OCR,3,Interpretation and Application of IR Spectroscopy,"Alcohols, Haloalkanes, and Analysis",10
+Chemistry,OCR,3,Using Mass Spectrometry to find Molecular Mass,"Alcohols, Haloalkanes, and Analysis",11
+Chemistry,OCR,3,Fragmentation and Combined Analytical Techniques,"Alcohols, Haloalkanes, and Analysis",12
+Chemistry,OCR,1,Physical chemistry and transition elements,,4
+Chemistry,OCR,2,"Kinetics, Equilibria, and pH",Physical chemistry and transition elements,1
+Chemistry,OCR,3,"Rates, Orders, and Rate Constants","Kinetics, Equilibria, and pH",1
+Chemistry,OCR,3,Determining Rate Equations and Rate Constants,"Kinetics, Equilibria, and pH",2
+Chemistry,OCR,3,Analysing Concentration-Time Graphs,"Kinetics, Equilibria, and pH",3
+Chemistry,OCR,3,Half-Life and First-Order Reactions,"Kinetics, Equilibria, and pH",4
+Chemistry,OCR,3,Analysing Rate-Concentration Graphs,"Kinetics, Equilibria, and pH",5
+Chemistry,OCR,3,The Rate-Determining Step and Reaction Mechanism,"Kinetics, Equilibria, and pH",6
+Chemistry,OCR,3,The Arrhenius Equation,"Kinetics, Equilibria, and pH",7
+Chemistry,OCR,3,"Mole Fractions, Partial Pressures, and Equilibrium","Kinetics, Equilibria, and pH",8
+Chemistry,OCR,3,Calculating Equilibrium Constants Kc and Kp,"Kinetics, Equilibria, and pH",9
+Chemistry,OCR,3,Factors Affecting Equilibrium,"Kinetics, Equilibria, and pH",10
+Chemistry,OCR,3,Brønsted-Lowry Theory of Acids and Bases,"Kinetics, Equilibria, and pH",11
+Chemistry,OCR,3,"pH, Kw, and Calculations for Strong Acids/Bases","Kinetics, Equilibria, and pH",12
+Chemistry,OCR,3,Ka and pH Calculations for Weak Acids,"Kinetics, Equilibria, and pH",13
+Chemistry,OCR,3,How Buffer Solutions Work,"Kinetics, Equilibria, and pH",14
+Chemistry,OCR,3,Buffer Solution Calculations,"Kinetics, Equilibria, and pH",15
+Chemistry,OCR,3,pH Titration Curves and Indicators,"Kinetics, Equilibria, and pH",16
+Chemistry,OCR,2,"Energetics, Redox, and Transition Metals",Physical chemistry and transition elements,2
+Chemistry,OCR,3,Lattice Enthalpy and Born-Haber Cycles,"Energetics, Redox, and Transition Metals",1
+Chemistry,OCR,3,Enthalpies of Solution and Hydration,"Energetics, Redox, and Transition Metals",2
+Chemistry,OCR,3,Entropy and Entropy Change,"Energetics, Redox, and Transition Metals",3
+Chemistry,OCR,3,Gibbs Free Energy and Feasibility,"Energetics, Redox, and Transition Metals",4
+Chemistry,OCR,3,Constructing Redox Equations,"Energetics, Redox, and Transition Metals",5
+Chemistry,OCR,3,Redox Titrations and Calculations,"Energetics, Redox, and Transition Metals",6
+Chemistry,OCR,3,Standard Electrode Potentials and Electrochemical Cells,"Energetics, Redox, and Transition Metals",7
+Chemistry,OCR,3,Using Cell Potentials to Predict Feasibility,"Energetics, Redox, and Transition Metals",8
+Chemistry,OCR,3,Storage and Fuel Cells,"Energetics, Redox, and Transition Metals",9
+Chemistry,OCR,3,Introduction to Transition Elements,"Energetics, Redox, and Transition Metals",10
+Chemistry,OCR,3,"Complex Ions, Ligands, and Coordination","Energetics, Redox, and Transition Metals",11
+Chemistry,OCR,3,Stereoisomerism in Complexes and Cis-platin,"Energetics, Redox, and Transition Metals",12
+Chemistry,OCR,3,Ligand Substitution Reactions,"Energetics, Redox, and Transition Metals",13
+Chemistry,OCR,3,Precipitation Reactions of Transition Metal Ions,"Energetics, Redox, and Transition Metals",14
+Chemistry,OCR,3,Redox Reactions of Transition Metal Ions,"Energetics, Redox, and Transition Metals",15
+Chemistry,OCR,3,Qualitative Analysis of Ions (Summary),"Energetics, Redox, and Transition Metals",16
+Chemistry,OCR,1,Organic chemistry and analysis,,5
+Chemistry,OCR,2,"Aromatics, Carbonyls, and Carboxylic Acids",Organic chemistry and analysis,1
+Chemistry,OCR,3,The Delocalised Structure of Benzene,"Aromatics, Carbonyls, and Carboxylic Acids",1
+Chemistry,OCR,3,Nomenclature and Electrophilic Substitution of Arenes,"Aromatics, Carbonyls, and Carboxylic Acids",2
+Chemistry,OCR,3,Friedel-Crafts Reactions,"Aromatics, Carbonyls, and Carboxylic Acids",3
+Chemistry,OCR,3,Mechanism of Electrophilic Substitution in Arenes,"Aromatics, Carbonyls, and Carboxylic Acids",4
+Chemistry,OCR,3,The Acidity of Phenol,"Aromatics, Carbonyls, and Carboxylic Acids",5
+Chemistry,OCR,3,Electrophilic Substitution of Phenol,"Aromatics, Carbonyls, and Carboxylic Acids",6
+Chemistry,OCR,3,Directing Groups in Aromatic Substitution,"Aromatics, Carbonyls, and Carboxylic Acids",7
+Chemistry,OCR,3,Oxidation and Nucleophilic Addition Reactions of Carbonyls,"Aromatics, Carbonyls, and Carboxylic Acids",8
+Chemistry,OCR,3,Mechanism of Nucleophilic Addition,"Aromatics, Carbonyls, and Carboxylic Acids",9
+Chemistry,OCR,3,Characteristic Tests for Carbonyls,"Aromatics, Carbonyls, and Carboxylic Acids",10
+Chemistry,OCR,3,Properties and Reactions of Carboxylic Acids,"Aromatics, Carbonyls, and Carboxylic Acids",11
+Chemistry,OCR,3,Esterification and Hydrolysis,"Aromatics, Carbonyls, and Carboxylic Acids",12
+Chemistry,OCR,3,Acyl Chlorides in Synthesis,"Aromatics, Carbonyls, and Carboxylic Acids",13
+Chemistry,OCR,2,"Nitrogen Compounds, Polymers, and Synthesis",Organic chemistry and analysis,2
+Chemistry,OCR,3,Preparation and Basicity of Amines,"Nitrogen Compounds, Polymers, and Synthesis",1
+Chemistry,OCR,3,Amino Acids and Amides,"Nitrogen Compounds, Polymers, and Synthesis",2
+Chemistry,OCR,3,Chirality and Optical Isomerism,"Nitrogen Compounds, Polymers, and Synthesis",3
+Chemistry,OCR,3,Condensation Polymerisation,"Nitrogen Compounds, Polymers, and Synthesis",4
+Chemistry,OCR,3,Analysis and Hydrolysis of Condensation Polymers,"Nitrogen Compounds, Polymers, and Synthesis",5
+Chemistry,OCR,3,Carbon-Carbon Bond Formation using Nitriles,"Nitrogen Compounds, Polymers, and Synthesis",6
+Chemistry,OCR,3,Reactions of Nitriles and Aromatic C–C Formation,"Nitrogen Compounds, Polymers, and Synthesis",7
+Chemistry,OCR,3,Practical Techniques for Solid Organic Synthesis,"Nitrogen Compounds, Polymers, and Synthesis",8
+Chemistry,OCR,3,Designing Multi-stage Synthetic Routes,"Nitrogen Compounds, Polymers, and Synthesis",9
+Chemistry,OCR,2,Advanced Analytical Techniques,Organic chemistry and analysis,3
+Chemistry,OCR,3,Chromatography (TLC and GC),Advanced Analytical Techniques,1
+Chemistry,OCR,3,Qualitative Analysis of Functional Groups (Part 1),Advanced Analytical Techniques,2
+Chemistry,OCR,3,Qualitative Analysis of Functional Groups (Part 2),Advanced Analytical Techniques,3
+Chemistry,OCR,3,Carbon-13 NMR Spectroscopy,Advanced Analytical Techniques,4
+Chemistry,OCR,3,Proton NMR: Chemical Shift and Integration,Advanced Analytical Techniques,5
+Chemistry,OCR,3,Proton NMR: Spin-Spin Splitting,Advanced Analytical Techniques,6
+Chemistry,OCR,3,Standards and Solvents in NMR Spectroscopy,Advanced Analytical Techniques,7
+Chemistry,OCR,3,Combined Analytical Techniques,Advanced Analytical Techniques,8

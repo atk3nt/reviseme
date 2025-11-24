@@ -1,0 +1,395 @@
+subject,exam_board,level,title,parent_title,order_index
+Physics,AQA,1,Measurements and their errors,,1
+Physics,AQA,2,Use of SI units and their prefixes,Measurements and their errors,1
+Physics,AQA,3,Fundamental and Derived SI Units,Use of SI units and their prefixes,1
+Physics,AQA,3,SI Prefixes and Unit Conversions,Use of SI units and their prefixes,2
+Physics,AQA,2,Limitation of physical measurements,Measurements and their errors,2
+Physics,AQA,3,Errors and Accuracy,Limitation of physical measurements,1
+Physics,AQA,3,Calculating with Uncertainties,Limitation of physical measurements,2
+Physics,AQA,3,Graphical Representation of Uncertainty,Limitation of physical measurements,3
+Physics,AQA,2,Estimation of physical quantities,Measurements and their errors,3
+Physics,AQA,3,Estimation and Orders of Magnitude,Estimation of physical quantities,1
+Physics,AQA,1,Particles and radiation,,2
+Physics,AQA,2,Constituents of the atom,Particles and radiation,1
+Physics,AQA,3,The Atomic Model and Subatomic Particles,Constituents of the atom,1
+Physics,AQA,3,"Specific Charge, Nuclide Notation and Isotopes",Constituents of the atom,2
+Physics,AQA,2,Stable and unstable nuclei,Particles and radiation,2
+Physics,AQA,3,The Strong Nuclear Force,Stable and unstable nuclei,1
+Physics,AQA,3,Radioactive Decay and the Neutrino,Stable and unstable nuclei,2
+Physics,AQA,2,"Particles, antiparticles and photons",Particles and radiation,3
+Physics,AQA,3,Antimatter,"Particles, antiparticles and photons",1
+Physics,AQA,3,"Photons, Annihilation and Pair Production","Particles, antiparticles and photons",2
+Physics,AQA,2,Particle interactions,Particles and radiation,4
+Physics,AQA,3,Fundamental Interactions and Exchange Particles,Particle interactions,1
+Physics,AQA,3,Electromagnetic and Weak Interactions,Particle interactions,2
+Physics,AQA,2,Classification of particles,Particles and radiation,5
+Physics,AQA,3,"Hadrons, Baryons and Mesons",Classification of particles,1
+Physics,AQA,3,Leptons and Lepton Number,Classification of particles,2
+Physics,AQA,3,Strange Particles and Strangeness,Classification of particles,3
+Physics,AQA,2,Quarks and antiquarks,Particles and radiation,6
+Physics,AQA,3,Quark Properties and Composition,Quarks and antiquarks,1
+Physics,AQA,2,Applications of conservation laws,Particles and radiation,7
+Physics,AQA,3,Conservation Laws in Particle Interactions,Applications of conservation laws,1
+Physics,AQA,2,The photoelectric effect,Particles and radiation,8
+Physics,AQA,3,Understanding the Photoelectric Effect,The photoelectric effect,1
+Physics,AQA,3,The Photoelectric Equation,The photoelectric effect,2
+Physics,AQA,2,Collisions of electrons with atoms,Particles and radiation,9
+Physics,AQA,3,"Ionisation, Excitation and the Electron Volt",Collisions of electrons with atoms,1
+Physics,AQA,2,Energy levels and photon emission,Particles and radiation,10
+Physics,AQA,3,Line Spectra and Energy Levels,Energy levels and photon emission,1
+Physics,AQA,2,Wave-particle duality,Particles and radiation,11
+Physics,AQA,3,Evidence for Wave-Particle Duality,Wave-particle duality,1
+Physics,AQA,3,The de Broglie Wavelength,Wave-particle duality,2
+Physics,AQA,1,Waves,,3
+Physics,AQA,2,Progressive waves,Waves,1
+Physics,AQA,3,Properties of Progressive Waves,Progressive waves,1
+Physics,AQA,2,Longitudinal and transverse waves,Waves,2
+Physics,AQA,3,Comparing Longitudinal and Transverse Waves,Longitudinal and transverse waves,1
+Physics,AQA,3,Polarisation,Longitudinal and transverse waves,2
+Physics,AQA,2,Principle of superposition of waves and formatio,Waves,3
+Physics,AQA,3,Formation of Stationary Waves,Principle of superposition of waves and formatio,1
+Physics,AQA,3,Harmonics on Strings,Principle of superposition of waves and formatio,2
+Physics,AQA,3,Required Practical 1: Stationary Waves on a Str,Principle of superposition of waves and formatio,3
+Physics,AQA,2,Interference,Waves,4
+Physics,AQA,3,Coherence and Path Difference,Interference,1
+Physics,AQA,3,Young's Double-Slit Experiment,Interference,2
+Physics,AQA,3,Interference with Other Waves and Laser Safety,Interference,3
+Physics,AQA,3,Required Practical 2: Interference Effects,Interference,4
+Physics,AQA,2,Diffraction,Waves,5
+Physics,AQA,3,Single-Slit Diffraction,Diffraction,1
+Physics,AQA,3,The Diffraction Grating,Diffraction,2
+Physics,AQA,2,Refraction at a plane surface,Waves,6
+Physics,AQA,3,Refractive Index and Snell's Law,Refraction at a plane surface,1
+Physics,AQA,3,Total Internal Reflection and Fibre Optics,Refraction at a plane surface,2
+Physics,AQA,1,Mechanics and materials,,4
+Physics,AQA,2,Scalars and vectors,Mechanics and materials,1
+Physics,AQA,3,Introduction to Scalars and Vectors,Scalars and vectors,1
+Physics,AQA,3,Vector Addition and Resolution,Scalars and vectors,2
+Physics,AQA,3,Equilibrium of Forces,Scalars and vectors,3
+Physics,AQA,2,Moments,Mechanics and materials,2
+Physics,AQA,3,"Moments, Couples and the Principle of Moments",Moments,1
+Physics,AQA,3,Centre of Mass,Moments,2
+Physics,AQA,2,Motion along a straight line,Mechanics and materials,3
+Physics,AQA,3,Definitions of Motion,Motion along a straight line,1
+Physics,AQA,3,Graphical Representation of Motion,Motion along a straight line,2
+Physics,AQA,3,Equations for Uniform Acceleration (SUVAT),Motion along a straight line,3
+Physics,AQA,3,Required Practical 3: Determination of g by Free Fall,Motion along a straight line,4
+Physics,AQA,2,Projectile motion,Mechanics and materials,4
+Physics,AQA,3,Analysing Projectile Motion,Projectile motion,1
+Physics,AQA,3,Air Resistance and Terminal Speed,Projectile motion,2
+Physics,AQA,2,Newton's laws of motion,Mechanics and materials,5
+Physics,AQA,3,Applying Newton's Three Laws of Motion,Newton's laws of motion,1
+Physics,AQA,2,Momentum,Mechanics and materials,6
+Physics,AQA,3,Linear Momentum and its Conservation,Momentum,1
+Physics,AQA,3,Impulse and Force-Time Graphs,Momentum,2
+Physics,AQA,3,Collisions and Explosions,Momentum,3
+Physics,AQA,2,"Work, energy and power",Mechanics and materials,7
+Physics,AQA,3,"Work, Power and Efficiency","Work, energy and power",1
+Physics,AQA,2,Conservation of energy,Mechanics and materials,8
+Physics,AQA,3,The Principle of Conservation of Energy,Conservation of energy,1
+Physics,AQA,2,Bulk properties of solids,Mechanics and materials,9
+Physics,AQA,3,"Density, Hooke's Law and Stress-Strain",Bulk properties of solids,1
+Physics,AQA,3,Elastic Strain Energy and Material Behaviour,Bulk properties of solids,2
+Physics,AQA,3,Energy Conservation in Materials,Bulk properties of solids,3
+Physics,AQA,2,The Young modulus,Mechanics and materials,10
+Physics,AQA,3,Defining and Measuring the Young Modulus,The Young modulus,1
+Physics,AQA,3,Required Practical 4: Determining the Young Modulus,The Young modulus,2
+Physics,AQA,1,Electricity,,5
+Physics,AQA,2,Basics of electricity,Electricity,1
+Physics,AQA,3,"Current, Potential Difference and Resistance",Basics of electricity,1
+Physics,AQA,2,Current-voltage characteristics,Electricity,2
+Physics,AQA,3,I-V Characteristics of Components,Current-voltage characteristics,1
+Physics,AQA,2,Resistivity,Electricity,3
+Physics,AQA,3,Resistivity and Temperature Effects,Resistivity,1
+Physics,AQA,3,Superconductivity,Resistivity,2
+Physics,AQA,3,Required Practical 5: Determining Resistivity,Resistivity,3
+Physics,AQA,2,Circuits,Electricity,4
+Physics,AQA,3,Analysing Series and Parallel Circuits,Circuits,1
+Physics,AQA,3,Energy and Power in Circuits,Circuits,2
+Physics,AQA,2,Potential divider,Electricity,5
+Physics,AQA,3,The Potential Divider Circuit,Potential divider,1
+Physics,AQA,2,Electromotive force and internal resistance,Electricity,6
+Physics,AQA,3,EMF and Internal Resistance,Electromotive force and internal resistance,1
+Physics,AQA,3,Required Practical 6: Investigating EMF and Internal Resistance,Electromotive force and internal resistance,2
+Physics,AQA,1,Further mechanics and thermal physics,,6
+Physics,AQA,2,Circular motion,Further mechanics and thermal physics,1
+Physics,AQA,3,Centripetal Acceleration and Force,Circular motion,1
+Physics,AQA,2,Simple harmonic motion (SHM),Further mechanics and thermal physics,2
+Physics,AQA,3,Defining SHM,Simple harmonic motion (SHM),1
+Physics,AQA,3,Equations and Graphs of SHM,Simple harmonic motion (SHM),2
+Physics,AQA,2,Simple harmonic systems,Further mechanics and thermal physics,3
+Physics,AQA,3,Mass-Spring Systems and Simple Pendulums,Simple harmonic systems,1
+Physics,AQA,3,Energy and Damping in SHM,Simple harmonic systems,2
+Physics,AQA,3,Required Practical 7: Investigating SHM,Simple harmonic systems,3
+Physics,AQA,2,Forced vibrations and resonance,Further mechanics and thermal physics,4
+Physics,AQA,3,Forced Vibrations and Resonance,Forced vibrations and resonance,1
+Physics,AQA,2,Thermal energy transfer,Further mechanics and thermal physics,5
+Physics,AQA,3,Internal Energy and the First Law of Thermodynamics,Thermal energy transfer,1
+Physics,AQA,3,Specific Heat Capacity and Latent Heat,Thermal energy transfer,2
+Physics,AQA,2,Ideal gases,Further mechanics and thermal physics,6
+Physics,AQA,3,The Ideal Gas Law,Ideal gases,1
+Physics,AQA,3,Work Done by a Gas and Molar Mass,Ideal gases,2
+Physics,AQA,3,Required Practical 8: Investigating Gas Laws,Ideal gases,3
+Physics,AQA,2,Molecular kinetic theory model,Further mechanics and thermal physics,7
+Physics,AQA,3,Kinetic Theory Model and Assumptions,Molecular kinetic theory model,1
+Physics,AQA,3,Pressure and Molecular Kinetic Energy,Molecular kinetic theory model,2
+Physics,AQA,3,Internal Energy of an Ideal Gas,Molecular kinetic theory model,3
+Physics,AQA,1,Fields and their consequences,,7
+Physics,AQA,2,Fields,Fields and their consequences,1
+Physics,AQA,3,Introduction to Force Fields,Fields,1
+Physics,AQA,2,Newton's law,Fields and their consequences,2
+Physics,AQA,3,Newton's Law of Universal Gravitation,Newton's law,1
+Physics,AQA,2,Gravitational field strength,Fields and their consequences,3
+Physics,AQA,3,Defining and Calculating Gravitational Field Strength,Gravitational field strength,1
+Physics,AQA,2,Gravitational potential,Fields and their consequences,4
+Physics,AQA,3,Gravitational Potential and Potential Difference,Gravitational potential,1
+Physics,AQA,3,Gravitational Potential in a Radial Field,Gravitational potential,2
+Physics,AQA,2,Orbits of planets and satellites,Fields and their consequences,5
+Physics,AQA,3,Orbital Period and Speed,Orbits of planets and satellites,1
+Physics,AQA,3,"Energy, Escape Velocity and Synchronous Orbit",Orbits of planets and satellites,2
+Physics,AQA,2,Coulomb's law,Fields and their consequences,6
+Physics,AQA,3,Coulomb's Law and Permittivity,Coulomb's law,1
+Physics,AQA,2,Electric field strength,Fields and their consequences,7
+Physics,AQA,3,Defining and Representing Electric Fields,Electric field strength,1
+Physics,AQA,3,Uniform and Radial Electric Fields,Electric field strength,2
+Physics,AQA,2,Electric potential,Fields and their consequences,8
+Physics,AQA,3,Absolute Electric Potential and Equipotentials,Electric potential,1
+Physics,AQA,3,Electric Potential in a Radial Field,Electric potential,2
+Physics,AQA,2,Capacitance,Fields and their consequences,9
+Physics,AQA,3,Definition of Capacitance,Capacitance,1
+Physics,AQA,2,Parallel plate capacitor,Fields and their consequences,10
+Physics,AQA,3,Capacitance of a Parallel Plate Capacitor,Parallel plate capacitor,1
+Physics,AQA,2,Magnetic flux density,Fields and their consequences,12
+Physics,AQA,3,Force on a Current-Carrying Wire,Magnetic flux density,1
+Physics,AQA,3,Required Practical 10: Investigating Force on a Current-Carrying Wire,Magnetic flux density,2
+Physics,AQA,2,Moving charges in a magnetic field,Fields and their consequences,13
+Physics,AQA,3,Force on Moving Charges and Circular Paths,Moving charges in a magnetic field,1
+Physics,AQA,2,Magnetic flux and flux linkage,Fields and their consequences,14
+Physics,AQA,3,Magnetic Flux and Flux Linkage,Magnetic flux and flux linkage,1
+Physics,AQA,3,Required Practical 11: Investigating Magnetic Flux Linkage,Magnetic flux and flux linkage,2
+Physics,AQA,2,Electromagnetic induction,Fields and their consequences,15
+Physics,AQA,3,Faraday's and Lenz's Laws,Electromagnetic induction,1
+Physics,AQA,3,Applications of EM Induction,Electromagnetic induction,2
+Physics,AQA,2,Alternating currents,Fields and their consequences,16
+Physics,AQA,3,AC Waveforms and RMS Values,Alternating currents,1
+Physics,AQA,3,Using an Oscilloscope,Alternating currents,2
+Physics,AQA,2,The operation of a transformer,Fields and their consequences,17
+Physics,AQA,3,The Transformer Equation and Efficiency,The operation of a transformer,1
+Physics,AQA,3,Transformer Inefficiencies and Power Transmission,The operation of a transformer,2
+Physics,AQA,1,Nuclear physics,,8
+Physics,AQA,2,Rutherford scattering,Nuclear physics,1
+Physics,AQA,3,Rutherford Scattering and the Nucleus,Rutherford scattering,1
+Physics,AQA,2,"α, β and γ radiation",Nuclear physics,2
+Physics,AQA,3,Properties and Absorption of Radiation,"α, β and γ radiation",1
+Physics,AQA,3,Inverse-Square Law and Safety,"α, β and γ radiation",2
+Physics,AQA,3,Required Practical 12: Inverse-Square Law for Radiation,"α, β and γ radiation",3
+Physics,AQA,2,"α, β and γ radiation",Nuclear physics,2
+Physics,AQA,3,Properties and Absorption of Radiation,"α, β and γ radiation",1
+Physics,AQA,3,Inverse-Square Law and Safety,"α, β and γ radiation",2
+Physics,AQA,3,Required Practical 12: Inverse-Square Law for γ Radiation,"α, β and γ radiation",3
+Physics,AQA,2,Radioactive decay,Nuclear physics,3
+Physics,AQA,3,The Nature of Radioactive Decay,Radioactive decay,1
+Physics,AQA,3,Activity and Half-Life,Radioactive decay,2
+Physics,AQA,3,Graphical Analysis and Applications of Decay,Radioactive decay,3
+Physics,AQA,2,Nuclear instability,Nuclear physics,4
+Physics,AQA,3,The N-Z Graph and Decay Modes,Nuclear instability,1
+Physics,AQA,3,Nuclear Excited States and Medical Applications,Nuclear instability,2
+Physics,AQA,2,Nuclear radius,Nuclear physics,5
+Physics,AQA,3,Estimating the Nuclear Radius,Nuclear radius,1
+Physics,AQA,3,Nuclear Radius and Density,Nuclear radius,2
+Physics,AQA,2,Mass and energy,Nuclear physics,6
+Physics,AQA,3,Mass-Energy Equivalence and Binding Energy,Mass and energy,1
+Physics,AQA,3,"Fission, Fusion and the Binding Energy Curve",Mass and energy,2
+Physics,AQA,2,Induced fission,Nuclear physics,7
+Physics,AQA,3,The Process of Induced Fission,Induced fission,1
+Physics,AQA,3,Components of a Thermal Nuclear Reactor,Induced fission,2
+Physics,AQA,2,Safety aspects,Nuclear physics,8
+Physics,AQA,3,Nuclear Power Safety and Waste Management,Safety aspects,1
+Physics,AQA,1,Astrophysics,,9
+Physics,AQA,2,Astronomical telescope consisting of two convex lenses,Astrophysics,1
+Physics,AQA,3,The Refracting Telescope,Astronomical telescope consisting of two convex lenses,1
+Physics,AQA,2,Reflecting telescopes,Astrophysics,2
+Physics,AQA,3,The Reflecting Telescope and its Advantages,Reflecting telescopes,1
+Physics,AQA,2,"Single dish radio telescopes, I–R, U–V and X-ray telescopes",Astrophysics,3
+Physics,AQA,3,Non-Optical Telescopes,"Single dish radio telescopes, I–R, U–V and X-ray telescopes",1
+Physics,AQA,2,Advantages of large diameter telescopes,Astrophysics,4
+Physics,AQA,3,Resolving and Collecting Power,Advantages of large diameter telescopes,1
+Physics,AQA,3,Comparing Detectors: The Eye vs CCD,Advantages of large diameter telescopes,2
+Physics,AQA,2,Classification by luminosity,Astrophysics,5
+Physics,AQA,3,Apparent Magnitude and Brightness,Classification by luminosity,1
+Physics,AQA,2,"Absolute magnitude, M",Astrophysics,6
+Physics,AQA,3,"Distance, Parsecs and Absolute Magnitude","Absolute magnitude, M",1
+Physics,AQA,2,"Classification by temperature, black-body radiation",Astrophysics,7
+Physics,AQA,3,Wien’s Law and Black-Body Curves,"Classification by temperature, black-body radiation",1
+Physics,AQA,3,Stefan’s Law and Stellar Properties,"Classification by temperature, black-body radiation",2
+Physics,AQA,2,Principles of the use of stellar spectral classes,Astrophysics,8
+Physics,AQA,3,Stellar Spectral Classes,Principles of the use of stellar spectral classes,1
+Physics,AQA,3,Hydrogen Balmer Lines,Principles of the use of stellar spectral classes,2
+Physics,AQA,2,The Hertzsprung–Russell (HR) diagram,Astrophysics,9
+Physics,AQA,3,The HR Diagram,The Hertzsprung–Russell (HR) diagram,1
+Physics,AQA,3,Stellar Evolution on the HR Diagram,The Hertzsprung–Russell (HR) diagram,2
+Physics,AQA,2,"Supernovae, neutron stars and black holes",Astrophysics,10
+Physics,AQA,3,"Defining Supernovae, Neutron Stars and Black Holes","Supernovae, neutron stars and black holes",1
+Physics,AQA,3,Type 1a Supernovae and the Event Horizon,"Supernovae, neutron stars and black holes",2
+Physics,AQA,2,Doppler effect,Astrophysics,11
+Physics,AQA,3,The Doppler Effect and Redshift,Doppler effect,1
+Physics,AQA,2,Hubble's law,Astrophysics,12
+Physics,AQA,3,Hubble's Law and the Age of the Universe,Hubble's law,1
+Physics,AQA,3,Evidence for the Big Bang,Hubble's law,2
+Physics,AQA,2,Quasars,Astrophysics,13
+Physics,AQA,3,Properties and Formation of Quasars,Quasars,1
+Physics,AQA,2,Detection of exoplanets,Astrophysics,14
+Physics,AQA,3,Methods for Detecting Exoplanets,Detection of exoplanets,1
+Physics,AQA,1,Medical physics,,10
+Physics,AQA,2,Physics of vision,Medical physics,1
+Physics,AQA,3,The Eye as an Optical System,Physics of vision,1
+Physics,AQA,2,Defects of vision and their correction using lenses,Medical physics,2
+Physics,AQA,3,Lens Properties and Power,Defects of vision and their correction using lenses,1
+Physics,AQA,3,Common Vision Defects and Corrections,Defects of vision and their correction using lenses,2
+Physics,AQA,2,Ear as a sound detection system,Medical physics,3
+Physics,AQA,3,The Structure and Function of the Ear,Ear as a sound detection system,1
+Physics,AQA,2,Sensitivity and frequency response,Medical physics,4
+Physics,AQA,3,Loudness Curves and Intensity Levels,Sensitivity and frequency response,1
+Physics,AQA,2,Defects of hearing,Medical physics,5
+Physics,AQA,3,Causes and Effects of Hearing Loss,Defects of hearing,1
+Physics,AQA,2,Simple ECG machines and the normal ECG wave,Medical physics,6
+Physics,AQA,3,Principles of the ECG,Simple ECG machines and the normal ECG wave,1
+Physics,AQA,2,Ultrasound imaging,Medical physics,7
+Physics,AQA,3,Principles of Ultrasound Imaging,Ultrasound imaging,1
+Physics,AQA,3,Generation and Application of Ultrasound,Ultrasound imaging,2
+Physics,AQA,2,Fibre optics and endoscopy,Medical physics,8
+Physics,AQA,3,Medical Applications of Fibre Optics,Fibre optics and endoscopy,1
+Physics,AQA,2,Magnetic resonance (MR) scanner,Medical physics,9
+Physics,AQA,3,Basic Principles of MR Scanners,Magnetic resonance (MR) scanner,1
+Physics,AQA,2,The physics of diagnostic X-rays,Medical physics,10
+Physics,AQA,3,Production of X-rays,The physics of diagnostic X-rays,1
+Physics,AQA,3,The Rotating-Anode X-ray Tube,The physics of diagnostic X-rays,2
+Physics,AQA,2,Image detection and enhancement,Medical physics,11
+Physics,AQA,3,Modern and Traditional X-ray Detection,Image detection and enhancement,1
+Physics,AQA,3,Contrast Enhancement Techniques,Image detection and enhancement,2
+Physics,AQA,2,Absorption of X-rays,Medical physics,12
+Physics,AQA,3,Exponential Attenuation of X-rays,Absorption of X-rays,1
+Physics,AQA,2,CT scanner,Medical physics,13
+Physics,AQA,3,Principles of CT Scanning,CT scanner,1
+Physics,AQA,2,Imaging techniques,Medical physics,14
+Physics,AQA,3,Radioisotope Tracers,Imaging techniques,1
+Physics,AQA,3,Molybdenum-Technetium Generator and PET Scanning,Imaging techniques,2
+Physics,AQA,2,Half-life,Medical physics,15
+Physics,AQA,3,"Physical, Biological and Effective Half-lives",Half-life,1
+Physics,AQA,2,Gamma camera,Medical physics,16
+Physics,AQA,3,The Gamma Camera and Photomultiplier Tube,Gamma camera,1
+Physics,AQA,2,Use of high-energy X-rays,Medical physics,17
+Physics,AQA,3,External Radiation Therapy,Use of high-energy X-rays,1
+Physics,AQA,2,Use of radioactive implants,Medical physics,18
+Physics,AQA,3,Internal Radiation Therapy,Use of radioactive implants,1
+Physics,AQA,2,Imaging comparisons,Medical physics,19
+Physics,AQA,3,Comparing Medical Imaging Techniques,Imaging comparisons,1
+Physics,AQA,1,Engineering physics,,11
+Physics,AQA,2,Concept of moment of inertia,Engineering physics,1
+Physics,AQA,3,Introduction to Moment of Inertia,Concept of moment of inertia,1
+Physics,AQA,2,Rotational kinetic energy,Engineering physics,2
+Physics,AQA,3,Rotational Kinetic Energy,Rotational kinetic energy,1
+Physics,AQA,3,Flywheels and their Applications,Rotational kinetic energy,2
+Physics,AQA,2,Rotational motion,Engineering physics,3
+Physics,AQA,3,Angular Kinematics,Rotational motion,1
+Physics,AQA,3,Equations for Uniform Angular Acceleration,Rotational motion,2
+Physics,AQA,2,Torque and angular acceleration,Engineering physics,4
+Physics,AQA,3,The Relationship Between Torque and Angular Acceleration,Torque and angular acceleration,1
+Physics,AQA,2,Angular momentum,Engineering physics,5
+Physics,AQA,3,Angular Momentum and its Conservation,Angular momentum,1
+Physics,AQA,2,Work and power,Engineering physics,6
+Physics,AQA,3,Work and Power in Rotational Systems,Work and power,1
+Physics,AQA,2,First law of thermodynamics,Engineering physics,7
+Physics,AQA,3,The First Law of Thermodynamics,First law of thermodynamics,1
+Physics,AQA,2,Non-flow processes,Engineering physics,8
+Physics,AQA,3,Thermodynamic Processes,Non-flow processes,1
+Physics,AQA,2,The p-V diagram,Engineering physics,9
+Physics,AQA,3,Understanding p-V Diagrams,The p-V diagram,1
+Physics,AQA,2,Engine cycles,Engineering physics,10
+Physics,AQA,3,Engine Cycles and Indicator Diagrams,Engine cycles,1
+Physics,AQA,3,Engine Power Calculations,Engine cycles,2
+Physics,AQA,3,Engine Efficiencies,Engine cycles,3
+Physics,AQA,2,Second Law and engines,Engineering physics,11
+Physics,AQA,3,The Second Law of Thermodynamics and Heat,Second Law and engines,1
+Physics,AQA,3,Heat Engine Diagrams and Practical Efficiencies,Second Law and engines,2
+Physics,AQA,2,Reversed heat engines,Engineering physics,12
+Physics,AQA,3,Heat Pumps and Refrigerators,Reversed heat engines,1
+Physics,AQA,3,Coefficients of Performance,Reversed heat engines,2
+Physics,AQA,1,Turning points in physics,,12
+Physics,AQA,2,Cathode rays,Turning points in physics,1
+Physics,AQA,3,Production of Cathode Rays,Cathode rays,1
+Physics,AQA,2,Thermionic emission of electrons,Turning points in physics,2
+Physics,AQA,3,Thermionic Emission,Thermionic emission of electrons,1
+Physics,AQA,2,Specific charge of the electron,Turning points in physics,3
+Physics,AQA,3,Determining the Specific Charge of the Electron,Specific charge of the electron,1
+Physics,AQA,2,Principle of Millikan's determination of the electr,Turning points in physics,4
+Physics,AQA,3,Millikan's Oil Drop Experiment: Setup and Theo,Principle of Millikan's determination of the electr,1
+Physics,AQA,3,Stokes' Law and the Significance of Millikan's F,Principle of Millikan's determination of the electr,2
+Physics,AQA,2,Newton's corpuscular theory of light,Turning points in physics,5
+Physics,AQA,3,Newton's Corpuscular Theory vs Huygens' Wave Theory,Newton's corpuscular theory of light,1
+Physics,AQA,2,Significance of Young's double slits experiment,Turning points in physics,6
+Physics,AQA,3,Young's Experiment and the Wave Theory of Light,Significance of Young's double slits experiment,1
+Physics,AQA,2,Significance of Young's double slits experiment,Turning points in physics,6
+Physics,AQA,3,Young's Experiment and the Wave Theory of Light,Significance of Young's double slits experiment,1
+Physics,AQA,2,Electromagnetic waves,Turning points in physics,7
+Physics,AQA,3,"Maxwell, Hertz and the Speed of EM Waves",Electromagnetic waves,1
+Physics,AQA,2,The discovery of photoelectricity,Turning points in physics,8
+Physics,AQA,3,Failures of Classical Theory,The discovery of photoelectricity,1
+Physics,AQA,3,Einstein's Explanation of Photoelectricity,The discovery of photoelectricity,2
+Physics,AQA,2,Wave-particle duality,Turning points in physics,9
+Physics,AQA,3,De Broglie's Hypothesis and Electron Diffraction,Wave-particle duality,1
+Physics,AQA,2,Electron microscopes,Turning points in physics,10
+Physics,AQA,3,Principles of Electron Microscopy,Electron microscopes,1
+Physics,AQA,2,The Michelson-Morley experiment,Turning points in physics,11
+Physics,AQA,3,The Search for Absolute Motion,The Michelson-Morley experiment,1
+Physics,AQA,2,Einstein's theory of special relativity,Turning points in physics,12
+Physics,AQA,3,The Postulates of Special Relativity,Einstein's theory of special relativity,1
+Physics,AQA,2,Time dilation,Turning points in physics,13
+Physics,AQA,3,Time Dilation,Time dilation,1
+Physics,AQA,2,Length contraction,Turning points in physics,14
+Physics,AQA,3,Length Contraction,Length contraction,1
+Physics,AQA,2,Mass and energy,Turning points in physics,15
+Physics,AQA,3,Relativistic Mass and Energy,Mass and energy,1
+Physics,AQA,1,Electronics,,13
+Physics,AQA,2,MOSFET (metal-oxide semiconducting field-effect transistor),Electronics,1
+Physics,AQA,3,Introduction to the MOSFET,MOSFET (metal-oxide semiconducting field-effect transistor),1
+Physics,AQA,2,Zener diode,Electronics,2
+Physics,AQA,3,The Zener Diode and its Applications,Zener diode,1
+Physics,AQA,2,Photodiode,Electronics,3
+Physics,AQA,3,The Photodiode as a Detector,Photodiode,1
+Physics,AQA,2,Hall effect sensor,Electronics,4
+Physics,AQA,3,The Hall Effect Sensor,Hall effect sensor,1
+Physics,AQA,2,Difference between analogue and digital signals,Electronics,5
+Physics,AQA,3,Analogue-to-Digital Conversion,Difference between analogue and digital signals,1
+Physics,AQA,3,Digital Sampling and Signal Recovery,Difference between analogue and digital signals,2
+Physics,AQA,2,LC resonance filters,Electronics,6
+Physics,AQA,3,LC Resonance Filters,LC resonance filters,1
+Physics,AQA,3,Q Factor and Response Curves,LC resonance filters,2
+Physics,AQA,2,The ideal operational amplifier,Electronics,7
+Physics,AQA,3,The Ideal Op-Amp,The ideal operational amplifier,1
+Physics,AQA,2,Inverting amplifier configuration,Electronics,8
+Physics,AQA,3,The Inverting Op-Amp,Inverting amplifier configuration,1
+Physics,AQA,2,Non-inverting amplifier configuration,Electronics,9
+Physics,AQA,3,The Non-Inverting Op-Amp,non-inverting amplifier configuration,1
+Physics,AQA,2,summing amplifier configuration,Electronics,10
+Physics,AQA,3,The Summing and Difference Amplifier,summing amplifier configuration,1
+Physics,AQA,2,Real operational amplifiers,Electronics,11
+Physics,AQA,3,Limitations of Real Op-Amps,Real operational amplifiers,1
+Physics,AQA,2,Combinational logic,Electronics,12
+Physics,AQA,3,Boolean Algebra and Logic Gates,Combinational logic,1
+Physics,AQA,3,Combining Logic Gates,Combinational logic,2
+Physics,AQA,2,Sequential logic,Electronics,13
+Physics,AQA,3,Counting Circuits,Sequential logic,1
+Physics,AQA,3,Counter Inputs and Modulo-n Counters,Sequential logic,2
+Physics,AQA,2,Astables,Electronics,14
+Physics,AQA,3,The Astable as an Oscillator,Astables,1
+Physics,AQA,2,Principles of communication systems,Electronics,15
+Physics,AQA,3,Block Diagram of a Communication System,Principles of communication systems,1
+Physics,AQA,2,Transmission media,Electronics,16
+Physics,AQA,3,Types of Transmission Media,Transmission media,1
+Physics,AQA,3,Satellite Systems and Media Comparison,Transmission media,2
+Physics,AQA,2,Time-division multiplexing,Electronics,17
+Physics,AQA,3,Time-Division Multiplexing,Time-division multiplexing,1
+Physics,AQA,2,Amplitude (AM) and frequency modulation (FM),Electronics,18
+Physics,AQA,3,Principles of Modulation,Amplitude (AM) and frequency modulation (FM),1
+Physics,AQA,3,Bandwidth and Data Capacity,Amplitude (AM) and frequency modulation (FM),2

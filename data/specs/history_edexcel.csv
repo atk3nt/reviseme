@@ -1,0 +1,437 @@
+subject,exam_board,level,title,parent_title,order_index
+History,Edexcel,1,"Route A: Conquest, control and resistance in the medieval world",,1
+History,Edexcel,2,"The Crusades, c1095–1204","Route A: Conquest, control and resistance in the medieval world",1
+History,Edexcel,3,Religious and Political Motives for Crusading,"The Crusades, c1095–1204",1
+History,Edexcel,3,Secular and Social Motives for Crusading,"The Crusades, c1095–1204",2
+History,Edexcel,3,"The Role of Knights, Chivalry and Settlement","The Crusades, c1095–1204",3
+History,Edexcel,3,The First Crusade: Leadership and Conquests,"The Crusades, c1095–1204",4
+History,Edexcel,3,The Second Crusade: Leadership and Failure,"The Crusades, c1095–1204",5
+History,Edexcel,3,The Third Crusade: A Troubled Leadership,"The Crusades, c1095–1204",6
+History,Edexcel,3,The Crusader States: Geography and Economy,"The Crusades, c1095–1204",7
+History,Edexcel,3,The Crusader States: Defence and Military Orders,"The Crusades, c1095–1204",8
+History,Edexcel,3,The Crusader States: Government and Instability,"The Crusades, c1095–1204",9
+History,Edexcel,3,Muslim Disunity and the First Crusade's Success,"The Crusades, c1095–1204",10
+History,Edexcel,3,The Muslim Counter-Crusade: Zengi and Nur ad-Din,"The Crusades, c1095–1204",11
+History,Edexcel,3,The Age of Saladin,"The Crusades, c1095–1204",12
+History,Edexcel,3,The Fourth Crusade: A Diverted Crusade,"The Crusades, c1095–1204",13
+History,Edexcel,3,The Fourth Crusade: The Role of Venice and Constantinople,"The Crusades, c1095–1204",14
+History,Edexcel,2,"Anglo-Saxon England and the Anglo-Norman Kingdom, c1053–1106","Route A: Conquest, control and resistance in the medieval world",2
+History,Edexcel,3,The Anglo-Saxon State: Monarchy and Government,"Anglo-Saxon England and the Anglo-Norman Kingdom, c1053–1106",1
+History,Edexcel,3,The Anglo-Saxon Economy,"Anglo-Saxon England and the Anglo-Norman Kingdom, c1053–1106",2
+History,Edexcel,3,The House of Godwin and the Rise of Harold,"Anglo-Saxon England and the Anglo-Norman Kingdom, c1053–1106",3
+History,Edexcel,3,The Succession Crisis of 1066,"Anglo-Saxon England and the Anglo-Norman Kingdom, c1053–1106",4
+History,Edexcel,3,The Norman Invasion and the Battle of Hastings,"Anglo-Saxon England and the Anglo-Norman Kingdom, c1053–1106",5
+History,Edexcel,3,Securing the Kingdom: The Norman Rebellions,"Anglo-Saxon England and the Anglo-Norman Kingdom, c1053–1106",6
+History,Edexcel,3,Extending Control: Wales and Scotland,"Anglo-Saxon England and the Anglo-Norman Kingdom, c1053–1106",7
+History,Edexcel,3,The Norman Military State,"Anglo-Saxon England and the Anglo-Norman Kingdom, c1053–1106",8
+History,Edexcel,3,Norman Government and Law,"Anglo-Saxon England and the Anglo-Norman Kingdom, c1053–1106",9
+History,Edexcel,3,The Norman Aristocracy and the Domesday Survey,"Anglo-Saxon England and the Anglo-Norman Kingdom, c1053–1106",10
+History,Edexcel,3,Social Changes under the Normans,"Anglo-Saxon England and the Anglo-Norman Kingdom, c1053–1106",11
+History,Edexcel,3,The Normanisation of the English Church,"Anglo-Saxon England and the Anglo-Norman Kingdom, c1053–1106",12
+History,Edexcel,3,Normandy and the Rule of William I,"Anglo-Saxon England and the Anglo-Norman Kingdom, c1053–1106",13
+History,Edexcel,3,William Rufus and Robert Curthose,"Anglo-Saxon England and the Anglo-Norman Kingdom, c1053–1106",14
+History,Edexcel,3,Henry I and the Restoration of the Anglo-Norman Kingdom,"Anglo-Saxon England and the Anglo-Norman Kingdom, c1053–1106",15
+History,Edexcel,2,"England and the Angevin Empire in the reign of Henry II, 1154–89","Route A: Conquest, control and resistance in the medieval world",3
+History,Edexcel,3,The Angevin Inheritance in 1154,"England and the Angevin Empire in the reign of Henry II, 1154–89",1
+History,Edexcel,3,Restoring Royal Authority over the Nobility,"England and the Angevin Empire in the reign of Henry II, 1154–89",2
+History,Edexcel,3,"Extending Authority: Wales, Scotland and Ireland","England and the Angevin Empire in the reign of Henry II, 1154–89",3
+History,Edexcel,3,Control and Conflict in the French Lands,"England and the Angevin Empire in the reign of Henry II, 1154–89",4
+History,Edexcel,3,Reforming Government Institutions,"England and the Angevin Empire in the reign of Henry II, 1154–89",5
+History,Edexcel,3,Financial and Coinage Reforms,"England and the Angevin Empire in the reign of Henry II, 1154–89",6
+History,Edexcel,3,Legal Reforms and Royal Justice,"England and the Angevin Empire in the reign of Henry II, 1154–89",7
+History,Edexcel,3,The Changing Nature of Kingship,"England and the Angevin Empire in the reign of Henry II, 1154–89",8
+History,Edexcel,3,Henry II’s Relationship with the Church,"England and the Angevin Empire in the reign of Henry II, 1154–89",9
+History,Edexcel,3,The Becket Conflict: The Early Years (1162–64),"England and the Angevin Empire in the reign of Henry II, 1154–89",10
+History,Edexcel,3,Becket’s Murder and its Significance,"England and the Angevin Empire in the reign of Henry II, 1154–89",11
+History,Edexcel,3,The Settlement with the Church (1172–74),"England and the Angevin Empire in the reign of Henry II, 1154–89",12
+History,Edexcel,3,Family Rivalries and Inheritance,"England and the Angevin Empire in the reign of Henry II, 1154–89",13
+History,Edexcel,3,The Great Rebellion (1173–74),"England and the Angevin Empire in the reign of Henry II, 1154–89",14
+History,Edexcel,3,Philip Augustus and the Collapse of Angevin Power,"England and the Angevin Empire in the reign of Henry II, 1154–89",15
+History,Edexcel,1,Route B: Religion and the state in early modern Europe,,2
+History,Edexcel,2,"England, 1509–1603: authority, nation and religion",Route B: Religion and the state in early modern Europe,1
+History,Edexcel,3,The Tudor Monarchs and the Crown's Servants,"England, 1509–1603: authority, nation and religion",1
+History,Edexcel,3,The Tudor State: Parliament and Government,"England, 1509–1603: authority, nation and religion",2
+History,Edexcel,3,The Role of Key Ministers,"England, 1509–1603: authority, nation and religion",3
+History,Edexcel,3,The Tudor Religious Settlement,"England, 1509–1603: authority, nation and religion",4
+History,Edexcel,3,Religious Division: The Survival of Catholicism,"England, 1509–1603: authority, nation and religion",5
+History,Edexcel,3,Religious Division: The Rise of Protestantism,"England, 1509–1603: authority, nation and religion",6
+History,Edexcel,3,Tudor Control of the Regions,"England, 1509–1603: authority, nation and religion",7
+History,Edexcel,3,Social Problems: Poverty and Resistance,"England, 1509–1603: authority, nation and religion",8
+History,Edexcel,3,Popular Rebellions against Tudor Rule,"England, 1509–1603: authority, nation and religion",9
+History,Edexcel,3,The Tudor Economy: Trade and Industry,"England, 1509–1603: authority, nation and religion",10
+History,Edexcel,3,The Changing Structure of Tudor Society,"England, 1509–1603: authority, nation and religion",11
+History,Edexcel,3,Tudor Cultural Development,"England, 1509–1603: authority, nation and religion",12
+History,Edexcel,3,Interpretations: Threats to Elizabeth's Later Reign,"England, 1509–1603: authority, nation and religion",13
+History,Edexcel,3,Interpretations: Domestic Problems in Elizabeth's Reign,"England, 1509–1603: authority, nation and religion",14
+History,Edexcel,2,"Luther and the German Reformation, c1515–55",Route B: Religion and the state in early modern Europe,2
+History,Edexcel,3,Germany on the Eve of Reformation,"Luther and the German Reformation, c1515–55",1
+History,Edexcel,3,The German Church and the Papacy,"Luther and the German Reformation, c1515–55",2
+History,Edexcel,3,Luther's Initial Challenge: The 95 Theses,"Luther and the German Reformation, c1515–55",3
+History,Edexcel,3,Luther's Break with Rome,"Luther and the German Reformation, c1515–55",4
+History,Edexcel,3,The Diet of Worms and its Aftermath,"Luther and the German Reformation, c1515–55",5
+History,Edexcel,3,"Luther, Radicalism and the Peasants' War","Luther and the German Reformation, c1515–55",6
+History,Edexcel,3,The Development of Lutheran Beliefs,"Luther and the German Reformation, c1515–55",7
+History,Edexcel,3,The Codification of Lutheranism,"Luther and the German Reformation, c1515–55",8
+History,Edexcel,3,The Failure of Religious Negotiation,"Luther and the German Reformation, c1515–55",9
+History,Edexcel,3,The Role of the German Princes,"Luther and the German Reformation, c1515–55",10
+History,Edexcel,3,Charles V and the Peace of Augsburg,"Luther and the German Reformation, c1515–55",11
+History,Edexcel,3,The Papacy and the Counter-Reformation,"Luther and the German Reformation, c1515–55",12
+History,Edexcel,2,"The Dutch Revolt, c1563–1609",Route B: Religion and the state in early modern Europe,3
+History,Edexcel,3,The Habsburg Netherlands under Philip II,"The Dutch Revolt, c1563–1609",1
+History,Edexcel,3,Early Opposition and the ‘Beggars’,"The Dutch Revolt, c1563–1609",2
+History,Edexcel,3,Calvinism and the Iconoclastic Fury,"The Dutch Revolt, c1563–1609",3
+History,Edexcel,3,The Duke of Alva and the Council of Troubles,"The Dutch Revolt, c1563–1609",4
+History,Edexcel,3,The Sea Beggars and the Revolt of Holland,"The Dutch Revolt, c1563–1609",5
+History,Edexcel,3,Orange’s Triumph and Alva’s Failure,"The Dutch Revolt, c1563–1609",6
+History,Edexcel,3,The Spanish Fury and the Pacification of Ghent,"The Dutch Revolt, c1563–1609",7
+History,Edexcel,3,The Division of the Netherlands,"The Dutch Revolt, c1563–1609",8
+History,Edexcel,3,The Birth of the Dutch Republic,"The Dutch Revolt, c1563–1609",9
+History,Edexcel,3,The Military Leadership of Maurice of Nassau,"The Dutch Revolt, c1563–1609",10
+History,Edexcel,3,Spanish Failures and Foreign Intervention,"The Dutch Revolt, c1563–1609",11
+History,Edexcel,3,The Growing Power of the United Provinces,"The Dutch Revolt, c1563–1609",12
+History,Edexcel,3,The Truce of Antwerp,"The Dutch Revolt, c1563–1609",13
+History,Edexcel,1,Route C: Revolutions in early modern and modern Europe,,3
+History,Edexcel,2,"Britain, 1625–1701: conflict, revolution and settlement",Route C: Revolutions in early modern and modern Europe,1
+History,Edexcel,3,"The Failure of Monarchical Rule, 1625–49","Britain, 1625–1701: conflict, revolution and settlement",1
+History,Edexcel,3,"Republican Rule and its Failure, 1649–60","Britain, 1625–1701: conflict, revolution and settlement",2
+History,Edexcel,3,"From Restoration to Revolution, 1660–88","Britain, 1625–1701: conflict, revolution and settlement",3
+History,Edexcel,3,Religious Conflict: Anglicanism and Puritanism,"Britain, 1625–1701: conflict, revolution and settlement",4
+History,Edexcel,3,Religious Conflict: Nonconformity and Catholicism,"Britain, 1625–1701: conflict, revolution and settlement",5
+History,Edexcel,3,The Catholic Question,"Britain, 1625–1701: conflict, revolution and settlement",6
+History,Edexcel,3,Social and Intellectual Revolutions,"Britain, 1625–1701: conflict, revolution and settlement",7
+History,Edexcel,3,A Ferment of Ideas,"Britain, 1625–1701: conflict, revolution and settlement",8
+History,Edexcel,3,Economic Development and Trade,"Britain, 1625–1701: conflict, revolution and settlement",9
+History,Edexcel,3,The Growth of Empire,"Britain, 1625–1701: conflict, revolution and settlement",10
+History,Edexcel,3,Interpretations: The Revolutionary Settlement,"Britain, 1625–1701: conflict, revolution and settlement",11
+History,Edexcel,3,Interpretations: Religious and Parliamentary Change,"Britain, 1625–1701: conflict, revolution and settlement",12
+History,Edexcel,3,Interpretations: The Financial Revolution,"Britain, 1625–1701: conflict, revolution and settlement",13
+History,Edexcel,2,"France in revolution, 1774–99",Route C: Revolutions in early modern and modern Europe,2
+History,Edexcel,3,The Ancien Régime and its Problems,"France in revolution, 1774–99",1
+History,Edexcel,3,The Financial Crisis of the 1780s,"France in revolution, 1774–99",2
+History,Edexcel,3,The Failures of Louis XVI and his Ministers,"France in revolution, 1774–99",3
+History,Edexcel,3,"The Outbreak of Revolution, 1789","France in revolution, 1774–99",4
+History,Edexcel,3,"Creating a Constitution, 1789–91","France in revolution, 1774–99",5
+History,Edexcel,3,"The Revolutionary Political Landscape, 1789–93","France in revolution, 1774–99",6
+History,Edexcel,3,"The Breakdown of Monarchy, 1791–92","France in revolution, 1774–99",7
+History,Edexcel,3,"The Radicalisation of the Revolution, 1792–93","France in revolution, 1774–99",8
+History,Edexcel,3,The Preconditions for Terror,"France in revolution, 1774–99",9
+History,Edexcel,3,The Machinery of the Terror,"France in revolution, 1774–99",10
+History,Edexcel,3,The Great Terror and the Fall of Robespierre,"France in revolution, 1774–99",11
+History,Edexcel,3,The Coup of Thermidor,"France in revolution, 1774–99",12
+History,Edexcel,3,The Directory: Challenges and Threats,"France in revolution, 1774–99",13
+History,Edexcel,3,The Directory and War,"France in revolution, 1774–99",14
+History,Edexcel,3,"The Coup of Brumaire, 1799","France in revolution, 1774–99",15
+History,Edexcel,2,"Russia in revolution, 1894–1924",Route C: Revolutions in early modern and modern Europe,3
+History,Edexcel,3,Tsarist Russia and its Opposition,"Russia in revolution, 1894–1924",1
+History,Edexcel,3,The 1905 Revolution,"Russia in revolution, 1894–1924",2
+History,Edexcel,3,The Tsarist Response to 1905,"Russia in revolution, 1894–1924",3
+History,Edexcel,3,The Duma Period: Government and Reform,"Russia in revolution, 1894–1924",4
+History,Edexcel,3,The Duma Period: Repression under Stolypin,"Russia in revolution, 1894–1924",5
+History,Edexcel,3,The Impact of the First World War,"Russia in revolution, 1894–1924",6
+History,Edexcel,3,The February Revolution and the Fall of the Tsar,"Russia in revolution, 1894–1924",7
+History,Edexcel,3,Dual Power: The Provisional Government and Petrograd Soviet,"Russia in revolution, 1894–1924",8
+History,Edexcel,3,Challenges to the Provisional Government,"Russia in revolution, 1894–1924",9
+History,Edexcel,3,The Kornilov Affair and its Impact,"Russia in revolution, 1894–1924",10
+History,Edexcel,3,The Bolshevik Seizure of Power,"Russia in revolution, 1894–1924",11
+History,Edexcel,3,Consolidating Bolshevik Power and the Red Terror,"Russia in revolution, 1894–1924",12
+History,Edexcel,3,"Bolshevik Economic Policies, 1917–24","Russia in revolution, 1894–1924",13
+History,Edexcel,3,The Russian Civil War,"Russia in revolution, 1894–1924",14
+History,Edexcel,3,Foreign Intervention in the Civil War,"Russia in revolution, 1894–1924",15
+History,Edexcel,1,Route D: Challenges to the authority of the state in the late eighteenth and nineteenth centuries,,4
+History,Edexcel,2,"Britain, c1785–c1870: democracy, protest and reform",Route D: Challenges to the authority of the state in the late eighteenth and nineteenth centuries,1
+History,Edexcel,3,The Unreformed Parliament and Early Demands for Change,"Britain, c1785–c1870: democracy, protest and reform",1
+History,Edexcel,3,The Great Reform Act and Chartism,"Britain, c1785–c1870: democracy, protest and reform",2
+History,Edexcel,3,"Further Parliamentary Reform, 1852–70","Britain, c1785–c1870: democracy, protest and reform",3
+History,Edexcel,3,The Impact of Industrialisation,"Britain, c1785–c1870: democracy, protest and reform",4
+History,Edexcel,3,"Working, Living Conditions and Protest","Britain, c1785–c1870: democracy, protest and reform",5
+History,Edexcel,3,Industrial and Social Reform,"Britain, c1785–c1870: democracy, protest and reform",6
+History,Edexcel,3,Early Trade Unionism,"Britain, c1785–c1870: democracy, protest and reform",7
+History,Edexcel,3,New Model Unionism,"Britain, c1785–c1870: democracy, protest and reform",8
+History,Edexcel,3,Cooperative and Friendly Societies,"Britain, c1785–c1870: democracy, protest and reform",9
+History,Edexcel,3,The Old Poor Law and Pressures for Change,"Britain, c1785–c1870: democracy, protest and reform",10
+History,Edexcel,3,The New Poor Law and its Opposition,"Britain, c1785–c1870: democracy, protest and reform",11
+History,Edexcel,3,Changing Attitudes to Poverty,"Britain, c1785–c1870: democracy, protest and reform",12
+History,Edexcel,3,Interpretations: Abolition of the Slave Trade (Part 1),"Britain, c1785–c1870: democracy, protest and reform",13
+History,Edexcel,3,Interpretations: Abolition of the Slave Trade (Part 2),"Britain, c1785–c1870: democracy, protest and reform",14
+History,Edexcel,2,"The unification of Italy, c1830–70",Route D: Challenges to the authority of the state in the late eighteenth and nineteenth centuries,2
+History,Edexcel,3,"Early Nationalism and Challenges, 1830–47","The unification of Italy, c1830–70",1
+History,Edexcel,3,The Ideas of Italian Nationalists,"The unification of Italy, c1830–70",2
+History,Edexcel,3,The Revolutions of 1848–49,"The unification of Italy, c1830–70",3
+History,Edexcel,3,Failure of the 1848–49 Revolutions,"The unification of Italy, c1830–70",4
+History,Edexcel,3,The Legacy of the Revolutions,"The unification of Italy, c1830–70",5
+History,Edexcel,3,Piedmont: Political and Economic Developments,"The unification of Italy, c1830–70",6
+History,Edexcel,3,Piedmont’s Economic Modernisation,"The unification of Italy, c1830–70",7
+History,Edexcel,3,Piedmont’s Diplomatic Developments,"The unification of Italy, c1830–70",8
+History,Edexcel,3,The Second Italian War of Independence,"The unification of Italy, c1830–70",9
+History,Edexcel,3,"The Impact of the War with Austria, 1859–60","The unification of Italy, c1830–70",10
+History,Edexcel,3,Garibaldi and the Conquest of the South,"The unification of Italy, c1830–70",11
+History,Edexcel,3,The Creation of the Kingdom of Italy,"The unification of Italy, c1830–70",12
+History,Edexcel,3,Challenges to the New Kingdom,"The unification of Italy, c1830–70",13
+History,Edexcel,3,Completing Unification: Venetia and Rome,"The unification of Italy, c1830–70",14
+History,Edexcel,3,The Roman Question and the State of Italy in 1870,"The unification of Italy, c1830–70",15
+History,Edexcel,2,"The unification of Germany, c1840–71",Route D: Challenges to the authority of the state in the late eighteenth and nineteenth centuries,3
+History,Edexcel,3,Germany in the 1840s: Politics and Nationalism,"The unification of Germany, c1840–71",1
+History,Edexcel,3,Germany in the 1840s: Economy and Society,"The unification of Germany, c1840–71",2
+History,Edexcel,3,"The Outbreak of Revolution, 1848","The unification of Germany, c1840–71",3
+History,Edexcel,3,The Frankfurt Parliament and its Failure,"The unification of Germany, c1840–71",4
+History,Edexcel,3,"The Revolution in Prussia, 1848–49","The unification of Germany, c1840–71",5
+History,Edexcel,3,The Failure and Impact of the Revolutions,"The unification of Germany, c1840–71",6
+History,Edexcel,3,"The Rise of Prussia, 1850–62","The unification of Germany, c1840–71",7
+History,Edexcel,3,Bismarck’s Appointment and the Constitutional Crisis,"The unification of Germany, c1840–71",8
+History,Edexcel,3,"The Defeat of Austria, 1862–66","The unification of Germany, c1840–71",9
+History,Edexcel,3,The North German Confederation,"The unification of Germany, c1840–71",10
+History,Edexcel,3,"The Road to War with France, 1866–70","The unification of Germany, c1840–71",11
+History,Edexcel,3,The Franco-Prussian War and Unification,"The unification of Germany, c1840–71",12
+History,Edexcel,3,Reasons for Prussian Success,"The unification of Germany, c1840–71",13
+History,Edexcel,1,Route E: Communist states in the twentieth century,,5
+History,Edexcel,2,"Russia, 1917–91: from Lenin to Yeltsin",Route E: Communist states in the twentieth century,1
+History,Edexcel,3,"Establishing Communist Rule, 1917–24","Russia, 1917–91: from Lenin to Yeltsin",1
+History,Edexcel,3,"Stalin’s Totalitarian State, 1928–53","Russia, 1917–91: from Lenin to Yeltsin",2
+History,Edexcel,3,Government after Stalin: De-Stalinisation and Stagnation,"Russia, 1917–91: from Lenin to Yeltsin",3
+History,Edexcel,3,Early Economic Policies: War Communism and NEP,"Russia, 1917–91: from Lenin to Yeltsin",4
+History,Edexcel,3,Stalin’s Command Economy,"Russia, 1917–91: from Lenin to Yeltsin",5
+History,Edexcel,3,The Post-Stalin Economy: Reform and Decline,"Russia, 1917–91: from Lenin to Yeltsin",6
+History,Edexcel,3,"Control: Propaganda, Media and Religion","Russia, 1917–91: from Lenin to Yeltsin",7
+History,Edexcel,3,Control: The Secret Police,"Russia, 1917–91: from Lenin to Yeltsin",8
+History,Edexcel,3,Control: Art and Culture,"Russia, 1917–91: from Lenin to Yeltsin",9
+History,Edexcel,3,Social Policy: Welfare and Stability,"Russia, 1917–91: from Lenin to Yeltsin",10
+History,Edexcel,3,"Social Policy: Women, Family and Education","Russia, 1917–91: from Lenin to Yeltsin",11
+History,Edexcel,3,Interpretations: Economic Weakness and Failed Reform,"Russia, 1917–91: from Lenin to Yeltsin",12
+History,Edexcel,3,Interpretations: Political Failure and Nationalism,"Russia, 1917–91: from Lenin to Yeltsin",13
+History,Edexcel,3,Interpretations: The Role of Individuals in the Collapse,"Russia, 1917–91: from Lenin to Yeltsin",14
+History,Edexcel,2,"Mao’s China, 1949–76",Route E: Communist states in the twentieth century,2
+History,Edexcel,3,"Establishing Communist Rule, 1949","Mao’s China, 1949–76",1
+History,Edexcel,3,Consolidating Power and Eliminating Opposition,"Mao’s China, 1949–76",2
+History,Edexcel,3,The Impact of the Korean War,"Mao’s China, 1949–76",3
+History,Edexcel,3,"Agricultural Reform and Collectivisation, 1949–57","Mao’s China, 1949–76",4
+History,Edexcel,3,"The Communes and the Great Famine, 1958–62","Mao’s China, 1949–76",5
+History,Edexcel,3,Industrialisation: The First Five-Year Plan,"Mao’s China, 1949–76",6
+History,Edexcel,3,"The Great Leap Forward, 1958–62","Mao’s China, 1949–76",7
+History,Edexcel,3,Launching the Cultural Revolution,"Mao’s China, 1949–76",8
+History,Edexcel,3,The Red Guards and the ‘Four Olds’,"Mao’s China, 1949–76",9
+History,Edexcel,3,Purging Political and Class Enemies,"Mao’s China, 1949–76",10
+History,Edexcel,3,"The End of the Cultural Revolution, 1968–76","Mao’s China, 1949–76",11
+History,Edexcel,3,Social Change: The Status of Women,"Mao’s China, 1949–76",12
+History,Edexcel,3,Social Change: Education and Health,"Mao’s China, 1949–76",13
+History,Edexcel,3,Social Change: Culture and Religion,"Mao’s China, 1949–76",14
+History,Edexcel,2,"The German Democratic Republic, 1949–90",Route E: Communist states in the twentieth century,3
+History,Edexcel,3,The Formation of the GDR,"The German Democratic Republic, 1949–90",1
+History,Edexcel,3,The GDR System of Government,"The German Democratic Republic, 1949–90",2
+History,Edexcel,3,Early Economic Policy and the 1953 Uprising,"The German Democratic Republic, 1949–90",3
+History,Edexcel,3,The Berlin Wall and its Impact,"The German Democratic Republic, 1949–90",4
+History,Edexcel,3,Economic Reforms after 1961,"The German Democratic Republic, 1949–90",5
+History,Edexcel,3,Developing a GDR Identity,"The German Democratic Republic, 1949–90",6
+History,Edexcel,3,Ostpolitik and Relations with West Germany,"The German Democratic Republic, 1949–90",7
+History,Edexcel,3,The GDR on the International Stage,"The German Democratic Republic, 1949–90",8
+History,Edexcel,3,Social Change and Welfare,"The German Democratic Republic, 1949–90",9
+History,Edexcel,3,Repression and Control: The Stasi,"The German Democratic Republic, 1949–90",10
+History,Edexcel,3,The State and the Protestant Church,"The German Democratic Republic, 1949–90",11
+History,Edexcel,3,Western Influences and Popular Culture,"The German Democratic Republic, 1949–90",12
+History,Edexcel,3,The Crisis of the 1980s,"The German Democratic Republic, 1949–90",13
+History,Edexcel,3,"The Fall of the Berlin Wall, 1989","The German Democratic Republic, 1949–90",14
+History,Edexcel,3,"The Reunification of Germany, 1989–90","The German Democratic Republic, 1949–90",15
+History,Edexcel,1,Route F: Searching for rights and freedoms in the twentieth century,,6
+History,Edexcel,2,"In search of the American Dream: the USA, c1917–96",Route F: Searching for rights and freedoms in the twentieth century,1
+History,Edexcel,3,"The Changing Presidency, 1917–80","In search of the American Dream: the USA, c1917–96",1
+History,Edexcel,3,"The Changing Political Landscape, 1917–80","In search of the American Dream: the USA, c1917–96",2
+History,Edexcel,3,The Impact of War on Domestic Politics,"In search of the American Dream: the USA, c1917–96",3
+History,Edexcel,3,Black American Civil Rights to 1955,"In search of the American Dream: the USA, c1917–96",4
+History,Edexcel,3,"The Civil Rights Movement, 1955–80","In search of the American Dream: the USA, c1917–96",5
+History,Edexcel,3,"The Campaign for Minority Rights, 1960–80","In search of the American Dream: the USA, c1917–96",6
+History,Edexcel,3,"The Changing Position of Women, 1917–80","In search of the American Dream: the USA, c1917–96",7
+History,Edexcel,3,"The Impact of Immigration, 1917–80","In search of the American Dream: the USA, c1917–96",8
+History,Edexcel,3,The Influence of Popular Culture and Media,"In search of the American Dream: the USA, c1917–96",9
+History,Edexcel,3,Economic Change and Quality of Life,"In search of the American Dream: the USA, c1917–96",10
+History,Edexcel,3,Living Standards and the Consumer Society,"In search of the American Dream: the USA, c1917–96",11
+History,Edexcel,3,The Growth of Leisure and Travel,"In search of the American Dream: the USA, c1917–96",12
+History,Edexcel,3,Interpretations: The Reagan Presidency (Economic),"In search of the American Dream: the USA, c1917–96",13
+History,Edexcel,3,Interpretations: The Reagan Presidency (Political),"In search of the American Dream: the USA, c1917–96",14
+History,Edexcel,2,"India, c1914–48: the road to independence",Route F: Searching for rights and freedoms in the twentieth century,2
+History,Edexcel,3,India and the First World War,"India, c1914–48: the road to independence",1
+History,Edexcel,3,Post-War British Rule: Reform and Repression,"India, c1914–48: the road to independence",2
+History,Edexcel,3,The Growth of Indian Nationalism,"India, c1914–48: the road to independence",3
+History,Edexcel,3,"Gandhi and Non-Cooperation, 1920–22","India, c1914–48: the road to independence",4
+History,Edexcel,3,"Congress and Civil Disobedience, 1922–30","India, c1914–48: the road to independence",5
+History,Edexcel,3,The Muslim League and Jinnah,"India, c1914–48: the road to independence",6
+History,Edexcel,3,British Response to Nationalism in the 1920s,"India, c1914–48: the road to independence",7
+History,Edexcel,3,The Round Table Conferences and their Failure,"India, c1914–48: the road to independence",8
+History,Edexcel,3,The Government of India Act (1935) and its Impact,"India, c1914–48: the road to independence",9
+History,Edexcel,3,Indian Reaction to the Second World War,"India, c1914–48: the road to independence",10
+History,Edexcel,3,The Impact of WWII on Indian Politics,"India, c1914–48: the road to independence",11
+History,Edexcel,3,"The Changing Britain–India Relationship, 1942–45","India, c1914–48: the road to independence",12
+History,Edexcel,3,"Post-War Attempts at Settlement, 1945–46","India, c1914–48: the road to independence",13
+History,Edexcel,3,"Withdrawal, Partition and Independence, 1947–48","India, c1914–48: the road to independence",14
+History,Edexcel,2,"South Africa, 1948–94: from apartheid state to ‘rainbow nation’",Route F: Searching for rights and freedoms in the twentieth century,3
+History,Edexcel,3,South Africa in 1948 and the Rise of Apartheid,"South Africa, 1948–94: from apartheid state to ‘rainbow nation’",1
+History,Edexcel,3,"Implementing Apartheid, 1948–59","South Africa, 1948–94: from apartheid state to ‘rainbow nation’",2
+History,Edexcel,3,"Early African Nationalism and Resistance, 1948–59","South Africa, 1948–94: from apartheid state to ‘rainbow nation’",3
+History,Edexcel,3,"The Sharpeville Massacre and its Aftermath, 1960–61","South Africa, 1948–94: from apartheid state to ‘rainbow nation’",4
+History,Edexcel,3,"Creating a Republic, 1960–61","South Africa, 1948–94: from apartheid state to ‘rainbow nation’",5
+History,Edexcel,3,"The Move to Armed Struggle, 1961–68","South Africa, 1948–94: from apartheid state to ‘rainbow nation’",6
+History,Edexcel,3,"Apartheid at its Height, 1961–68","South Africa, 1948–94: from apartheid state to ‘rainbow nation’",7
+History,Edexcel,3,Black Consciousness and the Soweto Uprising,"South Africa, 1948–94: from apartheid state to ‘rainbow nation’",8
+History,Edexcel,3,The ANC in Exile and the Anti-Apartheid Movement,"South Africa, 1948–94: from apartheid state to ‘rainbow nation’",9
+History,Edexcel,3,"Challenges to National Party Power, 1974–83","South Africa, 1948–94: from apartheid state to ‘rainbow nation’",10
+History,Edexcel,3,"Township Revolts, 1984–87","South Africa, 1948–94: from apartheid state to ‘rainbow nation’",11
+History,Edexcel,3,Botha’s ‘Total Strategy’ and the Road to Negotiations,"South Africa, 1948–94: from apartheid state to ‘rainbow nation’",12
+History,Edexcel,3,"The End of Apartheid, 1989–91","South Africa, 1948–94: from apartheid state to ‘rainbow nation’",13
+History,Edexcel,3,"Creating the ‘Rainbow Nation’, 1992–94","South Africa, 1948–94: from apartheid state to ‘rainbow nation’",14
+History,Edexcel,1,"Route G: Nationalism, dictatorship and democracy in twentieth-century Europe",,7
+History,Edexcel,2,"Germany and West Germany, 1918–89","Route G: Nationalism, dictatorship and democracy in twentieth-century Europe",1
+History,Edexcel,3,"The Weimar Republic, 1918–33","Germany and West Germany, 1918–89",1
+History,Edexcel,3,"The Nazi Dictatorship, 1933–45","Germany and West Germany, 1918–89",2
+History,Edexcel,3,"The Federal Republic of Germany (FRG), 1945–89","Germany and West Germany, 1918–89",3
+History,Edexcel,3,"Opposition to Government, 1918–89","Germany and West Germany, 1918–89",4
+History,Edexcel,3,"Methods of Control, 1918–89","Germany and West Germany, 1918–89",5
+History,Edexcel,3,"Popular Support for Government, 1919–89","Germany and West Germany, 1918–89",6
+History,Edexcel,3,"The Weimar Economy, 1918–32","Germany and West Germany, 1918–89",7
+History,Edexcel,3,"The Nazi Economy, 1933–45","Germany and West Germany, 1918–89",8
+History,Edexcel,3,"The West German Economy, 1945–89","Germany and West Germany, 1918–89",9
+History,Edexcel,3,"The Role and Status of Women, 1918–89","Germany and West Germany, 1918–89",10
+History,Edexcel,3,"Education and Culture, 1918–89","Germany and West Germany, 1918–89",11
+History,Edexcel,3,"The Position of Ethnic Minorities, 1918–89","Germany and West Germany, 1918–89",12
+History,Edexcel,3,Interpretations: Nazi Foreign Policy,"Germany and West Germany, 1918–89",13
+History,Edexcel,3,Interpretations: The Outbreak of War in 1939,"Germany and West Germany, 1918–89",14
+History,Edexcel,2,"The rise and fall of fascism in Italy, c1911–46","Route G: Nationalism, dictatorship and democracy in twentieth-century Europe",2
+History,Edexcel,3,"Liberal Italy and Giolitti, c.1911","The rise and fall of fascism in Italy, c1911–46",1
+History,Edexcel,3,The Impact of War and 'Mutilated Victory',"The rise and fall of fascism in Italy, c1911–46",2
+History,Edexcel,3,Post-War Crisis and the Rise of Socialism,"The rise and fall of fascism in Italy, c1911–46",3
+History,Edexcel,3,"The Rise of Fascism and the PNF, 1919–22","The rise and fall of fascism in Italy, c1911–46",4
+History,Edexcel,3,The March on Rome and Mussolini’s Appointment,"The rise and fall of fascism in Italy, c1911–46",5
+History,Edexcel,3,"Creating the Fascist Dictatorship, 1922–26","The rise and fall of fascism in Italy, c1911–46",6
+History,Edexcel,3,Fascist Control: Indoctrination and Propaganda,"The rise and fall of fascism in Italy, c1911–46",7
+History,Edexcel,3,Fascism and the Elites,"The rise and fall of fascism in Italy, c1911–46",8
+History,Edexcel,3,Fascist Economic Policies,"The rise and fall of fascism in Italy, c1911–46",9
+History,Edexcel,3,Fascism and the Catholic Church,"The rise and fall of fascism in Italy, c1911–46",10
+History,Edexcel,3,Fascist Foreign Policy to 1935,"The rise and fall of fascism in Italy, c1911–46",11
+History,Edexcel,3,"The Road to War, 1935–40","The rise and fall of fascism in Italy, c1911–46",12
+History,Edexcel,3,The Second World War and Mussolini’s Fall,"The rise and fall of fascism in Italy, c1911–46",13
+History,Edexcel,3,"The Restoration of Democracy, 1943–46","The rise and fall of fascism in Italy, c1911–46",14
+History,Edexcel,2,"Spain, 1930–78: republicanism, Francoism and the transition to democracy","Route G: Nationalism, dictatorship and democracy in twentieth-century Europe",3
+History,Edexcel,3,"The Second Republic and its Challenges, 1930–31","Spain, 1930–78: republicanism, Francoism and the transition to democracy",1
+History,Edexcel,3,"The Years of Reform, 1931–33","Spain, 1930–78: republicanism, Francoism and the transition to democracy",2
+History,Edexcel,3,"The Years of Reaction, 1933–36","Spain, 1930–78: republicanism, Francoism and the transition to democracy",3
+History,Edexcel,3,"The Failure of the Popular Front, 1936","Spain, 1930–78: republicanism, Francoism and the transition to democracy",4
+History,Edexcel,3,The Outbreak of the Spanish Civil War,"Spain, 1930–78: republicanism, Francoism and the transition to democracy",5
+History,Edexcel,3,The Course of the Civil War,"Spain, 1930–78: republicanism, Francoism and the transition to democracy",6
+History,Edexcel,3,Life During the War and Reasons for Nationalist Victory,"Spain, 1930–78: republicanism, Francoism and the transition to democracy",7
+History,Edexcel,3,Establishing the Francoist State,"Spain, 1930–78: republicanism, Francoism and the transition to democracy",8
+History,Edexcel,3,Control and Repression in Franco’s Spain,"Spain, 1930–78: republicanism, Francoism and the transition to democracy",9
+History,Edexcel,3,"The Spanish Economy and Foreign Relations, 1939–56","Spain, 1930–78: republicanism, Francoism and the transition to democracy",10
+History,Edexcel,3,"The 'Economic Miracle' and Social Change, 1956–75","Spain, 1930–78: republicanism, Francoism and the transition to democracy",11
+History,Edexcel,3,"Political Change and Opposition, 1956–75","Spain, 1930–78: republicanism, Francoism and the transition to democracy",12
+History,Edexcel,3,The Franco Succession,"Spain, 1930–78: republicanism, Francoism and the transition to democracy",13
+History,Edexcel,3,"The Transition to Democracy, 1975–78","Spain, 1930–78: republicanism, Francoism and the transition to democracy",14
+History,Edexcel,1,Route H: Democracies in change: Britain and the USA in the twentieth century,,8
+History,Edexcel,2,"Britain transformed, 1918–97",Route H: Democracies in change: Britain and the USA in the twentieth century,1
+History,Edexcel,3,"The Political Landscape, 1918–79","Britain transformed, 1918–97",1
+History,Edexcel,3,"Economic Challenges, 1918–79","Britain transformed, 1918–97",2
+History,Edexcel,3,"The Workplace and Industrial Relations, 1918–79","Britain transformed, 1918–97",3
+History,Edexcel,3,"The Welfare State, 1918–79","Britain transformed, 1918–97",4
+History,Edexcel,3,Public Health and the NHS,"Britain transformed, 1918–97",5
+History,Edexcel,3,"Education and Opportunity, 1918–79","Britain transformed, 1918–97",6
+History,Edexcel,3,"Class, Social Values and the 'Liberal Society'","Britain transformed, 1918–97",7
+History,Edexcel,3,"The Changing Role and Status of Women, 1918–79","Britain transformed, 1918–97",8
+History,Edexcel,3,"Race, Immigration and Multiculturalism, 1918–79","Britain transformed, 1918–97",9
+History,Edexcel,3,Living Standards and the Consumer Society,"Britain transformed, 1918–97",10
+History,Edexcel,3,"Popular Culture, Entertainment and Youth","Britain transformed, 1918–97",11
+History,Edexcel,3,Leisure and Travel,"Britain transformed, 1918–97",12
+History,Edexcel,3,Interpretations: Thatcher’s Economic and Social Impact,"Britain transformed, 1918–97",13
+History,Edexcel,3,Interpretations: Thatcher’s Political Legacy,"Britain transformed, 1918–97",14
+History,Edexcel,2,"The USA, c1920–55: boom, bust and recovery",Route H: Democracies in change: Britain and the USA in the twentieth century,2
+History,Edexcel,3,The Economic Boom and Crash,"The USA, c1920–55: boom, bust and recovery",1
+History,Edexcel,3,Society in the 'Roaring Twenties',"The USA, c1920–55: boom, bust and recovery",2
+History,Edexcel,3,The Great Depression and Hoover’s Response,"The USA, c1920–55: boom, bust and recovery",3
+History,Edexcel,3,"The First New Deal, 1933–35","The USA, c1920–55: boom, bust and recovery",4
+History,Edexcel,3,"The Second New Deal, 1935–38","The USA, c1920–55: boom, bust and recovery",5
+History,Edexcel,3,The Impact of the New Deal and WWII on Society,"The USA, c1920–55: boom, bust and recovery",6
+History,Edexcel,3,Culture in the Depression and War Years,"The USA, c1920–55: boom, bust and recovery",7
+History,Edexcel,3,"The War Economy, 1941–45","The USA, c1920–55: boom, bust and recovery",8
+History,Edexcel,3,Post-War Affluence and the Growth of Suburbia,"The USA, c1920–55: boom, bust and recovery",9
+History,Edexcel,3,The Cold War at Home: McCarthyism,"The USA, c1920–55: boom, bust and recovery",10
+History,Edexcel,3,Post-War Culture and the Rise of Television,"The USA, c1920–55: boom, bust and recovery",11
+History,Edexcel,3,The Status of Minorities by 1955,"The USA, c1920–55: boom, bust and recovery",12
+History,Edexcel,2,"The USA, 1955–92: conformity and challenge",Route H: Democracies in change: Britain and the USA in the twentieth century,3
+History,Edexcel,3,"Affluence and the Consumer Society, 1955–63","The USA, 1955–92: conformity and challenge",1
+History,Edexcel,3,"Cultural Conformity and Challenge, 1955–63","The USA, 1955–92: conformity and challenge",2
+History,Edexcel,3,"The Civil Rights Movement, 1955–63","The USA, 1955–92: conformity and challenge",3
+History,Edexcel,3,Kennedy’s New Frontier,"The USA, 1955–92: conformity and challenge",4
+History,Edexcel,3,The Rise of Black Power and Later Civil Rights,"The USA, 1955–92: conformity and challenge",5
+History,Edexcel,3,"Protest, Counter-Culture and Liberation Movements","The USA, 1955–92: conformity and challenge",6
+History,Edexcel,3,"Johnson’s Great Society, 1964–68","The USA, 1955–92: conformity and challenge",7
+History,Edexcel,3,"The 'Silent Majority' and Nixon’s Appeal, 1968–72","The USA, 1955–92: conformity and challenge",8
+History,Edexcel,3,"The Crisis of Political Leadership, 1973–80","The USA, 1955–92: conformity and challenge",9
+History,Edexcel,3,"Economic Crisis and its Social Impact, 1973–80","The USA, 1955–92: conformity and challenge",10
+History,Edexcel,3,Popular Culture in the 1970s,"The USA, 1955–92: conformity and challenge",11
+History,Edexcel,3,"Progress in Individual and Civil Rights, 1973–80","The USA, 1955–92: conformity and challenge",12
+History,Edexcel,3,"The Reagan–Bush Economic Policies, 1981–92","The USA, 1955–92: conformity and challenge",13
+History,Edexcel,3,The Rise of the Religious Right,"The USA, 1955–92: conformity and challenge",14
+History,Edexcel,3,Cultural Challenges of the 1980s,"The USA, 1955–92: conformity and challenge",15
+History,Edexcel,3,The Status of Minorities and Women by 1992,"The USA, 1955–92: conformity and challenge",16
+History,Edexcel,1,"Paper 3, Option 30: Lancastrians, Yorkists and Henry VII, 1399–1509",,9
+History,Edexcel,2,"Changes in Royal Authority, 1399–1509","Paper 3, Option 30: Lancastrians, Yorkists and Henry VII, 1399–1509",1
+History,Edexcel,3,The Power of the Nobility,"Changes in Royal Authority, 1399–1509",1
+History,Edexcel,3,Disorder and Local Rivalries,"Changes in Royal Authority, 1399–1509",2
+History,Edexcel,3,Royal Finances and Parliament,"Changes in Royal Authority, 1399–1509",3
+History,Edexcel,3,"War, Diplomacy and Royal Power","Changes in Royal Authority, 1399–1509",4
+History,Edexcel,2,Kings Challenged and Kings Triumphant,"Paper 3, Option 30: Lancastrians, Yorkists and Henry VII, 1399–1509",2
+History,Edexcel,3,The Usurpation of 1399,Kings Challenged and Kings Triumphant,1
+History,Edexcel,3,The Reign of Henry IV: Consolidating Power,Kings Challenged and Kings Triumphant,2
+History,Edexcel,3,"Henry IV and the Rebellions, 1403–05",Kings Challenged and Kings Triumphant,3
+History,Edexcel,3,The Reign of Henry V: France and Lollardy,Kings Challenged and Kings Triumphant,4
+History,Edexcel,3,Henry V and the Conquest of France,Kings Challenged and Kings Triumphant,5
+History,Edexcel,3,The Crisis of Henry VI’s Reign,Kings Challenged and Kings Triumphant,6
+History,Edexcel,3,The Rise of York and the Fall of Lancaster,Kings Challenged and Kings Triumphant,7
+History,Edexcel,3,The Divided Yorkists and the Rise of Richard III,Kings Challenged and Kings Triumphant,8
+History,Edexcel,3,Henry VII’s Seizure and Consolidation of Power,Kings Challenged and Kings Triumphant,9
+History,Edexcel,3,Henry VII: Challenges to the Throne,Kings Challenged and Kings Triumphant,10
+History,Edexcel,1,"Paper 3, Option 31: Rebellion and disorder under the Tudors, 1485–1603",,10
+History,Edexcel,2,Controlling a Fractious Nation: Changes in Tudor Government,"Paper 3, Option 31: Rebellion and disorder under the Tudors, 1485–1603",1
+History,Edexcel,3,Changes in Central Government,Controlling a Fractious Nation: Changes in Tudor Government,1
+History,Edexcel,3,"Changes in Crown, Church and Parliament Relations",Controlling a Fractious Nation: Changes in Tudor Government,2
+History,Edexcel,3,Governing the Localities,Controlling a Fractious Nation: Changes in Tudor Government,3
+History,Edexcel,3,Gaining Cooperation through Patronage and Progress,Controlling a Fractious Nation: Changes in Tudor Government,4
+History,Edexcel,2,Challenges to Authority,"Paper 3, Option 31: Rebellion and disorder under the Tudors, 1485–1603",2
+History,Edexcel,3,"Securing the Tudor Succession, 1485–87",Challenges to Authority,1
+History,Edexcel,3,The Pretenders: Simnel and Warbeck,Challenges to Authority,2
+History,Edexcel,3,Challenging Religious Change: The Henrician Rebellions,Challenges to Authority,3
+History,Edexcel,3,Leadership and Repression in the Henrician Rebellions,Challenges to Authority,4
+History,Edexcel,3,Kett’s Rebellion: Causes and Challenge,Challenges to Authority,5
+History,Edexcel,3,Kett’s Rebellion: Suppression and Repression,Challenges to Authority,6
+History,Edexcel,3,The Revolt of the Northern Earls: Causes,Challenges to Authority,7
+History,Edexcel,3,The Revolt of the Northern Earls: Events and Impact,Challenges to Authority,8
+History,Edexcel,3,Tyrone’s Rebellion: Causes and Events,Challenges to Authority,9
+History,Edexcel,3,Tyrone’s Rebellion: Duration and Outcome,Challenges to Authority,10
+History,Edexcel,1,"Paper 3, Option 32: The Golden Age of Spain, 1474–1598",,11
+History,Edexcel,2,"Changes in Spanish Influence and Power, 1474–1598","Paper 3, Option 32: The Golden Age of Spain, 1474–1598",1
+History,Edexcel,3,Expansion in Italy and the Mediterranean,"Changes in Spanish Influence and Power, 1474–1598",1
+History,Edexcel,3,Expansion in the New World and Europe,"Changes in Spanish Influence and Power, 1474–1598",2
+History,Edexcel,3,Spanish Military and Naval Power,"Changes in Spanish Influence and Power, 1474–1598",3
+History,Edexcel,3,Spanish Financial Resources,"Changes in Spanish Influence and Power, 1474–1598",4
+History,Edexcel,2,Ruling Spain – Newly United but Still Divided,"Paper 3, Option 32: The Golden Age of Spain, 1474–1598",2
+History,Edexcel,3,The Spanish Inquisition and the Expulsion of the Jews,Ruling Spain – Newly United but Still Divided,1
+History,Edexcel,3,The Accession of Charles V and the Comuneros Revolt,Ruling Spain – Newly United but Still Divided,2
+History,Edexcel,3,The Impact of the Comuneros Revolt,Ruling Spain – Newly United but Still Divided,3
+History,Edexcel,3,The Price Revolution: Causes and Debates,Ruling Spain – Newly United but Still Divided,4
+History,Edexcel,3,The Price Revolution: Social Impact,Ruling Spain – Newly United but Still Divided,5
+History,Edexcel,3,The Drive for Religious Orthodoxy,Ruling Spain – Newly United but Still Divided,6
+History,Edexcel,3,The Morisco Rebellion of 1568,Ruling Spain – Newly United but Still Divided,7
+History,Edexcel,3,The Crisis in Aragon: Revolt in Zaragoza,Ruling Spain – Newly United but Still Divided,8
+History,Edexcel,3,The Crisis in Aragon: Impact of the Revolt,Ruling Spain – Newly United but Still Divided,9
+History,Edexcel,1,"Paper 3, Option 33: The witch craze in Britain, Europe and North America, c1580–c1750",,12
+History,Edexcel,2,"Challenges to the Witch Craze, c1580–c1750","Paper 3, Option 33: The witch craze in Britain, Europe and North America, c1580–c1750",1
+History,Edexcel,3,The Growth of Scepticism in Britain,"Challenges to the Witch Craze, c1580–c1750",1
+History,Edexcel,3,Key Sceptical Publications,"Challenges to the Witch Craze, c1580–c1750",2
+History,Edexcel,3,The Scientific Revolution and its Impact,"Challenges to the Witch Craze, c1580–c1750",3
+History,Edexcel,3,Changing Approaches to Knowledge and Reason,"Challenges to the Witch Craze, c1580–c1750",4
+History,Edexcel,2,Persecuting Witches,"Paper 3, Option 33: The witch craze in Britain, Europe and North America, c1580–c1750",2
+History,Edexcel,3,The North Berwick Witches: Origins and Accusations,Persecuting Witches,1
+History,Edexcel,3,The North Berwick Witches: Aftermath,Persecuting Witches,2
+History,Edexcel,3,The Lancashire Witches: Context and Origins,Persecuting Witches,3
+History,Edexcel,3,The Lancashire Witches: The Trial,Persecuting Witches,4
+History,Edexcel,3,The Bamberg Witch Hunt: Context and Victims,Persecuting Witches,5
+History,Edexcel,3,The Bamberg Witch Hunt: Ending the Craze,Persecuting Witches,6
+History,Edexcel,3,The East Anglian Witch Craze: Context and Methods,Persecuting Witches,7
+History,Edexcel,3,The East Anglian Witch Craze: Ending the Hunt,Persecuting Witches,8
+History,Edexcel,3,The Salem Witch Hunt: Context and Instigators,Persecuting Witches,9
+History,Edexcel,3,The Salem Witch Hunt: Ending the Hunt,Persecuting Witches,10

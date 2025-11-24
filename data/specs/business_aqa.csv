@@ -1,0 +1,172 @@
+subject,exam_board,level,title,parent_title,order_index
+Business,AQA,1,What is business?,,1
+Business,AQA,2,Understanding the nature and purpose of business,What is business?,1
+Business,AQA,3,Purpose and Objectives of Business,Understanding the nature and purpose of business,1
+Business,AQA,3,Mission Statements and Setting Objectives,Understanding the nature and purpose of business,2
+Business,AQA,3,Measuring and Understanding Profit,Understanding the nature and purpose of business,3
+Business,AQA,2,Understanding different business forms,What is business?,2
+Business,AQA,3,Sole Traders and Limited Companies,Understanding different business forms,1
+Business,AQA,3,"Private, Public, and Non-Profit Organisations",Understanding different business forms,2
+Business,AQA,3,"Liability, Shares, and Dividends",Understanding different business forms,3
+Business,AQA,3,Shareholders and Share Price,Understanding different business forms,4
+Business,AQA,3,Effects of Ownership on Mission,Understanding different business forms,5
+Business,AQA,2,Understanding the external environment,What is business?,3
+Business,AQA,3,Impact of the External Environment on Costs and Demand,Understanding the external environment,1
+Business,AQA,1,"Managers, leadership and decision making",,2
+Business,AQA,2,"Understanding management, leadership and decision making","Managers, leadership and decision making",1
+Business,AQA,3,Management vs. Leadership,"Understanding management, leadership and decision making",1
+Business,AQA,3,Leadership Styles,"Understanding management, leadership and decision making",2
+Business,AQA,3,The Tannenbaum Schmidt Continuum and Leadership,"Understanding management, leadership and decision making",3
+Business,AQA,2,Understanding management decision making,"Managers, leadership and decision making",2
+Business,AQA,3,Scientific vs. Intuitive Decision Making,Understanding management decision making,1
+Business,AQA,3,Using Decision Trees,Understanding management decision making,2
+Business,AQA,3,Key Influences on Decision Making,Understanding management decision making,3
+Business,AQA,2,Understanding the role and importance of stakeholders,"Managers, leadership and decision making",3
+Business,AQA,3,Identifying Stakeholder Needs and Conflicts,Understanding the role and importance of stakeholders,1
+Business,AQA,3,Stakeholder Mapping and Management,Understanding the role and importance of stakeholders,2
+Business,AQA,1,Marketing management,,3
+Business,AQA,2,Setting marketing objectives,Marketing management,1
+Business,AQA,3,The Value and Types of Marketing Objectives,Setting marketing objectives,1
+Business,AQA,2,Understanding markets and customers,Marketing management,2
+Business,AQA,3,Primary and Secondary Market Research,Understanding markets and customers,1
+Business,AQA,3,Sampling Methods,Understanding markets and customers,2
+Business,AQA,3,Interpreting Marketing Data,Understanding markets and customers,3
+Business,AQA,3,Price and Income Elasticity of Demand,Understanding markets and customers,4
+Business,AQA,3,Using Data in Marketing Decisions,Understanding markets and customers,5
+Business,AQA,2,"Making marketing decisions: segmentation, targeting, positioning",Marketing management,3
+Business,AQA,3,"Segmentation, Targeting, and Positioning (STP)","Making marketing decisions: segmentation, targeting, positioning",1
+Business,AQA,3,Choosing a Target Market and Positioning,"Making marketing decisions: segmentation, targeting, positioning",2
+Business,AQA,2,Making marketing decisions: using the marketing mix,Marketing management,4
+Business,AQA,3,Introduction to the 7Ps Marketing Mix,Making marketing decisions: using the marketing mix,1
+Business,AQA,3,Product Decisions: Portfolio and Life Cycle,Making marketing decisions: using the marketing mix,2
+Business,AQA,3,Product Decisions: New Product Development,Making marketing decisions: using the marketing mix,3
+Business,AQA,3,Pricing Decisions and Strategies,Making marketing decisions: using the marketing mix,4
+Business,AQA,3,Promotional Decisions and Branding,Making marketing decisions: using the marketing mix,5
+Business,AQA,3,Distribution (Place) Decisions,Making marketing decisions: using the marketing mix,6
+Business,AQA,3,"The Extended Marketing Mix: People, Process, Physical Evidence",Making marketing decisions: using the marketing mix,7
+Business,AQA,3,Creating an Integrated Marketing Mix,Making marketing decisions: using the marketing mix,8
+Business,AQA,3,Digital Marketing and E-commerce,Making marketing decisions: using the marketing mix,9
+Business,AQA,1,Operational management,,4
+Business,AQA,2,Setting operational objectives,Operational management,1
+Business,AQA,3,The Value and Types of Operational Objectives,Setting operational objectives,1
+Business,AQA,2,Analysing operational performance,Operational management,2
+Business,AQA,3,Calculating and Using Operations Data,Analysing operational performance,1
+Business,AQA,2,Making operational decisions to improve performance,Operational management,3
+Business,AQA,3,The Importance and Utilisation of Capacity,Making operational decisions to improve performance,1
+Business,AQA,3,Improving Efficiency and Labour Productivity,Making operational decisions to improve performance,2
+Business,AQA,3,Lean Production and Just-in-Time,Making operational decisions to improve performance,3
+Business,AQA,3,Choosing the Optimal Resource Mix,Making operational decisions to improve performance,4
+Business,AQA,3,Using Technology to Improve Efficiency,Making operational decisions to improve performance,5
+Business,AQA,2,Making operational decisions to improve performance,Operational management,4
+Business,AQA,3,Methods of Improving Quality: QA vs QC,Making operational decisions to improve performance,1
+Business,AQA,3,Benefits and Consequences of Quality,Making operational decisions to improve performance,2
+Business,AQA,2,Making operational decisions to improve performance,Operational management,5
+Business,AQA,3,Matching Supply to Demand,Making operational decisions to improve performance,1
+Business,AQA,3,Inventory Control Management,Making operational decisions to improve performance,2
+Business,AQA,3,Supply Chain Management,Making operational decisions to improve performance,3
+Business,AQA,3,The Value of Outsourcing,Making operational decisions to improve performance,4
+Business,AQA,1,Financial management,,5
+Business,AQA,2,Setting financial objectives,Financial management,1
+Business,AQA,3,The Value of Financial Objectives,Setting financial objectives,1
+Business,AQA,3,Key Financial Distinctions: Profit vs. Cash Flow,Setting financial objectives,2
+Business,AQA,2,Analysing financial performance,Financial management,2
+Business,AQA,3,Budgets and Variance Analysis,Analysing financial performance,1
+Business,AQA,3,Constructing and Interpreting Break-Even Charts,Analysing financial performance,2
+Business,AQA,3,Using Break-Even Analysis,Analysing financial performance,3
+Business,AQA,3,Analysing Profitability using Ratios,Analysing financial performance,4
+Business,AQA,3,Analysing Cash Flow Timings,Analysing financial performance,5
+Business,AQA,2,Making financial decisions: sources of finance,Financial management,3
+Business,AQA,3,Internal and External Sources of Finance,Making financial decisions: sources of finance,1
+Business,AQA,3,Evaluating Sources of Finance,Making financial decisions: sources of finance,2
+Business,AQA,2,Making financial decisions: improving cash flow,Financial management,4
+Business,AQA,3,Methods of Improving Cash Flow,Making financial decisions: improving cash flow,1
+Business,AQA,3,Methods of Improving Profits and Profitability,Making financial decisions: improving cash flow,2
+Business,AQA,3,Difficulties in Improving Financial Performance,Making financial decisions: improving cash flow,3
+Business,AQA,1,Human resource management,,6
+Business,AQA,2,Setting human resource objectives,Human resource management,1
+Business,AQA,3,The Value and Types of HR Objectives,Setting human resource objectives,1
+Business,AQA,3,Hard vs. Soft HRM Approaches,Setting human resource objectives,2
+Business,AQA,2,Analysing human resource performance,Human resource management,2
+Business,AQA,3,Calculating and Interpreting HR Data,Analysing human resource performance,1
+Business,AQA,3,Using HR Data for Decision Making,Analysing human resource performance,2
+Business,AQA,2,Making human resource decisions: improving organisational design and structure,Human resource management,3
+Business,AQA,3,Models of Organisational Structure,Making human resource decisions: improving organisational design and structure,1
+Business,AQA,3,Principles of Organisational Design,Making human resource decisions: improving organisational design and structure,2
+Business,AQA,3,Managing Organisational Change and the HR Function,Making human resource decisions: improving organisational design and structure,3
+Business,AQA,2,Making human resource decisions: improving motivation and performance,Human resource management,4
+Business,AQA,3,"Motivation Theories: Taylor, Maslow, and Herzberg",Making human resource decisions: improving motivation and performance,1
+Business,AQA,3,Financial Methods of Motivation,Making human resource decisions: improving motivation and performance,2
+Business,AQA,3,Non-Financial Methods of Motivation,Making human resource decisions: improving motivation and performance,3
+Business,AQA,3,Choosing and Evaluating Motivational Methods,Making human resource decisions: improving motivation and performance,4
+Business,AQA,2,Making human resource decisions: improving employer-employee relations,Human resource management,5
+Business,AQA,3,Employee Representation: Unions and Works Councils,Making human resource decisions: improving employer-employee relations,1
+Business,AQA,3,Managing and Improving Employer-Employee Relations,Making human resource decisions: improving employer-employee relations,2
+Business,AQA,1,Analysing the strategic position of a business,,7
+Business,AQA,2,"Mission, corporate objectives, functional objectives and strategy",Analysing the strategic position of a business,1
+Business,AQA,3,Influences on Mission and Corporate Objectives,"Mission, corporate objectives, functional objectives and strategy",1
+Business,AQA,3,"Strategy, Tactics, and Corporate Objectives","Mission, corporate objectives, functional objectives and strategy",2
+Business,AQA,3,Linking Strategic and Functional Decision Making,"Mission, corporate objectives, functional objectives and strategy",3
+Business,AQA,3,Using SWOT Analysis,"Mission, corporate objectives, functional objectives and strategy",4
+Business,AQA,2,Analysing the internal position: financial ratio and performance analysis,Analysing the strategic position of a business,2
+Business,AQA,3,Calculating and Interpreting Key Financial Ratios,Analysing the internal position: financial ratio and performance analysis,1
+Business,AQA,3,Using Financial Ratios to Assess Performance,Analysing the internal position: financial ratio and performance analysis,2
+Business,AQA,2,Analysing the internal position: overall performance,Analysing the strategic position of a business,3
+Business,AQA,3,Analysing Non-Financial Performance Data,Analysing the internal position: overall performance,1
+Business,AQA,3,Core Competencies and Long-Term Performance,Analysing the internal position: overall performance,2
+Business,AQA,3,Assessing Overall Performance: The Triple Bottom Line,Analysing the internal position: overall performance,3
+Business,AQA,2,Analysing the external environment: political and legal factors,Analysing the strategic position of a business,4
+Business,AQA,3,Impact of Political and Legal Changes,Analysing the external environment: political and legal factors,1
+Business,AQA,2,Analysing the external environment: economic changes,Analysing the strategic position of a business,5
+Business,AQA,3,Impact of Economic Changes,Analysing the external environment: economic changes,1
+Business,AQA,2,Analysing the external environment: social and technological factors,Analysing the strategic position of a business,6
+Business,AQA,3,Impact of Social and Demographic Change,Analysing the external environment: social and technological factors,1
+Business,AQA,3,Corporate Social Responsibility (CSR),Analysing the external environment: social and technological factors,2
+Business,AQA,3,Impact of Technological Change,Analysing the external environment: social and technological factors,3
+Business,AQA,2,Analysing the external environment: the competitive environment,Analysing the strategic position of a business,7
+Business,AQA,3,Porter's Five Forces,Analysing the external environment: the competitive environment,1
+Business,AQA,2,Analysing strategic options: investment appraisal,Analysing the strategic position of a business,8
+Business,AQA,3,"Financial Investment Appraisal: Payback, ARR, NPV",Analysing strategic options: investment appraisal,1
+Business,AQA,3,Non-Financial Factors in Investment Decisions,Analysing strategic options: investment appraisal,2
+Business,AQA,1,Choosing strategic direction,,8
+Business,AQA,2,Choosing which markets to compete in and what products to offer,Choosing strategic direction,1
+Business,AQA,3,Strategic Direction: Ansoff's Matrix,Choosing which markets to compete in and what products to offer,1
+Business,AQA,3,Evaluating Strategic Options from Ansoff's Matrix,Choosing which markets to compete in and what products to offer,2
+Business,AQA,2,Strategic positioning: choosing how to compete,Choosing strategic direction,2
+Business,AQA,3,Strategic Positioning: Porter’s Generic Strategies,Strategic positioning: choosing how to compete,1
+Business,AQA,3,Choosing a Positioning Strategy,Strategic positioning: choosing how to compete,2
+Business,AQA,3,Building and Maintaining Competitive Advantage,Strategic positioning: choosing how to compete,3
+Business,AQA,1,Strategic methods: how to pursue strategies,,9
+Business,AQA,2,Assessing a change in scale,Strategic methods: how to pursue strategies,1
+Business,AQA,3,Reasons for Growth and Retrenchment,Assessing a change in scale,1
+Business,AQA,3,Methods and Impact of Growth,Assessing a change in scale,2
+Business,AQA,3,Managing the Challenges of Growth,Assessing a change in scale,3
+Business,AQA,2,Assessing innovation,Strategic methods: how to pursue strategies,2
+Business,AQA,3,The Value and Pressures for Innovation,Assessing innovation,1
+Business,AQA,3,Methods of Fostering Innovation,Assessing innovation,2
+Business,AQA,3,Protecting Innovation and its Impact,Assessing innovation,3
+Business,AQA,2,Assessing globalisation and internationalisation,Strategic methods: how to pursue strategies,3
+Business,AQA,3,Globalisation and Emerging Economies,Assessing globalisation and internationalisation,1
+Business,AQA,3,Methods of Entering International Markets,Assessing globalisation and internationalisation,2
+Business,AQA,3,Assessing the Attractiveness of International Markets,Assessing globalisation and internationalisation,3
+Business,AQA,3,International Production and Sourcing,Assessing globalisation and internationalisation,4
+Business,AQA,3,Managing International Operations,Assessing globalisation and internationalisation,5
+Business,AQA,2,Assessing greater use of digital technology,Strategic methods: how to pursue strategies,4
+Business,AQA,3,Pressures for Adopting Digital Technology,Assessing greater use of digital technology,1
+Business,AQA,3,The Value of Digital Technology in Business,Assessing greater use of digital technology,2
+Business,AQA,1,Managing strategic change,,10
+Business,AQA,2,Managing change,Managing strategic change,1
+Business,AQA,3,Causes and Types of Organisational Change,Managing change,1
+Business,AQA,3,Managing Change: Lewin's Force Field Analysis,Managing change,2
+Business,AQA,3,The Value of a Flexible Organisation,Managing change,3
+Business,AQA,3,Barriers to Change,Managing change,4
+Business,AQA,3,Overcoming Barriers to Change,Managing change,5
+Business,AQA,2,Managing organisational culture,Managing strategic change,2
+Business,AQA,3,Understanding Organisational Culture: Handy's Models,Managing organisational culture,1
+Business,AQA,3,Changing Organisational Culture,Managing organisational culture,2
+Business,AQA,2,Managing strategic implementation,Managing strategic change,3
+Business,AQA,3,Key Elements of Strategic Implementation,Managing strategic implementation,1
+Business,AQA,3,Using Network Analysis for Implementation,Managing strategic implementation,2
+Business,AQA,2,Problems with strategy and why strategies fail,Managing strategic change,4
+Business,AQA,3,Difficulties in Strategic Decision Making,Problems with strategy and why strategies fail,1
+Business,AQA,3,Planned vs. Emergent Strategy and Strategic Drift,Problems with strategy and why strategies fail,2
+Business,AQA,3,Evaluating Strategic Performance and Contingency Planning,Problems with strategy and why strategies fail,3

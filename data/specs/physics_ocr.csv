@@ -1,0 +1,181 @@
+subject,exam_board,level,title,parent_title,order_index
+Physics,OCR,1,Foundations of physics,,1
+Physics,OCR,2,Fundamentals of Physical Quantities,Foundations of physics,1
+Physics,OCR,3,Physical Quantities and Estimations,Fundamentals of Physical Quantities,1
+Physics,OCR,3,S.I. Units and Homogeneity,Fundamentals of Physical Quantities,2
+Physics,OCR,3,Prefixes and Data Presentation Conventions,Fundamentals of Physical Quantities,3
+Physics,OCR,2,Measurement and Uncertainty Analysis,Foundations of physics,2
+Physics,OCR,3,"Errors, Precision, and Accuracy",Measurement and Uncertainty Analysis,1
+Physics,OCR,3,Calculating with Uncertainties,Measurement and Uncertainty Analysis,2
+Physics,OCR,3,Graphical Treatment of Errors,Measurement and Uncertainty Analysis,3
+Physics,OCR,2,Scalars and Vectors,Foundations of physics,3
+Physics,OCR,3,Introduction to Scalars and Vectors,Scalars and Vectors,1
+Physics,OCR,3,Vector Addition and Subtraction,Scalars and Vectors,2
+Physics,OCR,3,Resolving Vectors,Scalars and Vectors,3
+Physics,OCR,1,Forces and Motion,,2
+Physics,OCR,2,Kinematics,Forces and Motion,1
+Physics,OCR,3,Kinematic Quantities,Kinematics,1
+Physics,OCR,3,Motion Graphs,Kinematics,2
+Physics,OCR,3,Equations of Motion (SUVAT),Kinematics,3
+Physics,OCR,3,Techniques for Investigating Motion,Kinematics,4
+Physics,OCR,3,Free Fall and Determining g,Kinematics,5
+Physics,OCR,3,Projectile Motion,Kinematics,6
+Physics,OCR,3,"Stopping, Thinking, and Braking Distances",Kinematics,7
+Physics,OCR,2,Dynamics,Forces and Motion,2
+Physics,OCR,3,Forces and Newton's Second Law,Dynamics,1
+Physics,OCR,3,Free-Body Diagrams and Resultant Force,Dynamics,2
+Physics,OCR,3,Drag and Terminal Velocity,Dynamics,3
+Physics,OCR,3,Investigating Terminal Velocity,Dynamics,4
+Physics,OCR,3,Moments and Couples,Dynamics,5
+Physics,OCR,3,Equilibrium and Centre of Mass,Dynamics,6
+Physics,OCR,3,Density and Pressure,Dynamics,7
+Physics,OCR,2,"Work, Energy, and Power",Forces and Motion,3
+Physics,OCR,3,Work and Conservation of Energy,"Work, Energy, and Power",1
+Physics,OCR,3,Kinetic and Gravitational Potential Energy,"Work, Energy, and Power",2
+Physics,OCR,3,Power and Efficiency,"Work, Energy, and Power",3
+Physics,OCR,2,Properties of Materials,Forces and Motion,4
+Physics,OCR,3,Deformation and Hooke's Law,Properties of Materials,1
+Physics,OCR,3,"Stress, Strain, and the Young Modulus",Properties of Materials,2
+Physics,OCR,3,Energy in Deformed Materials,Properties of Materials,3
+Physics,OCR,3,Graphical Analysis of Materials,Properties of Materials,4
+Physics,OCR,3,Investigating Force-Extension (PAG),Properties of Materials,5
+Physics,OCR,3,Investigating the Young Modulus (PAG),Properties of Materials,6
+Physics,OCR,2,Momentum,Forces and Motion,5
+Physics,OCR,3,Newton's Laws and Momentum,Momentum,1
+Physics,OCR,3,Impulse and Force-Time Graphs,Momentum,2
+Physics,OCR,3,Conservation of Momentum and Collisions,Momentum,3
+Physics,OCR,1,"Electrons, waves and photons",,3
+Physics,OCR,2,Electric Charge and Current,"Electrons, waves and photons",1
+Physics,OCR,3,Electric Charge and Current,Electric Charge and Current,1
+Physics,OCR,3,Charge Carriers and Kirchhoff's First Law,Electric Charge and Current,2
+Physics,OCR,3,Mean Drift Velocity,Electric Charge and Current,3
+Physics,OCR,2,Electrical Energy and Resistance,"Electrons, waves and photons",2
+Physics,OCR,3,"Circuit Symbols, EMF, and PD",Electrical Energy and Resistance,1
+Physics,OCR,3,Energy and Potential Difference,Electrical Energy and Resistance,2
+Physics,OCR,3,Resistance and Ohm's Law,Electrical Energy and Resistance,3
+Physics,OCR,3,I–V Characteristics of Components,Electrical Energy and Resistance,4
+Physics,OCR,3,Investigating I–V Characteristics (PAG),Electrical Energy and Resistance,5
+Physics,OCR,3,Resistivity,Electrical Energy and Resistance,6
+Physics,OCR,3,Investigating Resistivity (PAG),Electrical Energy and Resistance,7
+Physics,OCR,3,Electrical Power and Energy,Electrical Energy and Resistance,8
+Physics,OCR,2,Circuit Analysis,"Electrons, waves and photons",3
+Physics,OCR,3,Kirchhoff's Laws,Circuit Analysis,1
+Physics,OCR,3,Resistors in Series and Parallel,Circuit Analysis,2
+Physics,OCR,3,Analysing Complex Circuits,Circuit Analysis,3
+Physics,OCR,3,Internal Resistance,Circuit Analysis,4
+Physics,OCR,3,Investigating Internal Resistance (PAG),Circuit Analysis,5
+Physics,OCR,3,The Potential Divider,Circuit Analysis,6
+Physics,OCR,3,Investigating Potential Dividers (PAG),Circuit Analysis,7
+Physics,OCR,2,Wave Properties,"Electrons, waves and photons",4
+Physics,OCR,3,Progressive Wave Fundamentals,Wave Properties,1
+Physics,OCR,3,The Wave Equation and Oscilloscope Use,Wave Properties,2
+Physics,OCR,3,Graphical Representation and Wave Phenomena,Wave Properties,3
+Physics,OCR,3,Wave Intensity and Practical Investigations,Wave Properties,4
+Physics,OCR,3,The EM Spectrum and Polarisation,Wave Properties,5
+Physics,OCR,3,Refraction and Snell's Law,Wave Properties,6
+Physics,OCR,3,Total Internal Reflection and Critical Angle,Wave Properties,7
+Physics,OCR,3,Investigating Refraction and TIR (PAG),Wave Properties,8
+Physics,OCR,3,Principles of Superposition and Interference,Wave Properties,9
+Physics,OCR,3,Two-Source Interference,Wave Properties,10
+Physics,OCR,3,The Double-Slit and Grating Equation,Wave Properties,11
+Physics,OCR,3,Investigating Superposition (PAG),Wave Properties,12
+Physics,OCR,3,Formation of Stationary Waves,Wave Properties,13
+Physics,OCR,3,Harmonics and Wave Patterns,Wave Properties,14
+Physics,OCR,3,Investigating Stationary Waves (PAG),Wave Properties,15
+Physics,OCR,2,Introduction to Quantum Physics,"Electrons, waves and photons",5
+Physics,OCR,3,The Photon Model,Introduction to Quantum Physics,1
+Physics,OCR,3,Determining the Planck Constant,Introduction to Quantum Physics,2
+Physics,OCR,3,The Photoelectric Effect and Einstein's Equation,Introduction to Quantum Physics,3
+Physics,OCR,3,Photoelectric Effect Rules,Introduction to Quantum Physics,4
+Physics,OCR,3,Wave-Particle Duality and de Broglie,Introduction to Quantum Physics,5
+Physics,OCR,1,Newtonian world and astrophysics,,4
+Physics,OCR,2,Thermal Properties of Matter,Newtonian world and astrophysics,1
+Physics,OCR,3,Temperature and Thermal Equilibrium,Thermal Properties of Matter,1
+Physics,OCR,3,Kinetic Model and Brownian Motion,Thermal Properties of Matter,2
+Physics,OCR,3,Internal Energy and Phase Change,Thermal Properties of Matter,3
+Physics,OCR,3,Specific Heat Capacity,Thermal Properties of Matter,4
+Physics,OCR,3,Specific Latent Heat,Thermal Properties of Matter,5
+Physics,OCR,3,Assumptions of the Kinetic Theory,Thermal Properties of Matter,6
+Physics,OCR,3,The Ideal Gas Law,Thermal Properties of Matter,7
+Physics,OCR,3,Molecular Speed and Internal Energy,Thermal Properties of Matter,8
+Physics,OCR,2,Circular Motion Dynamics,Newtonian world and astrophysics,2
+Physics,OCR,3,Angular Motion,Circular Motion Dynamics,1
+Physics,OCR,3,Centripetal Force and Acceleration,Circular Motion Dynamics,2
+Physics,OCR,3,Investigating Circular Motion (PAG),Circular Motion Dynamics,3
+Physics,OCR,2,Oscillatory Motion,Newtonian world and astrophysics,3
+Physics,OCR,3,Fundamentals of Oscillations,Oscillatory Motion,1
+Physics,OCR,3,Defining and Investigating SHM,Oscillatory Motion,2
+Physics,OCR,3,Equations of SHM,Oscillatory Motion,3
+Physics,OCR,3,Graphical Representation of SHM,Oscillatory Motion,4
+Physics,OCR,3,Energy in SHM,Oscillatory Motion,5
+Physics,OCR,3,Damping and Forced Oscillations,Oscillatory Motion,6
+Physics,OCR,3,Resonance,Oscillatory Motion,7
+Physics,OCR,2,Gravitation,Newtonian world and astrophysics,4
+Physics,OCR,3,Gravitational Fields,Gravitation,1
+Physics,OCR,3,Newton's Law of Gravitation,Gravitation,2
+Physics,OCR,3,Planetary Motion and Kepler's Laws,Gravitation,3
+Physics,OCR,3,Satellites and Geostationary Orbits,Gravitation,4
+Physics,OCR,3,Gravitational Potential,Gravitation,5
+Physics,OCR,3,Gravitational Potential Energy,Gravitation,6
+Physics,OCR,3,Escape Velocity,Gravitation,7
+Physics,OCR,2,Stars and the Universe,Newtonian world and astrophysics,5
+Physics,OCR,3,Celestial Objects and Star Formation,Stars and the Universe,1
+Physics,OCR,3,Evolution of Low-Mass Stars,Stars and the Universe,2
+Physics,OCR,3,Evolution of High-Mass Stars,Stars and the Universe,3
+Physics,OCR,3,The Hertzsprung–Russell (HR) Diagram,Stars and the Universe,4
+Physics,OCR,3,Energy Levels and Emission Spectra,Stars and the Universe,5
+Physics,OCR,3,Stellar Spectra and Diffraction Gratings,Stars and the Universe,6
+Physics,OCR,3,Stellar Properties: Wien's and Stefan's Law,Stars and the Universe,7
+Physics,OCR,3,Cosmological Distance Ladder: Parallax,Stars and the Universe,8
+Physics,OCR,3,The Expanding Universe and Hubble's Law,Stars and the Universe,9
+Physics,OCR,3,The Big Bang Theory,Stars and the Universe,10
+Physics,OCR,3,Evolution of the Universe and Dark Matter,Stars and the Universe,11
+Physics,OCR,1,Particles and medical physics,,5
+Physics,OCR,2,Capacitance,Particles and medical physics,1
+Physics,OCR,3,Capacitors and Capacitance,Capacitance,1
+Physics,OCR,3,Capacitors in Series and Parallel,Capacitance,2
+Physics,OCR,3,Investigating Capacitor Combinations (PAG),Capacitance,3
+Physics,OCR,3,Energy Stored in a Capacitor,Capacitance,4
+Physics,OCR,3,Capacitor Discharge and Time Constant,Capacitance,5
+Physics,OCR,3,Modelling Capacitor Discharge,Capacitance,6
+Physics,OCR,3,Investigating Capacitor Discharge (PAG),Capacitance,7
+Physics,OCR,2,Electric Fields,Particles and medical physics,2
+Physics,OCR,3,Introduction to Electric Fields,Electric Fields,1
+Physics,OCR,3,Coulomb's Law,Electric Fields,2
+Physics,OCR,3,Comparing Electric and Gravitational Fields,Electric Fields,3
+Physics,OCR,3,Uniform Electric Fields,Electric Fields,4
+Physics,OCR,3,Electric Potential for a Point Charge,Electric Fields,5
+Physics,OCR,3,Electric Potential Energy,Electric Fields,6
+Physics,OCR,2,Electromagnetism,Particles and medical physics,3
+Physics,OCR,3,Magnetic Fields and Forces on Conductors,Electromagnetism,1
+Physics,OCR,3,Magnetic Flux Density and Measurement,Electromagnetism,2
+Physics,OCR,3,Motion of Charged Particles in Fields,Electromagnetism,3
+Physics,OCR,3,Principles of Electromagnetic Induction,Electromagnetism,4
+Physics,OCR,3,EMF Equation and Applications,Electromagnetism,5
+Physics,OCR,3,Investigating Electromagnetic Induction (PAG),Electromagnetism,6
+Physics,OCR,2,Nuclear and Particle Physics,Particles and medical physics,4
+Physics,OCR,3,The Nuclear Atom,Nuclear and Particle Physics,1
+Physics,OCR,3,Isotopes and the Strong Nuclear Force,Nuclear and Particle Physics,2
+Physics,OCR,3,Nuclear Radius and Density,Nuclear and Particle Physics,3
+Physics,OCR,3,Particles and Antiparticles,Nuclear and Particle Physics,4
+Physics,OCR,3,Hadrons and Leptons,Nuclear and Particle Physics,5
+Physics,OCR,3,The Quark Model,Nuclear and Particle Physics,6
+Physics,OCR,3,Beta Decay and Quark Transformations,Nuclear and Particle Physics,7
+Physics,OCR,3,Radioactivity and Radiations,Nuclear and Particle Physics,8
+Physics,OCR,3,Investigating Radiation Absorption (PAG),Nuclear and Particle Physics,9
+Physics,OCR,3,Activity and Decay Equations,Nuclear and Particle Physics,10
+Physics,OCR,3,Half-Life and its Determination,Nuclear and Particle Physics,11
+Physics,OCR,3,Modelling Radioactive Decay,Nuclear and Particle Physics,12
+Physics,OCR,3,Mass–Energy Equivalence,Nuclear and Particle Physics,13
+Physics,OCR,3,Binding Energy,Nuclear and Particle Physics,14
+Physics,OCR,3,Nuclear Fission and Reactors,Nuclear and Particle Physics,15
+Physics,OCR,3,Nuclear Fusion,Nuclear and Particle Physics,16
+Physics,OCR,2,Medical Imaging Physics,Particles and medical physics,5
+Physics,OCR,3,X-ray Production and Attenuation,Medical Imaging Physics,1
+Physics,OCR,3,X-ray Attenuation and Imaging,Medical Imaging Physics,2
+Physics,OCR,3,Computerised Axial Tomography (CAT),Medical Imaging Physics,3
+Physics,OCR,3,Medical Tracers and Gamma Cameras,Medical Imaging Physics,4
+Physics,OCR,3,Positron Emission Tomography (PET),Medical Imaging Physics,5
+Physics,OCR,3,Ultrasound Principles and Scans,Medical Imaging Physics,6
+Physics,OCR,3,Acoustic Impedance and Reflection,Medical Imaging Physics,7
+Physics,OCR,3,Doppler Ultrasound,Medical Imaging Physics,8

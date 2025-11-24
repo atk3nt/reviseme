@@ -1,0 +1,132 @@
+subject,exam_board,level,title,parent_title,order_index
+Mathematics,OCR,1,Pure Mathematics,,1
+Mathematics,OCR,2,Mathematical Proof,Pure Mathematics,1
+Mathematics,OCR,3,Structure and Methods of Proof,Mathematical Proof,1
+Mathematics,OCR,3,Logical Connectives and Disproof by Counter-Example,Mathematical Proof,2
+Mathematics,OCR,3,Proof by Contradiction,Mathematical Proof,3
+Mathematics,OCR,2,Algebra and Functions,Pure Mathematics,2
+Mathematics,OCR,3,Laws of Indices,Algebra and Functions,1
+Mathematics,OCR,3,Manipulating Surds,Algebra and Functions,2
+Mathematics,OCR,3,Solving Simultaneous Equations,Algebra and Functions,3
+Mathematics,OCR,3,Quadratic Functions and the Discriminant,Algebra and Functions,4
+Mathematics,OCR,3,Completing the Square,Algebra and Functions,5
+Mathematics,OCR,3,Solving Advanced Quadratic Equations and Inequalities,Algebra and Functions,6
+Mathematics,OCR,3,Representing Inequality Solutions,Algebra and Functions,7
+Mathematics,OCR,3,Manipulating Polynomials and The Factor Theorem,Algebra and Functions,8
+Mathematics,OCR,3,Simplifying Rational Expressions and Algebraic Fractions,Algebra and Functions,9
+Mathematics,OCR,3,The Modulus Function,Algebra and Functions,10
+Mathematics,OCR,3,Sketching and Solving with Modulus Graphs,Algebra and Functions,11
+Mathematics,OCR,3,Sketching Curves,Algebra and Functions,12
+Mathematics,OCR,3,Graphical Solutions and Proportionality,Algebra and Functions,13
+Mathematics,OCR,3,Definition of a Function,Algebra and Functions,14
+Mathematics,OCR,3,Composite and Inverse Functions,Algebra and Functions,15
+Mathematics,OCR,3,Graph Transformations,Algebra and Functions,16
+Mathematics,OCR,3,Partial Fractions,Algebra and Functions,17
+Mathematics,OCR,3,Using Functions in Modelling,Algebra and Functions,18
+Mathematics,OCR,2,Coordinate Geometry,Pure Mathematics,3
+Mathematics,OCR,3,Equations and Properties of Straight Lines,Coordinate Geometry,1
+Mathematics,OCR,3,Parallel/Perpendicular Lines and Modelling,Coordinate Geometry,2
+Mathematics,OCR,3,The Equation of a Circle,Coordinate Geometry,3
+Mathematics,OCR,3,Circle Properties and Intersections,Coordinate Geometry,4
+Mathematics,OCR,3,Parametric Equations and Modelling,Coordinate Geometry,5
+Mathematics,OCR,2,Sequences and Series,Pure Mathematics,4
+Mathematics,OCR,3,Binomial Expansion (Positive Integer Powers),Sequences and Series,1
+Mathematics,OCR,3,Binomial Expansion (Rational Powers),Sequences and Series,2
+Mathematics,OCR,3,Introduction to Sequences,Sequences and Series,3
+Mathematics,OCR,3,Sigma Notation,Sequences and Series,4
+Mathematics,OCR,3,Arithmetic Progressions,Sequences and Series,5
+Mathematics,OCR,3,Geometric Progressions,Sequences and Series,6
+Mathematics,OCR,3,Modelling with Sequences and Series,Sequences and Series,7
+Mathematics,OCR,2,Trigonometry,Pure Mathematics,5
+Mathematics,OCR,3,Triangle Trigonometry: Rules and Area,Trigonometry,1
+Mathematics,OCR,3,Radian Measure and Small Angle Approximation,Trigonometry,2
+Mathematics,OCR,3,Graphs of Trigonometric Functions and Exact Values,Trigonometry,3
+Mathematics,OCR,3,Reciprocal and Inverse Trigonometric Functions,Trigonometry,4
+Mathematics,OCR,3,Fundamental Trigonometric Identities,Trigonometry,5
+Mathematics,OCR,3,Addition and Double Angle Formulae,Trigonometry,6
+Mathematics,OCR,3,Harmonic Form (R-formulae),Trigonometry,7
+Mathematics,OCR,3,Solving Trigonometric Equations,Trigonometry,8
+Mathematics,OCR,3,Trigonometric Proofs and Modelling,Trigonometry,9
+Mathematics,OCR,2,Exponentials and Logarithms,Pure Mathematics,6
+Mathematics,OCR,3,The Exponential Function and its Gradient,Exponentials and Logarithms,1
+Mathematics,OCR,3,Introduction to Logarithms as Inverses,Exponentials and Logarithms,2
+Mathematics,OCR,3,Laws of Logarithms,Exponentials and Logarithms,3
+Mathematics,OCR,3,Solving Exponential Equations,Exponentials and Logarithms,4
+Mathematics,OCR,3,Reduction to Linear Form,Exponentials and Logarithms,5
+Mathematics,OCR,3,Modelling with Exponential Functions,Exponentials and Logarithms,6
+Mathematics,OCR,2,Differentiation,Pure Mathematics,7
+Mathematics,OCR,3,The Derivative as a Gradient and Rate of Change,Differentiation,1
+Mathematics,OCR,3,Differentiation from First Principles,Differentiation,2
+Mathematics,OCR,3,Differentiating Standard Functions,Differentiation,3
+Mathematics,OCR,3,The Product and Quotient Rules,Differentiation,4
+Mathematics,OCR,3,The Chain Rule and Connected Rates of Change,Differentiation,5
+Mathematics,OCR,3,"Tangents, Normals and Stationary Points",Differentiation,6
+Mathematics,OCR,3,Second Derivatives and Gradient Functions,Differentiation,7
+Mathematics,OCR,3,Concavity and Points of Inflection,Differentiation,8
+Mathematics,OCR,3,Implicit and Parametric Differentiation,Differentiation,9
+Mathematics,OCR,3,Constructing Differential Equations,Differentiation,10
+Mathematics,OCR,2,Integration,Pure Mathematics,8
+Mathematics,OCR,3,The Fundamental Theorem and Standard Integrals,Integration,1
+Mathematics,OCR,3,Finding Areas using Definite Integration,Integration,2
+Mathematics,OCR,3,Integration as the Limit of a Sum,Integration,3
+Mathematics,OCR,3,Integration by Substitution,Integration,4
+Mathematics,OCR,3,Integration by Parts,Integration,5
+Mathematics,OCR,3,Integration using Partial Fractions,Integration,6
+Mathematics,OCR,3,Solving First-Order Differential Equations,Integration,7
+Mathematics,OCR,2,Numerical Methods,Pure Mathematics,9
+Mathematics,OCR,3,Locating Roots by Change of Sign,Numerical Methods,1
+Mathematics,OCR,3,Iterative Methods for Solving Equations,Numerical Methods,2
+Mathematics,OCR,3,Convergence and Failure of Iterative Methods,Numerical Methods,3
+Mathematics,OCR,3,Numerical Integration,Numerical Methods,4
+Mathematics,OCR,3,Using Numerical Methods in Context,Numerical Methods,5
+Mathematics,OCR,2,Vectors,Pure Mathematics,10
+Mathematics,OCR,3,Vectors in 2D and 3D,Vectors,1
+Mathematics,OCR,3,"Magnitude, Direction and Vector Arithmetic",Vectors,2
+Mathematics,OCR,3,Position Vectors and Distance,Vectors,3
+Mathematics,OCR,3,Problem Solving with Vectors,Vectors,4
+Mathematics,OCR,1,Statistics,,2
+Mathematics,OCR,2,Statistical Sampling,Statistics,1
+Mathematics,OCR,3,"Populations, Samples, and Basic Sampling",Statistical Sampling,1
+Mathematics,OCR,3,Critiquing Sampling Techniques,Statistical Sampling,2
+Mathematics,OCR,2,Data Presentation and Interpretation,Statistics,2
+Mathematics,OCR,3,Interpreting Single-Variable Data Diagrams,Data Presentation and Interpretation,1
+Mathematics,OCR,3,Interpreting Bivariate Data and Correlation,Data Presentation and Interpretation,2
+Mathematics,OCR,3,Measures of Location and Spread,Data Presentation and Interpretation,3
+Mathematics,OCR,3,Outliers and Cleaning Data,Data Presentation and Interpretation,4
+Mathematics,OCR,2,Probability,Statistics,3
+Mathematics,OCR,3,Events and Probability Diagrams,Probability,1
+Mathematics,OCR,3,Conditional Probability,Probability,2
+Mathematics,OCR,3,Modelling with Probability,Probability,3
+Mathematics,OCR,2,Statistical Distributions,Statistics,4
+Mathematics,OCR,3,Discrete Probability Distributions,Statistical Distributions,1
+Mathematics,OCR,3,The Binomial Distribution,Statistical Distributions,2
+Mathematics,OCR,3,The Normal Distribution,Statistical Distributions,3
+Mathematics,OCR,3,Properties of the Normal Distribution,Statistical Distributions,4
+Mathematics,OCR,3,Approximating the Binomial and Selecting a Model,Statistical Distributions,5
+Mathematics,OCR,2,Statistical Hypothesis Testing,Statistics,5
+Mathematics,OCR,3,Language of Hypothesis Testing,Statistical Hypothesis Testing,1
+Mathematics,OCR,3,Hypothesis Testing a Binomial Proportion,Statistical Hypothesis Testing,2
+Mathematics,OCR,3,Hypothesis Testing a Normal Mean,Statistical Hypothesis Testing,3
+Mathematics,OCR,3,Hypothesis Testing for Correlation,Statistical Hypothesis Testing,4
+Mathematics,OCR,1,Mechanics,,3
+Mathematics,OCR,2,Quantities and Units in Mechanics,Mechanics,1
+Mathematics,OCR,3,Base and Derived SI Units,Quantities and Units in Mechanics,1
+Mathematics,OCR,2,Kinematics,Mechanics,2
+Mathematics,OCR,3,"Kinematics, Scalars, Vectors and Graphs",Kinematics,1
+Mathematics,OCR,3,Constant Acceleration in 1D (SUVAT),Kinematics,2
+Mathematics,OCR,3,Constant Acceleration in 2D (Vectors),Kinematics,3
+Mathematics,OCR,3,Variable Acceleration using Calculus,Kinematics,4
+Mathematics,OCR,3,Modelling Projectile Motion,Kinematics,5
+Mathematics,OCR,2,Forces and Newton's Laws,Mechanics,3
+Mathematics,OCR,3,Introduction to Forces and Newton's First Law,Forces and Newton's Laws,1
+Mathematics,OCR,3,Newton's Second Law,Forces and Newton's Laws,2
+Mathematics,OCR,3,Weight and Motion Under Gravity,Forces and Newton's Laws,3
+Mathematics,OCR,3,Newton's Third Law and Normal Reaction,Forces and Newton's Laws,4
+Mathematics,OCR,3,Connected Particles and Pulleys,Forces and Newton's Laws,5
+Mathematics,OCR,3,Equilibrium of a Particle,Forces and Newton's Laws,6
+Mathematics,OCR,3,Resultant Forces and Vector Dynamics,Forces and Newton's Laws,7
+Mathematics,OCR,3,Modelling with Friction,Forces and Newton's Laws,8
+Mathematics,OCR,3,Solving Problems with Friction,Forces and Newton's Laws,9
+Mathematics,OCR,2,Moments,Mechanics,4
+Mathematics,OCR,3,The Principle of Moments and Equilibrium,Moments,1
+Mathematics,OCR,3,Solving Problems with Moments,Moments,2

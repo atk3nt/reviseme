@@ -1,0 +1,132 @@
+subject,exam_board,level,title,parent_title,order_index
+Geography,AQA,1,Physical geography,,1
+Geography,AQA,2,Water and carbon cycles,Physical geography,1
+Geography,AQA,3,Systems Concepts in Cycles,Water and carbon cycles,1
+Geography,AQA,3,The Global Water Cycle and Stores,Water and carbon cycles,2
+Geography,AQA,3,Processes of the Water Cycle,Water and carbon cycles,3
+Geography,AQA,3,Drainage Basins as Open Systems,Water and carbon cycles,4
+Geography,AQA,3,"Runoff, Hydrographs and Water Cycle Change",Water and carbon cycles,5
+Geography,AQA,3,The Global Carbon Cycle and Stores,Water and carbon cycles,6
+Geography,AQA,3,Processes of the Carbon Cycle,Water and carbon cycles,7
+Geography,AQA,3,Changes to the Carbon Cycle Over Time,Water and carbon cycles,8
+Geography,AQA,3,The Carbon Budget and its Impacts,Water and carbon cycles,9
+Geography,AQA,3,"Cycle Interactions, Feedbacks and Management",Water and carbon cycles,10
+Geography,AQA,3,Quantitative and Qualitative Skills for Cycles,Water and carbon cycles,11
+Geography,AQA,3,Case Studies: Rainforest and River Catchment,Water and carbon cycles,12
+Geography,AQA,2,Hot desert systems and landscapes,Physical geography,2
+Geography,AQA,3,Deserts as Natural Systems,Hot desert systems and landscapes,1
+Geography,AQA,3,Characteristics and Causes of Aridity,Hot desert systems and landscapes,2
+Geography,AQA,3,Desert Energy and Sediment Budgets,Hot desert systems and landscapes,3
+Geography,AQA,3,Geomorphological Processes in Deserts,Hot desert systems and landscapes,4
+Geography,AQA,3,The Role of Wind and Water in Deserts,Hot desert systems and landscapes,5
+Geography,AQA,3,Desert Landforms and Landscapes,Hot desert systems and landscapes,6
+Geography,AQA,3,"Desertification: Causes, Impacts and Futures",Hot desert systems and landscapes,7
+Geography,AQA,3,Skills and Case Studies for Desert Landscapes,Hot desert systems and landscapes,8
+Geography,AQA,2,Coastal systems and landscapes,Physical geography,3
+Geography,AQA,3,Coasts as Natural Systems,Coastal systems and landscapes,1
+Geography,AQA,3,"Coastal Energy, Sediment and Processes",Coastal systems and landscapes,2
+Geography,AQA,3,Landforms of Coastal Erosion,Coastal systems and landscapes,3
+Geography,AQA,3,Landforms of Coastal Deposition,Coastal systems and landscapes,4
+Geography,AQA,3,Sea Level Change and Resultant Coastlines,Coastal systems and landscapes,5
+Geography,AQA,3,Coastal Futures and Management,Coastal systems and landscapes,6
+Geography,AQA,3,Skills and Case Studies for Coastal Systems,Coastal systems and landscapes,7
+Geography,AQA,2,Glacial systems and landscapes,Physical geography,4
+Geography,AQA,3,Glaciers as Natural Systems,Glacial systems and landscapes,1
+Geography,AQA,3,Distribution and Nature of Cold Environments,Glacial systems and landscapes,2
+Geography,AQA,3,Glacial Budgets and Glacier Types,Glacial systems and landscapes,3
+Geography,AQA,3,Glacial Geomorphological Processes,Glacial systems and landscapes,4
+Geography,AQA,3,Fluvio-glacial and Periglacial Processes,Glacial systems and landscapes,5
+Geography,AQA,3,Glacial Landforms of Erosion and Deposition,Glacial systems and landscapes,6
+Geography,AQA,3,Fluvio-glacial and Periglacial Landforms,Glacial systems and landscapes,7
+Geography,AQA,3,Human Impacts on Cold Environments,Glacial systems and landscapes,8
+Geography,AQA,3,Skills and Case Studies for Glacial Landscapes,Glacial systems and landscapes,9
+Geography,AQA,2,Hazards,Physical geography,5
+Geography,AQA,3,The Concept of Hazard and Human Response,Hazards,1
+Geography,AQA,3,"Plate Tectonics: Theory, Margins and Landforms",Hazards,2
+Geography,AQA,3,"Volcanic Hazards, Impacts and Responses",Hazards,3
+Geography,AQA,3,"Seismic Hazards, Impacts and Responses",Hazards,4
+Geography,AQA,3,"Storm Hazards, Impacts and Responses",Hazards,5
+Geography,AQA,3,"Wildfires: Nature, Impacts and Responses",Hazards,6
+Geography,AQA,3,Case Studies of Hazardous Environments,Hazards,7
+Geography,AQA,2,Ecosystems under stress,Physical geography,6
+Geography,AQA,3,"Ecosystems, Biodiversity and Sustainability",Ecosystems under stress,1
+Geography,AQA,3,"Ecosystem Processes: Energy, Succession and Nutrient Cycling",Ecosystems under stress,2
+Geography,AQA,3,Terrestrial Ecosystems and Global Change,Ecosystems under stress,3
+Geography,AQA,3,"Biomes: Concept, Characteristics and Human Impact",Ecosystems under stress,4
+Geography,AQA,3,Ecosystems in the British Isles,Ecosystems under stress,5
+Geography,AQA,3,Marine Ecosystems: Coral Reefs,Ecosystems under stress,6
+Geography,AQA,3,Local Ecosystems: Change and Management,Ecosystems under stress,7
+Geography,AQA,3,Case Studies in Ecological Change,Ecosystems under stress,8
+Geography,AQA,1,Human geography,,2
+Geography,AQA,2,Global systems and global governance,Human geography,1
+Geography,AQA,3,Globalisation: Dimensions and Factors,Global systems and global governance,1
+Geography,AQA,3,Global Interdependence and Associated Issues,Global systems and global governance,2
+Geography,AQA,3,"International Trade: Patterns, Relationships and Access",Global systems and global governance,3
+Geography,AQA,3,The Role and Impact of Transnational Corporations,Global systems and global governance,4
+Geography,AQA,3,World Trade Case Study and Consequences,Global systems and global governance,5
+Geography,AQA,3,Global Governance: Roles and Issues,Global systems and global governance,6
+Geography,AQA,3,The ‘Global Commons’ and Antarctica,Global systems and global governance,7
+Geography,AQA,3,Threats to Antarctica,Global systems and global governance,8
+Geography,AQA,3,Governance of Antarctica,Global systems and global governance,9
+Geography,AQA,3,Globalisation Critique and Skills,Global systems and global governance,10
+Geography,AQA,2,Changing places,Human geography,2
+Geography,AQA,3,The Concept and Importance of Place,Changing places,1
+Geography,AQA,3,Place Character and Framework for Study,Changing places,2
+Geography,AQA,3,Relationships and Connections: Demographic and Cultural,Changing places,3
+Geography,AQA,3,Shifting Flows and External Forces on Places,Changing places,4
+Geography,AQA,3,Past and Present Connections Shaping Places,Changing places,5
+Geography,AQA,3,"Place Meaning: Lived Experience, Perception and Representation",Changing places,6
+Geography,AQA,3,Influencing and Representing Place,Changing places,7
+Geography,AQA,3,Development Processes and Present Meanings,Changing places,8
+Geography,AQA,3,Skills for Place Studies,Changing places,9
+Geography,AQA,3,Conducting Place Studies,Changing places,10
+Geography,AQA,2,Contemporary urban environments,Human geography,3
+Geography,AQA,3,Urbanisation: Processes and Change,Contemporary urban environments,1
+Geography,AQA,3,Urban Forms and Landscapes,Contemporary urban environments,2
+Geography,AQA,3,Social and Economic Issues in Urban Areas,Contemporary urban environments,3
+Geography,AQA,3,Urban Climate and Air Quality Management,Contemporary urban environments,4
+Geography,AQA,3,Urban Hydrology and Catchment Management,Contemporary urban environments,5
+Geography,AQA,3,Urban Waste Management,Contemporary urban environments,6
+Geography,AQA,3,Urban Environmental Issues and Sustainability,Contemporary urban environments,7
+Geography,AQA,3,Urban Case Studies,Contemporary urban environments,8
+Geography,AQA,2,Population and the environment,Human geography,4
+Geography,AQA,3,Introduction to Population and Environment,Population and the environment,1
+Geography,AQA,3,"Population, Environment and Food Security",Population and the environment,2
+Geography,AQA,3,"Environment, Health and Disease",Population and the environment,3
+Geography,AQA,3,Dynamics of Population Change,Population and the environment,4
+Geography,AQA,3,Population Ecology and Theories,Population and the environment,5
+Geography,AQA,3,Global Population Futures,Population and the environment,6
+Geography,AQA,3,Population Case Studies,Population and the environment,7
+Geography,AQA,2,Resource security,Human geography,5
+Geography,AQA,3,Concepts of Resource Development and Sustainability,Resource security,1
+Geography,AQA,3,Global Resource Issues and Geopolitics,Resource security,2
+Geography,AQA,3,"Water Security: Supply, Management and Conflict",Resource security,3
+Geography,AQA,3,"Energy Security: Supply, Management and Sustainability",Resource security,4
+Geography,AQA,3,"Mineral Security: Extraction, Impacts and Sustainability",Resource security,5
+Geography,AQA,3,Resource Futures and Case Studies,Resource security,6
+Geography,AQA,1,Geography fieldwork investigation,,3
+Geography,AQA,2,Fieldwork and Investigation Requirements,Geography fieldwork investigation,1
+Geography,AQA,3,Core Fieldwork and Investigation Requirements,Fieldwork and Investigation Requirements,1
+Geography,AQA,3,Criteria for the Independent Investigation,Fieldwork and Investigation Requirements,2
+Geography,AQA,3,"Independence, Collaboration and Practicalities",Fieldwork and Investigation Requirements,3
+Geography,AQA,3,Guidance for Teachers and Students,Fieldwork and Investigation Requirements,4
+Geography,AQA,2,Non-exam assessment mark scheme guidance,Geography fieldwork investigation,2
+Geography,AQA,3,Mark Scheme Guidance: Level 4,Non-exam assessment mark scheme guidance,1
+Geography,AQA,3,Mark Scheme Guidance: Level 3,Non-exam assessment mark scheme guidance,2
+Geography,AQA,3,Mark Scheme Guidance: Level 2,Non-exam assessment mark scheme guidance,3
+Geography,AQA,3,Mark Scheme Guidance: Level 1,Non-exam assessment mark scheme guidance,4
+Geography,AQA,3,Mark Scheme Area 1: Introduction and Preliminary Research,Non-exam assessment mark scheme guidance,5
+Geography,AQA,3,Mark Scheme Area 2: Methods of Field Investigation and Data Collection,Non-exam assessment mark scheme guidance,6
+Geography,AQA,3,Mark Scheme Area 3: Methods of Critical Analysis,Non-exam assessment mark scheme guidance,7
+Geography,AQA,3,"Mark Scheme Area 4: Conclusions, Evaluation and Presentation",Non-exam assessment mark scheme guidance,8
+Geography,AQA,1,Geographical skills checklist,,4
+Geography,AQA,2,Geographical Skills and Data,Geographical skills checklist,1
+Geography,AQA,3,Introduction to Geographical Skills and Competence,Geographical Skills and Data,1
+Geography,AQA,3,Qualitative Skills and Approaches,Geographical Skills and Data,2
+Geography,AQA,3,Quantitative Skills and Approaches,Geographical Skills and Data,3
+Geography,AQA,2,Specific Skills,Geographical skills checklist,2
+Geography,AQA,3,Core Skills,Specific Skills,1
+Geography,AQA,3,Cartographic Skills,Specific Skills,2
+Geography,AQA,3,Graphical Skills,Specific Skills,3
+Geography,AQA,3,Statistical Skills,Specific Skills,4
+Geography,AQA,3,ICT Skills,Specific Skills,5

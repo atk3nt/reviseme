@@ -1,0 +1,114 @@
+subject,exam_board,level,title,parent_title,order_index
+Business,Edexcel,1,Marketing and people,,1
+Business,Edexcel,2,Understanding and Meeting Customer Needs,Marketing and people,1
+Business,Edexcel,3,Mass vs. Niche Markets,Understanding and Meeting Customer Needs,1
+Business,Edexcel,3,Dynamic Markets,Understanding and Meeting Customer Needs,2
+Business,Edexcel,3,"Competition, Risk and Uncertainty",Understanding and Meeting Customer Needs,3
+Business,Edexcel,3,Market Orientation and Research,Understanding and Meeting Customer Needs,4
+Business,Edexcel,3,Applying Market Research,Understanding and Meeting Customer Needs,5
+Business,Edexcel,3,Competitive Positioning and Advantage,Understanding and Meeting Customer Needs,6
+Business,Edexcel,2,Analysing the Market,Marketing and people,2
+Business,Edexcel,3,Factors Affecting Demand,Analysing the Market,1
+Business,Edexcel,3,Factors Affecting Supply,Analysing the Market,2
+Business,Edexcel,3,Supply and Demand Interaction,Analysing the Market,3
+Business,Edexcel,3,Price Elasticity of Demand (PED),Analysing the Market,4
+Business,Edexcel,3,Income Elasticity of Demand (YED),Analysing the Market,5
+Business,Edexcel,2,Developing the Marketing Mix and Strategy,Marketing and people,3
+Business,Edexcel,3,The Design Mix and Social Trends,Developing the Marketing Mix and Strategy,1
+Business,Edexcel,3,Branding and Promotion,Developing the Marketing Mix and Strategy,2
+Business,Edexcel,3,Building a Brand and Social Trends,Developing the Marketing Mix and Strategy,3
+Business,Edexcel,3,Pricing Strategies and Social Trends,Developing the Marketing Mix and Strategy,4
+Business,Edexcel,3,Distribution Channels and Trends,Developing the Marketing Mix and Strategy,5
+Business,Edexcel,3,Product Portfolio Management,Developing the Marketing Mix and Strategy,6
+Business,Edexcel,3,Marketing Strategies and Customer Loyalty,Developing the Marketing Mix and Strategy,7
+Business,Edexcel,2,Managing Human Resources,Marketing and people,4
+Business,Edexcel,3,Approaches to Staffing and Employee Relations,Managing Human Resources,1
+Business,Edexcel,3,"Recruitment, Selection, and Training",Managing Human Resources,2
+Business,Edexcel,3,Organisational Structures,Managing Human Resources,3
+Business,Edexcel,3,Theories of Motivation,Managing Human Resources,4
+Business,Edexcel,3,Methods of Motivation,Managing Human Resources,5
+Business,Edexcel,3,Leadership Styles,Managing Human Resources,6
+Business,Edexcel,2,Exploring Entrepreneurs and Leaders,Marketing and people,5
+Business,Edexcel,3,"The Entrepreneurial Role, Risks, and Barriers",Exploring Entrepreneurs and Leaders,1
+Business,Edexcel,3,Entrepreneurial Characteristics and Motives,Exploring Entrepreneurs and Leaders,2
+Business,Edexcel,3,Business Objectives,Exploring Entrepreneurs and Leaders,3
+Business,Edexcel,3,Forms of Business Ownership,Exploring Entrepreneurs and Leaders,4
+Business,Edexcel,3,Opportunity Cost and Trade-Offs,Exploring Entrepreneurs and Leaders,5
+Business,Edexcel,3,Developing from an Entrepreneur to a Leader,Exploring Entrepreneurs and Leaders,6
+Business,Edexcel,1,Managing business activities,,2
+Business,Edexcel,2,Methods of Raising Finance,Managing business activities,1
+Business,Edexcel,3,Internal Sources of Finance,Methods of Raising Finance,1
+Business,Edexcel,3,External Sources and Methods of Finance,Methods of Raising Finance,2
+Business,Edexcel,3,"Liability, Business Plans and Appropriate Finance",Methods of Raising Finance,3
+Business,Edexcel,3,Cash-Flow Forecasting,Methods of Raising Finance,4
+Business,Edexcel,2,Techniques of Financial Planning,Managing business activities,2
+Business,Edexcel,3,Sales Forecasting,Techniques of Financial Planning,1
+Business,Edexcel,3,"Calculating Sales, Revenue and Costs",Techniques of Financial Planning,2
+Business,Edexcel,3,Break-Even Analysis,Techniques of Financial Planning,3
+Business,Edexcel,3,Budgeting and Variance Analysis,Techniques of Financial Planning,4
+Business,Edexcel,2,Managing Company Finances,Managing business activities,3
+Business,Edexcel,3,"Profit, Profitability, and Cash",Managing Company Finances,1
+Business,Edexcel,3,Liquidity and Working Capital,Managing Company Finances,2
+Business,Edexcel,3,Causes of Business Failure,Managing Company Finances,3
+Business,Edexcel,2,Managing Resources,Managing business activities,4
+Business,Edexcel,3,Methods of Production,Managing Resources,1
+Business,Edexcel,3,Productivity and Efficiency,Managing Resources,2
+Business,Edexcel,3,Capacity Utilisation,Managing Resources,3
+Business,Edexcel,3,Stock Control and Lean Production,Managing Resources,4
+Business,Edexcel,3,Quality Management,Managing Resources,5
+Business,Edexcel,2,Responding to External Influences,Managing business activities,5
+Business,Edexcel,3,Economic Influences,Responding to External Influences,1
+Business,Edexcel,3,Legal Influences,Responding to External Influences,2
+Business,Edexcel,3,The Competitive Environment,Responding to External Influences,3
+Business,Edexcel,1,Business decisions and strategy,,3
+Business,Edexcel,2,Corporate Objectives and Strategy,Business decisions and strategy,1
+Business,Edexcel,3,Mission Statements and Corporate Objectives,Corporate Objectives and Strategy,1
+Business,Edexcel,3,Strategic Models for Growth and Advantage,Corporate Objectives and Strategy,2
+Business,Edexcel,3,Strategic and Tactical Decisions,Corporate Objectives and Strategy,3
+Business,Edexcel,3,SWOT Analysis,Corporate Objectives and Strategy,4
+Business,Edexcel,3,Analysing the External Environment,Corporate Objectives and Strategy,5
+Business,Edexcel,2,Strategies for Business Growth,Business decisions and strategy,2
+Business,Edexcel,3,Objectives and Problems of Growth,Strategies for Business Growth,1
+Business,Edexcel,3,Growth through Mergers and Takeovers,Strategies for Business Growth,2
+Business,Edexcel,3,Organic Growth,Strategies for Business Growth,3
+Business,Edexcel,3,Advantages of Staying Small,Strategies for Business Growth,4
+Business,Edexcel,2,Applying Decision-Making Techniques,Business decisions and strategy,3
+Business,Edexcel,3,Quantitative Sales Forecasting,Applying Decision-Making Techniques,1
+Business,Edexcel,3,Investment Appraisal Techniques,Applying Decision-Making Techniques,2
+Business,Edexcel,3,Decision Trees,Applying Decision-Making Techniques,3
+Business,Edexcel,3,Critical Path Analysis (CPA),Applying Decision-Making Techniques,4
+Business,Edexcel,2,Analysing Influences on Business Decisions,Business decisions and strategy,4
+Business,Edexcel,3,Corporate Timescales and Decision-Making Approaches,Analysing Influences on Business Decisions,1
+Business,Edexcel,3,Corporate Culture,Analysing Influences on Business Decisions,2
+Business,Edexcel,3,Stakeholder Management and Conflict,Analysing Influences on Business Decisions,3
+Business,Edexcel,3,Business Ethics and Corporate Social Responsibility,Analysing Influences on Business Decisions,4
+Business,Edexcel,2,Methods of Assessing Competitiveness,Business decisions and strategy,5
+Business,Edexcel,3,Interpreting Financial Statements,Methods of Assessing Competitiveness,1
+Business,Edexcel,3,Financial Ratio Analysis,Methods of Assessing Competitiveness,2
+Business,Edexcel,3,Using Human Resource Data to Assess Competitiveness,Methods of Assessing Competitiveness,3
+Business,Edexcel,2,Approaches to Managing Change,Business decisions and strategy,6
+Business,Edexcel,3,Causes and Effects of Organisational Change,Approaches to Managing Change,1
+Business,Edexcel,3,Managing the Change Process,Approaches to Managing Change,2
+Business,Edexcel,3,Risk Management and Contingency Planning,Approaches to Managing Change,3
+Business,Edexcel,1,Global business,,4
+Business,Edexcel,2,Understanding Globalisation,Global business,1
+Business,Edexcel,3,Economic Growth and Development,Understanding Globalisation,1
+Business,Edexcel,3,"Trade, Specialisation, and Investment",Understanding Globalisation,2
+Business,Edexcel,3,Drivers of Globalisation,Understanding Globalisation,3
+Business,Edexcel,3,Protectionism,Understanding Globalisation,4
+Business,Edexcel,3,Trading Blocs,Understanding Globalisation,5
+Business,Edexcel,2,Managing Global Markets and Expansion,Global business,2
+Business,Edexcel,3,Reasons for International Trade and Expansion,Managing Global Markets and Expansion,1
+Business,Edexcel,3,Assessing a Country as a Market,Managing Global Markets and Expansion,2
+Business,Edexcel,3,Assessing a Country for Production,Managing Global Markets and Expansion,3
+Business,Edexcel,3,Reasons for Global Mergers and Joint Ventures,Managing Global Markets and Expansion,4
+Business,Edexcel,3,Achieving Global Competitiveness,Managing Global Markets and Expansion,5
+Business,Edexcel,2,Strategies for Global Marketing,Global business,3
+Business,Edexcel,3,Global Marketing Strategies,Strategies for Global Marketing,1
+Business,Edexcel,3,Global Niche Markets,Strategies for Global Marketing,2
+Business,Edexcel,3,Cultural and Social Factors in Global Marketing,Strategies for Global Marketing,3
+Business,Edexcel,2,Analysing Global Industries and Companies (MNCs),Global business,4
+Business,Edexcel,3,The Impact of Multinational Corporations (MNCs),Analysing Global Industries and Companies (MNCs),1
+Business,Edexcel,3,Ethical Issues: Labour and Environment,Analysing Global Industries and Companies (MNCs),2
+Business,Edexcel,3,Ethical Issues: Supply Chain and Marketing,Analysing Global Industries and Companies (MNCs),3
+Business,Edexcel,3,Controlling Multinational Corporations,Analysing Global Industries and Companies (MNCs),4

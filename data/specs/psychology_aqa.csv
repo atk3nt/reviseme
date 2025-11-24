@@ -1,0 +1,224 @@
+subject,exam_board,level,title,parent_title,order_index
+Psychology,AQA,1,Introductory topics in Psychology,,1
+Psychology,AQA,2,Social Influence,Introductory topics in Psychology,1
+Psychology,AQA,3,Types of Conformity,Social Influence,1
+Psychology,AQA,3,Explanations for Conformity,Social Influence,2
+Psychology,AQA,3,Asch’s Research on Conformity,Social Influence,3
+Psychology,AQA,3,Conformity to Social Roles (Zimbardo),Social Influence,4
+Psychology,AQA,3,Milgram’s Research on Obedience,Social Influence,5
+Psychology,AQA,3,Situational Explanations for Obedience,Social Influence,6
+Psychology,AQA,3,Dispositional Explanation for Obedience,Social Influence,7
+Psychology,AQA,3,Resistance: Social Support,Social Influence,8
+Psychology,AQA,3,Resistance: Locus of Control,Social Influence,9
+Psychology,AQA,3,Minority Influence,Social Influence,10
+Psychology,AQA,3,Social Influence and Social Change,Social Influence,11
+Psychology,AQA,2,Memory,Introductory topics in Psychology,2
+Psychology,AQA,3,The Multi-Store Model of Memory,Memory,1
+Psychology,AQA,3,Features of Memory Stores,Memory,2
+Psychology,AQA,3,Types of Long-Term Memory,Memory,3
+Psychology,AQA,3,The Working Memory Model: Components,Memory,4
+Psychology,AQA,3,The Working Memory Model: Features,Memory,5
+Psychology,AQA,3,Forgetting: Interference Theory,Memory,6
+Psychology,AQA,3,Forgetting: Retrieval Failure,Memory,7
+Psychology,AQA,3,Eyewitness Testimony: Misleading Information,Memory,8
+Psychology,AQA,3,Eyewitness Testimony: Anxiety,Memory,9
+Psychology,AQA,3,Improving Eyewitness Testimony: The Cognitive Interview,Memory,10
+Psychology,AQA,2,Attachment,Introductory topics in Psychology,3
+Psychology,AQA,3,Caregiver–Infant Interactions,Attachment,1
+Psychology,AQA,3,Schaffer’s Stages of Attachment,Attachment,2
+Psychology,AQA,3,Multiple Attachments and the Role of the Father,Attachment,3
+Psychology,AQA,3,Animal Studies: Lorenz’s Research,Attachment,4
+Psychology,AQA,3,Animal Studies: Harlow’s Research,Attachment,5
+Psychology,AQA,3,Explanations of Attachment: Learning Theory,Attachment,6
+Psychology,AQA,3,Explanations of Attachment: Bowlby’s Theory,Attachment,7
+Psychology,AQA,3,Bowlby’s Theory: Key Concepts,Attachment,8
+Psychology,AQA,3,Ainsworth’s ‘Strange Situation’,Attachment,9
+Psychology,AQA,3,Types of Attachment,Attachment,10
+Psychology,AQA,3,Cultural Variations in Attachment,Attachment,11
+Psychology,AQA,3,Bowlby’s Theory of Maternal Deprivation,Attachment,12
+Psychology,AQA,3,Effects of Institutionalisation,Attachment,13
+Psychology,AQA,3,Influence of Early Attachment on Later Relationships,Attachment,14
+Psychology,AQA,2,Psychopathology,Introductory topics in Psychology,4
+Psychology,AQA,3,Definitions: Deviation and Infrequency,Psychopathology,1
+Psychology,AQA,3,Definitions: Functioning and Mental Health,Psychopathology,2
+Psychology,AQA,3,Characteristics of Phobias,Psychopathology,3
+Psychology,AQA,3,Characteristics of Depression,Psychopathology,4
+Psychology,AQA,3,Characteristics of OCD,Psychopathology,5
+Psychology,AQA,3,Explaining Phobias: The Two-Process Model,Psychopathology,6
+Psychology,AQA,3,Treating Phobias: Systematic Desensitisation,Psychopathology,7
+Psychology,AQA,3,Treating Phobias: Flooding,Psychopathology,8
+Psychology,AQA,3,Explaining Depression: Cognitive Models,Psychopathology,9
+Psychology,AQA,3,Treating Depression: CBT,Psychopathology,10
+Psychology,AQA,3,Explaining OCD: Biological Approach,Psychopathology,11
+Psychology,AQA,3,Treating OCD: Drug Therapy,Psychopathology,12
+Psychology,AQA,1,Psychology in Context,,2
+Psychology,AQA,2,Approaches in Psychology,Psychology in Context,1
+Psychology,AQA,3,Origins of Psychology,Approaches in Psychology,1
+Psychology,AQA,3,The Behaviourist Approach: Classical Conditioning,Approaches in Psychology,2
+Psychology,AQA,3,The Behaviourist Approach: Operant Conditioning,Approaches in Psychology,3
+Psychology,AQA,3,Social Learning Theory: Core Concepts,Approaches in Psychology,4
+Psychology,AQA,3,Social Learning Theory: Mediational Processes,Approaches in Psychology,5
+Psychology,AQA,3,The Cognitive Approach: Core Concepts,Approaches in Psychology,6
+Psychology,AQA,3,The Cognitive Approach: Models and Neuroscience,Approaches in Psychology,7
+Psychology,AQA,3,The Biological Approach: Core Principles,Approaches in Psychology,8
+Psychology,AQA,3,The Biological Approach: Genetics and Evolution,Approaches in Psychology,9
+Psychology,AQA,3,Psychodynamic: The Unconscious & Personality Structure,Approaches in Psychology,10
+Psychology,AQA,3,Psychodynamic: Defence Mechanisms,Approaches in Psychology,11
+Psychology,AQA,3,Psychodynamic: Psychosexual Stages,Approaches in Psychology,12
+Psychology,AQA,3,Humanistic Psychology: Core Concepts,Approaches in Psychology,13
+Psychology,AQA,3,Humanistic Psychology: The Self and Congruence,Approaches in Psychology,14
+Psychology,AQA,3,Humanistic Psychology: Applied,Approaches in Psychology,15
+Psychology,AQA,3,Comparison of Approaches,Approaches in Psychology,16
+Psychology,AQA,2,Biopsychology,Psychology in Context,2
+Psychology,AQA,3,Divisions of the Nervous System,Biopsychology,1
+Psychology,AQA,3,Types of Neurons,Biopsychology,2
+Psychology,AQA,3,Synaptic Transmission,Biopsychology,3
+Psychology,AQA,3,The Endocrine System,Biopsychology,4
+Psychology,AQA,3,The Fight or Flight Response,Biopsychology,5
+Psychology,AQA,3,Localisation of Brain Function,Biopsychology,6
+Psychology,AQA,3,Hemispheric Lateralisation & Split-Brain Research,Biopsychology,7
+Psychology,AQA,3,Brain Plasticity and Functional Recovery,Biopsychology,8
+Psychology,AQA,3,Studying the Brain: fMRI,Biopsychology,9
+Psychology,AQA,3,Studying the Brain: EEGs and ERPs,Biopsychology,10
+Psychology,AQA,3,Studying the Brain: Post-Mortem Examinations,Biopsychology,11
+Psychology,AQA,3,Types of Biological Rhythms,Biopsychology,12
+Psychology,AQA,3,The Sleep/Wake Cycle,Biopsychology,13
+Psychology,AQA,2,Research Methods,Psychology in Context,3
+Psychology,AQA,3,Laboratory and Field Experiments,Research Methods,1
+Psychology,AQA,3,Natural and Quasi-Experiments,Research Methods,2
+Psychology,AQA,3,Observational Techniques,Research Methods,3
+Psychology,AQA,3,Self-Report Techniques,Research Methods,4
+Psychology,AQA,3,Correlations,Research Methods,5
+Psychology,AQA,3,Content Analysis,Research Methods,6
+Psychology,AQA,3,Case Studies,Research Methods,7
+Psychology,AQA,3,Aims and Hypotheses,Research Methods,8
+Psychology,AQA,3,Sampling Techniques,Research Methods,9
+Psychology,AQA,3,Pilot Studies,Research Methods,10
+Psychology,AQA,3,Experimental Designs,Research Methods,11
+Psychology,AQA,3,Observational Design,Research Methods,12
+Psychology,AQA,3,Questionnaire and Interview Design,Research Methods,13
+Psychology,AQA,3,Variables and Operationalisation,Research Methods,14
+Psychology,AQA,3,Control in Research,Research Methods,15
+Psychology,AQA,3,Demand Characteristics and Investigator Effects,Research Methods,16
+Psychology,AQA,3,Ethical Issues and Conduct,Research Methods,17
+Psychology,AQA,3,The Role of Peer Review,Research Methods,18
+Psychology,AQA,3,Psychology and the Economy,Research Methods,19
+Psychology,AQA,3,Reliability,Research Methods,20
+Psychology,AQA,3,Types of Validity,Research Methods,21
+Psychology,AQA,3,Assessing and Improving Validity,Research Methods,22
+Psychology,AQA,3,"Features of Science: Objectivity, Empiricism, Replicability",Research Methods,23
+Psychology,AQA,3,Features of Science: Theory and Paradigms,Research Methods,24
+Psychology,AQA,3,Reporting Psychological Investigations,Research Methods,25
+Psychology,AQA,3,Data Types and Collection,Research Methods,26
+Psychology,AQA,3,"Primary, Secondary Data and Meta-Analysis",Research Methods,27
+Psychology,AQA,3,Descriptive Statistics: Central Tendency and Dispersion,Research Methods,28
+Psychology,AQA,3,Descriptive Statistics: Percentages and Correlations,Research Methods,29
+Psychology,AQA,3,Presentation of Quantitative Data,Research Methods,30
+Psychology,AQA,3,Distributions,Research Methods,31
+Psychology,AQA,3,Correlation Coefficients and Levels of Measurement,Research Methods,32
+Psychology,AQA,3,Qualitative Data Analysis,Research Methods,33
+Psychology,AQA,3,Introduction to the Sign Test,Research Methods,34
+Psychology,AQA,3,"Probability, Significance and Errors",Research Methods,35
+Psychology,AQA,3,Choosing a Statistical Test,Research Methods,36
+Psychology,AQA,1,Issues and Options in Psychology,,3
+Psychology,AQA,2,Issues and Debates in Psychology,Issues and Options in Psychology,1
+Psychology,AQA,3,Gender Bias,Issues and Debates in Psychology,1
+Psychology,AQA,3,Cultural Bias,Issues and Debates in Psychology,2
+Psychology,AQA,3,Free Will and Determinism,Issues and Debates in Psychology,3
+Psychology,AQA,3,Types of Determinism,Issues and Debates in Psychology,4
+Psychology,AQA,3,The Nature–Nurture Debate,Issues and Debates in Psychology,5
+Psychology,AQA,3,Holism and Reductionism,Issues and Debates in Psychology,6
+Psychology,AQA,3,Types of Reductionism,Issues and Debates in Psychology,7
+Psychology,AQA,3,Idiographic and Nomothetic Approaches,Issues and Debates in Psychology,8
+Psychology,AQA,3,Ethical Implications and Social Sensitivity,Issues and Debates in Psychology,9
+Psychology,AQA,2,Option: Relationships,Issues and Options in Psychology,2
+Psychology,AQA,3,Evolutionary Explanations for Partner Preference,Option: Relationships,1
+Psychology,AQA,3,Attraction: Self-Disclosure and Physical Attractiveness,Option: Relationships,2
+Psychology,AQA,3,Attraction: Filter Theory,Option: Relationships,3
+Psychology,AQA,3,Theories of Relationships: Social Exchange and Equity Theory,Option: Relationships,4
+Psychology,AQA,3,Theories of Relationships: Rusbult’s Investment Model,Option: Relationships,5
+Psychology,AQA,3,Duck’s Phase Model of Relationship Breakdown,Option: Relationships,6
+Psychology,AQA,3,Virtual Relationships and Self-Disclosure,Option: Relationships,7
+Psychology,AQA,3,Virtual Relationships and Absence of Gating,Option: Relationships,8
+Psychology,AQA,3,Parasocial Relationships: Models and Levels,Option: Relationships,9
+Psychology,AQA,3,Parasocial Relationships: Attachment Theory,Option: Relationships,10
+Psychology,AQA,2,Option: Gender,Issues and Options in Psychology,3
+Psychology,AQA,3,"Sex, Gender, and Stereotypes",Option: Gender,1
+Psychology,AQA,3,Androgyny and the BSRI,Option: Gender,2
+Psychology,AQA,3,Role of Chromosomes and Hormones,Option: Gender,3
+Psychology,AQA,3,Atypical Sex Chromosome Patterns,Option: Gender,4
+Psychology,AQA,3,Cognitive Explanations: Kohlberg’s Theory,Option: Gender,5
+Psychology,AQA,3,Cognitive Explanations: Gender Schema Theory,Option: Gender,6
+Psychology,AQA,3,Psychodynamic Explanation of Gender,Option: Gender,7
+Psychology,AQA,3,Social Learning Theory and Gender,Option: Gender,8
+Psychology,AQA,3,Culture and Media Influence on Gender Roles,Option: Gender,9
+Psychology,AQA,3,Atypical Gender Development: Gender Dysphoria,Option: Gender,10
+Psychology,AQA,2,Option: Cognition and Development,Issues and Options in Psychology,4
+Psychology,AQA,3,Piaget’s Theory: Core Concepts,Option: Cognition and Development,1
+Psychology,AQA,3,Piaget’s Stages of Development,Option: Cognition and Development,2
+Psychology,AQA,3,Vygotsky’s Theory of Cognitive Development,Option: Cognition and Development,3
+Psychology,AQA,3,Baillargeon’s Explanation of Early Infant Abilities,Option: Cognition and Development,4
+Psychology,AQA,3,Social Cognition: Selman’s Levels,Option: Cognition and Development,5
+Psychology,AQA,3,Social Cognition: Theory of Mind,Option: Cognition and Development,6
+Psychology,AQA,3,Social Cognition: Mirror Neurons,Option: Cognition and Development,7
+Psychology,AQA,2,Option: Schizophrenia,Issues and Options in Psychology,5
+Psychology,AQA,3,Classification and Symptoms of Schizophrenia,Option: Schizophrenia,1
+Psychology,AQA,3,Issues in Diagnosis and Classification,Option: Schizophrenia,2
+Psychology,AQA,3,Biological Explanations for Schizophrenia,Option: Schizophrenia,3
+Psychology,AQA,3,Psychological Explanations: Family Dysfunction,Option: Schizophrenia,4
+Psychology,AQA,3,Psychological Explanations: Cognitive,Option: Schizophrenia,5
+Psychology,AQA,3,Drug Therapy for Schizophrenia,Option: Schizophrenia,6
+Psychology,AQA,3,Psychological Therapies for Schizophrenia,Option: Schizophrenia,7
+Psychology,AQA,3,Managing Schizophrenia: Token Economies,Option: Schizophrenia,8
+Psychology,AQA,3,The Interactionist Approach to Schizophrenia,Option: Schizophrenia,9
+Psychology,AQA,2,Option: Eating Behaviour,Issues and Options in Psychology,6
+Psychology,AQA,3,Food Preferences: Evolutionary Explanations,Option: Eating Behaviour,1
+Psychology,AQA,3,Food Preferences: The Role of Learning,Option: Eating Behaviour,2
+Psychology,AQA,3,Neural and Hormonal Mechanisms in Eating,Option: Eating Behaviour,3
+Psychology,AQA,3,Biological Explanations for Anorexia Nervosa,Option: Eating Behaviour,4
+Psychology,AQA,3,Psychological Explanations for AN: Family Systems Theory,Option: Eating Behaviour,5
+Psychology,AQA,3,Psychological Explanations for AN: SLT and Cognitive Factors,Option: Eating Behaviour,6
+Psychology,AQA,3,Biological Explanations for Obesity,Option: Eating Behaviour,7
+Psychology,AQA,3,Psychological Explanations for Obesity,Option: Eating Behaviour,8
+Psychology,AQA,3,Explanations for Dieting Success and Failure,Option: Eating Behaviour,9
+Psychology,AQA,2,Option: Stress,Issues and Options in Psychology,7
+Psychology,AQA,3,The Physiology of Stress,Option: Stress,1
+Psychology,AQA,3,The Role of Stress in Illness,Option: Stress,2
+Psychology,AQA,3,Sources of Stress: Life Changes and Daily Hassles,Option: Stress,3
+Psychology,AQA,3,Sources of Stress: The Workplace,Option: Stress,4
+Psychology,AQA,3,Measuring Stress: Self-Report and Physiological Methods,Option: Stress,5
+Psychology,AQA,3,Individual Differences: Personality,Option: Stress,6
+Psychology,AQA,3,Individual Differences: Hardiness,Option: Stress,7
+Psychology,AQA,3,Managing Stress: Drug Therapy and Biofeedback,Option: Stress,8
+Psychology,AQA,3,Managing Stress: Stress Inoculation Therapy,Option: Stress,9
+Psychology,AQA,3,Coping with Stress: Gender and Social Support,Option: Stress,10
+Psychology,AQA,2,Option: Aggression,Issues and Options in Psychology,8
+Psychology,AQA,3,Neural and Hormonal Mechanisms in Aggression,Option: Aggression,1
+Psychology,AQA,3,Genetic Factors in Aggression,Option: Aggression,2
+Psychology,AQA,3,Ethological and Evolutionary Explanations,Option: Aggression,3
+Psychology,AQA,3,Social Explanations: Frustration–Aggression Hypothesis,Option: Aggression,4
+Psychology,AQA,3,Social Explanations: SLT and De-individuation,Option: Aggression,5
+Psychology,AQA,3,Institutional Aggression,Option: Aggression,6
+Psychology,AQA,3,Media Influences on Aggression,Option: Aggression,7
+Psychology,AQA,3,Explaining Media Effects on Aggression,Option: Aggression,8
+Psychology,AQA,2,Option: Forensic Psychology,Issues and Options in Psychology,9
+Psychology,AQA,3,Offender Profiling: Top-Down Approach,Option: Forensic Psychology,1
+Psychology,AQA,3,Offender Profiling: Bottom-Up Approach,Option: Forensic Psychology,2
+Psychology,AQA,3,Biological Explanations: Atavistic Form,Option: Forensic Psychology,3
+Psychology,AQA,3,Biological Explanations: Genetic and Neural,Option: Forensic Psychology,4
+Psychology,AQA,3,Psychological Explanations: Eysenck’s Theory,Option: Forensic Psychology,5
+Psychology,AQA,3,Psychological Explanations: Cognitive,Option: Forensic Psychology,6
+Psychology,AQA,3,Psychological Explanations: Differential Association Theory (DAT) and Psychodynamic,Option: Forensic Psychology,7
+Psychology,AQA,3,Dealing with Offending: Custodial Sentencing,Option: Forensic Psychology,8
+Psychology,AQA,3,Dealing with Offending: Behaviour Modification,Option: Forensic Psychology,9
+Psychology,AQA,3,Dealing with Offending: Anger Management and Restorative Justice,Option: Forensic Psychology,10
+Psychology,AQA,2,Option: Addiction,Issues and Options in Psychology,10
+Psychology,AQA,3,Describing Addiction,Option: Addiction,1
+Psychology,AQA,3,Risk Factors in Addiction,Option: Addiction,2
+Psychology,AQA,3,Explaining Nicotine Addiction: Neurochemistry,Option: Addiction,3
+Psychology,AQA,3,Explaining Nicotine Addiction: Learning Theory,Option: Addiction,4
+Psychology,AQA,3,Explaining Gambling Addiction: Learning Theory,Option: Addiction,5
+Psychology,AQA,3,Explaining Gambling Addiction: Cognitive Theory,Option: Addiction,6
+Psychology,AQA,3,Reducing Addiction: Drug Therapy and CBT,Option: Addiction,7
+Psychology,AQA,3,Reducing Addiction: Behavioural Interventions,Option: Addiction,8
+Psychology,AQA,3,Theories of Behaviour Change,Option: Addiction,9

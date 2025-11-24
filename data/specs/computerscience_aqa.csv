@@ -1,0 +1,215 @@
+subject,exam_board,level,title,parent_title,order_index
+Computer Science,AQA,1,Fundamentals of programming,,1
+Computer Science,AQA,2,Programming,Fundamentals of programming,1
+Computer Science,AQA,3,Introduction to Data Types,Programming,1
+Computer Science,AQA,3,Composite and User-Defined Types,Programming,2
+Computer Science,AQA,3,"Variables, Constants, and Declarations",Programming,3
+Computer Science,AQA,3,Iteration and Nested Structures,Programming,4
+Computer Science,AQA,3,Arithmetic and Relational Operations,Programming,5
+Computer Science,AQA,3,Boolean and String Operations,Programming,6
+Computer Science,AQA,3,String Conversions and Other Techniques,Programming,7
+Computer Science,AQA,3,Introduction to Subroutines,Programming,8
+Computer Science,AQA,3,Subroutine Parameters and Return Values,Programming,9
+Computer Science,AQA,3,Local and Global Variables,Programming,10
+Computer Science,AQA,3,Subroutine Calls and the Stack,Programming,11
+Computer Science,AQA,3,Recursive Techniques,Programming,12
+Computer Science,AQA,2,Programming paradigms,Fundamentals of programming,2
+Computer Science,AQA,3,Introduction to Programming Paradigms,Programming paradigms,1
+Computer Science,AQA,3,Procedural Programming,Programming paradigms,2
+Computer Science,AQA,3,Core OOP Concepts,Programming paradigms,3
+Computer Science,AQA,3,OOP Fundamentals and Design Principles,Programming paradigms,4
+Computer Science,AQA,3,Practical OOP and Class Diagrams,Programming paradigms,5
+Computer Science,AQA,1,Fundamentals of data structures,,2
+Computer Science,AQA,2,Data structures and abstract data types,Fundamentals of data structures,1
+Computer Science,AQA,3,Introduction to Data Structures and Arrays,Data structures and abstract data types,1
+Computer Science,AQA,3,File Handling,Data structures and abstract data types,2
+Computer Science,AQA,3,Overview of Abstract Data Types (ADTs),Data structures and abstract data types,3
+Computer Science,AQA,3,Static vs Dynamic Data Structures,Data structures and abstract data types,4
+Computer Science,AQA,3,"Implementing Queues, Stacks, and Hash Table",Data structures and abstract data types,5
+Computer Science,AQA,2,Queues,Fundamentals of data structures,2
+Computer Science,AQA,3,Queue Operations,Queues,1
+Computer Science,AQA,2,Stacks,Fundamentals of data structures,3
+Computer Science,AQA,3,Stack Operations,Stacks,1
+Computer Science,AQA,2,Graphs,Fundamentals of data structures,4
+Computer Science,AQA,3,Graph Fundamentals and Terminology,Graphs,1
+Computer Science,AQA,3,Representing Graphs,Graphs,2
+Computer Science,AQA,2,Trees,Fundamentals of data structures,5
+Computer Science,AQA,3,Tree Concepts,Trees,1
+Computer Science,AQA,2,Hash tables,Fundamentals of data structures,6
+Computer Science,AQA,3,Hash Tables and Collision Handling,Hash tables,1
+Computer Science,AQA,2,Dictionaries,Fundamentals of data structures,7
+Computer Science,AQA,3,Dictionary Concepts and Applications,Dictionaries,1
+Computer Science,AQA,2,Vectors,Fundamentals of data structures,8
+Computer Science,AQA,3,Vector Concepts and Notation,Vectors,1
+Computer Science,AQA,3,Vector Representation in Programming,Vectors,2
+Computer Science,AQA,3,Vector Operations,Vectors,3
+Computer Science,AQA,1,Fundamentals of algorithms,,3
+Computer Science,AQA,2,Graph-traversal,Fundamentals of algorithms,1
+Computer Science,AQA,3,Graph-Traversal Algorithms,Graph-traversal,1
+Computer Science,AQA,2,Tree-traversal,Fundamentals of algorithms,2
+Computer Science,AQA,3,Tree Traversal Algorithms and Their Uses,Tree-traversal,1
+Computer Science,AQA,2,Reverse Polish,Fundamentals of algorithms,3
+Computer Science,AQA,3,Reverse Polish Notation (RPN),Reverse Polish,1
+Computer Science,AQA,2,Searching algorithms,Fundamentals of algorithms,4
+Computer Science,AQA,3,Linear and Binary Search,Searching algorithms,1
+Computer Science,AQA,3,Binary Tree Search,Searching algorithms,2
+Computer Science,AQA,2,Sorting algorithms,Fundamentals of algorithms,5
+Computer Science,AQA,3,Bubble Sort and Merge Sort,Sorting algorithms,1
+Computer Science,AQA,2,Optimisation algorithms,Fundamentals of algorithms,6
+Computer Science,AQA,3,Dijkstra's Shortest Path Algorithm,Optimisation algorithms,1
+Computer Science,AQA,1,Theory of computation,,4
+Computer Science,AQA,2,Abstraction and automation,Theory of computation,1
+Computer Science,AQA,3,Algorithms and Problem Solving,Abstraction and automation,1
+Computer Science,AQA,3,Implementing and Evaluating Algorithms,Abstraction and automation,2
+Computer Science,AQA,3,Abstraction and Information Hiding,Abstraction and automation,3
+Computer Science,AQA,3,Types of Abstraction,Abstraction and automation,4
+Computer Science,AQA,3,Decomposition and Problem Reduction,Abstraction and automation,5
+Computer Science,AQA,3,Automation,Abstraction and automation,6
+Computer Science,AQA,2,Regular languages,Theory of computation,2
+Computer Science,AQA,3,Finite State Machines,Regular languages,1
+Computer Science,AQA,3,Set Theory Basics,Regular languages,2
+Computer Science,AQA,3,Advanced Set Theory and Operations,Regular languages,3
+Computer Science,AQA,3,Introduction to Regular Expressions and Languages,Regular languages,4
+Computer Science,AQA,3,Using Regular Expressions,Regular languages,5
+Computer Science,AQA,3,Relating Regular Expressions and FSMs,Regular languages,6
+Computer Science,AQA,2,Context-free languages,Theory of computation,3
+Computer Science,AQA,3,BNF and Syntax Diagrams,Context-free languages,1
+Computer Science,AQA,2,Classification of algorithms,Theory of computation,4
+Computer Science,AQA,3,Comparing Algorithm Efficiency,Classification of algorithms,1
+Computer Science,AQA,3,Mathematical Foundations for Big-O,Classification of algorithms,2
+Computer Science,AQA,3,Order of Complexity (Big-O Notation),Classification of algorithms,3
+Computer Science,AQA,3,Deriving Time Complexity,Classification of algorithms,4
+Computer Science,AQA,3,Limits of Computation,Classification of algorithms,5
+Computer Science,AQA,3,Tractable and Intractable Problems,Classification of algorithms,6
+Computer Science,AQA,3,The Halting Problem,Classification of algorithms,7
+Computer Science,AQA,2,A model of computation,Theory of computation,5
+Computer Science,AQA,3,Introduction to Turing Machines,A model of computation,1
+Computer Science,AQA,3,Turing Machine Operations,A model of computation,2
+Computer Science,AQA,3,The Importance of Turing Machines,A model of computation,3
+Computer Science,AQA,1,Fundamentals of data representation,,5
+Computer Science,AQA,2,Number systems,Fundamentals of data representation,1
+Computer Science,AQA,3,Number System Concepts,Number systems,1
+Computer Science,AQA,3,Applications of Number Systems,Number systems,2
+Computer Science,AQA,2,Number bases,Fundamentals of data representation,2
+Computer Science,AQA,3,Number Bases and Conversions,Number bases,1
+Computer Science,AQA,2,Units of information,Fundamentals of data representation,3
+Computer Science,AQA,3,"Bits, Bytes and Prefixes",Units of information,1
+Computer Science,AQA,3,Binary and Decimal Prefixes,Units of information,2
+Computer Science,AQA,2,Binary number system,Fundamentals of data representation,4
+Computer Science,AQA,3,Unsigned Binary and Arithmetic,Binary number system,1
+Computer Science,AQA,3,Two's Complement Representation and Arithmetic,Binary number system,2
+Computer Science,AQA,3,Fixed-Point and Floating-Point Representation,Binary number system,3
+Computer Science,AQA,3,Converting and Normalising Fractional Numbers,Binary number system,4
+Computer Science,AQA,3,Representation Errors,Binary number system,5
+Computer Science,AQA,3,"Range, Precision, Underflow and Overflow",Binary number system,6
+Computer Science,AQA,2,Information coding systems,Fundamentals of data representation,5
+Computer Science,AQA,3,Character Encoding,Information coding systems,1
+Computer Science,AQA,3,Error Detection and Correction,Information coding systems,2
+Computer Science,AQA,2,"Representing images, sound and other data",Fundamentals of data representation,6
+Computer Science,AQA,3,Analogue and Digital Representation,"Representing images, sound and other data",1
+Computer Science,AQA,3,Analogue-Digital Conversion,"Representing images, sound and other data",2
+Computer Science,AQA,3,Bitmap Graphics,"Representing images, sound and other data",3
+Computer Science,AQA,3,Vector Graphics,"Representing images, sound and other data",4
+Computer Science,AQA,3,Digital Sound Representation and MIDI,"Representing images, sound and other data",5
+Computer Science,AQA,3,Data Compression,"Representing images, sound and other data",6
+Computer Science,AQA,3,Introduction to Encryption,"Representing images, sound and other data",7
+Computer Science,AQA,3,Computational Security,"Representing images, sound and other data",8
+Computer Science,AQA,1,Fundamentals of computer systems,,6
+Computer Science,AQA,2,Hardware and software,Fundamentals of computer systems,1
+Computer Science,AQA,3,Hardware and Software Classification,Hardware and software,1
+Computer Science,AQA,3,System Software and the Operating System,Hardware and software,2
+Computer Science,AQA,2,Classification of programming languages,Fundamentals of computer systems,2
+Computer Science,AQA,3,Low-Level Programming Languages,Classification of programming languages,1
+Computer Science,AQA,3,High-Level Languages and Comparison,Classification of programming languages,2
+Computer Science,AQA,2,Types of program translator,Fundamentals of computer systems,3
+Computer Science,AQA,3,The Role and Types of Translators,Types of program translator,1
+Computer Science,AQA,3,Compilation vs Interpretation,Types of program translator,2
+Computer Science,AQA,3,Intermediate Code and Object Code,Types of program translator,3
+Computer Science,AQA,2,Logic gates,Fundamentals of computer systems,4
+Computer Science,AQA,3,Logic Gates and Truth Tables,Logic gates,1
+Computer Science,AQA,3,Combining Logic Gates,Logic gates,2
+Computer Science,AQA,3,Adders and D-type Flip-Flops,Logic gates,3
+Computer Science,AQA,2,Boolean algebra,Fundamentals of computer systems,5
+Computer Science,AQA,3,Using Boolean Algebra,Boolean algebra,1
+Computer Science,AQA,1,Fundamentals of computer organisation and architecture,,7
+Computer Science,AQA,2,Internal hardware components of a computer,Fundamentals of computer organisation and architecture,1
+Computer Science,AQA,3,Core Internal Components,Internal hardware components of a computer,1
+Computer Science,AQA,3,System Buses,Internal hardware components of a computer,2
+Computer Science,AQA,3,Computer Architectures and Addressable Memory,Internal hardware components of a computer,3
+Computer Science,AQA,2,The stored program concept,Fundamentals of computer organisation and architecture,2
+Computer Science,AQA,3,The Stored Program Concept,The stored program concept,1
+Computer Science,AQA,2,Structure and role of the processor and its components,Fundamentals of computer organisation and architecture,3
+Computer Science,AQA,3,Processor Components and Registers,Structure and role of the processor and its components,1
+Computer Science,AQA,3,The Fetch-Execute Cycle,Structure and role of the processor and its components,2
+Computer Science,AQA,3,The Processor Instruction Set,Structure and role of the processor and its components,3
+Computer Science,AQA,3,Addressing Modes,Structure and role of the processor and its components,4
+Computer Science,AQA,3,Machine Code Operations,Structure and role of the processor and its components,5
+Computer Science,AQA,3,Interrupts,Structure and role of the processor and its components,6
+Computer Science,AQA,3,Factors Affecting Processor Performance,Structure and role of the processor and its components,7
+Computer Science,AQA,2,External hardware devices,Fundamentals of computer organisation and architecture,4
+Computer Science,AQA,3,Input/Output Devices,External hardware devices,1
+Computer Science,AQA,3,Secondary Storage Devices,External hardware devices,2
+Computer Science,AQA,3,Solid-State Drive (SSD) Technology,External hardware devices,3
+Computer Science,AQA,1,Consequences of uses of computing,,8
+Computer Science,AQA,2,"Individual (moral), social (ethical), legal and cultural issues and opportunities",Consequences of uses of computing,1
+Computer Science,AQA,3,The Impact of Digital Technology,"Individual (moral), social (ethical), legal and cultural issues and opportunities",1
+Computer Science,AQA,3,"Responsibilities, Legislation and Teaching Applications","Individual (moral), social (ethical), legal and cultural issues and opportunities",2
+Computer Science,AQA,1,Fundamentals of communication and networking,,9
+Computer Science,AQA,2,Communication,Fundamentals of communication and networking,1
+Computer Science,AQA,3,Data Transmission Methods,Communication,1
+Computer Science,AQA,3,Communication Metrics,Communication,2
+Computer Science,AQA,2,Networking,Fundamentals of communication and networking,2
+Computer Science,AQA,3,Network Topologies,Networking,1
+Computer Science,AQA,3,Peer-to-Peer vs Client-Server,Networking,2
+Computer Science,AQA,3,Wireless Networking and Security,Networking,3
+Computer Science,AQA,3,The CSMA/CA Protocol,Networking,4
+Computer Science,AQA,2,The Internet,Fundamentals of communication and networking,3
+Computer Science,AQA,3,"The Internet, Packet Switching and Routing",The Internet,1
+Computer Science,AQA,3,Internet Addressing and DNS,The Internet,2
+Computer Science,AQA,3,Firewalls and Encryption,The Internet,3
+Computer Science,AQA,3,Malware and Protection,The Internet,4
+Computer Science,AQA,2,The Transmission Control Protocol/Internet Protocol (TCP/IP),Fundamentals of communication and networking,4
+Computer Science,AQA,3,TCP/IP Layers and Sockets,The Transmission Control Protocol/Internet Protocol (TCP/IP),1
+Computer Science,AQA,3,Ports and Application Layer Protocols,The Transmission Control Protocol/Internet Protocol (TCP/IP),2
+Computer Science,AQA,3,Using FTP and SSH,The Transmission Control Protocol/Internet Protocol (TCP/IP),3
+Computer Science,AQA,3,Web and Email Communication,The Transmission Control Protocol/Internet Protocol (TCP/IP),4
+Computer Science,AQA,3,IP Addressing and Subnetting,The Transmission Control Protocol/Internet Protocol (TCP/IP),5
+Computer Science,AQA,3,IP Standards and Address Types,The Transmission Control Protocol/Internet Protocol (TCP/IP),6
+Computer Science,AQA,3,"DHCP, NAT and Port Forwarding",The Transmission Control Protocol/Internet Protocol (TCP/IP),7
+Computer Science,AQA,3,Client-Server Model and Websockets,The Transmission Control Protocol/Internet Protocol (TCP/IP),8
+Computer Science,AQA,3,"Web Applications (CRUD, REST)",The Transmission Control Protocol/Internet Protocol (TCP/IP),9
+Computer Science,AQA,3,Data Formats and Client Architectures,The Transmission Control Protocol/Internet Protocol (TCP/IP),10
+Computer Science,AQA,1,Fundamentals of databases,,10
+Computer Science,AQA,2,Conceptual data models and entity relationship modelling,Fundamentals of databases,1
+Computer Science,AQA,3,Data Modelling and ERDs,Conceptual data models and entity relationship modelling,1
+Computer Science,AQA,2,Relational databases,Fundamentals of databases,2
+Computer Science,AQA,3,Relational Database Concepts,Relational databases,1
+Computer Science,AQA,2,Database design and normalisation techniques,Fundamentals of databases,3
+Computer Science,AQA,3,Database Normalisation,Database design and normalisation techniques,1
+Computer Science,AQA,2,Structured Query Language (SQL),Fundamentals of databases,4
+Computer Science,AQA,3,Introduction to SQL (DDL & DML),Structured Query Language (SQL),1
+Computer Science,AQA,2,Client server databases,Fundamentals of databases,5
+Computer Science,AQA,3,Client-Server Databases and Concurrency,Client server databases,1
+Computer Science,AQA,1,Big Data,,11
+Computer Science,AQA,2,Big Data,Big Data,1
+Computer Science,AQA,3,Defining Big Data,Big Data,1
+Computer Science,AQA,3,Challenges and Processing Techniques,Big Data,2
+Computer Science,AQA,3,Functional Programming for Big Data,Big Data,3
+Computer Science,AQA,3,Representing Big Data,Big Data,4
+Computer Science,AQA,1,Fundamentals of functional programming,,12
+Computer Science,AQA,2,Functional programming paradigm,Fundamentals of functional programming,1
+Computer Science,AQA,3,Core Functional Concepts,Functional programming paradigm,1
+Computer Science,AQA,3,Functions as First-Class Objects,Functional programming paradigm,2
+Computer Science,AQA,3,Function Application,Functional programming paradigm,3
+Computer Science,AQA,3,Function Composition,Functional programming paradigm,4
+Computer Science,AQA,2,Writing functional programs,Fundamentals of functional programming,2
+Computer Science,AQA,3,Writing Functional Programs with Higher-Order Functions,Writing functional programs,1
+Computer Science,AQA,2,Lists in functional programming,Fundamentals of functional programming,3
+Computer Science,AQA,3,List Representation and Operations,Lists in functional programming,1
+Computer Science,AQA,3,List Programming Experience,Lists in functional programming,2
+Computer Science,AQA,1,Systematic approach to problem solving,,13
+Computer Science,AQA,2,Aspects of software development,Systematic approach to problem solving,1
+Computer Science,AQA,3,Analysis Phase,Aspects of software development,1
+Computer Science,AQA,3,Design Phase,Aspects of software development,2
+Computer Science,AQA,3,Implementation Phase,Aspects of software development,3
+Computer Science,AQA,3,Testing and Evaluation,Aspects of software development,4

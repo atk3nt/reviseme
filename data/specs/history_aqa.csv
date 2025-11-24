@@ -1,0 +1,332 @@
+subject,exam_board,level,title,parent_title,order_index
+History,AQA,1,"The Age of the Crusades, c1071–1204",,1
+History,AQA,2,"The Crusader States and Outremer, c1071–1149","The Age of the Crusades, c1071–1204",1
+History,AQA,3,"The Pre-Crusade World: West, East, and Byzantium","The Crusader States and Outremer, c1071–1149",1
+History,AQA,3,"The First Crusade: Call, Motivations, and Course","The Crusader States and Outremer, c1071–1149",2
+History,AQA,3,"Outremer: Establishment, Defence, and Diplomacy","The Crusader States and Outremer, c1071–1149",3
+History,AQA,3,The Islamic Response and the Second Crusade,"The Crusader States and Outremer, c1071–1149",4
+History,AQA,2,"The Revival of Islam and the Later Crusades, 1149–","The Age of the Crusades, c1071–1204",2
+History,AQA,3,The Levant after the Second Crusade,"The Revival of Islam and the Later Crusades, 1149–",1
+History,AQA,3,The Rise of Saladin and the Fall of Jerusalem,"The Revival of Islam and the Later Crusades, 1149–",2
+History,AQA,3,The Third Crusade: Response and Impact,"The Revival of Islam and the Later Crusades, 1149–",3
+History,AQA,3,The Fourth Crusade and the Legacy of the Crusad,"The Revival of Islam and the Later Crusades, 1149–",4
+History,AQA,1,"1B Spain in the Age of Discovery, 1469–1598 (A-level only)",,2
+History,AQA,2,"Establishing a ‘New Monarchy’, 1469–1556","1B Spain in the Age of Discovery, 1469–1598 (A-level only)",1
+History,AQA,3,The Catholic Monarchs: Unification and Royal Authority,"Establishing a ‘New Monarchy’, 1469–1556",1
+History,AQA,3,"The Catholic Monarchs: Religion, Economy, and Law","Establishing a ‘New Monarchy’, 1469–1556",2
+History,AQA,3,Charles I: Imperial Inheritance and Governance,"Establishing a ‘New Monarchy’, 1469–1556",3
+History,AQA,3,"Charles I: Religion, Empire, and Abdication","Establishing a ‘New Monarchy’, 1469–1556",4
+History,AQA,2,"Philip II’s Spain, 1556–1598 (A-level only)","1B Spain in the Age of Discovery, 1469–1598 (A-level only)",2
+History,AQA,3,Philip II’s Domestic Rule and Religious Policy,"Philip II’s Spain, 1556–1598 (A-level only)",1
+History,AQA,3,"Philip II’s Spain: Economy, Culture, and Society","Philip II’s Spain, 1556–1598 (A-level only)",2
+History,AQA,3,Philip II’s Foreign Policy: European Ambitions,"Philip II’s Spain, 1556–1598 (A-level only)",3
+History,AQA,3,Philip II’s Foreign Policy: Global Conflicts and Empire,"Philip II’s Spain, 1556–1598 (A-level only)",4
+History,AQA,1,"1C The Tudors: England, 1485–1603",,3
+History,AQA,2,"Consolidation of the Tudor Dynasty: England, 1485–1547","1C The Tudors: England, 1485–1603",1
+History,AQA,3,Henry VII: Securing the Throne,"Consolidation of the Tudor Dynasty: England, 1485–1547",1
+History,AQA,3,"Society, Economy, and Culture under Henry VII","Consolidation of the Tudor Dynasty: England, 1485–1547",2
+History,AQA,3,"Henry VIII: Government, Supremacy, and Foreign Policy","Consolidation of the Tudor Dynasty: England, 1485–1547",3
+History,AQA,3,"Society, Economy, and the Henrician Reformation","Consolidation of the Tudor Dynasty: England, 1485–1547",4
+History,AQA,2,"England: Turmoil and Triumph, 1547–1603 (A-level only)","1C The Tudors: England, 1485–1603",2
+History,AQA,3,The Mid-Tudor Crisis: Edward VI and Mary I,"England: Turmoil and Triumph, 1547–1603 (A-level only)",1
+History,AQA,3,Elizabeth I: Consolidation and Settlement,"England: Turmoil and Triumph, 1547–1603 (A-level only)",2
+History,AQA,3,Challenges to Elizabethan Rule,"England: Turmoil and Triumph, 1547–1603 (A-level only)",3
+History,AQA,3,"The Late Elizabethan State: Economy, Culture, and Society","England: Turmoil and Triumph, 1547–1603 (A-level only)",4
+History,AQA,1,"1D Stuart Britain and the Crisis of Monarchy, 1603–1702",,4
+History,AQA,2,"Absolutism Challenged: Britain, 1603–1649","1D Stuart Britain and the Crisis of Monarchy, 1603–1702",1
+History,AQA,3,The Jacobean and Early Caroline State,"Absolutism Challenged: Britain, 1603–1649",1
+History,AQA,3,"Conflict and Breakdown, 1603–1629","Absolutism Challenged: Britain, 1603–1649",2
+History,AQA,3,The Personal Rule and the Path to War,"Absolutism Challenged: Britain, 1603–1649",3
+History,AQA,3,"Civil War, Radicalism, and Regicide","Absolutism Challenged: Britain, 1603–1649",4
+History,AQA,2,"Monarchy Restored and Restrained: Britain, 1649–1702","1D Stuart Britain and the Crisis of Monarchy, 1603–1702",2
+History,AQA,3,The Interregnum: Republic and Protectorate,"Monarchy Restored and Restrained: Britain, 1649–1702",1
+History,AQA,3,The Restoration Settlement and its Challenges,"Monarchy Restored and Restrained: Britain, 1649–1702",2
+History,AQA,3,Crisis of Monarchy and the Glorious Revolution,"Monarchy Restored and Restrained: Britain, 1649–1702",3
+History,AQA,3,The Post-Revolution Settlement and Limited Monarchy,"Monarchy Restored and Restrained: Britain, 1649–1702",4
+History,AQA,1,"1E Russia in the Age of Absolutism and Enlightenment, 1682–1796 (A-level only)",,5
+History,AQA,2,"Peter the Great and Russia, 1682–1725","1E Russia in the Age of Absolutism and Enlightenment, 1682–1796 (A-level only)",1
+History,AQA,3,Peter’s Accession and Early Influences,"Peter the Great and Russia, 1682–1725",1
+History,AQA,3,The Petrine Reforms: State and Economy,"Peter the Great and Russia, 1682–1725",2
+History,AQA,3,Society and Opposition in Petrine Russia,"Peter the Great and Russia, 1682–1725",3
+History,AQA,3,Peter the Great’s Foreign Policy and Wars,"Peter the Great and Russia, 1682–1725",4
+History,AQA,2,"Enlightenment Russia, 1725–1796","1E Russia in the Age of Absolutism and Enlightenment, 1682–1796 (A-level only)",2
+History,AQA,3,The Post-Petrine Era: Succession and Elizabeth,"Enlightenment Russia, 1725–1796",1
+History,AQA,3,Russia before Catherine the Great,"Enlightenment Russia, 1725–1796",2
+History,AQA,3,Catherine the Great: Enlightened Rule and Reform,"Enlightenment Russia, 1725–1796",3
+History,AQA,3,Catherine the Great: Challenges and Imperial Expansion,"Enlightenment Russia, 1725–1796",4
+History,AQA,1,"1F Industrialisation and the People: Britain, c1783–1885",,6
+History,AQA,2,"The Impact of Industrialisation: Britain, c1783–1832","1F Industrialisation and the People: Britain, c1783–1885",1
+History,AQA,3,Britain in the Age of Pitt,"The Impact of Industrialisation: Britain, c1783–1832",1
+History,AQA,3,"War, Radicalism, and Social Change","The Impact of Industrialisation: Britain, c1783–1832",2
+History,AQA,3,Post-War Toryism and Repression,"The Impact of Industrialisation: Britain, c1783–1832",3
+History,AQA,3,Industrial Society and the Great Reform Act,"The Impact of Industrialisation: Britain, c1783–1832",4
+History,AQA,2,"The Age of Reform: Britain, 1832–1885 (A-level only)","1F Industrialisation and the People: Britain, c1783–1885",2
+History,AQA,3,Post-Reform Act Britain: Politics and Protest,"The Age of Reform: Britain, 1832–1885 (A-level only)",1
+History,AQA,3,"Peel, the Economy, and Social Conditions","The Age of Reform: Britain, 1832–1885 (A-level only)",2
+History,AQA,3,Mid-Victorian Politics: Gladstone and Disraeli,"The Age of Reform: Britain, 1832–1885 (A-level only)",3
+History,AQA,3,The Late Victorian State and Society,"The Age of Reform: Britain, 1832–1885 (A-level only)",4
+History,AQA,1,"1G Challenge and transformation: Britain, c1851–1964",,7
+History,AQA,2,"Victorian and Edwardian Britain, c1851–1914","1G Challenge and transformation: Britain, c1851–1964",1
+History,AQA,3,"Mid-Victorian Politics, Economy, and Society","Victorian and Edwardian Britain, c1851–1914",1
+History,AQA,3,Late Victorian Challenges: Ireland and the Rise of,"Victorian and Edwardian Britain, c1851–1914",2
+History,AQA,3,The New Liberalism and the Welfare State,"Victorian and Edwardian Britain, c1851–1914",3
+History,AQA,3,Edwardian Britain on the Eve of War,"Victorian and Edwardian Britain, c1851–1914",4
+History,AQA,2,"The World Wars and their Legacies: Britain, 1914–","1G Challenge and transformation: Britain, c1851–1964",2
+History,AQA,3,The Impact of the Great War,"The World Wars and their Legacies: Britain, 1914–",1
+History,AQA,3,"Interwar Britain: Politics, Economy, and Ireland","The World Wars and their Legacies: Britain, 1914–",2
+History,AQA,3,WWII and the Post-War Labour Government,"The World Wars and their Legacies: Britain, 1914–",3
+History,AQA,3,The Age of Affluence: Politics and Economy,"The World Wars and their Legacies: Britain, 1914–",4
+History,AQA,3,"Post-War Society: Change, Division, and Ireland","The World Wars and their Legacies: Britain, 1914–",5
+History,AQA,1,"1H Tsarist and Communist Russia, 1855–1964",,8
+History,AQA,2,"Autocracy, Reform and Revolution: Russia, 1855–","1H Tsarist and Communist Russia, 1855–1964",1
+History,AQA,3,The Era of Great Reforms under Alexander II,"Autocracy, Reform and Revolution: Russia, 1855–",1
+History,AQA,3,"Reaction, Russification, and the Growth of Opposi","Autocracy, Reform and Revolution: Russia, 1855–",2
+History,AQA,3,The Reign of Nicholas II and the 1905 Revolution,"Autocracy, Reform and Revolution: Russia, 1855–",3
+History,AQA,3,War and the Revolutions of 1917,"Autocracy, Reform and Revolution: Russia, 1855–",4
+History,AQA,2,"The Soviet Union, 1917–1964 (A-level only)","1H Tsarist and Communist Russia, 1855–1964",2
+History,AQA,3,Lenin’s Russia: Revolution and Consolidation,"The Soviet Union, 1917–1964 (A-level only)",1
+History,AQA,3,Stalin’s Revolution: Collectivisation and Industri,"The Soviet Union, 1917–1964 (A-level only)",2
+History,AQA,3,The Great Patriotic War and High Stalinism,"The Soviet Union, 1917–1964 (A-level only)",3
+History,AQA,3,The Khrushchev Thaw and its Limits,"The Soviet Union, 1917–1964 (A-level only)",4
+History,AQA,1,"1J The British Empire, c1857–1967",,9
+History,AQA,2,"The High Water Mark of the British Empire, c1857–","1J The British Empire, c1857–1967",1
+History,AQA,3,Imperial Expansion and Policy in Africa,"The High Water Mark of the British Empire, c1857–",1
+History,AQA,3,"Trade, Attitudes, and Indigenous Relations","The High Water Mark of the British Empire, c1857–",2
+History,AQA,3,The ‘New Imperialism’: Consolidation and Policy,"The High Water Mark of the British Empire, c1857–",3
+History,AQA,3,Justifications and Challenges to Late Victorian Imp,"The High Water Mark of the British Empire, c1857–",4
+History,AQA,2,"Imperial Retreat, 1914–1967 (A-level only)","1J The British Empire, c1857–1967",2
+History,AQA,3,The World Wars and their Impact on the Empire,"Imperial Retreat, 1914–1967 (A-level only)",1
+History,AQA,3,"The Interwar Empire: Policy, Attitudes, and Nation","Imperial Retreat, 1914–1967 (A-level only)",2
+History,AQA,3,The Process of Decolonisation and the Suez Crisis,"Imperial Retreat, 1914–1967 (A-level only)",3
+History,AQA,3,The End of Empire and its Legacy,"Imperial Retreat, 1914–1967 (A-level only)",4
+History,AQA,1,"1K The making of a Superpower: USA, 1865–1975",,10
+History,AQA,2,"From Civil War to World War, 1865–1920","1K The making of a Superpower: USA, 1865–1975",1
+History,AQA,3,The Gilded Age: Politics and Society,"From Civil War to World War, 1865–1920",1
+History,AQA,3,The Gilded Age: Economy and Foreign Policy,"From Civil War to World War, 1865–1920",2
+History,AQA,3,The Progressive Era: Domestic Reform and Social,"From Civil War to World War, 1865–1920",3
+History,AQA,3,The Progressive Era: Economic Power and the Wo,"From Civil War to World War, 1865–1920",4
+History,AQA,2,"Crises and the Rise to World Power, 1920–1975 (A-","1K The making of a Superpower: USA, 1865–1975",2
+History,AQA,3,The 1920s and the Great Depression,"Crises and the Rise to World Power, 1920–1975 (A-",1
+History,AQA,3,From Isolationism to Superpower: WWII and the E,"Crises and the Rise to World Power, 1920–1975 (A-",2
+History,AQA,3,The Affluent Society: Progress and Division,"Crises and the Rise to World Power, 1920–1975 (A-",3
+History,AQA,3,Superpower: The Post-War Economy and Cold Wa,"Crises and the Rise to World Power, 1920–1975 (A-",4
+History,AQA,1,"1L The quest for political stability: Germany, 1871–",,11
+History,AQA,2,"Empire to Democracy, 1871–1929","1L The quest for political stability: Germany, 1871–",1
+History,AQA,3,The German Empire under Bismarck,"Empire to Democracy, 1871–1929",1
+History,AQA,3,Wilhelmine Germany on the Eve of War,"Empire to Democracy, 1871–1929",2
+History,AQA,3,WWI and the Troubled Birth of the Weimar Republi,"Empire to Democracy, 1871–1929",3
+History,AQA,3,The Stresemann Era: Stability and Culture,"Empire to Democracy, 1871–1929",4
+History,AQA,2,"The Impact of Nazism, War and Division, 1929–199","1L The quest for political stability: Germany, 1871–",2
+History,AQA,3,The Nazi Seizure of Power and Peacetime Rule,"The Impact of Nazism, War and Division, 1929–199",1
+History,AQA,3,The Second World War and the Division of Germ,"The Impact of Nazism, War and Division, 1929–199",2
+History,AQA,3,"West Germany: Democracy, Prosperity, and Politic","The Impact of Nazism, War and Division, 1929–199",3
+History,AQA,3,West German Society and Reunification,"The Impact of Nazism, War and Division, 1929–199",4
+History,AQA,1,"2A Royal Authority and the Angevin Kings, 1154–1216",,12
+History,AQA,2,"The Reign of Henry II, 1154–1189","2A Royal Authority and the Angevin Kings, 1154–1216",1
+History,AQA,3,Henry II’s Accession and Restoration of Authority,"The Reign of Henry II, 1154–1189",1
+History,AQA,3,Church–State Conflict and Ireland,"The Reign of Henry II, 1154–1189",2
+History,AQA,3,The Great Rebellion and its Aftermath,"The Reign of Henry II, 1154–1189",3
+History,AQA,3,The Final Years of Henry II’s Reign,"The Reign of Henry II, 1154–1189",4
+History,AQA,2,"England under Henry II’s Successors, 1189–1216 (A-","2A Royal Authority and the Angevin Kings, 1154–1216",2
+History,AQA,3,The Reign of Richard I,"England under Henry II’s Successors, 1189–1216 (A-",1
+History,AQA,3,King John’s Early Reign: Government and Church,"England under Henry II’s Successors, 1189–1216 (A-",2
+History,AQA,3,King John’s Military Failures,"England under Henry II’s Successors, 1189–1216 (A-",3
+History,AQA,3,"Magna Carta, Civil War, and John’s Legacy","England under Henry II’s Successors, 1189–1216 (A-",4
+History,AQA,1,"2B The Wars of the Roses, 1450–1499",,13
+History,AQA,2,"The Fall of the House of Lancaster, 1450–1471","2B The Wars of the Roses, 1450–1499",1
+History,AQA,3,Origins of the Conflict and the Rise of York,"The Fall of the House of Lancaster, 1450–1471",1
+History,AQA,3,The First Phase of War and Uneasy Peace,"The Fall of the House of Lancaster, 1450–1471",2
+History,AQA,3,The Yorkist Triumph,"The Fall of the House of Lancaster, 1450–1471",3
+History,AQA,3,Edward IV’s Early Reign and the Fall of Lancaster,"The Fall of the House of Lancaster, 1450–1471",4
+History,AQA,2,"The Fall of the House of York, 1471–1499 (A-level o","2B The Wars of the Roses, 1450–1499",2
+History,AQA,3,The Second Reign of Edward IV,"The Fall of the House of York, 1471–1499 (A-level o",1
+History,AQA,3,The Usurpation of Richard III,"The Fall of the House of York, 1471–1499 (A-level o",2
+History,AQA,3,The Fall of York and Rise of Tudor,"The Fall of the House of York, 1471–1499 (A-level o",3
+History,AQA,3,Consolidating the Tudor Dynasty,"The Fall of the House of York, 1471–1499 (A-level o",4
+History,AQA,1,"2C The Reformation in Europe, c1500–1564 (A-level only)",,14
+History,AQA,2,"The Origins of the Reformation, c1500–1531","2C The Reformation in Europe, c1500–1564 (A-level only)",1
+History,AQA,3,The Pre-Reformation Church,"The Origins of the Reformation, c1500–1531",1
+History,AQA,3,Martin Luther’s Challenge to the Church,"The Origins of the Reformation, c1500–1531",2
+History,AQA,3,The Spread and Diversification of the Reformation,"The Origins of the Reformation, c1500–1531",3
+History,AQA,3,Social and Political Consequences of Reform,"The Origins of the Reformation, c1500–1531",4
+History,AQA,2,"Reformation Europe, 1531–1564","2C The Reformation in Europe, c1500–1564 (A-level only)",2
+History,AQA,3,The Expansion of Protestantism,"Reformation Europe, 1531–1564",1
+History,AQA,3,The Rise of Calvinism,"Reformation Europe, 1531–1564",2
+History,AQA,3,Religious War and Catholic Reformation,"Reformation Europe, 1531–1564",3
+History,AQA,3,The Council of Trent and its Impact,"Reformation Europe, 1531–1564",4
+History,AQA,1,"2D Religious conflict and the Church in England, c1529–c1570",,15
+History,AQA,2,"The Break from Rome, c1529–1547","2D Religious conflict and the Church in England, c1529–c1570",1
+History,AQA,3,The English Church on the Eve of Reformation,"The Break from Rome, c1529–1547",1
+History,AQA,3,The Henrician Reformation: Politics and Power,"The Break from Rome, c1529–1547",2
+History,AQA,3,The Henrician Reformation: Doctrine and Dissoluti,"The Break from Rome, c1529–1547",3
+History,AQA,3,The State of the Church by 1547,"The Break from Rome, c1529–1547",4
+History,AQA,2,"The Establishment of the Church of England, 1547–","2D Religious conflict and the Church in England, c1529–c1570",2
+History,AQA,3,The Edwardian Reformation,"The Establishment of the Church of England, 1547–",1
+History,AQA,3,The Marian Restoration: Aims and Obstacles,"The Establishment of the Church of England, 1547–",2
+History,AQA,3,Marian Persecution and its Consequences,"The Establishment of the Church of England, 1547–",3
+History,AQA,3,The Elizabethan Religious Settlement,"The Establishment of the Church of England, 1547–",4
+History,AQA,1,"2E The English Revolution, 1625–1660",,16
+History,AQA,2,"The Origins of the English Civil War, 1625–1642","2E The English Revolution, 1625–1660",1
+History,AQA,3,Charles I and the Causes of Conflict,"The Origins of the English Civil War, 1625–1642",1
+History,AQA,3,Breakdown of Relations and Personal Rule,"The Origins of the English Civil War, 1625–1642",2
+History,AQA,3,The Collapse of Personal Rule and the Approach o,"The Origins of the English Civil War, 1625–1642",3
+History,AQA,3,The Slide into War,"The Origins of the English Civil War, 1625–1642",4
+History,AQA,2,"Radicalism, Republic and Restoration, 1642–1660","2E The English Revolution, 1625–1660",2
+History,AQA,3,The First Civil War and its Aftermath,"Radicalism, Republic and Restoration, 1642–1660",1
+History,AQA,3,Radicalism and the Second Civil War,"Radicalism, Republic and Restoration, 1642–1660",2
+History,AQA,3,Regicide and the Third Civil War,"Radicalism, Republic and Restoration, 1642–1660",3
+History,AQA,3,The Protectorate and the Restoration,"Radicalism, Republic and Restoration, 1642–1660",4
+History,AQA,1,"2F The Sun King: Louis XIV, France and Europe, 1643–1715 (A-level only)",,17
+History,AQA,2,"The Sun King, 1643–1685","2F The Sun King: Louis XIV, France and Europe, 1643–1715 (A-level only)",1
+History,AQA,3,The Minority of Louis XIV and the Frondes,"The Sun King, 1643–1685",1
+History,AQA,3,Louis XIV and Absolutism,"The Sun King, 1643–1685",2
+History,AQA,3,Domestic Policy under Louis XIV,"The Sun King, 1643–1685",3
+History,AQA,3,Early Foreign Policy and Expansion,"The Sun King, 1643–1685",4
+History,AQA,2,"Louis XIV in Decline, 1685–1715","2F The Sun King: Louis XIV, France and Europe, 1643–1715 (A-level only)",2
+History,AQA,3,France after 1685: Domestic Pressures,"Louis XIV in Decline, 1685–1715",1
+History,AQA,3,The Nine Years War,"Louis XIV in Decline, 1685–1715",2
+History,AQA,3,The War of the Spanish Succession,"Louis XIV in Decline, 1685–1715",3
+History,AQA,3,The End of the Reign and Louis’s Legacy,"Louis XIV in Decline, 1685–1715",4
+History,AQA,1,"2G The Birth of the USA, 1760–1801",,18
+History,AQA,2,"The Origins of the American Revolution, 1760–1776","2G The Birth of the USA, 1760–1801",1
+History,AQA,3,The American Colonies and Britain in 1760,"The Origins of the American Revolution, 1760–1776",1
+History,AQA,3,Growing Tensions and Colonial Reaction,"The Origins of the American Revolution, 1760–1776",2
+History,AQA,3,The Road to Revolution,"The Origins of the American Revolution, 1760–1776",3
+History,AQA,3,The Outbreak of War and Declaration of Indepen,"The Origins of the American Revolution, 1760–1776",4
+History,AQA,2,"Establishing the Nation, 1776–1801 (A-level only)","2G The Birth of the USA, 1760–1801",2
+History,AQA,3,The War of Independence,"Establishing the Nation, 1776–1801 (A-level only)",1
+History,AQA,3,Creating a Constitution,"Establishing the Nation, 1776–1801 (A-level only)",2
+History,AQA,3,The Early Republic under Washington and Adams,"Establishing the Nation, 1776–1801 (A-level only)",3
+History,AQA,3,The Rise of Political Parties and the State of the N,"Establishing the Nation, 1776–1801 (A-level only)",4
+History,AQA,1,"2H France in Revolution, 1774–1815 (A-level only)",,19
+History,AQA,2,"The End of Absolutism and the French Revolution, 1","2H France in Revolution, 1774–1815 (A-level only)",1
+History,AQA,3,The Ancien Régime on the Eve of Revolution,"The End of Absolutism and the French Revolution, 1",1
+History,AQA,3,The Revolution of 1789 and the Constitutional Mon,"The End of Absolutism and the French Revolution, 1",2
+History,AQA,3,The Republic and the Execution of the King,"The End of Absolutism and the French Revolution, 1",3
+History,AQA,3,"War, Terror, and the Fall of Robespierre","The End of Absolutism and the French Revolution, 1",4
+History,AQA,2,The Rise of Napoleon and his Impact on France and,"2H France in Revolution, 1774–1815 (A-level only)",2
+History,AQA,3,The Directory and the Rise of Napoleon,The Rise of Napoleon and his Impact on France and,1
+History,AQA,3,Napoleonic France: Domestic Policies,The Rise of Napoleon and his Impact on France and,2
+History,AQA,3,The Napoleonic Empire: Expansion and Control,The Rise of Napoleon and his Impact on France and,3
+History,AQA,3,The Collapse of the Napoleonic Empire,The Rise of Napoleon and his Impact on France and,4
+History,AQA,1,"2J America: A Nation Divided, c1845–1877",,20
+History,AQA,2,"The Origins of the American Civil War, c1845–1861","2J America: A Nation Divided, c1845–1877",1
+History,AQA,3,America in c1845: Divisions and Tensions,"The Origins of the American Civil War, c1845–1861",1
+History,AQA,3,Westward Expansion and Attempts at Compromis,"The Origins of the American Civil War, c1845–1861",2
+History,AQA,3,The Rise of Sectionalism,"The Origins of the American Civil War, c1845–1861",3
+History,AQA,3,The Path to Secession,"The Origins of the American Civil War, c1845–1861",4
+History,AQA,2,"Civil War and Reconstruction, 1861–1877 (A-level o","2J America: A Nation Divided, c1845–1877",2
+History,AQA,3,The American Civil War,"Civil War and Reconstruction, 1861–1877 (A-level o",1
+History,AQA,3,Planning and Implementing Reconstruction,"Civil War and Reconstruction, 1861–1877 (A-level o",2
+History,AQA,3,Presidential Reconstruction and its Opposition,"Civil War and Reconstruction, 1861–1877 (A-level o",3
+History,AQA,3,Radical Reconstruction and its End,"Civil War and Reconstruction, 1861–1877 (A-level o",4
+History,AQA,1,"2K International Relations and Global Conflict, c1890–1941 (A-level only)",,21
+History,AQA,2,"Great Power Rivalries and Entry into War, c1890–","2K International Relations and Global Conflict, c1890–1941 (A-level only)",1
+History,AQA,3,"The Great Powers and their Rivalries, c.1900","Great Power Rivalries and Entry into War, c1890–",1
+History,AQA,3,"Instability and Alliances, 1900–1911","Great Power Rivalries and Entry into War, c1890–",2
+History,AQA,3,The Balkan Crises,"Great Power Rivalries and Entry into War, c1890–",3
+History,AQA,3,The Outbreak of World War,"Great Power Rivalries and Entry into War, c1890–",4
+History,AQA,2,The Failure of International Peace and the Origins o,"2K International Relations and Global Conflict, c1890–1941 (A-level only)",2
+History,AQA,3,The Post-War Peace Settlement and its Challenge,The Failure of International Peace and the Origins o,1
+History,AQA,3,The ‘Locarno Spirit’ and the Great Depression,The Failure of International Peace and the Origins o,2
+History,AQA,3,The Collapse of Collective Security and the Rise o,The Failure of International Peace and the Origins o,3
+History,AQA,3,The Outbreak and Escalation of the Second World,The Failure of International Peace and the Origins o,4
+History,AQA,1,"2L Italy and Fascism, c1900–1945",,22
+History,AQA,2,"The Crisis of Liberal Italy and the Rise of Mussolini,","2L Italy and Fascism, c1900–1945",1
+History,AQA,3,Liberal Italy: Challenges and Crises,"The Crisis of Liberal Italy and the Rise of Mussolini,",1
+History,AQA,3,The Impact of the First World War,"The Crisis of Liberal Italy and the Rise of Mussolini,",2
+History,AQA,3,Post-War Crisis and the Rise of Fascism,"The Crisis of Liberal Italy and the Rise of Mussolini,",3
+History,AQA,3,Mussolini’s Consolidation of Power,"The Crisis of Liberal Italy and the Rise of Mussolini,",4
+History,AQA,2,"Fascist Italy, 1926–1945 (A-level only)","2L Italy and Fascism, c1900–1945",2
+History,AQA,3,The Fascist State: Control and Society,"Fascist Italy, 1926–1945 (A-level only)",1
+History,AQA,3,Fascist Foreign Policy and Expansion,"Fascist Italy, 1926–1945 (A-level only)",2
+History,AQA,3,The Path to War and Italy’s Involvement,"Fascist Italy, 1926–1945 (A-level only)",3
+History,AQA,3,The Fall of Fascism,"Fascist Italy, 1926–1945 (A-level only)",4
+History,AQA,1,"2M Wars and Welfare: Britain in Transition, 1906–1957",,23
+History,AQA,2,"Society in Crisis, 1906–1929","2M Wars and Welfare: Britain in Transition, 1906–1957",1
+History,AQA,3,"The Liberal Governments, 1906–1914","Society in Crisis, 1906–1929",1
+History,AQA,3,Pre-War Crises and the Impact of War,"Society in Crisis, 1906–1929",2
+History,AQA,3,The Social and Economic Impact of War,"Society in Crisis, 1906–1929",3
+History,AQA,3,Britain in the 1920s,"Society in Crisis, 1906–1929",4
+History,AQA,2,"The Emergence of the Affluent Society, 1929–1957","2M Wars and Welfare: Britain in Transition, 1906–1957",2
+History,AQA,3,Britain in the ‘Hungry Thirties’,"The Emergence of the Affluent Society, 1929–1957",1
+History,AQA,3,The ‘People’s War’ and the Post-War Settlement,"The Emergence of the Affluent Society, 1929–1957",2
+History,AQA,3,The Age of Affluence: Politics and Economy,"The Emergence of the Affluent Society, 1929–1957",3
+History,AQA,3,The Affluent Society: Social Change and Tensions,"The Emergence of the Affluent Society, 1929–1957",4
+History,AQA,1,"2N Revolution and dictatorship: Russia, 1917–1953",,24
+History,AQA,2,"The Russian Revolution and the Rise of Stalin, 1917","2N Revolution and dictatorship: Russia, 1917–1953",1
+History,AQA,3,The Revolutions of 1917,"The Russian Revolution and the Rise of Stalin, 1917",1
+History,AQA,3,"Consolidation, Civil War, and the NEP","The Russian Revolution and the Rise of Stalin, 1917",2
+History,AQA,3,The Power Struggle and Stalin’s Rise,"The Russian Revolution and the Rise of Stalin, 1917",3
+History,AQA,3,The ‘Great Turn’ and the Stalinist State,"The Russian Revolution and the Rise of Stalin, 1917",4
+History,AQA,2,"Stalin’s Rule, 1929–1953 (A-level only)","2N Revolution and dictatorship: Russia, 1917–1953",2
+History,AQA,3,Stalin’s Revolution from Above,"Stalin’s Rule, 1929–1953 (A-level only)",1
+History,AQA,3,The Terror State,"Stalin’s Rule, 1929–1953 (A-level only)",2
+History,AQA,3,The Great Patriotic War,"Stalin’s Rule, 1929–1953 (A-level only)",3
+History,AQA,3,High Stalinism and Legacy,"Stalin’s Rule, 1929–1953 (A-level only)",4
+History,AQA,1,"2O Democracy and Nazism: Germany, 1918–1945",,25
+History,AQA,2,"The Weimar Republic, 1918–1933","2O Democracy and Nazism: Germany, 1918–1945",1
+History,AQA,3,"The Troubled Birth of the Republic, 1918–1924","The Weimar Republic, 1918–1933",1
+History,AQA,3,"The ‘Golden Age’ of Weimar, 1924–1929","The Weimar Republic, 1918–1933",2
+History,AQA,3,"The Collapse of the Republic, 1929–1933","The Weimar Republic, 1918–1933",3
+History,AQA,3,Hitler’s Appointment as Chancellor,"The Weimar Republic, 1918–1933",4
+History,AQA,2,"Nazi Germany, 1933–1945 (A-level only)","2O Democracy and Nazism: Germany, 1918–1945",2
+History,AQA,3,Consolidating Power and the Terror State,"Nazi Germany, 1933–1945 (A-level only)",1
+History,AQA,3,Nazi Economic and Social Policies,"Nazi Germany, 1933–1945 (A-level only)",2
+History,AQA,3,Racial Policy and the Holocaust,"Nazi Germany, 1933–1945 (A-level only)",3
+History,AQA,3,The Impact of War on Nazi Germany,"Nazi Germany, 1933–1945 (A-level only)",4
+History,AQA,1,"2P The Transformation of China, 1936–1997",,26
+History,AQA,2,"The Emergence of the People’s Republic of China, 1","2P The Transformation of China, 1936–1997",1
+History,AQA,3,"The GMD, CCP, and the Sino-Japanese War","The Emergence of the People’s Republic of China, 1",1
+History,AQA,3,The Chinese Civil War and Communist Victory,"The Emergence of the People’s Republic of China, 1",2
+History,AQA,3,Consolidating Communist Rule,"The Emergence of the People’s Republic of China, 1",3
+History,AQA,3,The Great Leap Forward and its Consequences,"The Emergence of the People’s Republic of China, 1",4
+History,AQA,2,Economic Growth and the Transformation of the St,"2P The Transformation of China, 1936–1997",2
+History,AQA,3,China after the Great Leap Forward,Economic Growth and the Transformation of the St,1
+History,AQA,3,The Cultural Revolution: Origins and Development,Economic Growth and the Transformation of the St,2
+History,AQA,3,The Impact of the Cultural Revolution and Foreign,Economic Growth and the Transformation of the St,3
+History,AQA,3,The Deng Xiaoping Era and Modern China,Economic Growth and the Transformation of the St,4
+History,AQA,1,"2Q The American Dream: reality and illusion, 1945–1980",,27
+History,AQA,2,"Prosperity, Inequality and Superpower Status, 1945–","2Q The American Dream: reality and illusion, 1945–1980",1
+History,AQA,3,The Truman Presidency and the Early Cold War,"Prosperity, Inequality and Superpower Status, 1945–",1
+History,AQA,3,The Eisenhower Presidency and the Affluent Socie,"Prosperity, Inequality and Superpower Status, 1945–",2
+History,AQA,3,The Kennedy Presidency and the ‘New Frontier’,"Prosperity, Inequality and Superpower Status, 1945–",3
+History,AQA,3,The Civil Rights Movement to 1963,"Prosperity, Inequality and Superpower Status, 1945–",4
+History,AQA,2,"Challenges to the American Dream, 1963–1980 (A-","2Q The American Dream: reality and illusion, 1945–1980",2
+History,AQA,3,The Johnson Presidency: ‘Great Society’ and Viet,"Challenges to the American Dream, 1963–1980 (A-",1
+History,AQA,3,Social Division and Protest in the 1960s,"Challenges to the American Dream, 1963–1980 (A-",2
+History,AQA,3,The Nixon Presidency and Watergate,"Challenges to the American Dream, 1963–1980 (A-",3
+History,AQA,3,"The USA after Watergate: Ford, Carter and the ‘Ne","Challenges to the American Dream, 1963–1980 (A-",4
+History,AQA,1,"2R The Cold War, c1945–1991",,28
+History,AQA,2,To the Brink of Nuclear War: International Relations,"2R The Cold War, c1945–1991",1
+History,AQA,3,The Origins and Development of the Cold War,To the Brink of Nuclear War: International Relations,1
+History,AQA,3,The Cold War in Europe and Asia,To the Brink of Nuclear War: International Relations,2
+History,AQA,3,The ‘New Look’ and Peaceful Coexistence,To the Brink of Nuclear War: International Relations,3
+History,AQA,3,Superpower Confrontation in the Kennedy Era,To the Brink of Nuclear War: International Relations,4
+History,AQA,2,"From Détente to the End of the Cold War, c1963–19","2R The Cold War, c1945–1991",2
+History,AQA,3,The Vietnam War and Superpower Relations,"From Détente to the End of the Cold War, c1963–19",1
+History,AQA,3,The Era of Détente,"From Détente to the End of the Cold War, c1963–19",2
+History,AQA,3,The Second Cold War,"From Détente to the End of the Cold War, c1963–19",3
+History,AQA,3,The End of the Cold War,"From Détente to the End of the Cold War, c1963–19",4
+History,AQA,1,"2S The Making of Modern Britain, 1951–2007",,29
+History,AQA,2,"Building a New Britain, 1951–1979","2S The Making of Modern Britain, 1951–2007",1
+History,AQA,3,"The Affluent Society, 1951–1964","Building a New Britain, 1951–1979",1
+History,AQA,3,The ‘Swinging Sixties’: Labour in Power,"Building a New Britain, 1951–1979",2
+History,AQA,3,Society and Foreign Relations in the 1960s,"Building a New Britain, 1951–1979",3
+History,AQA,3,"The End of the Post-War Consensus, 1970–1979","Building a New Britain, 1951–1979",4
+History,AQA,2,"Modern Britain, 1979–2007 (A-level only)","2S The Making of Modern Britain, 1951–2007",2
+History,AQA,3,The Thatcher Revolution: Politics and Economy,"Modern Britain, 1979–2007 (A-level only)",1
+History,AQA,3,Thatcherism: Society and Foreign Policy,"Modern Britain, 1979–2007 (A-level only)",2
+History,AQA,3,The Major Years and the Rise of New Labour,"Modern Britain, 1979–2007 (A-level only)",3
+History,AQA,3,"New Labour in Power, 1997–2007","Modern Britain, 1979–2007 (A-level only)",4
+History,AQA,1,"2T The Crisis of Communism: The USSR and the Soviet Empire, 1953–2000 (A-level only)",,30
+History,AQA,2,"Crisis in the Soviet Union, 1953–2000","2T The Crisis of Communism: The USSR and the Soviet Empire, 1953–2000 (A-level only)",1
+History,AQA,3,The Khrushchev Era: De-Stalinisation and Reform,"Crisis in the Soviet Union, 1953–2000",1
+History,AQA,3,The Brezhnev Era: Stagnation and Détente,"Crisis in the Soviet Union, 1953–2000",2
+History,AQA,3,The Gorbachev Era: Reform and Collapse,"Crisis in the Soviet Union, 1953–2000",3
+History,AQA,3,The End of the USSR and Post-Soviet Russia,"Crisis in the Soviet Union, 1953–2000",4
+History,AQA,2,"Crisis in the Soviet Empire, 1953–2000","2T The Crisis of Communism: The USSR and the Soviet Empire, 1953–2000 (A-level only)",2
+History,AQA,3,Life and Repression in the Satellite States,"Crisis in the Soviet Empire, 1953–2000",1
+History,AQA,3,Challenges to Soviet Control up to 1980,"Crisis in the Soviet Empire, 1953–2000",2
+History,AQA,3,The Collapse of Communism in Eastern Europe,"Crisis in the Soviet Empire, 1953–2000",3
+History,AQA,3,The Post-Soviet Era in Eastern and Central Europ,"Crisis in the Soviet Empire, 1953–2000",4

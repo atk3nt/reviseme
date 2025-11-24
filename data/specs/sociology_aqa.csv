@@ -1,0 +1,129 @@
+subject,exam_board,level,title,parent_title,order_index
+Sociology,AQA,1,Education with Theory and Methods,,1
+Sociology,AQA,2,Education,Education with Theory and Methods,1
+Sociology,AQA,3,Role and Functions of the Education System,Education,1
+Sociology,AQA,3,Differential Educational Achievement,Education,2
+Sociology,AQA,3,Relationships and Processes in Schools,Education,3
+Sociology,AQA,3,The Hidden Curriculum and School Organisation,Education,4
+Sociology,AQA,3,Educational Policies: Selection and Marketisation,Education,5
+Sociology,AQA,3,Educational Policies for Equality,Education,6
+Sociology,AQA,3,Globalisation and Educational Policy,Education,7
+Sociology,AQA,2,Methods in Context,Education with Theory and Methods,2
+Sociology,AQA,3,Applying Sociological Research Methods to Education,Methods in Context,1
+Sociology,AQA,2,Theory and Methods,Education with Theory and Methods,3
+Sociology,AQA,3,Quantitative and Qualitative Methods,Theory and Methods,1
+Sociology,AQA,3,Research Design,Theory and Methods,2
+Sociology,AQA,3,Data Sources: Questionnaires and Interviews,Theory and Methods,3
+Sociology,AQA,3,Data Sources: Observation and Experiments,Theory and Methods,4
+Sociology,AQA,3,Data Sources: Documents and Official Statistics,Theory and Methods,5
+Sociology,AQA,3,Primary vs. Secondary Data,Theory and Methods,6
+Sociology,AQA,3,Quantitative vs. Qualitative Data,Theory and Methods,7
+Sociology,AQA,3,"Positivism, Interpretivism and Methods",Theory and Methods,8
+Sociology,AQA,3,The Nature of 'Social Facts',Theory and Methods,9
+Sociology,AQA,3,"Research Considerations: Theoretical, Practical, Ethical",Theory and Methods,10
+Sociology,AQA,3,Consensus and Conflict Theories,Theory and Methods,11
+Sociology,AQA,3,Structural and Social Action Theories,Theory and Methods,12
+Sociology,AQA,3,"Modernity, Post-modernity and Theory",Theory and Methods,13
+Sociology,AQA,3,Sociology as a Science,Theory and Methods,14
+Sociology,AQA,3,The Relationship Between Theory and Methods,Theory and Methods,15
+Sociology,AQA,3,"Debates on Subjectivity, Objectivity and Value Freedom",Theory and Methods,16
+Sociology,AQA,3,Sociology and Social Policy,Theory and Methods,17
+Sociology,AQA,1,Topics in Sociology,,2
+Sociology,AQA,2,Culture and Identity,Topics in Sociology,1
+Sociology,AQA,3,Conceptions of Culture,Culture and Identity,1
+Sociology,AQA,3,The Socialisation Process,Culture and Identity,2
+Sociology,AQA,3,Agencies of Socialisation,Culture and Identity,3
+Sociology,AQA,3,Social Construction of Self and Identity,Culture and Identity,4
+Sociology,AQA,3,"Identity: Age, Disability and Ethnicity",Culture and Identity,5
+Sociology,AQA,3,"Identity: Gender, Nationality, Sexuality and Class",Culture and Identity,6
+Sociology,AQA,3,"Identity, Production and Consumption",Culture and Identity,7
+Sociology,AQA,3,Identity and Globalisation,Culture and Identity,8
+Sociology,AQA,2,Families and Households,Topics in Sociology,2
+Sociology,AQA,3,"The Family, Social Structure and Social Change",Families and Households,1
+Sociology,AQA,3,Changing Patterns in Relationships,Families and Households,2
+Sociology,AQA,3,Personal Life and Family Diversity,Families and Households,3
+Sociology,AQA,3,Gender Roles and Domestic Labour,Families and Households,4
+Sociology,AQA,3,Power Relationships in the Family,Families and Households,5
+Sociology,AQA,3,The Nature and Changing Status of Childhood,Families and Households,6
+Sociology,AQA,3,"Demographic Trends: Births, Deaths and Family Size",Families and Households,7
+Sociology,AQA,3,Demographic Trends: Life Expectancy and Ageing,Families and Households,8
+Sociology,AQA,3,Demographic Trends: Migration and Globalisation,Families and Households,9
+Sociology,AQA,2,Health,Topics in Sociology,3
+Sociology,AQA,3,Social Construction of Health and Illness,Health,1
+Sociology,AQA,3,Models of Health and Illness,Health,2
+Sociology,AQA,3,"Health Inequalities by Class, Gender, Ethnicity and Age",Health,3
+Sociology,AQA,3,Inequalities in Health Care Provision and Access,Health,4
+Sociology,AQA,3,The Nature and Social Distribution of Mental Illness,Health,5
+Sociology,AQA,3,The Role of Medicine and Health Professions,Health,6
+Sociology,AQA,3,The Globalised Health Industry,Health,7
+Sociology,AQA,2,"Work, Poverty and Welfare",Topics in Sociology,4
+Sociology,AQA,3,The Nature and Persistence of Poverty,"Work, Poverty and Welfare",1
+Sociology,AQA,3,"Distribution of Poverty, Wealth and Income","Work, Poverty and Welfare",2
+Sociology,AQA,3,State Responses to Poverty,"Work, Poverty and Welfare",3
+Sociology,AQA,3,Private and Voluntary Welfare Providers,"Work, Poverty and Welfare",4
+Sociology,AQA,3,Organisation and Control of the Labour Process,"Work, Poverty and Welfare",5
+Sociology,AQA,3,"Technology, Skill and De-skilling","Work, Poverty and Welfare",6
+Sociology,AQA,3,Significance of Work and Worklessness,"Work, Poverty and Welfare",7
+Sociology,AQA,3,Globalisation's Effects on Work,"Work, Poverty and Welfare",8
+Sociology,AQA,2,Beliefs in Society,Topics in Sociology,5
+Sociology,AQA,3,"Ideology, Science and Religion",Beliefs in Society,1
+Sociology,AQA,3,"Religion, Social Change and Stability",Beliefs in Society,2
+Sociology,AQA,3,Types of Religious Organisations,Beliefs in Society,3
+Sociology,AQA,3,Organisations and Belief/Practice,Beliefs in Society,4
+Sociology,AQA,3,Social Groups and Religious Movements,Beliefs in Society,5
+Sociology,AQA,3,Religion and Religiosity Today,Beliefs in Society,6
+Sociology,AQA,3,Secularisation in a Global Context,Beliefs in Society,7
+Sociology,AQA,3,Globalisation and the Spread of Religions,Beliefs in Society,8
+Sociology,AQA,2,Global Development,Topics in Sociology,6
+Sociology,AQA,3,"Development, Underdevelopment and Global Inequality",Global Development,1
+Sociology,AQA,3,Globalisation and Inter-Society Relationships,Global Development,2
+Sociology,AQA,3,"Role of TNCs, NGOs and International Agencies",Global Development,3
+Sociology,AQA,3,"Development: Aid, Trade, Industrialisation and Urbanisation",Global Development,4
+Sociology,AQA,3,"Development: Environment, War and Conflict",Global Development,5
+Sociology,AQA,3,"Employment, Education and Health as Aspects of Development",Global Development,6
+Sociology,AQA,3,Demographic Change and Gender as Aspects of Development,Global Development,7
+Sociology,AQA,2,The Media,Topics in Sociology,7
+Sociology,AQA,3,The New Media and its Significance,The Media,1
+Sociology,AQA,3,Media Ownership and Control,The Media,2
+Sociology,AQA,3,"Media, Globalisation and Popular Culture",The Media,3
+Sociology,AQA,3,Selection and Presentation of News,The Media,4
+Sociology,AQA,3,"Media Representations: Age, Class and Ethnicity",The Media,5
+Sociology,AQA,3,"Media Representations: Gender, Sexuality and Identity",The Media,6
+Sociology,AQA,3,The Media and Audiences,The Media,7
+Sociology,AQA,2,Stratification and Differentiation,Topics in Sociology,8
+Sociology,AQA,3,Theories of Stratification and Differentiation,Stratification and Differentiation,1
+Sociology,AQA,3,"Dimensions of Inequality: Class, Status and Power",Stratification and Differentiation,2
+Sociology,AQA,3,Life-chances by Social Group,Stratification and Differentiation,3
+Sociology,AQA,3,Defining and Measuring Social Class,Stratification and Differentiation,4
+Sociology,AQA,3,"Occupation, Gender and Social Class",Stratification and Differentiation,5
+Sociology,AQA,3,Changing Structures of Inequality,Stratification and Differentiation,6
+Sociology,AQA,3,Patterns of Social Mobility,Stratification and Differentiation,7
+Sociology,AQA,1,Crime and Deviance with Theory and Methods,,3
+Sociology,AQA,2,Crime and Deviance,Crime and Deviance with Theory and Methods,1
+Sociology,AQA,3,Concepts of Crime and Deviance,Crime and Deviance,1
+Sociology,AQA,3,Concepts of Social Order and Control,Crime and Deviance,2
+Sociology,AQA,3,Social Distribution of Crime,Crime and Deviance,3
+Sociology,AQA,3,Recent Patterns and Trends in Crime,Crime and Deviance,4
+Sociology,AQA,3,Globalisation and Crime,Crime and Deviance,5
+Sociology,AQA,3,The Media and Crime,Crime and Deviance,6
+Sociology,AQA,3,"Green Crime, Human Rights and State Crime",Crime and Deviance,7
+Sociology,AQA,3,"Crime Control, Surveillance and Prevention",Crime and Deviance,8
+Sociology,AQA,3,Victims and the Criminal Justice System,Crime and Deviance,9
+Sociology,AQA,2,Theory and Methods,Crime and Deviance with Theory and Methods,2
+Sociology,AQA,3,Quantitative and Qualitative Methods,Theory and Methods,1
+Sociology,AQA,3,Research Design,Theory and Methods,2
+Sociology,AQA,3,Data Sources: Questionnaires and Interviews,Theory and Methods,3
+Sociology,AQA,3,Data Sources: Observation and Experiments,Theory and Methods,4
+Sociology,AQA,3,Data Sources: Documents and Official Statistics,Theory and Methods,5
+Sociology,AQA,3,Primary vs. Secondary Data,Theory and Methods,6
+Sociology,AQA,3,Quantitative vs. Qualitative Data,Theory and Methods,7
+Sociology,AQA,3,"Positivism, Interpretivism and Methods",Theory and Methods,8
+Sociology,AQA,3,The Nature of ‘Social Facts’,Theory and Methods,9
+Sociology,AQA,3,"Research Considerations: Theoretical, Practical, Ethical",Theory and Methods,10
+Sociology,AQA,3,Consensus and Conflict Theories,Theory and Methods,11
+Sociology,AQA,3,Structural and Social Action Theories,Theory and Methods,12
+Sociology,AQA,3,"Modernity, Post-modernity and Theory",Theory and Methods,13
+Sociology,AQA,3,Sociology as a Science,Theory and Methods,14
+Sociology,AQA,3,The Relationship Between Theory and Methods,Theory and Methods,15
+Sociology,AQA,3,"Debates on Subjectivity, Objectivity and Value Freedom",Theory and Methods,16
+Sociology,AQA,3,Sociology and Social Policy,Theory and Methods,17

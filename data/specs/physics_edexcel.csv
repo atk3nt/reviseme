@@ -1,0 +1,170 @@
+subject,exam_board,level,title,parent_title,order_index
+Physics,Edexcel,1,Scientific Principles and Practice,,1
+Physics,Edexcel,2,Fundamental Quantities and Measurement,Scientific Principles and Practice,1
+Physics,Edexcel,3,Base and Derived Quantities,Fundamental Quantities and Measurement,1
+Physics,Edexcel,3,Practical Skills and Techniques,Fundamental Quantities and Measurement,2
+Physics,Edexcel,3,Estimation in Physics,Fundamental Quantities and Measurement,3
+Physics,Edexcel,3,Limitations of Physical Measurement,Fundamental Quantities and Measurement,4
+Physics,Edexcel,2,The Nature and Communication of Science,Scientific Principles and Practice,2
+Physics,Edexcel,3,Scientific Communication,The Nature and Communication of Science,1
+Physics,Edexcel,3,Benefits and Risks of Scientific Applications,The Nature and Communication of Science,2
+Physics,Edexcel,3,Validating Scientific Knowledge,The Nature and Communication of Science,3
+Physics,Edexcel,3,Science in Societal Decision Making,The Nature and Communication of Science,4
+Physics,Edexcel,1,"Motion, Forces, and Energy",,2
+Physics,Edexcel,2,Kinematics,"Motion, Forces, and Energy",1
+Physics,Edexcel,3,Equations of Uniform Motion (SUVAT),Kinematics,1
+Physics,Edexcel,3,Motion Graphs,Kinematics,2
+Physics,Edexcel,3,Scalar and Vector Quantities,Kinematics,3
+Physics,Edexcel,3,Vector Resolution and Addition,Kinematics,4
+Physics,Edexcel,3,Projectile Motion,Kinematics,5
+Physics,Edexcel,2,Dynamics and Forces,"Motion, Forces, and Energy",2
+Physics,Edexcel,3,Free-Body Diagrams and Newton's Laws,Dynamics and Forces,1
+Physics,Edexcel,3,Gravitational Field Strength and Weight,Dynamics and Forces,2
+Physics,Edexcel,3,Core Practical 1: Determine ‘g’,Dynamics and Forces,3
+Physics,Edexcel,2,Momentum and Moments,"Motion, Forces, and Energy",3
+Physics,Edexcel,3,Momentum and Newton's Third Law,Momentum and Moments,1
+Physics,Edexcel,3,Conservation of Linear Momentum,Momentum and Moments,2
+Physics,Edexcel,3,Moments and Equilibrium,Momentum and Moments,3
+Physics,Edexcel,2,"Work, Energy, and Power","Motion, Forces, and Energy",4
+Physics,Edexcel,3,Work and Kinetic Energy,"Work, Energy, and Power",1
+Physics,Edexcel,3,Gravitational Potential Energy and Conservatio,"Work, Energy, and Power",2
+Physics,Edexcel,3,Power,"Work, Energy, and Power",3
+Physics,Edexcel,3,Efficiency,"Work, Energy, and Power",4
+Physics,Edexcel,1,Fundamentals of Electric Circuits,,3
+Physics,Edexcel,2,Fundamental Circuit Concepts,Fundamentals of Electric Circuits,1
+Physics,Edexcel,3,Electric Current and Potential Difference,Fundamental Circuit Concepts,1
+Physics,Edexcel,3,Resistance and Ohm's Law,Fundamental Circuit Concepts,2
+Physics,Edexcel,3,Circuit Conservation Laws,Fundamental Circuit Concepts,3
+Physics,Edexcel,3,Resistors in Series and Parallel,Fundamental Circuit Concepts,4
+Physics,Edexcel,3,Electrical Power,Fundamental Circuit Concepts,5
+Physics,Edexcel,2,Component Characteristics and Resistivity,Fundamentals of Electric Circuits,2
+Physics,Edexcel,3,Current–Potential Difference Graphs,Component Characteristics and Resistivity,1
+Physics,Edexcel,3,Resistivity and Core Practical 2,Component Characteristics and Resistivity,2
+Physics,Edexcel,3,Current and Charge Carriers,Component Characteristics and Resistivity,3
+Physics,Edexcel,2,Advanced Circuit Analysis,Fundamentals of Electric Circuits,3
+Physics,Edexcel,3,The Potential Divider,Advanced Circuit Analysis,1
+Physics,Edexcel,3,Sensing Circuits with LDRs and Thermistors,Advanced Circuit Analysis,2
+Physics,Edexcel,3,"EMF, Internal Resistance and Core Practical 3",Advanced Circuit Analysis,3
+Physics,Edexcel,2,Microscopic Models of Resistance,Fundamentals of Electric Circuits,4
+Physics,Edexcel,3,Modelling Resistance vs. Temperature,Microscopic Models of Resistance,1
+Physics,Edexcel,3,Modelling Resistance vs. Illumination,Microscopic Models of Resistance,2
+Physics,Edexcel,1,Properties of Materials,,4
+Physics,Edexcel,2,Fluid Mechanics,Properties of Materials,1
+Physics,Edexcel,3,Density and Upthrust,Fluid Mechanics,1
+Physics,Edexcel,3,"Viscosity, Stokes' Law and Core Practical 4",Fluid Mechanics,2
+Physics,Edexcel,2,Mechanical Properties of Solids,Properties of Materials,2
+Physics,Edexcel,3,"Stress, Strain and the Young Modulus",Mechanical Properties of Solids,1
+Physics,Edexcel,3,Force-Extension Graphs,Mechanical Properties of Solids,2
+Physics,Edexcel,3,Stress-Strain Graphs,Mechanical Properties of Solids,3
+Physics,Edexcel,3,Elastic Strain Energy and Core Practical 5,Mechanical Properties of Solids,4
+Physics,Edexcel,1,Wave Phenomena and Quantum Physics,,5
+Physics,Edexcel,2,Fundamentals of Waves,Wave Phenomena and Quantum Physics,1
+Physics,Edexcel,3,Introduction to Waves,Fundamentals of Waves,1
+Physics,Edexcel,3,Transverse and Longitudinal Waves,Fundamentals of Waves,2
+Physics,Edexcel,3,Wave Graphs and Core Practical 6,Fundamentals of Waves,3
+Physics,Edexcel,3,Superposition and Interference,Fundamentals of Waves,4
+Physics,Edexcel,3,Stationary Waves,Fundamentals of Waves,5
+Physics,Edexcel,3,Waves on a String and Core Practical 7,Fundamentals of Waves,6
+Physics,Edexcel,3,Wave Intensity,Fundamentals of Waves,7
+Physics,Edexcel,2,Geometrical Optics,Wave Phenomena and Quantum Physics,2
+Physics,Edexcel,3,Refraction and Snell's Law,Geometrical Optics,1
+Physics,Edexcel,3,Total Internal Reflection,Geometrical Optics,2
+Physics,Edexcel,3,Introduction to Lenses and Ray Diagrams,Geometrical Optics,3
+Physics,Edexcel,3,Lens Power and Combinations,Geometrical Optics,4
+Physics,Edexcel,3,The Thin Lens and Magnification Equations,Geometrical Optics,5
+Physics,Edexcel,2,Wave Optics,Wave Phenomena and Quantum Physics,3
+Physics,Edexcel,3,Polarisation,Wave Optics,1
+Physics,Edexcel,3,Diffraction and Huygens' Construction,Wave Optics,2
+Physics,Edexcel,3,The Diffraction Grating and Core Practical 8,Wave Optics,3
+Physics,Edexcel,2,Quantum Physics,Wave Phenomena and Quantum Physics,4
+Physics,Edexcel,3,Wave-Particle Duality,Quantum Physics,1
+Physics,Edexcel,3,Pulse-Echo Techniques,Quantum Physics,2
+Physics,Edexcel,3,The Photon Model,Quantum Physics,3
+Physics,Edexcel,3,The Photoelectric Effect,Quantum Physics,4
+Physics,Edexcel,3,Electronvolts and Atomic Spectra,Quantum Physics,5
+Physics,Edexcel,1,Circular Motion and Momentum,,6
+Physics,Edexcel,2,Momentum and Collisions,Circular Motion and Momentum,1
+Physics,Edexcel,3,Impulse and Core Practical 9,Momentum and Collisions,1
+Physics,Edexcel,3,Collisions in 2D and Core Practical 10,Momentum and Collisions,2
+Physics,Edexcel,3,Elastic and Inelastic Collisions,Momentum and Collisions,3
+Physics,Edexcel,2,Circular Motion,Circular Motion and Momentum,2
+Physics,Edexcel,3,Angular Displacement and Velocity,Circular Motion,1
+Physics,Edexcel,3,Centripetal Acceleration,Circular Motion,2
+Physics,Edexcel,3,Centripetal Force,Circular Motion,3
+Physics,Edexcel,1,Fields: Electric and Magnetic,,7
+Physics,Edexcel,2,Electric Fields,Fields: Electric and Magnetic,1
+Physics,Edexcel,3,Electric Fields and Field Strength,Electric Fields,1
+Physics,Edexcel,3,Coulomb's Law,Electric Fields,2
+Physics,Edexcel,3,Electric Field of a Point Charge,Electric Fields,3
+Physics,Edexcel,3,Uniform Electric Fields,Electric Fields,4
+Physics,Edexcel,3,Electric Potential and Field Diagrams,Electric Fields,5
+Physics,Edexcel,2,Capacitors,Fields: Electric and Magnetic,2
+Physics,Edexcel,3,Capacitance and Energy Storage,Capacitors,1
+Physics,Edexcel,3,Capacitor Discharge and Core Practical 11,Capacitors,2
+Physics,Edexcel,3,Exponential Discharge Equations,Capacitors,3
+Physics,Edexcel,2,Magnetic Fields and Forces,Fields: Electric and Magnetic,3
+Physics,Edexcel,3,Magnetic Flux and Flux Linkage,Magnetic Fields and Forces,1
+Physics,Edexcel,3,Force on a Moving Charge in a Magnetic Field,Magnetic Fields and Forces,2
+Physics,Edexcel,3,Force on a Current-Carrying Conductor,Magnetic Fields and Forces,3
+Physics,Edexcel,2,Electromagnetic Induction,Fields: Electric and Magnetic,4
+Physics,Edexcel,3,Electromagnetic Induction and Lenz's Law,Electromagnetic Induction,1
+Physics,Edexcel,3,Faraday's Law,Electromagnetic Induction,2
+Physics,Edexcel,3,Alternating Currents,Electromagnetic Induction,3
+Physics,Edexcel,1,Particle and Nuclear Physics,,8
+Physics,Edexcel,2,Investigating the Nucleus,Particle and Nuclear Physics,1
+Physics,Edexcel,3,The Nuclear Atom,Investigating the Nucleus,1
+Physics,Edexcel,3,Particle Accelerators and Detectors,Investigating the Nucleus,2
+Physics,Edexcel,3,Particle Interactions and Tracks,Investigating the Nucleus,3
+Physics,Edexcel,3,Mass-Energy Equivalence,Investigating the Nucleus,4
+Physics,Edexcel,3,Particle Physics Units and Relativistic Effects,Investigating the Nucleus,5
+Physics,Edexcel,2,The Standard Model and Conservation Laws,Particle and Nuclear Physics,2
+Physics,Edexcel,3,The Standard Model,The Standard Model and Conservation Laws,1
+Physics,Edexcel,3,Antimatter,The Standard Model and Conservation Laws,2
+Physics,Edexcel,3,Conservation Laws in Particle Physics,The Standard Model and Conservation Laws,3
+Physics,Edexcel,1,Thermal Physics and Thermodynamics,,9
+Physics,Edexcel,2,Heat and Internal Energy,Thermal Physics and Thermodynamics,1
+Physics,Edexcel,3,Specific Heat Capacity and Latent Heat,Heat and Internal Energy,1
+Physics,Edexcel,3,Core Practical 12: Calibrate a Thermistor,Heat and Internal Energy,2
+Physics,Edexcel,3,Core Practical 13: Determine Specific Latent Heat,Heat and Internal Energy,3
+Physics,Edexcel,3,Internal Energy and Absolute Zero,Heat and Internal Energy,4
+Physics,Edexcel,2,The Ideal Gas Model,Thermal Physics and Thermodynamics,2
+Physics,Edexcel,3,Ideal Gas Equations,The Ideal Gas Model,1
+Physics,Edexcel,3,Core Practical 14: Investigate Boyle's Law,The Ideal Gas Model,2
+Physics,Edexcel,3,Kinetic Energy of Gas Molecules,The Ideal Gas Model,3
+Physics,Edexcel,2,Thermal Radiation,Thermal Physics and Thermodynamics,3
+Physics,Edexcel,3,Black Body Radiation Curves,Thermal Radiation,1
+Physics,Edexcel,3,Stefan-Boltzmann and Wien's Laws,Thermal Radiation,2
+Physics,Edexcel,1,Astrophysics and Cosmology,,10
+Physics,Edexcel,2,Stellar Astrophysics,Astrophysics and Cosmology,1
+Physics,Edexcel,3,Luminosity and the Inverse Square Law,Stellar Astrophysics,1
+Physics,Edexcel,3,Measuring Astronomical Distances,Stellar Astrophysics,2
+Physics,Edexcel,3,Hertzsprung–Russell Diagrams and Stellar Evolution,Stellar Astrophysics,3
+Physics,Edexcel,2,Cosmology,Astrophysics and Cosmology,2
+Physics,Edexcel,3,The Doppler Effect,Cosmology,1
+Physics,Edexcel,3,Redshift and Hubble's Law,Cosmology,2
+Physics,Edexcel,3,The Age and Fate of the Universe,Cosmology,3
+Physics,Edexcel,1,Radioactivity and Nuclear Energy,,11
+Physics,Edexcel,2,Nuclear Energy and Binding,Radioactivity and Nuclear Energy,1
+Physics,Edexcel,3,Nuclear Binding Energy,Nuclear Energy and Binding,1
+Physics,Edexcel,3,Fission and Fusion,Nuclear Energy and Binding,2
+Physics,Edexcel,2,Radioactivity,Radioactivity and Nuclear Energy,2
+Physics,Edexcel,3,Properties of Nuclear Radiation,Radioactivity,1
+Physics,Edexcel,3,Core Practical 15: Absorption of Gamma Radiation,Radioactivity,2
+Physics,Edexcel,3,Radioactive Decay and Half-Life,Radioactivity,3
+Physics,Edexcel,1,Gravitational Fields and Orbits,,12
+Physics,Edexcel,2,Gravitational Fields and Orbits,Gravitational Fields and Orbits,1
+Physics,Edexcel,3,Gravitational Fields and Field Strength,Gravitational Fields and Orbits,1
+Physics,Edexcel,3,Newton's Law of Universal Gravitation,Gravitational Fields and Orbits,2
+Physics,Edexcel,3,Field Strength of a Point Mass,Gravitational Fields and Orbits,3
+Physics,Edexcel,3,Gravitational Potential,Gravitational Fields and Orbits,4
+Physics,Edexcel,3,Comparing Fields and Orbital Motion,Gravitational Fields and Orbits,5
+Physics,Edexcel,1,Oscillations and Simple Harmonic Motion,,13
+Physics,Edexcel,2,Simple Harmonic Motion (SHM),Oscillations and Simple Harmonic Motion,1
+Physics,Edexcel,3,Conditions for Simple Harmonic Motion,Simple Harmonic Motion (SHM),1
+Physics,Edexcel,3,Equations of Simple Harmonic Motion,Simple Harmonic Motion (SHM),2
+Physics,Edexcel,3,Period of SHM Oscillators,Simple Harmonic Motion (SHM),3
+Physics,Edexcel,3,Graphical Representation of SHM,Simple Harmonic Motion (SHM),4
+Physics,Edexcel,2,Resonance and Damping,Oscillations and Simple Harmonic Motion,2
+Physics,Edexcel,3,Resonance and Core Practical 16,Resonance and Damping,1
+Physics,Edexcel,3,Energy in Oscillations,Resonance and Damping,2
+Physics,Edexcel,3,Damping and Resonance Effects,Resonance and Damping,3

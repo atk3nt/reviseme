@@ -51,10 +51,27 @@ const CrispChat = () => {
 // 3. Toaster: Show Success/Error messages anywhere from the app with toast()
 // 4. Tooltip: Show tooltips if any JSX elements has these 2 attributes: data-tooltip-id="tooltip" data-tooltip-content=""
 // 5. CrispChat: Set Crisp customer chat support (see above)
+// 6. Dev Helpers: Load development helper functions in browser console
 const ClientLayout = ({ children }) => {
+  // Load dev helpers in development (check hostname)
+  useEffect(() => {
+    const isDev = 
+      typeof window !== 'undefined' && (
+        window.location.hostname === 'localhost' ||
+        window.location.hostname === '127.0.0.1' ||
+        window.location.hostname.includes('.local')
+      );
+    
+    if (isDev) {
+      import('@/libs/dev-helpers').catch(() => {
+        // Silently fail if helpers can't load
+      });
+    }
+  }, []);
+
   return (
     <>
-      <SessionProvider>
+      <SessionProvider basePath="/api/auth">
         {/* Show a progress bar at the top when navigating between pages */}
         <NextTopLoader color={config.colors.main} showSpinner={false} />
 

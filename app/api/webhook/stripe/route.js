@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import Stripe from "stripe";
-import connectMongo from "@/libs/mongoose";
 import configFile from "@/config";
-import User from "@/models/User";
+import { supabaseAdmin } from "@/libs/supabase";
 import { findCheckoutSession } from "@/libs/stripe";
 
 // Initialize Stripe only if the secret key is available
@@ -20,8 +19,6 @@ export async function POST(req) {
     console.error("Stripe is not configured properly. Missing STRIPE_SECRET_KEY or STRIPE_WEBHOOK_SECRET");
     return NextResponse.json({ error: "Stripe configuration missing" }, { status: 500 });
   }
-
-  await connectMongo();
 
   const body = await req.text();
 
@@ -61,30 +58,53 @@ export async function POST(req) {
 
         let user;
 
-        // Get or create the user. userId is normally pass in the checkout session (clientReferenceID) to identify the user when we get the webhook event
+        // Get or update user. userId is passed in the checkout session (clientReferenceID) to identify the user when we get the webhook event
         if (userId) {
-          user = await User.findById(userId);
+          // Update existing user
+          const { error: updateError } = await supabaseAdmin
+            .from('users')
+            .update({
+              price_id: priceId,
+              customer_id: customerId,
+              has_access: true
+            })
+            .eq('id', userId);
+          
+          if (updateError) {
+            console.error('Error updating user:', updateError);
+            throw updateError;
+          }
         } else if (customer.email) {
-          user = await User.findOne({ email: customer.email });
-
-          if (!user) {
-            user = await User.create({
-              email: customer.email,
-              name: customer.name,
-            });
-
-            await user.save();
+          // Try to find user by email
+          const { data: existingUser } = await supabaseAdmin
+            .from('users')
+            .select('*')
+            .eq('email', customer.email)
+            .single();
+          
+          if (existingUser) {
+            // Update existing user
+            const { error: updateError } = await supabaseAdmin
+              .from('users')
+              .update({
+                price_id: priceId,
+                customer_id: customerId,
+                has_access: true
+              })
+              .eq('id', existingUser.id);
+            
+            if (updateError) {
+              console.error('Error updating user:', updateError);
+              throw updateError;
+            }
+          } else {
+            console.error("No user found for email:", customer.email);
+            throw new Error("No user found");
           }
         } else {
-          console.error("No user found");
+          console.error("No user ID or email found");
           throw new Error("No user found");
         }
-
-        // Update user data + Grant user access to your product. It's a boolean in the database, but could be a number of credits, etc...
-        user.priceId = priceId;
-        user.customerId = customerId;
-        user.hasAccess = true;
-        await user.save();
 
         // Extra: send email with user link, product page, etc...
         // try {
@@ -111,16 +131,24 @@ export async function POST(req) {
 
       case "customer.subscription.deleted": {
         // The customer subscription stopped
-        // ❌ Revoke access to the product
-        // The customer might have changed the plan (higher or lower plan, cancel soon etc...)
+        // ❌ Revoke access to the product (for subscription products only)
         const subscription = await stripe.subscriptions.retrieve(
           data.object.id
         );
-        const user = await User.findOne({ customerId: subscription.customer });
 
-        // Revoke access to your product
-        user.hasAccess = false;
-        await user.save();
+        const { data: user } = await supabaseAdmin
+          .from('users')
+          .select('*')
+          .eq('customer_id', subscription.customer)
+          .single();
+
+        if (user) {
+          // Revoke access to your product
+          await supabaseAdmin
+            .from('users')
+            .update({ has_access: false })
+            .eq('id', user.id);
+        }
 
         break;
       }
@@ -131,14 +159,22 @@ export async function POST(req) {
         const priceId = data.object.lines.data[0].price.id;
         const customerId = data.object.customer;
 
-        const user = await User.findOne({ customerId });
+        const { data: user } = await supabaseAdmin
+          .from('users')
+          .select('*')
+          .eq('customer_id', customerId)
+          .single();
 
-        // Make sure the invoice is for the same plan (priceId) the user subscribed to
-        if (user.priceId !== priceId) break;
+        if (user) {
+          // Make sure the invoice is for the same plan (priceId) the user subscribed to
+          if (user.price_id !== priceId) break;
 
-        // Grant user access to your product. It's a boolean in the database, but could be a number of credits, etc...
-        user.hasAccess = true;
-        await user.save();
+          // Grant user access to your product
+          await supabaseAdmin
+            .from('users')
+            .update({ has_access: true })
+            .eq('id', user.id);
+        }
 
         break;
       }
