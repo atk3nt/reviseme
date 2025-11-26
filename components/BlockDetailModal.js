@@ -158,127 +158,214 @@ export default function BlockDetailModal({
   const isRunning = timerState?.running || false;
   const isPaused = timerState && !timerState.running && timerState.pausedAt !== null;
   const phase = timerState?.phase || 'study';
+  const isStudyPhase = phase === 'study';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div 
-        className="fixed inset-0 bg-black/50"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
       />
       
       {/* Modal */}
-      <div className="relative bg-base-100 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+      <div className="relative bg-base-100 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="sticky top-0 bg-base-200 px-6 py-4 border-b border-base-300 flex items-center justify-between">
-          <h2 className="text-2xl font-bold">Study Block Details</h2>
+        <div className="bg-base-200 px-6 py-4 border-b border-base-300 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div
+              className="w-3 h-3 rounded-full"
+              style={{ backgroundColor: getSubjectColor(subject) }}
+            />
+            <h2 className="text-xl font-bold">Study Block</h2>
+          </div>
           <button
             onClick={onClose}
             className="btn btn-sm btn-circle btn-ghost"
             aria-label="Close"
           >
-            ✕
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
         </div>
 
         {/* Content */}
-        <div className="p-6 space-y-6">
-          {/* Block Info */}
-          <div className="space-y-4">
-            <div className="flex items-start gap-3">
-              <div
-                className="w-4 h-4 rounded-full mt-2"
-                style={{ backgroundColor: getSubjectColor(subject) }}
-              />
-              <div className="flex-1">
-                <p className="text-sm font-medium text-base-content/70 flex items-center gap-2 mb-1">
-                  <span>{getSubjectIcon(subject)}</span>
-                  <span>{subject}</span>
-                </p>
-                <h3 className="text-xl font-semibold mb-2">{topicName}</h3>
-                <div className="flex items-center gap-4 text-sm text-base-content/70">
-                  <span>📅 {formattedDate}</span>
-                  <span>🕐 {formattedTime}</span>
-                  <span>⏱️ {block.duration_minutes} minutes</span>
+        <div className="flex-1 overflow-y-auto">
+          <div className="p-6 space-y-6">
+            {/* Block Info Card */}
+            <div className="bg-base-200 rounded-xl p-5 space-y-4">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="mb-3">
+                    <span className="text-sm font-medium text-base-content/70 uppercase tracking-wide">
+                      {subject}
+                    </span>
+                    <h3 className="text-2xl font-bold mt-1">{topicName}</h3>
+                  </div>
+                  
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center gap-2 text-base-content/70">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      <span className="font-medium">Date:</span>
+                      <span>{formattedDate}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-base-content/70">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span className="font-medium">Time:</span>
+                      <span>{formattedTime}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-base-content/70">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span className="font-medium">Duration:</span>
+                      <span>{block.duration_minutes} minutes</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-col items-end gap-1">
+                  <span className={`text-2xl ${getStatusColor(block.status)}`}>
+                    {getStatusIcon(block.status)}
+                  </span>
+                  <span className="text-xs text-base-content/50 capitalize font-medium">{block.status}</span>
                 </div>
               </div>
-              <div className="text-right">
-                <span className={`text-2xl ${getStatusColor(block.status)}`}>
-                  {getStatusIcon(block.status)}
-                </span>
+
+              {block.ai_rationale && (() => {
+                // Try to parse JSON rationale, otherwise use as plain text
+                let rationaleText = block.ai_rationale;
+                try {
+                  const parsed = JSON.parse(block.ai_rationale);
+                  if (parsed.explanation) {
+                    rationaleText = parsed.explanation;
+                  } else if (typeof parsed === 'string') {
+                    rationaleText = parsed;
+                  }
+                } catch (e) {
+                  // Not JSON, use as-is
+                  rationaleText = block.ai_rationale;
+                }
+                
+                return (
+                  <div className="mt-4 pt-4 border-t border-base-300">
+                    <p className="text-xs font-medium text-base-content/60 mb-2">Why this topic?</p>
+                    <p className="text-sm text-base-content/80 leading-relaxed">{rationaleText}</p>
+                  </div>
+                );
+              })()}
+            </div>
+
+            {/* Pomodoro Timer Card */}
+            <div className="bg-base-200/50 rounded-xl p-8 border border-base-300/50">
+              <div className="text-center space-y-6">
+                {/* Phase Label */}
+                <div className="flex justify-center">
+                  <div className={`badge badge-lg gap-2 px-4 py-2 rounded-full ${
+                    isStudyPhase 
+                      ? 'bg-blue-50 text-blue-700 border-blue-200' 
+                      : 'bg-amber-50 text-amber-700 border-amber-200'
+                  } border`}>
+                    {isStudyPhase ? (
+                      <>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                        Study Phase
+                      </>
+                    ) : (
+                      <>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        Rest Phase
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                {/* Timer Display */}
+                <div className="py-4">
+                  <p className="text-xs font-medium text-base-content/50 mb-3 uppercase tracking-wide">Time Remaining</p>
+                  <div className={`text-7xl font-sans font-light mb-3 tracking-wider ${
+                    isStudyPhase ? 'text-blue-500' : 'text-amber-500'
+                  }`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif', letterSpacing: '0.05em' }}>
+                    {displayTime}
+                  </div>
+                  <p className="text-xs text-base-content/50 max-w-xs mx-auto">
+                    {isStudyPhase 
+                      ? 'Focus on your revision for 25 minutes' 
+                      : 'Take a 5-minute break to recharge'}
+                  </p>
+                </div>
+
+                {/* Timer Controls */}
+                <div className="flex gap-3 justify-center pt-2">
+                  {!timerState || (!isRunning && !isPaused) ? (
+                    <button
+                      onClick={handleStartTimer}
+                      className="btn btn-lg gap-2 bg-blue-500 hover:bg-blue-600 border-blue-500 hover:border-blue-600 text-white rounded-full px-8"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      Start Timer
+                    </button>
+                  ) : isRunning ? (
+                    <button
+                      onClick={handlePauseTimer}
+                      className="btn btn-lg gap-2 bg-amber-500 hover:bg-amber-600 border-amber-500 hover:border-amber-600 text-white rounded-full px-8"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      Pause Timer
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleResumeTimer}
+                      className="btn btn-lg gap-2 bg-blue-500 hover:bg-blue-600 border-blue-500 hover:border-blue-600 text-white rounded-full px-8"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      Resume Timer
+                    </button>
+                  )}
+                  {timerState && (
+                    <button
+                      onClick={handleResetTimer}
+                      className="btn btn-outline btn-lg gap-2 border-base-300 hover:bg-base-200 rounded-full px-8"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                      Reset Timer
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
 
-            {block.ai_rationale && (
-              <div className="bg-base-200 rounded-lg p-4">
-                <p className="text-sm text-base-content/80">{block.ai_rationale}</p>
-              </div>
-            )}
-          </div>
-
-          {/* Pomodoro Timer */}
-          <div className="border-t border-base-300 pt-6">
-            <h3 className="text-lg font-semibold mb-4">Pomodoro Timer</h3>
-            <div className="flex flex-col items-center gap-4">
-              {/* Timer Display */}
-              <div className="text-center">
-                <div className={`text-6xl font-mono font-bold mb-2 ${
-                  phase === 'study' ? 'text-primary' : 'text-success'
-                }`}>
-                  {displayTime}
-                </div>
-                <div className="text-sm text-base-content/70">
-                  {phase === 'study' ? '📚 Study Phase' : '☕ Rest Phase'}
-                </div>
-              </div>
-
-              {/* Timer Controls */}
-              <div className="flex gap-2">
-                {!timerState || (!isRunning && !isPaused) ? (
-                  <button
-                    onClick={handleStartTimer}
-                    className="btn btn-primary"
-                  >
-                    ▶️ Start
-                  </button>
-                ) : isRunning ? (
-                  <button
-                    onClick={handlePauseTimer}
-                    className="btn btn-warning"
-                  >
-                    ⏸️ Pause
-                  </button>
-                ) : (
-                  <button
-                    onClick={handleResumeTimer}
-                    className="btn btn-success"
-                  >
-                    ▶️ Resume
-                  </button>
-                )}
-                {timerState && (
-                  <button
-                    onClick={handleResetTimer}
-                    className="btn btn-outline"
-                  >
-                    🔄 Reset
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="border-t border-base-300 pt-6">
-            <div className="flex gap-2 justify-end">
+            {/* Action Buttons */}
+            <div className="flex gap-3">
               <button
                 onClick={() => {
                   onBlockAction(blockKey, 'missed');
                   onClose();
                 }}
-                className="btn btn-error btn-outline"
-                disabled={block.status === 'missed'}
+                className="btn btn-error btn-outline flex-1 gap-2"
+                disabled={block.status === 'missed' || block.status === 'done'}
               >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
                 Mark as Missed
               </button>
               <button
@@ -286,9 +373,12 @@ export default function BlockDetailModal({
                   onBlockAction(blockKey, 'done');
                   onClose();
                 }}
-                className="btn btn-success"
+                className="btn btn-success flex-1 gap-2"
                 disabled={block.status === 'done'}
               >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
                 Mark as Done
               </button>
             </div>
@@ -298,4 +388,3 @@ export default function BlockDetailModal({
     </div>
   );
 }
-

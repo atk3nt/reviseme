@@ -108,12 +108,12 @@ export async function generateStudyPlan({
 
   if (slots.length === 0) {
     return [];
-  }
+}
 
   const scheduledBlocks = assignTopicsToSlots(slots, prioritizedTopics);
   if (process.env.NODE_ENV === 'development') {
     console.log('Scheduled sample', scheduledBlocks.slice(0, 10).map(b => `${b.day} ${b.start_time}`));
-  }
+    }
   return scheduledBlocks.map(({ slotIndex, ...block }) => ({
     ...block,
     week_start: weekStart

@@ -216,7 +216,7 @@ async function loadRepeatableEvents(userId, weekStartDate, weekEndDate) {
 export async function POST(req) {
   try {
     const userId = await resolveUserId();
-
+    
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -424,7 +424,7 @@ export async function POST(req) {
         timePreferences: effectiveTimePreferences
       });
     }
-
+    
     return NextResponse.json({
       success: true,
       blocks: allBlocks,

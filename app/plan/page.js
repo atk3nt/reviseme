@@ -414,6 +414,30 @@ export default function PlanPage() {
     return config.subjects[key]?.color || '#6b7280';
   };
 
+  // Get subtle background color for blocks (with low opacity)
+  const getSubjectBgColor = (subject) => {
+    const key = getSubjectKey(subject);
+    const color = config.subjects[key]?.color || '#6b7280';
+    // Convert hex to rgba with 10% opacity for subtle background
+    const hex = color.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, 0.08)`;
+  };
+
+  // Get subtle border color for blocks (with low opacity)
+  const getSubjectBorderColor = (subject) => {
+    const key = getSubjectKey(subject);
+    const color = config.subjects[key]?.color || '#6b7280';
+    // Convert hex to rgba with 20% opacity for subtle border
+    const hex = color.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, 0.15)`;
+  };
+
   const getSubjectIcon = (subject) => {
     const key = getSubjectKey(subject);
     return config.subjects[key]?.icon || '📚';
@@ -713,6 +737,22 @@ export default function PlanPage() {
               </li>
               <li>
                 <Link
+                  href="/insights"
+                  className={`block px-4 py-3 rounded-lg transition ${
+                    pathname === '/insights' 
+                      ? 'bg-primary text-primary-content' 
+                      : 'hover:bg-base-300'
+                  }`}
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">📊</span>
+                    <span className="font-medium">Study Stats</span>
+                  </div>
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/settings/availability"
                   className={`block px-4 py-3 rounded-lg transition ${
                     pathname === '/settings/availability' 
@@ -826,6 +866,8 @@ export default function PlanPage() {
             blocks={getTodayBlocks()} 
             onSelectBlock={handleSelectSlot}
             getSubjectColor={getSubjectColor}
+            getSubjectBgColor={getSubjectBgColor}
+            getSubjectBorderColor={getSubjectBorderColor}
             getSubjectIcon={getSubjectIcon}
             getBlockKey={deriveBlockKey}
           />
@@ -834,6 +876,8 @@ export default function PlanPage() {
             blocks={blocks}
             onSelectBlock={handleSelectSlot}
             getSubjectColor={getSubjectColor}
+            getSubjectBgColor={getSubjectBgColor}
+            getSubjectBorderColor={getSubjectBorderColor}
             getSubjectIcon={getSubjectIcon}
             getStatusColor={getStatusColor}
             getStatusIcon={getStatusIcon}
@@ -902,7 +946,7 @@ export default function PlanPage() {
   );
 }
 
-function TodayView({ blocks, onSelectBlock, getSubjectColor, getSubjectIcon, getBlockKey }) {
+function TodayView({ blocks, onSelectBlock, getSubjectColor, getSubjectBgColor, getSubjectBorderColor, getSubjectIcon, getBlockKey }) {
   if (blocks.length === 0) {
     return (
       <div className="text-center py-12">
@@ -937,11 +981,15 @@ function TodayView({ blocks, onSelectBlock, getSubjectColor, getSubjectIcon, get
                 onSelectBlock({ kind: 'study', key: blockKey });
               }
             }}
-            className={`card bg-base-100 shadow-sm border cursor-pointer transition focus:outline-none focus:ring-2 focus:ring-primary ${
+            className={`card shadow-sm border cursor-pointer transition focus:outline-none focus:ring-2 focus:ring-primary ${
               isCompleted 
                 ? 'opacity-70 border-success/50 bg-success/5' 
-                : 'hover:shadow-md border-base-300'
+                : 'hover:shadow-md'
             }`}
+            style={{
+              backgroundColor: isCompleted ? undefined : getSubjectBgColor(subject),
+              borderColor: isCompleted ? undefined : getSubjectBorderColor(subject)
+            }}
           >
             <div className="card-body">
               <div className="flex items-start justify-between gap-4">
@@ -975,6 +1023,8 @@ function WeekView({
   blocks, 
   onSelectBlock, 
   getSubjectColor, 
+  getSubjectBgColor,
+  getSubjectBorderColor,
   getSubjectIcon, 
   getStatusColor, 
   getStatusIcon, 
@@ -1238,8 +1288,14 @@ function WeekView({
                                   ? 'opacity-60 border border-success/50 bg-success/10' 
                                   : isMissed
                                     ? 'border border-error/50 bg-error/10'
-                                    : 'bg-base-200 hover:bg-base-300'
+                                    : 'hover:opacity-80'
                               } ${isDone ? 'pointer-events-none' : ''}`}
+                              style={!isDone && !isMissed ? {
+                                backgroundColor: getSubjectBgColor(subject),
+                                borderColor: getSubjectBorderColor(subject),
+                                borderWidth: '1px',
+                                borderStyle: 'solid'
+                              } : undefined}
                             >
                               <div className="flex items-center gap-1 mb-1">
                                 <div

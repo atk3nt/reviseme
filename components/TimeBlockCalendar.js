@@ -37,9 +37,9 @@ export default function TimeBlockCalendar({
     if (!timePreferences) {
       // Default: 6am to 12am (36 blocks)
       const slots = [];
-      for (let hour = 6; hour < 24; hour++) {
+  for (let hour = 6; hour < 24; hour++) {
         slots.push(`${hour.toString().padStart(2, '0')}:00`);
-        if (hour < 23) {
+    if (hour < 23) {
           slots.push(`${hour.toString().padStart(2, '0')}:30`);
         }
       }

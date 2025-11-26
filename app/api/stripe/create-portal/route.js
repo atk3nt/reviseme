@@ -10,8 +10,8 @@ export async function POST(req) {
     return NextResponse.json({ error: "Not signed in" }, { status: 401 });
   }
 
-  try {
-    const body = await req.json();
+    try {
+      const body = await req.json();
     const userId = session.user.id;
 
     if (!body.returnUrl) {
@@ -37,25 +37,25 @@ export async function POST(req) {
     }
 
     if (!user?.customer_id) {
-      return NextResponse.json(
-        {
-          error:
-            "You don't have a billing account yet. Make a purchase first.",
-        },
-        { status: 400 }
-      );
-    }
+        return NextResponse.json(
+          {
+            error:
+              "You don't have a billing account yet. Make a purchase first.",
+          },
+          { status: 400 }
+        );
+      }
 
-    const stripePortalUrl = await createCustomerPortal({
+      const stripePortalUrl = await createCustomerPortal({
       customerId: user.customer_id,
-      returnUrl: body.returnUrl,
-    });
+        returnUrl: body.returnUrl,
+      });
 
-    return NextResponse.json({
-      url: stripePortalUrl,
-    });
-  } catch (e) {
-    console.error(e);
-    return NextResponse.json({ error: e?.message }, { status: 500 });
+      return NextResponse.json({
+        url: stripePortalUrl,
+      });
+    } catch (e) {
+      console.error(e);
+      return NextResponse.json({ error: e?.message }, { status: 500 });
   }
 }

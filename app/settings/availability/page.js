@@ -1,14 +1,19 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import TimeBlockCalendar from "@/components/TimeBlockCalendar";
 
 export default function AvailabilitySettingsPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [settingsDropdownOpen, setSettingsDropdownOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   
   // Time preferences - will be loaded from database
@@ -626,16 +631,34 @@ export default function AvailabilitySettingsPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <button
-            onClick={() => router.push('/plan')}
-            className="text-gray-500 hover:text-gray-700 text-sm underline mb-4 inline-block"
-          >
-            ← Back to Plan
-          </button>
-          <h1 className="text-4xl font-bold text-gray-900">Availability Settings</h1>
-          <p className="text-xl text-gray-600 mt-2">
-            Manage your study time preferences and block unavailable times
-          </p>
+          <div className="flex items-center gap-4 mb-4">
+            {/* Menu Icon */}
+            <button
+              type="button"
+              className="inline-flex items-center justify-center rounded-md p-2 hover:bg-gray-200 transition"
+              onClick={() => setSidebarOpen(true)}
+              aria-label="Open menu"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                className="w-6 h-6 text-gray-700"
+              >
+                <rect x="1" y="11" width="22" height="2" fill="currentColor" strokeWidth="0"></rect>
+                <rect x="1" y="4" width="22" height="2" strokeWidth="0" fill="currentColor"></rect>
+                <rect x="1" y="18" width="22" height="2" strokeWidth="0" fill="currentColor"></rect>
+              </svg>
+            </button>
+            
+            <div>
+              <h1 className="text-4xl font-bold text-gray-900">Availability Settings</h1>
+              <p className="text-xl text-gray-600 mt-2">
+                Manage your study time preferences and block unavailable times
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Repeatable Events Section */}
@@ -1075,6 +1098,175 @@ export default function AvailabilitySettingsPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Sidebar */}
+      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-base-200 shadow-xl transform transition-transform duration-300 ease-in-out ${
+        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}>
+        <div className="flex flex-col h-full">
+          {/* Sidebar Header */}
+          <div className="flex items-center justify-between p-4 border-b border-base-300">
+            <h2 className="text-xl font-bold">Menu</h2>
+            <button
+              type="button"
+              className="btn btn-sm btn-circle btn-ghost"
+              onClick={() => setSidebarOpen(false)}
+              aria-label="Close menu"
+            >
+              ✕
+            </button>
+          </div>
+
+          {/* Sidebar Navigation */}
+          <nav className="flex-1 p-4">
+            <ul className="space-y-2">
+              <li>
+                <Link
+                  href="/plan"
+                  className={`block px-4 py-3 rounded-lg transition ${
+                    pathname === '/plan' 
+                      ? 'bg-primary text-primary-content' 
+                      : 'hover:bg-base-300'
+                  }`}
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">📅</span>
+                    <span className="font-medium">Revision Plan</span>
+                  </div>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/insights"
+                  className={`block px-4 py-3 rounded-lg transition ${
+                    pathname === '/insights' 
+                      ? 'bg-primary text-primary-content' 
+                      : 'hover:bg-base-300'
+                  }`}
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">📊</span>
+                    <span className="font-medium">Study Stats</span>
+                  </div>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/settings/availability"
+                  className={`block px-4 py-3 rounded-lg transition ${
+                    pathname === '/settings/availability' 
+                      ? 'bg-primary text-primary-content' 
+                      : 'hover:bg-base-300'
+                  }`}
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">⏰</span>
+                    <span className="font-medium">Availability</span>
+                  </div>
+                </Link>
+              </li>
+              <li>
+                <div>
+                  <button
+                    onClick={() => setSettingsDropdownOpen(!settingsDropdownOpen)}
+                    className={`w-full block px-4 py-3 rounded-lg transition ${
+                      pathname?.startsWith('/settings') 
+                        ? 'bg-primary text-primary-content' 
+                        : 'hover:bg-base-300'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <span className="text-xl">⚙️</span>
+                        <span className="font-medium">Settings</span>
+                      </div>
+                      <svg
+                        className={`w-4 h-4 transition-transform ${settingsDropdownOpen ? 'rotate-180' : ''}`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </button>
+                  
+                  {settingsDropdownOpen && (
+                    <ul className="ml-4 mt-2 space-y-1">
+                      <li>
+                        <Link
+                          href="/settings?section=preferences"
+                          className={`block px-4 py-2 rounded-lg transition text-sm hover:bg-base-300 ${
+                            pathname === '/settings' && searchParams?.get('section') === 'preferences' ? 'bg-primary/20' : ''
+                          }`}
+                          onClick={() => setSidebarOpen(false)}
+                        >
+                          Study Preferences
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          href="/settings?section=account"
+                          className={`block px-4 py-2 rounded-lg transition text-sm hover:bg-base-300 ${
+                            pathname === '/settings' && searchParams?.get('section') === 'account' ? 'bg-primary/20' : ''
+                          }`}
+                          onClick={() => setSidebarOpen(false)}
+                        >
+                          Account Information
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          href="/settings?section=contact"
+                          className={`block px-4 py-2 rounded-lg transition text-sm hover:bg-base-300 ${
+                            pathname === '/settings' && searchParams?.get('section') === 'contact' ? 'bg-primary/20' : ''
+                          }`}
+                          onClick={() => setSidebarOpen(false)}
+                        >
+                          Contact
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          href="/settings?section=feedback"
+                          className={`block px-4 py-2 rounded-lg transition text-sm hover:bg-base-300 ${
+                            pathname === '/settings' && searchParams?.get('section') === 'feedback' ? 'bg-primary/20' : ''
+                          }`}
+                          onClick={() => setSidebarOpen(false)}
+                        >
+                          Feedback
+                        </Link>
+                      </li>
+                      <li>
+                        <button
+                          onClick={() => {
+                            setSidebarOpen(false);
+                            signOut({ callbackUrl: '/' });
+                          }}
+                          className="w-full text-left block px-4 py-2 rounded-lg transition text-sm hover:bg-base-300 text-error"
+                        >
+                          Sign Out
+                        </button>
+                      </li>
+                    </ul>
+                  )}
+                </div>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+
+      {/* Sidebar Backdrop */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50"
+          onClick={() => setSidebarOpen(false)}
+        />
       )}
     </div>
   );

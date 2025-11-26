@@ -112,8 +112,8 @@ export async function POST(req) {
 
     // Reschedule the missed block to the earliest available buffer slot
     try {
-      const blockDate = new Date(block.scheduled_at);
-      const weekStart = getStartOfWeek(blockDate);
+    const blockDate = new Date(block.scheduled_at);
+    const weekStart = getStartOfWeek(blockDate);
       const weekEnd = new Date(weekStart);
       weekEnd.setDate(weekStart.getDate() + 7);
 
