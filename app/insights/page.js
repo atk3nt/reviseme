@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { supabase } from "@/libs/supabase";
 import { usePathname, useSearchParams } from "next/navigation";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
+import SupportModal from "@/components/SupportModal";
 
-export default function InsightsPage() {
+function InsightsPageContent() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [insights, setInsights] = useState([]);
@@ -14,6 +15,7 @@ export default function InsightsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [settingsDropdownOpen, setSettingsDropdownOpen] = useState(false);
+  const [supportModalOpen, setSupportModalOpen] = useState(false);
   
   // Stats data - will be populated from API when available
   const [hoursRevised, setHoursRevised] = useState(0);
@@ -193,49 +195,50 @@ export default function InsightsPage() {
         <div className="text-center">
           <span className="loading loading-spinner loading-lg"></span>
           <p className="mt-4">Loading your insights...</p>
-        </div>
       </div>
-    );
-  }
+      
+      <SupportModal isOpen={supportModalOpen} onClose={() => setSupportModalOpen(false)} />
+    </div>
+  );
+}
 
   return (
-    <div className="min-h-screen bg-base-100">
-      {/* Header */}
-      <div className="bg-base-200">
-        <div className="max-w-6xl mx-auto px-4 py-6">
-          <div className="flex items-center gap-4">
-            {/* Menu Icon */}
-            <button
-              type="button"
-              className="inline-flex items-center justify-center rounded-md p-2 hover:bg-base-300 transition"
-              onClick={() => setSidebarOpen(true)}
-              aria-label="Open menu"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                className="w-6 h-6 text-base-content"
-              >
-                <rect x="1" y="11" width="22" height="2" fill="currentColor" strokeWidth="0"></rect>
-                <rect x="1" y="4" width="22" height="2" strokeWidth="0" fill="currentColor"></rect>
-                <rect x="1" y="18" width="22" height="2" strokeWidth="0" fill="currentColor"></rect>
-              </svg>
-            </button>
-            
+    <>
+      <div className="min-h-screen bg-base-100">
+        {/* Fixed Menu Button - Top Left */}
+        <button
+          type="button"
+          className="fixed top-4 left-4 z-50 inline-flex items-center justify-center rounded-md p-2 bg-base-200 hover:bg-base-300 transition shadow-lg"
+          onClick={() => setSidebarOpen(true)}
+          aria-label="Open menu"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            className="w-6 h-6 text-base-content"
+          >
+            <rect x="1" y="11" width="22" height="2" fill="currentColor" strokeWidth="0"></rect>
+            <rect x="1" y="4" width="22" height="2" strokeWidth="0" fill="currentColor"></rect>
+            <rect x="1" y="18" width="22" height="2" strokeWidth="0" fill="currentColor"></rect>
+          </svg>
+        </button>
+
+        {/* Header */}
+        <div className="bg-base-200">
+          <div className="max-w-7xl mx-auto px-4 py-6">
             <div>
               <h1 className="text-3xl font-bold">Study Stats</h1>
               <p className="text-base-content/70">
-                Track your revision progress and performance
-              </p>
+                  Track your revision progress and performance
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Content */}
-      <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Stats Overview - 6 cards in 2 rows */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {/* Row 1 */}
@@ -563,26 +566,15 @@ export default function InsightsPage() {
                         </Link>
                       </li>
                       <li>
-                        <Link
-                          href="/settings?section=contact"
-                          className={`block px-4 py-2 rounded-lg transition text-sm hover:bg-base-300 ${
-                            pathname === '/settings' && searchParams?.get('section') === 'contact' ? 'bg-primary/20' : ''
-                          }`}
-                          onClick={() => setSidebarOpen(false)}
+                        <button
+                          onClick={() => {
+                            setSupportModalOpen(true);
+                            setSidebarOpen(false);
+                          }}
+                          className="block w-full text-left px-4 py-2 rounded-lg transition text-sm hover:bg-base-300"
                         >
-                          Contact
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="/settings?section=feedback"
-                          className={`block px-4 py-2 rounded-lg transition text-sm hover:bg-base-300 ${
-                            pathname === '/settings' && searchParams?.get('section') === 'feedback' ? 'bg-primary/20' : ''
-                          }`}
-                          onClick={() => setSidebarOpen(false)}
-                        >
-                          Feedback
-                        </Link>
+                          Support
+                        </button>
                       </li>
                       <li>
                         <button
@@ -611,6 +603,23 @@ export default function InsightsPage() {
           onClick={() => setSidebarOpen(false)}
         />
       )}
-    </div>
+      
+      <SupportModal isOpen={supportModalOpen} onClose={() => setSupportModalOpen(false)} />
+    </>
+  );
+}
+
+export default function InsightsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <span className="loading loading-spinner loading-lg"></span>
+          <p className="mt-4">Loading...</p>
+        </div>
+      </div>
+    }>
+      <InsightsPageContent />
+    </Suspense>
   );
 }

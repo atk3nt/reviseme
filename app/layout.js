@@ -14,8 +14,11 @@ export const viewport = {
 };
 
 // This adds default SEO tags to all pages in our app.
-// You can override them in each page passing params to getSOTags() function.
-export const metadata = getSEOTags();
+// You can override them in each page passing params to getSEOTags() function.
+export const metadata = getSEOTags({
+  title: "AI-Powered A-Level Revision Planner",
+  description: "Stop procrastinating. Start revising. Your personalized A-Level revision plan built around your schedule. AI-powered scheduling for better grades.",
+});
 
 export default function RootLayout({ children }) {
 	return (

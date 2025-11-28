@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import TimeBlockCalendar from "@/components/TimeBlockCalendar";
+import SupportModal from "@/components/SupportModal";
 
-export default function AvailabilitySettingsPage() {
+function AvailabilitySettingsPageContent() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
@@ -14,6 +15,7 @@ export default function AvailabilitySettingsPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [settingsDropdownOpen, setSettingsDropdownOpen] = useState(false);
+  const [supportModalOpen, setSupportModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   
   // Time preferences - will be loaded from database
@@ -35,12 +37,14 @@ export default function AvailabilitySettingsPage() {
   // Repeatable events
   const [repeatableEvents, setRepeatableEvents] = useState([]);
   const [showAddEventForm, setShowAddEventForm] = useState(false);
+  const [showEventsModal, setShowEventsModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [eventToDelete, setEventToDelete] = useState(null);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [newEvent, setNewEvent] = useState({
     label: '',
     start_time: '',
@@ -56,6 +60,90 @@ export default function AvailabilitySettingsPage() {
     // Each week starts blank - don't copy blocked times from previous weeks
     // Repeatable events are handled separately and appear in all weeks automatically
     setSelectedWeek(weekOffset);
+  };
+
+  // Reset blocked times for current week (keep repeatable events)
+  const handleResetWeek = () => {
+    if (selectedWeek === 0) return; // Can't reset current week
+    
+    // Clear all blocked times for this week (repeatable events are handled separately)
+    setBlockedTimesByWeek(prev => ({
+      ...prev,
+      [selectedWeek]: []
+    }));
+    
+    setShowResetConfirm(false);
+    setSuccessMessage('Week reset successfully. All blocked times cleared (repeatable events remain).');
+    setShowSuccessModal(true);
+    setTimeout(() => setShowSuccessModal(false), 3000);
+  };
+
+  // Copy blocked times from previous week
+  const handleCopyFromPreviousWeek = () => {
+    if (selectedWeek === 0) return; // Can't copy to week 0 (current week)
+    
+    const previousWeek = selectedWeek - 1;
+    const previousWeekBlockedTimes = blockedTimesByWeek[previousWeek] || [];
+    
+    // Only copy manual blocked times (not repeatable events)
+    const manualBlockedTimes = previousWeekBlockedTimes.filter(
+      blocked => blocked.source !== 'repeatable_event'
+    );
+    
+    if (manualBlockedTimes.length === 0) {
+      // Show a message that there's nothing to copy
+      setErrorMessage('No blocked times in the previous week to copy.');
+      setShowErrorModal(true);
+      setTimeout(() => setShowErrorModal(false), 3000);
+      return;
+    }
+    
+    // Adjust dates to the current week
+    const currentWeekStart = getWeekStart(selectedWeek);
+    const previousWeekStart = getWeekStart(previousWeek);
+    const daysDiff = (currentWeekStart - previousWeekStart) / (1000 * 60 * 60 * 24);
+    
+    const adjustedBlockedTimes = manualBlockedTimes.map(blocked => {
+      const originalStart = new Date(blocked.start);
+      const originalEnd = new Date(blocked.end);
+      
+      const newStart = new Date(originalStart);
+      newStart.setDate(newStart.getDate() + daysDiff);
+      
+      const newEnd = new Date(originalEnd);
+      newEnd.setDate(newEnd.getDate() + daysDiff);
+      
+      return {
+        ...blocked,
+        start: newStart.toISOString(),
+        end: newEnd.toISOString()
+      };
+    });
+    
+    // Merge with existing blocked times for this week (avoid duplicates)
+    const currentWeekBlockedTimes = blockedTimesByWeek[selectedWeek] || [];
+    const existingStartTimes = new Set(
+      currentWeekBlockedTimes.map(bt => new Date(bt.start).toISOString())
+    );
+    
+    const newBlockedTimes = adjustedBlockedTimes.filter(
+      bt => !existingStartTimes.has(new Date(bt.start).toISOString())
+    );
+    
+    if (newBlockedTimes.length > 0) {
+      setBlockedTimesByWeek(prev => ({
+        ...prev,
+        [selectedWeek]: [...currentWeekBlockedTimes, ...newBlockedTimes]
+      }));
+      
+      setSuccessMessage(`Copied ${newBlockedTimes.length} blocked time(s) from the previous week.`);
+      setShowSuccessModal(true);
+      setTimeout(() => setShowSuccessModal(false), 3000);
+    } else {
+      setErrorMessage('All blocked times from the previous week already exist in this week.');
+      setShowErrorModal(true);
+      setTimeout(() => setShowErrorModal(false), 3000);
+    }
   };
 
   useEffect(() => {
@@ -257,7 +345,86 @@ export default function AvailabilitySettingsPage() {
   };
 
   // Handle block toggle in calendar
-  const handleBlockToggle = (day, timeSlot, isBlocked) => {
+  // Batch toggle handler - accepts array of toggles
+  const handleBatchBlockToggle = (toggles) => {
+    if (!toggles || toggles.length === 0) return;
+    
+    setBlockedTimesByWeek(prev => {
+      const currentWeekBlockedTimes = prev[selectedWeek] || [];
+      const repeatableBlocked = getRepeatableEventsAsBlockedTimes(selectedWeek);
+      const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+      const weekStart = getWeekStart(selectedWeek);
+      
+      let newBlockedTimes = [...currentWeekBlockedTimes];
+      
+      toggles.forEach(({ day, timeSlot, isBlocked }) => {
+        const [hour, minute] = timeSlot.split(':').map(Number);
+        const dayIndex = days.indexOf(day);
+        const date = new Date(weekStart);
+        date.setDate(weekStart.getDate() + dayIndex);
+        date.setHours(hour, minute, 0, 0);
+        
+        // Check if this time slot is a repeatable event (cannot be toggled)
+        const isRepeatableEvent = repeatableBlocked.some(blocked => {
+          const blockedStart = new Date(blocked.start);
+          return blockedStart.getTime() === date.getTime();
+        });
+        
+        if (isRepeatableEvent) {
+          return; // Skip repeatable events
+        }
+        
+        const endTime = new Date(date);
+        endTime.setMinutes(endTime.getMinutes() + 30);
+        
+        if (isBlocked) {
+          // Check if this time is already blocked
+          const exists = newBlockedTimes.some(blocked => {
+            const blockedStart = new Date(blocked.start);
+            return blockedStart.getTime() === date.getTime();
+          });
+          
+          if (!exists) {
+            newBlockedTimes.push({
+              start: date.toISOString(),
+              end: endTime.toISOString(),
+              source: 'manual'
+            });
+          }
+        } else {
+          // Remove from blocked times
+          newBlockedTimes = newBlockedTimes.filter(blocked => {
+            const blockedStart = new Date(blocked.start);
+            return blockedStart.getTime() !== date.getTime();
+          });
+        }
+      });
+      
+      return {
+        ...prev,
+        [selectedWeek]: newBlockedTimes
+      };
+    });
+  };
+
+  const handleBlockToggle = (dayOrToggles, timeSlotOrUndefined, isBlockedOrUndefined) => {
+    // Check if first argument is an array (batch toggle)
+    if (Array.isArray(dayOrToggles)) {
+      handleBatchBlockToggle(dayOrToggles);
+      return;
+    }
+    
+    // Single toggle - validate parameters first
+    const day = dayOrToggles;
+    const timeSlot = timeSlotOrUndefined;
+    const isBlocked = isBlockedOrUndefined;
+    
+    // Validate required parameters
+    if (!day || !timeSlot || typeof isBlocked !== 'boolean') {
+      console.error('handleBlockToggle: Invalid parameters', { day, timeSlot, isBlocked });
+      return;
+    }
+    
     const [hour, minute] = timeSlot.split(':').map(Number);
     
     // Find the day index
@@ -285,37 +452,43 @@ export default function AvailabilitySettingsPage() {
     const endTime = new Date(date);
     endTime.setMinutes(endTime.getMinutes() + 30); // 30-minute block
 
-    // Get current blocked times for this week (manual only)
-    const currentWeekBlockedTimes = blockedTimesByWeek[selectedWeek] || [];
-
-    if (isBlocked) {
-      // Check if this time is already blocked
-      const exists = currentWeekBlockedTimes.some(blocked => {
-        const blockedStart = new Date(blocked.start);
-        return blockedStart.getTime() === date.getTime();
-      });
+    // Use functional update to ensure we always have the latest state
+    setBlockedTimesByWeek(prev => {
+      const currentWeekBlockedTimes = prev[selectedWeek] || [];
       
-      if (!exists) {
-        // Add to blocked times for this week
-        setBlockedTimesByWeek(prev => ({
-          ...prev,
-          [selectedWeek]: [...currentWeekBlockedTimes, {
-            start: date.toISOString(),
-            end: endTime.toISOString(),
-            source: 'manual' // Mark as manually blocked
-          }]
-        }));
-      }
-    } else {
-      // Remove from blocked times for this week
-      setBlockedTimesByWeek(prev => ({
-        ...prev,
-        [selectedWeek]: currentWeekBlockedTimes.filter(blocked => {
+      if (isBlocked) {
+        // Check if this time is already blocked
+        const exists = currentWeekBlockedTimes.some(blocked => {
+          const blockedStart = new Date(blocked.start);
+          return blockedStart.getTime() === date.getTime();
+        });
+        
+        if (!exists) {
+          // Add to blocked times for this week
+          return {
+            ...prev,
+            [selectedWeek]: [...currentWeekBlockedTimes, {
+              start: date.toISOString(),
+              end: endTime.toISOString(),
+              source: 'manual' // Mark as manually blocked
+            }]
+          };
+        }
+      } else {
+        // Remove from blocked times for this week
+        const newBlockedTimes = currentWeekBlockedTimes.filter(blocked => {
           const blockedStart = new Date(blocked.start);
           return blockedStart.getTime() !== date.getTime();
-        })
-      }));
-    }
+        });
+        
+        return {
+          ...prev,
+          [selectedWeek]: newBlockedTimes
+        };
+      }
+      
+      return prev; // No change needed
+    });
   };
 
   // Save availability
@@ -627,102 +800,87 @@ export default function AvailabilitySettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-4 mb-4">
-            {/* Menu Icon */}
-            <button
-              type="button"
-              className="inline-flex items-center justify-center rounded-md p-2 hover:bg-gray-200 transition"
-              onClick={() => setSidebarOpen(true)}
-              aria-label="Open menu"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                className="w-6 h-6 text-gray-700"
-              >
-                <rect x="1" y="11" width="22" height="2" fill="currentColor" strokeWidth="0"></rect>
-                <rect x="1" y="4" width="22" height="2" strokeWidth="0" fill="currentColor"></rect>
-                <rect x="1" y="18" width="22" height="2" strokeWidth="0" fill="currentColor"></rect>
-              </svg>
-            </button>
-            
+    <div className="min-h-screen bg-base-100">
+      {/* Fixed Menu Button - Top Left */}
+      <button
+        type="button"
+        className="fixed top-4 left-4 z-50 inline-flex items-center justify-center rounded-md p-2 bg-base-200 hover:bg-base-300 transition shadow-lg"
+        onClick={() => setSidebarOpen(true)}
+        aria-label="Open menu"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          className="w-6 h-6 text-base-content"
+        >
+          <rect x="1" y="11" width="22" height="2" fill="currentColor" strokeWidth="0"></rect>
+          <rect x="1" y="4" width="22" height="2" strokeWidth="0" fill="currentColor"></rect>
+          <rect x="1" y="18" width="22" height="2" strokeWidth="0" fill="currentColor"></rect>
+        </svg>
+      </button>
+
+      {/* Header */}
+      <div className="bg-base-200">
+        <div className="max-w-7xl mx-auto px-4 py-6">
+          <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-4xl font-bold text-gray-900">Availability Settings</h1>
-              <p className="text-xl text-gray-600 mt-2">
+              <h1 className="text-3xl font-bold">Availability Settings</h1>
+              <p className="text-base-content/70">
                 Manage your study time preferences and block unavailable times
               </p>
             </div>
+            <button
+              onClick={handleSave}
+              disabled={isSaving}
+              className="bg-blue-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSaving ? 'Saving...' : 'Save Changes'}
+            </button>
           </div>
         </div>
+      </div>
 
-        {/* Repeatable Events Section */}
-        <div className="bg-white border-2 border-gray-200 rounded-xl p-6 mb-6">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-            Repeatable Events
-          </h2>
-          <p className="text-sm text-gray-600 mb-6">
-            Add recurring commitments (e.g., football practice every Tuesday 5-7pm) that will automatically block those times in your schedule.
-          </p>
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        {/* Repeatable Events and Study Window Times - Side by Side */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          {/* Repeatable Events Section - Left Side */}
+          <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              Repeatable Events
+            </h2>
+            <p className="text-sm text-gray-600 mb-6">
+              Add recurring commitments (e.g., football practice every Tuesday 5-7pm) that will automatically block those times in your schedule.
+            </p>
 
-          {/* Existing Events List */}
-          {repeatableEvents.length > 0 && (
-            <div className="mb-6 space-y-4">
-              {getEventsByDay().map(([dayIndex, events]) => {
-                const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-                const dayName = dayNames[dayIndex];
-                
-                return (
-                  <div key={dayIndex} className="space-y-2">
-                    <h3 className="text-lg font-semibold text-gray-900">{dayName}</h3>
-                    {events.map((event) => (
-                      <div
-                        key={`${event.id}-${dayIndex}`}
-                        className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200"
-                      >
-                        <div className="flex-1">
-                          <div className="font-medium text-gray-900">{event.label}</div>
-                          <div className="text-sm text-gray-600 mt-1">
-                            {formatTime(event.start_time)} - {formatTime(event.end_time)}
-                          </div>
-                        </div>
-                        <button
-                          onClick={() => handleDeleteClick(event.id)}
-                          className="ml-4 px-3 py-1 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-
-          {/* Add Event Button */}
-          {!showAddEventForm && (
-            <button
-              onClick={() => {
-                setNewEvent({
-                  label: '',
-                  start_time: '',
-                  end_time: '',
-                  days_of_week: [],
-                });
-                setShowAddEventForm(true);
-              }}
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-            >
-              + Add Repeatable Event
-            </button>
-          )}
-        </div>
+            {/* Buttons */}
+            {!showAddEventForm && (
+              <div className="flex flex-col gap-3">
+                <button
+                  onClick={() => {
+                    setNewEvent({
+                      label: '',
+                      start_time: '',
+                      end_time: '',
+                      days_of_week: [],
+                    });
+                    setShowAddEventForm(true);
+                  }}
+                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                >
+                  + Add Repeatable Event
+                </button>
+                <button
+                  onClick={() => setShowEventsModal(true)}
+                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+                >
+                  View Events
+                </button>
+              </div>
+            )}
+          </div>
 
         {/* Add Event Modal */}
         {showAddEventForm && (
@@ -778,45 +936,62 @@ export default function AvailabilitySettingsPage() {
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Start Time *
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    Time Range *
                   </label>
-                  <div className="flex flex-wrap gap-2 max-h-48 overflow-y-auto p-2 border border-gray-200 rounded-lg bg-gray-50">
-                    {timeOptions.map(time => (
-                      <button
-                        key={time}
-                        type="button"
-                        onClick={() => setNewEvent(prev => ({ ...prev, start_time: time }))}
-                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                          newEvent.start_time === time
-                            ? 'bg-blue-500 text-white'
-                            : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
-                        }`}
-                      >
-                        {time}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    End Time *
-                  </label>
-                  <div className="flex flex-wrap gap-2 max-h-48 overflow-y-auto p-2 border border-gray-200 rounded-lg bg-gray-50">
-                    {timeOptions.map(time => (
-                      <button
-                        key={time}
-                        type="button"
-                        onClick={() => setNewEvent(prev => ({ ...prev, end_time: time }))}
-                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                          newEvent.end_time === time
-                            ? 'bg-blue-500 text-white'
-                            : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
-                        }`}
-                      >
-                        {time}
-                      </button>
-                    ))}
+                  <div className="space-y-3">
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="block text-xs text-gray-500">Start Time</label>
+                        <span className="text-xs font-medium text-gray-700">{newEvent.start_time || 'Not selected'}</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="0"
+                        max={timeOptions.length - 1}
+                        value={newEvent.start_time && timeOptions.indexOf(newEvent.start_time) >= 0 
+                          ? timeOptions.indexOf(newEvent.start_time) 
+                          : 0}
+                        onChange={(e) => {
+                          const index = parseInt(e.target.value);
+                          const selectedTime = timeOptions[index];
+                          if (selectedTime) {
+                            const endIndex = newEvent.end_time ? timeOptions.indexOf(newEvent.end_time) : -1;
+                            // Ensure start time is before end time
+                            if (endIndex < 0 || endIndex >= index) {
+                              setNewEvent(prev => ({ ...prev, start_time: selectedTime }));
+                            }
+                          }
+                        }}
+                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="block text-xs text-gray-500">End Time</label>
+                        <span className="text-xs font-medium text-gray-700">{newEvent.end_time || 'Not selected'}</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="0"
+                        max={timeOptions.length - 1}
+                        value={newEvent.end_time && timeOptions.indexOf(newEvent.end_time) >= 0
+                          ? timeOptions.indexOf(newEvent.end_time)
+                          : timeOptions.length - 1}
+                        onChange={(e) => {
+                          const index = parseInt(e.target.value);
+                          const selectedTime = timeOptions[index];
+                          if (selectedTime) {
+                            const startIndex = newEvent.start_time ? timeOptions.indexOf(newEvent.start_time) : -1;
+                            // Ensure end time is after start time
+                            if (startIndex < 0 || startIndex <= index) {
+                              setNewEvent(prev => ({ ...prev, end_time: selectedTime }));
+                            }
+                          }
+                        }}
+                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -826,9 +1001,17 @@ export default function AvailabilitySettingsPage() {
                   Days of Week * (select at least one)
                 </label>
                 <div className="flex flex-wrap gap-2">
-                  {['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((day, index) => (
+                  {[
+                    { name: 'Monday', index: 1 },
+                    { name: 'Tuesday', index: 2 },
+                    { name: 'Wednesday', index: 3 },
+                    { name: 'Thursday', index: 4 },
+                    { name: 'Friday', index: 5 },
+                    { name: 'Saturday', index: 6 },
+                    { name: 'Sunday', index: 0 }
+                  ].map(({ name, index }) => (
                     <button
-                      key={day}
+                      key={name}
                       type="button"
                       onClick={() => handleDayToggle(index)}
                       className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
@@ -837,7 +1020,7 @@ export default function AvailabilitySettingsPage() {
                           : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
                       }`}
                     >
-                      {day.substring(0, 3)}
+                      {name.substring(0, 3)}
                     </button>
                   ))}
                 </div>
@@ -870,108 +1053,240 @@ export default function AvailabilitySettingsPage() {
           </div>
           )}
 
-        {/* Time Preferences */}
-        <div className="bg-white border-2 border-gray-200 rounded-xl p-6 mb-6">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-6">
-            Study Window Times
-          </h2>
-          
-          <div className="space-y-6">
-            {/* Weekday Times */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Weekday Study Times (Monday - Friday)
-              </label>
-              <div className="flex items-center space-x-4">
-                <div className="flex-1">
-                  <label className="block text-xs text-gray-500 mb-1">Earliest</label>
-                  <select
-                    value={timePreferences.weekdayEarliest}
-                    onChange={(e) => handleTimePreferenceChange('weekdayEarliest', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    {timeOptions.map(time => (
-                      <option key={time} value={time}>{time}</option>
-                    ))}
-                  </select>
-                </div>
-                <span className="text-gray-500 mt-6">to</span>
-                <div className="flex-1">
-                  <label className="block text-xs text-gray-500 mb-1">Latest</label>
-                  <select
-                    value={timePreferences.weekdayLatest}
-                    onChange={(e) => handleTimePreferenceChange('weekdayLatest', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    {timeOptions.map(time => (
-                      <option key={time} value={time}>{time}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            {/* Weekend Times */}
-            <div>
-              <div className="flex items-center space-x-3 mb-2">
-                <input
-                  type="checkbox"
-                  id="weekendToggle"
-                  checked={timePreferences.useSameWeekendTimes}
-                  onChange={handleWeekendToggle}
-                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                />
-                <label htmlFor="weekendToggle" className="text-sm font-medium text-gray-700">
-                  Use same times for weekends
+          {/* Study Window Times - Right Side */}
+          <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+              Study Window Times
+            </h2>
+            
+            <div className="space-y-6">
+              {/* Weekday Times */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Weekday Study Times (Monday - Friday)
                 </label>
-              </div>
-              
-              {!timePreferences.useSameWeekendTimes && (
-                <div className="mt-3 ml-7">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Weekend Study Times (Saturday - Sunday)
-                  </label>
-                  <div className="flex items-center space-x-4">
-                    <div className="flex-1">
-                      <label className="block text-xs text-gray-500 mb-1">Earliest</label>
-                      <select
-                        value={timePreferences.weekendEarliest}
-                        onChange={(e) => handleTimePreferenceChange('weekendEarliest', e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      >
-                        {timeOptions.map(time => (
-                          <option key={time} value={time}>{time}</option>
-                        ))}
-                      </select>
+                <div className="space-y-4">
+                  <div>
+                    <div className="flex justify-between text-xs text-gray-500 mb-2">
+                      <span>Earliest: {timePreferences.weekdayEarliest}</span>
+                      <span>Latest: {timePreferences.weekdayLatest}</span>
                     </div>
-                    <span className="text-gray-500 mt-6">to</span>
-                    <div className="flex-1">
-                      <label className="block text-xs text-gray-500 mb-1">Latest</label>
-                      <select
-                        value={timePreferences.weekendLatest}
-                        onChange={(e) => handleTimePreferenceChange('weekendLatest', e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      >
-                        {timeOptions.map(time => (
-                          <option key={time} value={time}>{time}</option>
-                        ))}
-                      </select>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-xs text-gray-500 mb-1">Earliest</label>
+                        <input
+                          type="range"
+                          min="0"
+                          max={timeOptions.length - 1}
+                          value={timeOptions.indexOf(timePreferences.weekdayEarliest)}
+                          onChange={(e) => {
+                            const index = parseInt(e.target.value);
+                            const selectedTime = timeOptions[index];
+                            if (selectedTime && timeOptions.indexOf(timePreferences.weekdayLatest) >= index) {
+                              handleTimePreferenceChange('weekdayEarliest', selectedTime);
+                            }
+                          }}
+                          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-gray-500 mb-1">Latest</label>
+                        <input
+                          type="range"
+                          min="0"
+                          max={timeOptions.length - 1}
+                          value={timeOptions.indexOf(timePreferences.weekdayLatest)}
+                          onChange={(e) => {
+                            const index = parseInt(e.target.value);
+                            const selectedTime = timeOptions[index];
+                            if (selectedTime && timeOptions.indexOf(timePreferences.weekdayEarliest) <= index) {
+                              handleTimePreferenceChange('weekdayLatest', selectedTime);
+                            }
+                          }}
+                          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
-              )}
+              </div>
+
+              {/* Weekend Times */}
+              <div>
+                <div className="flex items-center space-x-3 mb-3">
+                  <input
+                    type="checkbox"
+                    id="weekendToggle"
+                    checked={timePreferences.useSameWeekendTimes}
+                    onChange={handleWeekendToggle}
+                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <label htmlFor="weekendToggle" className="text-sm font-medium text-gray-700">
+                    Use same times for weekends
+                  </label>
+                </div>
+                
+                {!timePreferences.useSameWeekendTimes && (
+                  <div className="mt-3">
+                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                      Weekend Study Times (Saturday - Sunday)
+                    </label>
+                    <div className="space-y-4">
+                      <div>
+                        <div className="flex justify-between text-xs text-gray-500 mb-2">
+                          <span>Earliest: {timePreferences.weekendEarliest}</span>
+                          <span>Latest: {timePreferences.weekendLatest}</span>
+                        </div>
+                        <div className="space-y-3">
+                          <div>
+                            <label className="block text-xs text-gray-500 mb-1">Earliest</label>
+                            <input
+                              type="range"
+                              min="0"
+                              max={timeOptions.length - 1}
+                              value={timeOptions.indexOf(timePreferences.weekendEarliest)}
+                              onChange={(e) => {
+                                const index = parseInt(e.target.value);
+                                const selectedTime = timeOptions[index];
+                                if (selectedTime && timeOptions.indexOf(timePreferences.weekendLatest) >= index) {
+                                  handleTimePreferenceChange('weekendEarliest', selectedTime);
+                                }
+                              }}
+                              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-gray-500 mb-1">Latest</label>
+                            <input
+                              type="range"
+                              min="0"
+                              max={timeOptions.length - 1}
+                              value={timeOptions.indexOf(timePreferences.weekendLatest)}
+                              onChange={(e) => {
+                                const index = parseInt(e.target.value);
+                                const selectedTime = timeOptions[index];
+                                if (selectedTime && timeOptions.indexOf(timePreferences.weekendEarliest) <= index) {
+                                  handleTimePreferenceChange('weekendLatest', selectedTime);
+                                }
+                              }}
+                              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
 
+        {/* View Events Modal */}
+        {showEventsModal && (
+          <div 
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-md"
+            onClick={() => setShowEventsModal(false)}
+          >
+            <div 
+              className="bg-white rounded-xl shadow-2xl p-8 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto transform transition-all animate-popup"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">Repeatable Events</h2>
+                <button
+                  onClick={() => setShowEventsModal(false)}
+                  className="btn btn-sm btn-ghost"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              {repeatableEvents.length === 0 ? (
+                <div className="text-center py-12">
+                  <svg className="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">No Repeatable Events</h3>
+                  <p className="text-gray-600 mb-4">
+                    You haven't added any repeatable events yet.
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Click "Add Repeatable Event" to create recurring commitments that will automatically block those times in your schedule.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {getEventsByDay().map(([dayIndex, events]) => {
+                    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                    const dayName = dayNames[dayIndex];
+                    
+                    return (
+                      <div key={dayIndex} className="space-y-2">
+                        <h3 className="text-lg font-semibold text-gray-900">{dayName}</h3>
+                        {events.map((event) => (
+                          <div
+                            key={`${event.id}-${dayIndex}`}
+                            className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200"
+                          >
+                            <div className="flex-1">
+                              <div className="font-medium text-gray-900">{event.label}</div>
+                              <div className="text-sm text-gray-600 mt-1">
+                                {formatTime(event.start_time)} - {formatTime(event.end_time)}
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => {
+                                setShowEventsModal(false);
+                                handleDeleteClick(event.id);
+                              }}
+                              className="ml-4 px-3 py-1 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Calendar Section */}
         <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-            Block Unavailable Times
-          </h2>
-          <p className="text-sm text-gray-600 mb-6">
-            Click or drag to block times when you can't study. These will be excluded from your schedule.
-          </p>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-2xl font-semibold text-gray-900">
+                Block Unavailable Times
+              </h2>
+              <p className="text-sm text-gray-600 mt-1">
+                Click or drag to block times when you can't study. These will be excluded from your schedule.
+              </p>
+            </div>
+            {selectedWeek > 0 && (
+              <div className="flex gap-3">
+                <button
+                  onClick={handleCopyFromPreviousWeek}
+                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors text-sm font-medium"
+                  title="Copy blocked times from the previous week"
+                >
+                  Copy from Previous Week
+                </button>
+                <button
+                  onClick={() => setShowResetConfirm(true)}
+                  className="px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors text-sm font-medium"
+                  title="Reset all blocked times for this week"
+                >
+                  Reset Week
+                </button>
+              </div>
+            )}
+          </div>
 
           {/* Week Tabs */}
           <div className="flex space-x-2 mb-6 border-b border-gray-200">
@@ -1011,16 +1326,6 @@ export default function AvailabilitySettingsPage() {
           />
         </div>
 
-        {/* Save Button */}
-        <div className="mt-6 flex justify-end">
-          <button
-            onClick={handleSave}
-            disabled={isSaving}
-            className="bg-blue-500 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isSaving ? 'Saving...' : 'Save Changes'}
-          </button>
-        </div>
       </div>
 
       {/* Delete Confirmation Modal */}
@@ -1047,6 +1352,42 @@ export default function AvailabilitySettingsPage() {
                   className="flex-1 px-6 py-3 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 transition-colors"
                 >
                   Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reset Week Confirmation Modal */}
+      {showResetConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-md">
+          <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-4 transform transition-all animate-popup">
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 mx-auto bg-red-100 rounded-full flex items-center justify-center">
+                <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900">Reset Week?</h3>
+              <p className="text-gray-600">
+                Are you sure you want to reset this week? This will clear all manually blocked times for this week.
+              </p>
+              <p className="text-sm text-gray-500">
+                Note: Repeatable events will remain unchanged.
+              </p>
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={() => setShowResetConfirm(false)}
+                  className="flex-1 px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleResetWeek}
+                  className="flex-1 px-6 py-3 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 transition-colors"
+                >
+                  Reset Week
                 </button>
               </div>
             </div>
@@ -1220,26 +1561,15 @@ export default function AvailabilitySettingsPage() {
                         </Link>
                       </li>
                       <li>
-                        <Link
-                          href="/settings?section=contact"
-                          className={`block px-4 py-2 rounded-lg transition text-sm hover:bg-base-300 ${
-                            pathname === '/settings' && searchParams?.get('section') === 'contact' ? 'bg-primary/20' : ''
-                          }`}
-                          onClick={() => setSidebarOpen(false)}
+                        <button
+                          onClick={() => {
+                            setSupportModalOpen(true);
+                            setSidebarOpen(false);
+                          }}
+                          className="block w-full text-left px-4 py-2 rounded-lg transition text-sm hover:bg-base-300"
                         >
-                          Contact
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="/settings?section=feedback"
-                          className={`block px-4 py-2 rounded-lg transition text-sm hover:bg-base-300 ${
-                            pathname === '/settings' && searchParams?.get('section') === 'feedback' ? 'bg-primary/20' : ''
-                          }`}
-                          onClick={() => setSidebarOpen(false)}
-                        >
-                          Feedback
-                        </Link>
+                          Support
+                        </button>
                       </li>
                       <li>
                         <button
@@ -1268,8 +1598,23 @@ export default function AvailabilitySettingsPage() {
           onClick={() => setSidebarOpen(false)}
         />
       )}
+      
+      <SupportModal isOpen={supportModalOpen} onClose={() => setSupportModalOpen(false)} />
     </div>
   );
 }
 
-
+export default function AvailabilitySettingsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <span className="loading loading-spinner loading-lg"></span>
+          <p className="mt-4">Loading...</p>
+        </div>
+      </div>
+    }>
+      <AvailabilitySettingsPageContent />
+    </Suspense>
+  );
+}

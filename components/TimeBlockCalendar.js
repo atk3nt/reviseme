@@ -28,6 +28,7 @@ export default function TimeBlockCalendar({
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState(null);
   const [dragEnd, setDragEnd] = useState(null);
+  const dragEndRef = useRef(null); // Use ref to track latest drag end position
   const calendarRef = useRef(null);
 
   // Generate time slots based on time preferences
@@ -168,6 +169,40 @@ export default function TimeBlockCalendar({
     return 'available';
   };
 
+  // Check if a time slot is within the study window for a specific day
+  const isWithinStudyWindow = (dayIndex, timeSlot) => {
+    if (!timePreferences) {
+      return true; // If no preferences, all times are valid
+    }
+
+    const parseTime = (timeStr) => {
+      const [hour, minute] = timeStr.split(':').map(Number);
+      return hour * 60 + minute; // Convert to minutes
+    };
+
+    const timeSlotMinutes = parseTime(timeSlot);
+    
+    // Check if it's a weekend (Saturday = 5, Sunday = 6)
+    const isWeekend = dayIndex >= 5;
+    
+    let earliestMinutes, latestMinutes;
+    
+    if (isWeekend && !timePreferences.useSameWeekendTimes) {
+      // Weekend with different times
+      earliestMinutes = parseTime(timePreferences.weekendEarliest || '8:00');
+      latestMinutes = parseTime(timePreferences.weekendLatest || '23:30');
+    } else {
+      // Weekday or weekend with same times as weekday
+      earliestMinutes = parseTime(timePreferences.weekdayEarliest || '6:00');
+      latestMinutes = parseTime(timePreferences.weekdayLatest || '23:30');
+    }
+    
+    // Check if time slot is within the window
+    // timeSlotMinutes is the start of the 30-minute slot
+    // We check if the slot starts at or after earliest and before latest
+    return timeSlotMinutes >= earliestMinutes && timeSlotMinutes < latestMinutes;
+  };
+
   // Handle mouse down (start drag or single click)
   const handleMouseDown = (e, dayIndex, timeSlot) => {
     if (readOnly) return;
@@ -175,75 +210,129 @@ export default function TimeBlockCalendar({
     // Prevent text selection
     e.preventDefault();
     
+    const startPos = { dayIndex, timeSlot };
     setIsDragging(true);
-    setDragStart({ dayIndex, timeSlot });
-    setDragEnd({ dayIndex, timeSlot });
+    setDragStart(startPos);
+    setDragEnd(startPos);
+    dragEndRef.current = startPos; // Initialize ref
   };
 
-  // Handle mouse move (during drag)
+  // Handle mouse move (during drag) - using elementFromPoint for better accuracy
   const handleMouseMove = (e) => {
-    if (!isDragging || readOnly || !calendarRef.current) return;
+    // Check both state and ref to ensure we're actually dragging
+    if (!isDragging || !dragStart || readOnly || !calendarRef.current) {
+      // If we think we're dragging but state says we're not, clean up
+      if (dragEndRef.current) {
+        setIsDragging(false);
+        setDragStart(null);
+        setDragEnd(null);
+        dragEndRef.current = null;
+      }
+      return;
+    }
 
     // Prevent text selection during drag
     e.preventDefault();
 
-    const rect = calendarRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    // Use elementFromPoint to find which cell we're over
+    const element = document.elementFromPoint(e.clientX, e.clientY);
+    if (!element) return;
 
-    // Calculate which block we're hovering over
-    // Time column is first column, then 7 day columns
-    const cellWidth = rect.width / 8; // 7 days + time column
-    const headerHeight = 60; // Approximate header height
-    const cellHeight = (rect.height - headerHeight) / timeSlots.length;
-
-    const dayIndex = Math.floor((x - cellWidth) / cellWidth);
-    const timeIndex = Math.floor((y - headerHeight) / cellHeight);
-
-    if (dayIndex >= 0 && dayIndex < 7 && timeIndex >= 0 && timeIndex < timeSlots.length) {
-      setDragEnd({ dayIndex, timeSlot: timeSlots[timeIndex] });
+    // Find the cell element (look for data attributes or traverse up)
+    let cellElement = element;
+    let maxDepth = 10; // Prevent infinite loop
+    while (cellElement && cellElement !== calendarRef.current && maxDepth > 0) {
+      const dayIndex = cellElement.getAttribute('data-day-index');
+      const timeSlot = cellElement.getAttribute('data-time-slot');
+      if (dayIndex !== null && timeSlot !== null) {
+        const newDragEnd = { 
+          dayIndex: parseInt(dayIndex), 
+          timeSlot: timeSlot 
+        };
+        // Always update dragEnd to ensure it's current
+        setDragEnd(newDragEnd);
+        dragEndRef.current = newDragEnd; // Update ref immediately
+        return;
+      }
+      cellElement = cellElement.parentElement;
+      maxDepth--;
     }
   };
 
   // Handle mouse up (end drag or click)
   const handleMouseUp = () => {
-    if (!isDragging || readOnly) return;
+    if (!isDragging || readOnly) {
+      // Make sure we're not dragging even if state is inconsistent
+      setIsDragging(false);
+      setDragStart(null);
+      setDragEnd(null);
+      dragEndRef.current = null;
+      return;
+    }
 
-    if (dragStart && dragEnd && onBlockToggle) {
+    // Capture values before resetting state
+    const currentDragStart = dragStart;
+    const currentDragEnd = dragEndRef.current || dragStart;
+    
+    // Reset drag state IMMEDIATELY to prevent further drag events
+    setIsDragging(false);
+    setDragStart(null);
+    setDragEnd(null);
+    dragEndRef.current = null;
+    
+    // Now process the toggle
+    if (currentDragStart && currentDragEnd && onBlockToggle) {
       // If same block, single click
-      if (dragStart.dayIndex === dragEnd.dayIndex && dragStart.timeSlot === dragEnd.timeSlot) {
-        const wasBlocked = isBlocked(dragStart.dayIndex, dragStart.timeSlot);
-        onBlockToggle(
-          days[dragStart.dayIndex],
-          dragStart.timeSlot,
-          !wasBlocked
-        );
+      if (currentDragStart.dayIndex === currentDragEnd.dayIndex && currentDragStart.timeSlot === currentDragEnd.timeSlot) {
+        const wasBlocked = isBlocked(currentDragStart.dayIndex, currentDragStart.timeSlot);
+        const dayName = days[currentDragStart.dayIndex];
+        const timeSlotValue = currentDragStart.timeSlot;
+        
+        // Validate before calling
+        if (dayName && timeSlotValue) {
+          onBlockToggle(dayName, timeSlotValue, !wasBlocked);
+        }
       } else {
         // Drag selection - toggle all blocks in range
-        const startDay = Math.min(dragStart.dayIndex, dragEnd.dayIndex);
-        const endDay = Math.max(dragStart.dayIndex, dragEnd.dayIndex);
+        const startDay = Math.min(currentDragStart.dayIndex, currentDragEnd.dayIndex);
+        const endDay = Math.max(currentDragStart.dayIndex, currentDragEnd.dayIndex);
         const startTimeIndex = Math.min(
-          timeSlots.indexOf(dragStart.timeSlot),
-          timeSlots.indexOf(dragEnd.timeSlot)
+          timeSlots.indexOf(currentDragStart.timeSlot),
+          timeSlots.indexOf(currentDragEnd.timeSlot)
         );
         const endTimeIndex = Math.max(
-          timeSlots.indexOf(dragStart.timeSlot),
-          timeSlots.indexOf(dragEnd.timeSlot)
+          timeSlots.indexOf(currentDragStart.timeSlot),
+          timeSlots.indexOf(currentDragEnd.timeSlot)
         );
 
+        // Toggle all cells in the range - collect them first, then toggle
+        const cellsToToggle = [];
         for (let day = startDay; day <= endDay; day++) {
           for (let timeIndex = startTimeIndex; timeIndex <= endTimeIndex; timeIndex++) {
-            const timeSlot = timeSlots[timeIndex];
-            const wasBlocked = isBlocked(day, timeSlot);
-            onBlockToggle(days[day], timeSlot, !wasBlocked);
+            const timeSlotToToggle = timeSlots[timeIndex];
+            const wasBlocked = isBlocked(day, timeSlotToToggle);
+            cellsToToggle.push({ 
+              day: days[day], 
+              timeSlot: timeSlotToToggle, 
+              isBlocked: !wasBlocked 
+            });
+          }
+        }
+        
+        // Batch toggle all cells at once
+        if (cellsToToggle.length > 0) {
+          // Validate all cells before toggling
+          const validCells = cellsToToggle.filter(cell => 
+            cell.day && cell.timeSlot && typeof cell.isBlocked === 'boolean'
+          );
+          
+          if (validCells.length > 0) {
+            // Pass array to onBlockToggle - it will detect array and use batch handler
+            onBlockToggle(validCells);
           }
         }
       }
     }
-
-    setIsDragging(false);
-    setDragStart(null);
-    setDragEnd(null);
   };
 
   // Get blocks in drag range
@@ -280,27 +369,38 @@ export default function TimeBlockCalendar({
 
   useEffect(() => {
     if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-      return () => {
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
+      const handleMouseMoveWrapper = (e) => {
+        handleMouseMove(e);
       };
+      const handleMouseUpWrapper = (e) => {
+        handleMouseUp();
+      };
+      
+      document.addEventListener('mousemove', handleMouseMoveWrapper);
+      document.addEventListener('mouseup', handleMouseUpWrapper);
+      
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMoveWrapper);
+        document.removeEventListener('mouseup', handleMouseUpWrapper);
+      };
+    } else {
+      // Clean up if not dragging
+      setDragStart(null);
+      setDragEnd(null);
+      dragEndRef.current = null;
     }
-  }, [isDragging, dragStart, dragEnd]);
+  }, [isDragging]);
 
   return (
     <div className="w-full overflow-x-auto select-none">
       <div
         ref={calendarRef}
         className="inline-block min-w-full bg-white border-2 border-gray-200 rounded-xl overflow-hidden select-none"
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
         style={{ userSelect: 'none', WebkitUserSelect: 'none' }}
       >
         {/* Header */}
-        <div className="grid grid-cols-8 border-b-2 border-gray-300 bg-gray-50 select-none">
-          <div className="p-3 font-semibold text-gray-700 border-r border-gray-200 select-none">
+        <div className="grid grid-cols-8 border-b-2 border-gray-300 bg-gray-50 select-none gap-2 px-2 py-3">
+          <div className="font-semibold text-gray-700 select-none text-center flex items-center justify-center">
             Time
           </div>
           {days.map((day, index) => {
@@ -308,7 +408,7 @@ export default function TimeBlockCalendar({
             return (
               <div
                 key={day}
-                className="p-3 text-center border-r border-gray-200 last:border-r-0 select-none"
+                className="text-center select-none"
               >
                 <p className="font-semibold text-gray-900 select-none">{dayLabels[index]}</p>
                 <p className="text-xs text-gray-500 select-none">
@@ -320,14 +420,14 @@ export default function TimeBlockCalendar({
         </div>
 
         {/* Time Blocks */}
-        <div className="divide-y divide-gray-200">
+        <div className="p-2 space-y-2">
           {timeSlots.map((timeSlot, timeIndex) => (
             <div
               key={timeSlot}
-              className="grid grid-cols-8 hover:bg-gray-50"
+              className="grid grid-cols-8 gap-2"
             >
               {/* Time Label */}
-              <div className="p-2 text-sm text-gray-600 border-r border-gray-200 bg-gray-50 select-none">
+              <div className="text-sm text-gray-600 bg-gray-50 select-none text-center flex items-center justify-center rounded-md py-2">
                 {formatTime(timeSlot)}
               </div>
 
@@ -335,12 +435,28 @@ export default function TimeBlockCalendar({
               {days.map((day, dayIndex) => {
                 const state = getBlockState(dayIndex, timeSlot);
                 const inDragRange = isInDragRange(dayIndex, timeSlot);
+                const withinWindow = isWithinStudyWindow(dayIndex, timeSlot);
                 
                 let bgColor = 'bg-white';
-                let borderColor = 'border-gray-200';
+                let borderColor = 'border-gray-300';
                 let textColor = 'text-gray-400';
+                let opacity = '';
+                let cursor = !readOnly ? 'cursor-pointer' : 'cursor-default';
                 
-                if (state === 'scheduled') {
+                // Grey out if outside study window (but still show drag range if dragging)
+                if (!withinWindow && !inDragRange) {
+                  bgColor = 'bg-gray-200';
+                  borderColor = 'border-gray-300';
+                  textColor = 'text-gray-400';
+                  opacity = 'opacity-60';
+                  cursor = 'cursor-default';
+                }
+                // Highlight drag range (even if outside window)
+                else if (inDragRange) {
+                  bgColor = 'bg-blue-200';
+                  borderColor = 'border-blue-400';
+                  textColor = 'text-blue-800';
+                } else if (state === 'scheduled') {
                   bgColor = 'bg-blue-100';
                   borderColor = 'border-blue-300';
                   textColor = 'text-blue-700';
@@ -348,9 +464,6 @@ export default function TimeBlockCalendar({
                   bgColor = 'bg-red-100';
                   borderColor = 'border-red-300';
                   textColor = 'text-red-700';
-                } else if (inDragRange) {
-                  bgColor = 'bg-yellow-100';
-                  borderColor = 'border-yellow-300';
                 } else {
                   bgColor = 'bg-white hover:bg-gray-50';
                 }
@@ -358,23 +471,39 @@ export default function TimeBlockCalendar({
                 return (
                   <div
                     key={`${day}-${timeSlot}`}
-                    onMouseDown={(e) => handleMouseDown(e, dayIndex, timeSlot)}
+                    data-day-index={dayIndex}
+                    data-time-slot={timeSlot}
+                    onMouseDown={(e) => {
+                      if (!withinWindow || readOnly) {
+                        e.preventDefault();
+                        return;
+                      }
+                      handleMouseDown(e, dayIndex, timeSlot);
+                    }}
+                    onMouseEnter={() => {
+                      if (isDragging && dragStart) {
+                        const newDragEnd = { dayIndex, timeSlot };
+                        setDragEnd(newDragEnd);
+                        dragEndRef.current = newDragEnd;
+                      }
+                    }}
                     className={`
-                      p-1 border-r border-gray-200 last:border-r-0
-                      transition-colors ${bgColor} ${borderColor} ${textColor} select-none
-                      ${!readOnly ? 'cursor-pointer' : 'cursor-default'}
+                      rounded-md border ${borderColor} ${bgColor} ${textColor} ${opacity} select-none
+                      transition-all duration-200 flex items-center justify-center
+                      ${cursor}
+                      min-h-[32px]
+                      ${inDragRange ? 'ring-2 ring-blue-400 ring-offset-1' : ''}
                     `}
                     style={{ userSelect: 'none', WebkitUserSelect: 'none' }}
-                    title={`${day} ${formatTime(timeSlot)} - ${state === 'blocked' ? 'Blocked' : state === 'scheduled' ? 'Scheduled' : 'Available'}`}
+                    title={!withinWindow ? '' : `${day} ${formatTime(timeSlot)} - ${
+                      state === 'blocked' ? 'Blocked' : 
+                      state === 'scheduled' ? 'Scheduled' : 
+                      'Available'
+                    }`}
                   >
-                    <div className="w-full h-6 rounded border border-gray-300 flex items-center justify-center select-none">
-                      {state === 'blocked' && (
-                        <span className="text-xs select-none">✗</span>
-                      )}
-                      {state === 'scheduled' && (
-                        <span className="text-xs select-none">●</span>
-                      )}
-                    </div>
+                    {state === 'scheduled' && !inDragRange && (
+                      <span className="text-xs select-none">●</span>
+                    )}
                   </div>
                 );
               })}

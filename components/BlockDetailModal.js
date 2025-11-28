@@ -143,7 +143,19 @@ export default function BlockDetailModal({
   if (!isOpen || !block) return null;
 
   const subject = block.topics?.specs?.subject || 'Subject';
+  // Clean topic name by removing leading apostrophes/quotes
+  const cleanTopicName = (name) => {
+    if (!name) return 'Topic';
+    return name.replace(/^['"]+/, '').trim() || 'Topic';
+  };
+  
   const topicName = block.topics?.name || 'Topic';
+  const parentTopicName = block.topics?.parent_topic_name || block.parent_topic_name || null;
+  
+  // Format with parent if available: "Subtopic - Parent Topic"
+  const displayTopicName = parentTopicName 
+    ? `${cleanTopicName(topicName)} - ${cleanTopicName(parentTopicName)}`
+    : cleanTopicName(topicName);
   const formattedTime = new Date(block.scheduled_at).toLocaleTimeString([], {
     hour: '2-digit',
     minute: '2-digit'
@@ -201,7 +213,7 @@ export default function BlockDetailModal({
                     <span className="text-sm font-medium text-base-content/70 uppercase tracking-wide">
                       {subject}
                     </span>
-                    <h3 className="text-2xl font-bold mt-1">{topicName}</h3>
+                    <h3 className="text-2xl font-bold mt-1">{displayTopicName}</h3>
                   </div>
                   
                   <div className="space-y-2 text-sm">

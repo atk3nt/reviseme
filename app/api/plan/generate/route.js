@@ -460,7 +460,7 @@ export async function GET(request) {
         .from('blocks')
         .select(
           `id, topic_id, scheduled_at, duration_minutes, status, ai_rationale,
-           topics(title, specs(subject, exam_board))`
+           topics!left(title, specs(subject, exam_board))`
         )
         .eq('id', blockId)
         .eq('user_id', userId)
@@ -470,6 +470,8 @@ export async function GET(request) {
         return NextResponse.json({ error: 'Block not found' }, { status: 404 });
       }
       
+      const topic = block.topics;
+      
       const formattedBlock = {
         id: block.id,
         topic_id: block.topic_id,
@@ -477,9 +479,10 @@ export async function GET(request) {
         duration_minutes: block.duration_minutes,
         status: block.status,
         ai_rationale: block.ai_rationale,
-        topic_name: block.topics?.title || 'Topic',
-        subject: block.topics?.specs?.subject || 'Unknown subject',
-        exam_board: block.topics?.specs?.exam_board || 'Unknown board'
+        topic_name: topic?.title || 'Topic',
+        parent_topic_name: null,
+        subject: topic?.specs?.subject || 'Unknown subject',
+        exam_board: topic?.specs?.exam_board || 'Unknown board'
       };
       
       return NextResponse.json({
@@ -488,7 +491,7 @@ export async function GET(request) {
       });
     }
     
-    // Try to find blocks for the current week, but also check a wider range
+    // Try to find blocks for the current week, but also check a much wider range
     // to catch blocks that might be slightly outside the current week
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -496,57 +499,108 @@ export async function GET(request) {
     const weekEndDate = new Date(weekStartDate);
     weekEndDate.setDate(weekStartDate.getDate() + 7);
     
-    // Also check 1 week before and 2 weeks after to catch any existing blocks
-    const searchStart = new Date(weekStartDate);
-    searchStart.setDate(weekStartDate.getDate() - 7);
-    const searchEnd = new Date(weekEndDate);
-    searchEnd.setDate(weekEndDate.getDate() + 14);
-
-    console.log('🔍 Searching for blocks:', {
+    console.log('🔍 Fetching ALL blocks for user (no date filter):', {
       userId,
-      searchStart: searchStart.toISOString(),
-      searchEnd: searchEnd.toISOString(),
       weekStart: weekStartDate.toISOString(),
       weekEnd: weekEndDate.toISOString()
     });
 
-    const { data, error } = await supabaseAdmin
-      .from('blocks')
-      .select(
-        `id, topic_id, scheduled_at, duration_minutes, status, ai_rationale,
-         topics(title, specs(subject, exam_board))`
-      )
-      .eq('user_id', userId)
-      .gte('scheduled_at', searchStart.toISOString())
-      .lt('scheduled_at', searchEnd.toISOString())
-      .order('scheduled_at', { ascending: true });
+      // Fetch ALL blocks for the user (no date filter) to ensure we don't miss any
+      // The frontend can filter by date if needed
+      // First, try the simplest query that we know works (like check-blocks)
+      // Simple query: just get blocks with topic info
+      // Match the working check-blocks route exactly
+      // First, check total count
+      const { count: totalBlockCount } = await supabaseAdmin
+        .from('blocks')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', userId);
+      
+      console.log('🔍 Total blocks in database for user:', totalBlockCount);
+      
+      // Use the exact same query format as check-blocks route (no !left, just topics)
+      const { data, error } = await supabaseAdmin
+        .from('blocks')
+        .select(
+          `id, topic_id, scheduled_at, duration_minutes, status, ai_rationale,
+           topics(title, specs(subject, exam_board))`
+        )
+        .eq('user_id', userId)
+        .order('scheduled_at', { ascending: true });
     
     console.log('📊 Blocks query result:', {
       found: data?.length || 0,
       error: error?.message,
-      sample: data?.slice(0, 3).map(b => ({
+      errorCode: error?.code,
+      blocksWithTopics: data?.filter(b => b.topics).length || 0,
+      blocksWithoutTopics: data?.filter(b => !b.topics).length || 0,
+      sample: data?.slice(0, 5).map(b => ({
         id: b.id,
         scheduled_at: b.scheduled_at,
-        topic: b.topics?.title
+        topicTitle: b.topics?.title,
+        topicId: b.topic_id,
+        hasTopics: !!b.topics,
+        topicLevel: b.topics?.level
       }))
     });
 
     if (error) {
       console.error('Plan fetch error:', error);
-      return NextResponse.json({ error: 'Failed to load study plan' }, { status: 500 });
+      return NextResponse.json({ 
+        error: 'Failed to load study plan',
+        details: error.message 
+      }, { status: 500 });
     }
 
-    const blocks = (data || []).map((row) => ({
-      id: row.id,
-      topic_id: row.topic_id,
-      scheduled_at: row.scheduled_at,
-      duration_minutes: row.duration_minutes,
-      status: row.status,
-      ai_rationale: row.ai_rationale,
-      topic_name: row.topics?.title || 'Topic',
-      subject: row.topics?.specs?.subject || 'Unknown subject',
-      exam_board: row.topics?.specs?.exam_board || 'Unknown board'
-    }));
+    if (!data || data.length === 0) {
+      console.log('⚠️ No blocks found for user:', userId);
+      return NextResponse.json({
+        success: true,
+        blocks: [],
+        weekStart: weekStartDate.toISOString().split('T')[0],
+        blockedTimes: []
+      });
+    }
+
+    // Simple version: just return blocks with topic info, no parent lookup
+    const blocks = (data || []).map((row) => {
+      const topic = row.topics;
+      
+      // Handle null topics gracefully
+      if (!topic) {
+        return {
+          id: row.id,
+          topic_id: row.topic_id,
+          scheduled_at: row.scheduled_at,
+          duration_minutes: row.duration_minutes,
+          status: row.status,
+          ai_rationale: row.ai_rationale,
+          topic_name: 'Unknown Topic',
+          parent_topic_name: null,
+          subject: 'Unknown subject',
+          exam_board: 'Unknown board'
+        };
+      }
+      
+      return {
+        id: row.id,
+        topic_id: row.topic_id,
+        scheduled_at: row.scheduled_at,
+        duration_minutes: row.duration_minutes,
+        status: row.status,
+        ai_rationale: row.ai_rationale,
+        topic_name: topic.title || 'Topic',
+        parent_topic_name: null, // No parent - just show Level 3 subtopic
+        subject: topic.specs?.subject || 'Unknown subject',
+        exam_board: topic.specs?.exam_board || 'Unknown board'
+      };
+    });
+    
+    console.log('✅ Returning blocks:', {
+      totalBlocks: blocks.length,
+      blocksWithTopics: blocks.filter(b => b.topic_name !== 'Unknown Topic').length,
+      blocksWithoutTopics: blocks.filter(b => b.topic_name === 'Unknown Topic').length
+    });
 
     // Determine the actual week start from the blocks (use the earliest block's week)
     let actualWeekStart = weekStartDate.toISOString().split('T')[0];
@@ -565,7 +619,7 @@ export async function GET(request) {
       ])
     );
 
-    console.log('✅ Returning blocks:', {
+    console.log('✅ Final response:', {
       blocksCount: blocks.length,
       weekStart: actualWeekStart,
       blockedTimesCount: blockedTimes.length

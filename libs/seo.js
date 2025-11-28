@@ -12,14 +12,36 @@ export const getSEOTags = ({
   openGraph,
   canonicalUrlRelative,
   extraTags,
+  includeBrandInTitle = true, // Automatically append brand name to titles
 } = {}) => {
+  // Format title with brand name for better SEO and social media discoverability
+  const formatTitle = (pageTitle) => {
+    if (!pageTitle) return config.appName;
+    
+    // If title already includes brand name, don't duplicate
+    if (pageTitle.includes(config.appName)) {
+      return pageTitle;
+    }
+    
+    // If includeBrandInTitle is false, return title as-is
+    if (!includeBrandInTitle) {
+      return pageTitle;
+    }
+    
+    // Format: "Page Name | Brand Name"
+    return `${pageTitle} | ${config.appName}`;
+  };
+
+  const finalTitle = formatTitle(title);
+  const ogTitle = openGraph?.title ? formatTitle(openGraph.title) : finalTitle;
+
   return {
-    // up to 50 characters (what does your app do for the user?) > your main should be here
-    title: title || config.appName,
+    // up to 60 characters (what does your app do for the user?) > your main should be here
+    title: finalTitle,
     // up to 160 characters (how does your app help the user?)
     description: description || config.appDescription,
     // some keywords separated by commas. by default it will be your app name
-    keywords: keywords || [config.appName],
+    keywords: keywords || [config.appName, "A-Level revision", "study planner", "revision schedule"],
     applicationName: config.appName,
     // set a base URL prefix for other fields that require a fully qualified URL (.e.g og:image: og:image: 'https://yourdomain.com/share.png' => '/share.png')
     metadataBase: new URL(
@@ -29,10 +51,10 @@ export const getSEOTags = ({
     ),
 
     openGraph: {
-      title: openGraph?.title || config.appName,
-      description: openGraph?.description || config.appDescription,
-      url: openGraph?.url || `https://${config.domainName}/`,
-      siteName: openGraph?.title || config.appName,
+      title: ogTitle,
+      description: openGraph?.description || description || config.appDescription,
+      url: openGraph?.url || `https://${config.domainName}${canonicalUrlRelative || '/'}`,
+      siteName: config.appName, // Always use brand name for site name
       // If you add an opengraph-image.(jpg|jpeg|png|gif) image to the /app folder, you don't need the code below
       // images: [
       //   {
@@ -46,12 +68,13 @@ export const getSEOTags = ({
     },
 
     twitter: {
-      title: openGraph?.title || config.appName,
-      description: openGraph?.description || config.appDescription,
+      title: ogTitle,
+      description: openGraph?.description || description || config.appDescription,
       // If you add an twitter-image.(jpg|jpeg|png|gif) image to the /app folder, you don't need the code below
       // images: [openGraph?.image || defaults.og.image],
       card: "summary_large_image",
-      creator: "@marc_louvion",
+      // Update with your Twitter handle when available
+      // creator: "@yourhandle",
     },
 
     // If a canonical URL is given, we add it. The metadataBase will turn the relative URL into a fully qualified URL

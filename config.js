@@ -1,6 +1,6 @@
 const config = {
   // REQUIRED
-  appName: "Markr Planner",
+  appName: "ReviseMe",
   // REQUIRED: a short description of your app for SEO tags (can be overwritten)
   appDescription:
     "AI-powered revision scheduling for A-Level students. Stop procrastinating — get revision planned around you.",
@@ -50,11 +50,11 @@ const config = {
     // REQUIRED — Email 'From' field to be used when sending magic login links
     // For development: use Resend's default email (onboarding@resend.dev works without verification)
     // For production: verify your domain at https://resend.com/domains
-    fromNoReply: `Markr Planner <onboarding@resend.dev>`,
+    fromNoReply: `ReviseMe <noreply@reviseme.co>`,
     // REQUIRED — Email 'From' field to be used when sending other emails, like abandoned carts, updates etc..
-    fromAdmin: `Markr Planner <onboarding@resend.dev>`,
+    fromAdmin: `ReviseMe <noreply@reviseme.co>`,
     // Email shown to customer if need support. Leave empty if not needed => if empty, set up Crisp above, otherwise you won't be able to offer customer support."
-    supportEmail: "onboarding@resend.dev",
+    supportEmail: "support@reviseme.co",
   },
   colors: {
     // REQUIRED — The DaisyUI theme to use (added to the main layout.js). Leave blank for default (light & dark mode). If you any other theme than light/dark, you need to add it in config.tailwind.js in daisyui.themes.

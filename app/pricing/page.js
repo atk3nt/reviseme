@@ -1,5 +1,12 @@
 import ButtonCheckout from "@/components/ButtonCheckout";
 import config from "@/config";
+import { getSEOTags } from "@/libs/seo";
+
+export const metadata = getSEOTags({
+  title: "Pricing",
+  description: "Simple, transparent pricing for your A-Level revision plan. One payment, full access. No subscriptions. Start your revision journey today.",
+  canonicalUrlRelative: "/pricing",
+});
 
 export default function PricingPage() {
   const plan = config.stripe.plans[0];

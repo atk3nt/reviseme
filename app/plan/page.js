@@ -1,13 +1,15 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef, Suspense } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { toast } from "react-hot-toast";
 import config from "@/config";
 import BlockDetailModal from "@/components/BlockDetailModal";
+import SupportModal from "@/components/SupportModal";
 
-export default function PlanPage() {
+function PlanPageContent() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
@@ -32,6 +34,22 @@ export default function PlanPage() {
   const [rescheduledBlockInfo, setRescheduledBlockInfo] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [settingsDropdownOpen, setSettingsDropdownOpen] = useState(false);
+  const [supportModalOpen, setSupportModalOpen] = useState(false);
+
+  // Clean topic names by removing leading apostrophes/quotes
+  // Optionally include parent topic name (for TodayView and BlockDetailModal)
+  const cleanTopicName = useCallback((name, parentName = null, includeParent = false) => {
+    if (!name) return 'Topic';
+    const cleaned = name.replace(/^['"]+/, '').trim() || 'Topic';
+    
+    // Add parent topic if available and requested
+    if (includeParent && parentName) {
+      const cleanedParent = parentName.replace(/^['"]+/, '').trim();
+      return `${cleaned} - ${cleanedParent}`;
+    }
+    
+    return cleaned;
+  }, []);
 
   useEffect(() => {
     // Check if we're in dev mode
@@ -89,8 +107,9 @@ export default function PlanPage() {
               } else if (block.week_start && block.start_time) {
                 scheduled_at = new Date(`${block.week_start}T${block.start_time}:00`).toISOString();
               } else {
-                console.error('Block missing scheduled_at or week_start/start_time:', block);
-                return null;
+                console.warn('Block missing scheduled_at or week_start/start_time, using current time:', block.id);
+                // Don't filter out - use current time as fallback
+                scheduled_at = new Date().toISOString();
               }
               
               return {
@@ -100,7 +119,8 @@ export default function PlanPage() {
                 status: block.status || 'scheduled',
                 ai_rationale: block.ai_rationale || `Priority: ${block.priority_score || 'N/A'} - ${block.topic_description || 'Focus on this topic to improve your understanding.'}`,
                 topics: {
-                  name: block.topic_name || block.topics?.name || 'Topic',
+                  name: cleanTopicName(block.topic_name || block.topics?.name || 'Topic'),
+                  parent_topic_name: block.parent_topic_name || block.topics?.parent_topic_name || null,
                   level: block.confidence_rating || block.topics?.level,
                   specs: {
                     subject: block.subject || block.topics?.specs?.subject || 'Subject',
@@ -237,7 +257,8 @@ export default function PlanPage() {
           status: block.status || 'scheduled',
           ai_rationale: block.ai_rationale || `Priority: ${block.priority_score || 'N/A'} - ${block.topic_description || 'Focus on this topic to improve your understanding.'}`,
           topics: {
-            name: block.topic_name || block.topics?.name || 'Topic',
+            name: cleanTopicName(block.topic_name || block.topics?.name || 'Topic'),
+            parent_topic_name: block.parent_topic_name || block.topics?.parent_topic_name || null,
             level: block.confidence_rating || block.topics?.level,
             specs: {
               subject: block.subject || block.topics?.specs?.subject || 'Subject',
@@ -335,7 +356,11 @@ export default function PlanPage() {
         const responseData = await response.json();
         if (responseData.rescheduled && responseData.newTime) {
           setRescheduledBlockInfo({
-            topicName: block.topics?.name || 'Topic',
+            topicName: cleanTopicName(
+              block.topics?.name || 'Topic',
+              block.topics?.parent_topic_name || null,
+              true // Include parent in rescheduled modal
+            ),
             newTime: responseData.newTime
           });
           setShowRescheduledModal(true);
@@ -647,37 +672,35 @@ export default function PlanPage() {
 
   return (
     <div className="min-h-screen bg-base-100">
+      {/* Fixed Menu Button - Top Left */}
+      <button
+        type="button"
+        className="fixed top-4 left-4 z-50 inline-flex items-center justify-center rounded-md p-2 bg-base-200 hover:bg-base-300 transition shadow-lg"
+        onClick={() => setSidebarOpen(true)}
+        aria-label="Open menu"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          className="w-6 h-6 text-base-content"
+        >
+          <rect x="1" y="11" width="22" height="2" fill="currentColor" strokeWidth="0"></rect>
+          <rect x="1" y="4" width="22" height="2" strokeWidth="0" fill="currentColor"></rect>
+          <rect x="1" y="18" width="22" height="2" strokeWidth="0" fill="currentColor"></rect>
+        </svg>
+      </button>
+
       {/* Header */}
       <div className="bg-base-200">
-        <div className="max-w-[95vw] mx-auto px-4 py-6">
+        <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              {/* Menu Icon */}
-              <button
-                type="button"
-                className="inline-flex items-center justify-center rounded-md p-2 hover:bg-base-300 transition"
-                onClick={() => setSidebarOpen(true)}
-                aria-label="Open menu"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  className="w-6 h-6 text-base-content"
-                >
-                  <rect x="1" y="11" width="22" height="2" fill="currentColor" strokeWidth="0"></rect>
-                  <rect x="1" y="4" width="22" height="2" strokeWidth="0" fill="currentColor"></rect>
-                  <rect x="1" y="18" width="22" height="2" strokeWidth="0" fill="currentColor"></rect>
-                </svg>
-              </button>
-              
-              <div>
-                <h1 className="text-3xl font-bold">Your Revision Plan</h1>
-                <p className="text-base-content/70">
+            <div>
+              <h1 className="text-3xl font-bold">Your Revision Plan</h1>
+              <p className="text-base-content/70">
                   {activeTab === 'today' ? 'Today\'s schedule' : 'This week\'s overview'}
                 </p>
-              </div>
             </div>
             
             <div className="flex space-x-2">
@@ -814,22 +837,15 @@ export default function PlanPage() {
                         </Link>
                       </li>
                       <li>
-                        <Link
-                          href="/settings?section=contact"
-                          className="block px-4 py-2 rounded-lg transition text-sm hover:bg-base-300"
-                          onClick={() => setSidebarOpen(false)}
+                        <button
+                          onClick={() => {
+                            setSupportModalOpen(true);
+                            setSidebarOpen(false);
+                          }}
+                          className="block w-full text-left px-4 py-2 rounded-lg transition text-sm hover:bg-base-300"
                         >
-                          Contact
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="/settings?section=feedback"
-                          className="block px-4 py-2 rounded-lg transition text-sm hover:bg-base-300"
-                          onClick={() => setSidebarOpen(false)}
-                        >
-                          Feedback
-                        </Link>
+                          Support
+                        </button>
                       </li>
                       <li>
                         <button
@@ -870,6 +886,7 @@ export default function PlanPage() {
             getSubjectBorderColor={getSubjectBorderColor}
             getSubjectIcon={getSubjectIcon}
             getBlockKey={deriveBlockKey}
+            cleanTopicName={cleanTopicName}
           />
         ) : (
           <WeekView 
@@ -887,6 +904,7 @@ export default function PlanPage() {
             blockedSlotMap={blockedSlotMap}
             weekStartDate={weekStartDate}
             isLoading={isLoading}
+            cleanTopicName={cleanTopicName}
           />
         )}
       </div>
@@ -904,6 +922,8 @@ export default function PlanPage() {
         timerState={activeBlock ? getTimerState(deriveBlockKey(activeBlock)) : null}
         onTimerStateChange={activeBlockTimerStateChange}
       />
+      
+      <SupportModal isOpen={supportModalOpen} onClose={() => setSupportModalOpen(false)} />
 
       {showRescheduledModal && rescheduledBlockInfo && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -946,7 +966,7 @@ export default function PlanPage() {
   );
 }
 
-function TodayView({ blocks, onSelectBlock, getSubjectColor, getSubjectBgColor, getSubjectBorderColor, getSubjectIcon, getBlockKey }) {
+function TodayView({ blocks, onSelectBlock, getSubjectColor, getSubjectBgColor, getSubjectBorderColor, getSubjectIcon, getBlockKey, cleanTopicName }) {
   if (blocks.length === 0) {
     return (
       <div className="text-center py-12">
@@ -962,7 +982,11 @@ function TodayView({ blocks, onSelectBlock, getSubjectColor, getSubjectBgColor, 
       {blocks.map((block, index) => {
         const blockKey = getBlockKey(block) || `${block.id || 'block'}-${index}`;
         const subject = block.topics?.specs?.subject || 'Subject';
-        const topicName = block.topics?.name || 'Topic';
+        const topicName = cleanTopicName(
+          block.topics?.name || 'Topic',
+          block.topics?.parent_topic_name || block.parent_topic_name || null,
+          true // Include parent in TodayView
+        );
         const formattedTime = new Date(block.scheduled_at).toLocaleTimeString([], {
           hour: '2-digit',
           minute: '2-digit'
@@ -1033,7 +1057,8 @@ function WeekView({
   weekTimeBounds,
   blockedSlotMap,
   weekStartDate,
-  isLoading
+  isLoading,
+  cleanTopicName
 }) {
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   
@@ -1199,7 +1224,7 @@ function WeekView({
   
   return (
     <div className="w-full overflow-hidden">
-      <div className="w-full">
+      <div className="w-full rounded-xl overflow-hidden border border-base-300">
         <table className="table-fixed w-full border-collapse">
           <colgroup>
             <col className="w-[70px]" />
@@ -1267,7 +1292,11 @@ function WeekView({
                           const block = slotBlocks[0];
                           const blockKey = getBlockKey(block) || `${block.id || 'block'}-0`;
                           const subject = block.topics?.specs?.subject || 'Subject';
-                          const topicName = block.topics?.name || 'Topic';
+                          const topicName = cleanTopicName(
+                            block.topics?.name || 'Topic',
+                            block.topics?.parent_topic_name || block.parent_topic_name || null,
+                            false // Don't include parent in WeekView
+                          );
                           const isDone = block.status === 'done';
                           const isMissed = block.status === 'missed';
                           
@@ -1283,7 +1312,7 @@ function WeekView({
                                   onSelectBlock({ kind: 'study', key: blockKey });
                                 }
                               }}
-                              className={`p-2 rounded text-xs cursor-pointer transition h-full w-full ${
+                              className={`p-2 rounded-lg text-xs cursor-pointer transition h-full w-full ${
                                 isDone 
                                   ? 'opacity-60 border border-success/50 bg-success/10' 
                                   : isMissed
@@ -1318,8 +1347,58 @@ function WeekView({
                           );
                         })()
                       ) : (
-                        // Empty cell - still visible as a block space
-                        <div className="h-full w-full" />
+                        // Empty cell - clickable rounded box
+                        <div 
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => {
+                            // Show message based on slot status
+                            if (!isAvailable) {
+                              toast('This time slot is outside your available study window.', {
+                                icon: '⏰',
+                                duration: 3000,
+                              });
+                            } else if (isBlocked) {
+                              toast('Unavailable - You are busy during this time.', {
+                                icon: '🚫',
+                                duration: 3000,
+                              });
+                            } else {
+                              toast('Free buffer slot - Available for rescheduling if needed.', {
+                                icon: '✨',
+                                duration: 3000,
+                              });
+                            }
+                          }}
+                          onKeyDown={(event) => {
+                            if (event.key === 'Enter' || event.key === ' ') {
+                              event.preventDefault();
+                              if (!isAvailable) {
+                                toast('This time slot is outside your available study window.', {
+                                  icon: '⏰',
+                                  duration: 3000,
+                                });
+                              } else if (isBlocked) {
+                                toast('Unavailable - You are busy during this time.', {
+                                  icon: '🚫',
+                                  duration: 3000,
+                                });
+                              } else {
+                                toast('Free buffer slot - Available for rescheduling if needed.', {
+                                  icon: '✨',
+                                  duration: 3000,
+                                });
+                              }
+                            }
+                          }}
+                          className={`h-full w-full rounded-md border border-dashed transition-all cursor-pointer ${
+                            !isAvailable
+                              ? 'border-base-300/70 bg-base-300/5 hover:bg-base-300/25 hover:border-base-300/90 hover:shadow-sm'
+                              : isBlocked
+                                ? 'border-base-300/70 bg-base-300/8 hover:bg-base-300/30 hover:border-base-300/90 hover:shadow-sm'
+                                : 'border-base-300/70 bg-base-200/10 hover:bg-base-200/35 hover:border-base-300/90 hover:shadow-sm'
+                          }`}
+                        />
                       )}
                     </td>
                   );
@@ -1330,5 +1409,20 @@ function WeekView({
         </table>
       </div>
     </div>
+  );
+}
+
+export default function PlanPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <span className="loading loading-spinner loading-lg"></span>
+          <p className="mt-4">Loading...</p>
+        </div>
+      </div>
+    }>
+      <PlanPageContent />
+    </Suspense>
   );
 }
