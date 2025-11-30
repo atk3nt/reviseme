@@ -336,6 +336,8 @@ function PlanPageContent() {
         endpoint = '/api/plan/mark-done';
       } else if (newStatus === 'missed') {
         endpoint = '/api/plan/mark-missed';
+      } else if (newStatus === 'scheduled') {
+        endpoint = '/api/plan/mark-scheduled';
       } else {
         setIsUpdating(false);
         return;
@@ -755,6 +757,22 @@ function PlanPageContent() {
                   <div className="flex items-center gap-3">
                     <span className="text-xl">📅</span>
                     <span className="font-medium">Revision Plan</span>
+                  </div>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/settings/rerate-topics"
+                  className={`block px-4 py-3 rounded-lg transition ${
+                    pathname === '/settings/rerate-topics' 
+                      ? 'bg-primary text-primary-content' 
+                      : 'hover:bg-base-300'
+                  }`}
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">⭐</span>
+                    <span className="font-medium">Rerate Topics</span>
                   </div>
                 </Link>
               </li>
@@ -1318,7 +1336,7 @@ function WeekView({
                                   : isMissed
                                     ? 'border border-error/50 bg-error/10'
                                     : 'hover:opacity-80'
-                              } ${isDone ? 'pointer-events-none' : ''}`}
+                              }`}
                               style={!isDone && !isMissed ? {
                                 backgroundColor: getSubjectBgColor(subject),
                                 borderColor: getSubjectBorderColor(subject),

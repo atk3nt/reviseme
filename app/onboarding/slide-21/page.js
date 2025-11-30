@@ -44,8 +44,69 @@ export default function Slide21Page() {
 
   const weekStart = getThisWeekStart();
 
-  // Handle block toggle in calendar
-  const handleBlockToggle = (day, timeSlot, isBlocked) => {
+  // Handle block toggle in calendar - supports both single and batch toggles
+  const handleBlockToggle = (dayOrToggles, timeSlotOrUndefined, isBlockedOrUndefined) => {
+    // Check if first argument is an array (batch toggle from drag selection)
+    if (Array.isArray(dayOrToggles)) {
+      const toggles = dayOrToggles;
+      const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+      
+      setBlockedTimes(prev => {
+        let newBlockedTimes = [...prev];
+        
+        toggles.forEach(({ day, timeSlot, isBlocked }) => {
+          // Validate parameters
+          if (!day || !timeSlot || typeof isBlocked !== 'boolean') {
+            return; // Skip invalid entries
+          }
+          
+          const [hour, minute] = timeSlot.split(':').map(Number);
+          const dayIndex = days.indexOf(day);
+          const date = new Date(weekStart);
+          date.setDate(weekStart.getDate() + dayIndex);
+          date.setHours(hour, minute, 0, 0);
+          
+          const endTime = new Date(date);
+          endTime.setMinutes(endTime.getMinutes() + 30);
+          
+          if (isBlocked) {
+            // Check if this time is already blocked
+            const exists = newBlockedTimes.some(blocked => {
+              const blockedStart = new Date(blocked.start);
+              return blockedStart.getTime() === date.getTime();
+            });
+            
+            if (!exists) {
+              newBlockedTimes.push({
+                start: date.toISOString(),
+                end: endTime.toISOString()
+              });
+            }
+          } else {
+            // Remove from blocked times
+            newBlockedTimes = newBlockedTimes.filter(blocked => {
+              const blockedStart = new Date(blocked.start);
+              return blockedStart.getTime() !== date.getTime();
+            });
+          }
+        });
+        
+        return newBlockedTimes;
+      });
+      return;
+    }
+    
+    // Single toggle - validate parameters first
+    const day = dayOrToggles;
+    const timeSlot = timeSlotOrUndefined;
+    const isBlocked = isBlockedOrUndefined;
+    
+    // Validate required parameters
+    if (!day || !timeSlot || typeof isBlocked !== 'boolean') {
+      console.error('handleBlockToggle: Invalid parameters', { day, timeSlot, isBlocked });
+      return;
+    }
+    
     const [hour, minute] = timeSlot.split(':').map(Number);
     
     // Find the day index

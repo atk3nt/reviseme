@@ -147,10 +147,15 @@ export async function POST(req) {
     }
 
     // Save topic ratings separately (using user_topic_confidence table)
+    // Save ALL ratings including 0 (Haven't Learned) and -2 (Not Doing) so they can be viewed/updated later
     const topicRatings = quizAnswers.topicRatings || {};
     const uuidRegex = /^[0-9a-fA-F-]{36}$/;
     const ratingEntries = Object.entries(topicRatings)
-      .filter(([topicId, rating]) => uuidRegex.test(topicId) && rating && rating !== -2 && rating !== 0) // Filter out invalid ids and skipped/unrated
+      .filter(([topicId, rating]) => {
+        // Only filter out invalid UUIDs and undefined/null ratings
+        // Keep all valid ratings: -2, -1, 0, 1, 2, 3, 4, 5
+        return uuidRegex.test(topicId) && rating !== undefined && rating !== null;
+      })
       .map(([topicId, rating]) => ({
         user_id: userId,
       topic_id: topicId,

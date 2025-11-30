@@ -51,6 +51,15 @@ export async function POST(req) {
       topicMap.set(topic.title, topic);
     });
     
+    // Helper function to find level-2 parent for level-3 topics
+    const findLevel2Parent = (topic) => {
+      if (topic.level === 3 && topic.parent_title) {
+        // parent_title of level-3 is the level-2 topic name
+        return topic.parent_title;
+      }
+      return null;
+    };
+
     // Helper function to find level-1 parent for any topic
     const findLevel1Parent = (topic) => {
       if (topic.level === 1) {
@@ -72,23 +81,54 @@ export async function POST(req) {
       return 'Other';
     };
 
-    // Flatten the response and add level_1_parent field
+    // Build maps to store level 1 and level 2 topics with their order_index
+    const level1Map = new Map(); // level1 name -> { title, order_index }
+    const level2Map = new Map(); // level2 name -> { title, order_index, level1_parent }
+    
+    // First pass: collect level 1 and level 2 topics
+    (allTopics || []).forEach(topic => {
+      if (topic.level === 1) {
+        level1Map.set(topic.title, {
+          title: topic.title,
+          order_index: topic.order_index || 999
+        });
+      } else if (topic.level === 2) {
+        const level1Parent = findLevel1Parent(topic);
+        level2Map.set(topic.title, {
+          title: topic.title,
+          order_index: topic.order_index || 999,
+          level_1_parent: level1Parent
+        });
+      }
+    });
+
+    // Flatten the response and add level_1_parent and level_2_parent fields
     const flattenedTopics = (allTopics || []).map(topic => {
       const level1Parent = findLevel1Parent(topic);
+      const level2Parent = findLevel2Parent(topic);
       return {
         ...topic,
         subject: topic.specs.subject,
         exam_board: topic.specs.exam_board,
         level_1_parent: level1Parent, // Add level-1 parent for grouping
+        level_2_parent: level2Parent, // Add level-2 parent for grouping
         specs: undefined // Remove nested specs to avoid duplication
       };
     });
 
     // Filter to only return level-3 topics (what students rate)
-    // But keep level-1 info for grouping
+    // But keep level-1 and level-2 info for grouping
     const level3Topics = flattenedTopics.filter(topic => topic.level === 3);
 
-    return NextResponse.json({ topics: level3Topics });
+    // Convert maps to arrays for the response
+    const level1Topics = Array.from(level1Map.values());
+    const level2Topics = Array.from(level2Map.values());
+
+    return NextResponse.json({ 
+      topics: level3Topics,
+      level1Topics: level1Topics, // Level 1 units with order_index
+      level2Topics: level2Topics  // Level 2 topics with order_index
+    });
   } catch (error) {
     console.error('API error:', error);
     return NextResponse.json(

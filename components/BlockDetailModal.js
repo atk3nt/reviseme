@@ -20,10 +20,25 @@ export default function BlockDetailModal({
 }) {
   const [displayTime, setDisplayTime] = useState("25:00");
   const [isOpen, setIsOpen] = useState(false);
+  const [confirmMissed, setConfirmMissed] = useState(false);
 
   useEffect(() => {
     setIsOpen(selection !== null && selection.kind === 'study');
+    // Reset confirmation when modal closes
+    if (selection === null || selection.kind !== 'study') {
+      setConfirmMissed(false);
+    }
   }, [selection]);
+
+  // Auto-reset confirmation after 3 seconds
+  useEffect(() => {
+    if (confirmMissed) {
+      const timer = setTimeout(() => {
+        setConfirmMissed(false);
+      }, 3000); // Reset after 3 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [confirmMissed]);
 
   // Update display time based on timer state
   useEffect(() => {
@@ -369,29 +384,50 @@ export default function BlockDetailModal({
             <div className="flex gap-3">
               <button
                 onClick={() => {
-                  onBlockAction(blockKey, 'missed');
-                  onClose();
+                  if (!confirmMissed) {
+                    // First click: show confirmation
+                    setConfirmMissed(true);
+                  } else {
+                    // Second click: execute action
+                    onBlockAction(blockKey, 'missed');
+                    onClose();
+                  }
                 }}
-                className="btn btn-error btn-outline flex-1 gap-2"
+                className={`btn flex-1 gap-2 ${
+                  confirmMissed 
+                    ? 'btn-error' // Solid red on confirmation
+                    : 'btn-error btn-outline' // Outlined red initially
+                }`}
                 disabled={block.status === 'missed' || block.status === 'done'}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
-                Mark as Missed
+                {confirmMissed ? 'Confirm Missed?' : 'Mark as Missed'}
               </button>
               <button
                 onClick={() => {
-                  onBlockAction(blockKey, 'done');
+                  if (block.status === 'done') {
+                    onBlockAction(blockKey, 'scheduled');
+                  } else {
+                    onBlockAction(blockKey, 'done');
+                  }
                   onClose();
                 }}
-                className="btn btn-success flex-1 gap-2"
-                disabled={block.status === 'done'}
+                className={`btn flex-1 gap-2 ${
+                  block.status === 'done' 
+                    ? 'btn-warning btn-outline' 
+                    : 'btn-success'
+                }`}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  {block.status === 'done' ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  )}
                 </svg>
-                Mark as Done
+                {block.status === 'done' ? 'Mark as Scheduled' : 'Mark as Done'}
               </button>
             </div>
           </div>

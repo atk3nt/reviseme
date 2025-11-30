@@ -140,7 +140,7 @@ SELECT
   COUNT(b.id) FILTER (WHERE b.status = 'done') AS blocks_done,
   COUNT(b.id) FILTER (WHERE b.status = 'missed') AS blocks_missed,
   COUNT(b.id) FILTER (WHERE b.status = 'scheduled') AS blocks_scheduled,
-  AVG(utc.rating) AS avg_confidence,
+  AVG(utc.rating) FILTER (WHERE utc.rating >= 1 AND utc.rating <= 5) AS avg_confidence,
   COUNT(DISTINCT DATE(b.scheduled_at)) FILTER (WHERE b.status = 'done') AS active_days,
   MAX(b.completed_at) AS last_activity
 FROM users u

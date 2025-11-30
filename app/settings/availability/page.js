@@ -1480,6 +1480,22 @@ function AvailabilitySettingsPageContent() {
               </li>
               <li>
                 <Link
+                  href="/settings/rerate-topics"
+                  className={`block px-4 py-3 rounded-lg transition ${
+                    pathname === '/settings/rerate-topics' 
+                      ? 'bg-primary text-primary-content' 
+                      : 'hover:bg-base-300'
+                  }`}
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">⭐</span>
+                    <span className="font-medium">Rerate Topics</span>
+                  </div>
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/insights"
                   className={`block px-4 py-3 rounded-lg transition ${
                     pathname === '/insights' 

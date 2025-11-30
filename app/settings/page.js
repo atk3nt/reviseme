@@ -330,6 +330,22 @@ function SettingsPageContent() {
               </li>
               <li>
                 <Link
+                  href="/settings/rerate-topics"
+                  className={`block px-4 py-3 rounded-lg transition ${
+                    pathname === '/settings/rerate-topics' 
+                      ? 'bg-primary text-primary-content' 
+                      : 'hover:bg-base-300'
+                  }`}
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">⭐</span>
+                    <span className="font-medium">Rerate Topics</span>
+                  </div>
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/insights"
                   className={`block px-4 py-3 rounded-lg transition ${
                     pathname === '/insights' 
@@ -399,17 +415,28 @@ function SettingsPageContent() {
                           Study Preferences
                         </Link>
                       </li>
-                      <li>
-                        <Link
-                          href="/settings?section=account"
-                          className={`block px-4 py-2 rounded-lg transition text-sm hover:bg-base-300 ${
-                            pathname === '/settings' && searchParams?.get('section') === 'account' ? 'bg-primary/20' : ''
-                          }`}
-                          onClick={() => setSidebarOpen(false)}
-                        >
-                          Account Information
-                        </Link>
-                      </li>
+                        <li>
+                          <Link
+                            href="/settings/rerate-topics"
+                            className={`block px-4 py-2 rounded-lg transition text-sm hover:bg-base-300 ${
+                              pathname === '/settings/rerate-topics' ? 'bg-primary/20' : ''
+                            }`}
+                            onClick={() => setSidebarOpen(false)}
+                          >
+                            Rerate Topics
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/settings?section=account"
+                            className={`block px-4 py-2 rounded-lg transition text-sm hover:bg-base-300 ${
+                              pathname === '/settings' && searchParams?.get('section') === 'account' ? 'bg-primary/20' : ''
+                            }`}
+                            onClick={() => setSidebarOpen(false)}
+                          >
+                            Account Information
+                          </Link>
+                        </li>
                       <li>
                         <button
                           onClick={() => {

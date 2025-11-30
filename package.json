@@ -14,7 +14,8 @@
     "drop-study-blocks": "tsx scripts/drop-study-blocks.ts",
     "drop-study-blocks-direct": "tsx scripts/drop-study-blocks-direct.ts",
     "create-dev-user": "tsx scripts/create-dev-user.ts",
-    "clear-dev-blocks": "node scripts/clear-dev-blocks.js"
+    "clear-dev-blocks": "node scripts/clear-dev-blocks.js",
+    "migration:009": "node scripts/run-migration-009.js"
   },
   "dependencies": {
     "@auth/supabase-adapter": "^1.11.0",
