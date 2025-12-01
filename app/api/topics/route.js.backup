@@ -12,7 +12,7 @@ export async function POST(req) {
       );
     }
 
-    // Query all topics (we'll build parent relationships in code)
+    // Query all topics (levels 1, 2, 3) via specs join to build hierarchy
     let query = supabaseAdmin
       .from('topics')
       .select(`
@@ -45,71 +45,40 @@ export async function POST(req) {
       );
     }
 
-    // Build topic map for quick lookups
+    // Build a map of topic titles to find level-1 parents for level-3 topics
     const topicMap = new Map();
     (allTopics || []).forEach(topic => {
-      topicMap.set(topic.id, topic);
+      topicMap.set(topic.title, topic);
     });
     
-    // Recursive helper to find level-1 parent using parent_id
-    const findLevel1Parent = (topic) => {
-      if (topic.level === 1) {
-        return topic.title;
-      }
-      
-      // Use parent_id if available (preferred method)
-      if (topic.parent_id) {
-        const parentTopic = topicMap.get(topic.parent_id);
-        if (parentTopic) {
-          return findLevel1Parent(parentTopic);
-        }
-      }
-      
-      // Fallback to parent_title for backward compatibility
-      if (topic.parent_title) {
-        // Try to find parent by title lookup
-        const parentTopic = Array.from(topicMap.values()).find(t => 
-          t.spec_id === topic.spec_id && 
-          t.title === topic.parent_title &&
-          t.level === topic.level - 1
-        );
-        if (parentTopic) {
-          return findLevel1Parent(parentTopic);
-        }
-        // If level 2, parent_title should be level 1
-        if (topic.level === 2) {
-          return topic.parent_title;
-        }
-      }
-      
-      return 'Other';
-    };
-    
-    // Helper to find level-2 parent
+    // Helper function to find level-2 parent for level-3 topics
     const findLevel2Parent = (topic) => {
-      if (topic.level === 3) {
-        // Use parent_id if available (preferred method)
-        if (topic.parent_id) {
-          const parentTopic = topicMap.get(topic.parent_id);
-          if (parentTopic && parentTopic.level === 2) {
-            return parentTopic.title;
-          }
-        }
-        
-        // Fallback to parent_title
-        if (topic.parent_title) {
-          const parentTopic = Array.from(topicMap.values()).find(t => 
-            t.spec_id === topic.spec_id && 
-            t.title === topic.parent_title &&
-            t.level === 2
-          );
-          if (parentTopic) {
-            return parentTopic.title;
-          }
-          return topic.parent_title;
-        }
+      if (topic.level === 3 && topic.parent_title) {
+        // parent_title of level-3 is the level-2 topic name
+        return topic.parent_title;
       }
       return null;
+    };
+
+    // Helper function to find level-1 parent for any topic
+    const findLevel1Parent = (topic) => {
+      if (topic.level === 1) {
+        return topic.title; // It's a level-1 topic itself
+      }
+      if (topic.level === 2 && topic.parent_title) {
+        // Level-2 topic, parent_title should be level-1
+        return topic.parent_title;
+      }
+      if (topic.level === 3 && topic.parent_title) {
+        // Level-3 topic, need to find its level-2 parent, then level-1
+        const level2Topic = topicMap.get(topic.parent_title);
+        if (level2Topic && level2Topic.parent_title) {
+          return level2Topic.parent_title; // This should be the level-1 topic
+        }
+        // Fallback: if parent_title is empty or not found, return as-is
+        return topic.parent_title || 'Other';
+      }
+      return 'Other';
     };
 
     // Build maps to store level 1 and level 2 topics with their order_index
@@ -141,13 +110,14 @@ export async function POST(req) {
         ...topic,
         subject: topic.specs.subject,
         exam_board: topic.specs.exam_board,
-        level_1_parent: level1Parent,
-        level_2_parent: level2Parent,
+        level_1_parent: level1Parent, // Add level-1 parent for grouping
+        level_2_parent: level2Parent, // Add level-2 parent for grouping
         specs: undefined // Remove nested specs to avoid duplication
       };
     });
 
     // Filter to only return level-3 topics (what students rate)
+    // But keep level-1 and level-2 info for grouping
     const level3Topics = flattenedTopics.filter(topic => topic.level === 3);
 
     // Convert maps to arrays for the response
@@ -156,8 +126,8 @@ export async function POST(req) {
 
     return NextResponse.json({ 
       topics: level3Topics,
-      level1Topics: level1Topics,
-      level2Topics: level2Topics
+      level1Topics: level1Topics, // Level 1 units with order_index
+      level2Topics: level2Topics  // Level 2 topics with order_index
     });
   } catch (error) {
     console.error('API error:', error);

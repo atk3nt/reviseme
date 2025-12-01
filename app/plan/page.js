@@ -118,6 +118,7 @@ function PlanPageContent() {
                 duration_minutes: block.duration_minutes || (block.duration ? block.duration * 60 : 90),
                 status: block.status || 'scheduled',
                 ai_rationale: block.ai_rationale || `Priority: ${block.priority_score || 'N/A'} - ${block.topic_description || 'Focus on this topic to improve your understanding.'}`,
+                hierarchy: block.hierarchy || block.topics?.hierarchy || null,
                 topics: {
                   name: cleanTopicName(block.topic_name || block.topics?.name || 'Topic'),
                   parent_topic_name: block.parent_topic_name || block.topics?.parent_topic_name || null,
@@ -256,6 +257,7 @@ function PlanPageContent() {
           duration_minutes: block.duration_minutes || (block.duration ? block.duration * 60 : 90),
           status: block.status || 'scheduled',
           ai_rationale: block.ai_rationale || `Priority: ${block.priority_score || 'N/A'} - ${block.topic_description || 'Focus on this topic to improve your understanding.'}`,
+          hierarchy: block.hierarchy || block.topics?.hierarchy || null,
           topics: {
             name: cleanTopicName(block.topic_name || block.topics?.name || 'Topic'),
             parent_topic_name: block.parent_topic_name || block.topics?.parent_topic_name || null,
@@ -999,12 +1001,27 @@ function TodayView({ blocks, onSelectBlock, getSubjectColor, getSubjectBgColor, 
     <div className="space-y-4">
       {blocks.map((block, index) => {
         const blockKey = getBlockKey(block) || `${block.id || 'block'}-${index}`;
-        const subject = block.topics?.specs?.subject || 'Subject';
-        const topicName = cleanTopicName(
-          block.topics?.name || 'Topic',
-          block.topics?.parent_topic_name || block.parent_topic_name || null,
-          true // Include parent in TodayView
+        const subject = block.topics?.specs?.subject || block.subject || 'Subject';
+        
+        // Get hierarchy from block data (preferred) or build from legacy fields
+        const hierarchy = block.hierarchy || 
+          (block.topics?.hierarchy) ||
+          (block.level_1_parent && block.level_2_parent && block.level_3_topic
+            ? [block.level_1_parent, block.level_2_parent, block.level_3_topic]
+            : [block.topics?.name || block.topic_name || 'Topic']);
+
+        // Main topic: Level 3 (subtopic) - the specific learning
+        const mainTopicName = cleanTopicName(
+          hierarchy[hierarchy.length - 1] || block.topics?.name || block.topic_name || 'Topic',
+          null,
+          false
         );
+
+        // Context: Unit → Section (where to find it in textbook)
+        const hierarchyContext = hierarchy.length > 1
+          ? hierarchy.slice(0, -1).map(name => cleanTopicName(name, null, false)).join(' → ')
+          : null;
+        
         const formattedTime = new Date(block.scheduled_at).toLocaleTimeString([], {
           hour: '2-digit',
           minute: '2-digit'
@@ -1045,7 +1062,12 @@ function TodayView({ blocks, onSelectBlock, getSubjectColor, getSubjectBgColor, 
                       <span>{getSubjectIcon(subject)}</span>
                       <span>{subject}</span>
                     </p>
-                    <h3 className="text-lg font-semibold leading-snug">{topicName}</h3>
+                    <h3 className="text-lg font-semibold leading-snug">{mainTopicName}</h3>
+                    {hierarchyContext && (
+                      <p className="text-xs text-base-content/60 mt-1">
+                        📚 {hierarchyContext}
+                      </p>
+                    )}
                   </div>
                 </div>
                 <div className="text-right">
@@ -1309,11 +1331,20 @@ function WeekView({
                           // Only show the first block if multiple blocks exist in the same slot
                           const block = slotBlocks[0];
                           const blockKey = getBlockKey(block) || `${block.id || 'block'}-0`;
-                          const subject = block.topics?.specs?.subject || 'Subject';
+                          const subject = block.topics?.specs?.subject || block.subject || 'Subject';
+                          
+                          // Get hierarchy from block data (preferred) or build from legacy fields
+                          const hierarchy = block.hierarchy || 
+                            (block.topics?.hierarchy) ||
+                            (block.level_1_parent && block.level_2_parent && block.level_3_topic
+                              ? [block.level_1_parent, block.level_2_parent, block.level_3_topic]
+                              : [block.topics?.name || block.topic_name || 'Topic']);
+
+                          // WeekView: Only show subtopic (Level 3) on the card front
                           const topicName = cleanTopicName(
-                            block.topics?.name || 'Topic',
-                            block.topics?.parent_topic_name || block.parent_topic_name || null,
-                            false // Don't include parent in WeekView
+                            hierarchy[hierarchy.length - 1] || block.topics?.name || block.topic_name || 'Topic',
+                            null,
+                            false
                           );
                           const isDone = block.status === 'done';
                           const isMissed = block.status === 'missed';

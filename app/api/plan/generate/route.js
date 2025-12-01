@@ -453,14 +453,14 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const targetWeek = searchParams.get('weekStart');
     const blockId = searchParams.get('blockId'); // Optional: fetch specific block
-    
+
     // If requesting a specific block, return just that block
     if (blockId) {
       const { data: block, error: blockError } = await supabaseAdmin
         .from('blocks')
         .select(
           `id, topic_id, scheduled_at, duration_minutes, status, ai_rationale,
-           topics!left(title, specs(subject, exam_board))`
+           topics!left(id, title, level, parent_id, spec_id, specs(subject, exam_board))`
         )
         .eq('id', blockId)
         .eq('user_id', userId)
@@ -472,6 +472,46 @@ export async function GET(request) {
       
       const topic = block.topics;
       
+      // Build hierarchy if topic exists
+      let hierarchy = [];
+      if (topic && topic.spec_id) {
+        // Fetch all topics in the same spec to build the map
+        const { data: allTopics } = await supabaseAdmin
+          .from('topics')
+          .select('id, title, level, parent_id, spec_id')
+          .eq('spec_id', topic.spec_id);
+        
+        const topicMap = new Map();
+        (allTopics || []).forEach(t => topicMap.set(t.id, t));
+        
+        const topicWithId = topicMap.get(topic.id) || topic;
+        // Helper function to build topic hierarchy (local to this block)
+        const buildTopicHierarchyLocal = (topicMap, topic) => {
+          if (!topic || !topic.id) return [];
+          
+          const hierarchy = [];
+          let currentTopic = topicMap.get(topic.id) || topic;
+          
+          // Start with the current topic (Level 3 - subtopic)
+          hierarchy.push(currentTopic.title);
+          
+          // Traverse up the hierarchy using parent_id
+          while (currentTopic.parent_id) {
+            const parent = topicMap.get(currentTopic.parent_id);
+            if (!parent) break;
+            
+            hierarchy.unshift(parent.title); // Add parent to the beginning
+            currentTopic = parent;
+          }
+          
+          return hierarchy;
+        };
+        hierarchy = buildTopicHierarchyLocal(topicMap, topicWithId);
+      } else if (topic) {
+        // Fallback: just use the topic title
+        hierarchy = [topic.title || 'Topic'];
+      }
+      
       const formattedBlock = {
         id: block.id,
         topic_id: block.topic_id,
@@ -482,7 +522,8 @@ export async function GET(request) {
         topic_name: topic?.title || 'Topic',
         parent_topic_name: null,
         subject: topic?.specs?.subject || 'Unknown subject',
-        exam_board: topic?.specs?.exam_board || 'Unknown board'
+        exam_board: topic?.specs?.exam_board || 'Unknown board',
+        hierarchy: hierarchy.length > 0 ? hierarchy : [topic?.title || 'Topic']
       };
       
       return NextResponse.json({
@@ -518,12 +559,12 @@ export async function GET(request) {
       
       console.log('🔍 Total blocks in database for user:', totalBlockCount);
       
-      // Use the exact same query format as check-blocks route (no !left, just topics)
+      // Fetch blocks with topic info including parent_id for hierarchy building
       const { data, error } = await supabaseAdmin
         .from('blocks')
         .select(
           `id, topic_id, scheduled_at, duration_minutes, status, ai_rationale,
-           topics(title, specs(subject, exam_board))`
+           topics(id, title, level, parent_id, spec_id, specs(subject, exam_board))`
         )
         .eq('user_id', userId)
         .order('scheduled_at', { ascending: true });
@@ -562,7 +603,51 @@ export async function GET(request) {
       });
     }
 
-    // Simple version: just return blocks with topic info, no parent lookup
+    // Helper function to build topic hierarchy
+    const buildTopicHierarchy = (topicMap, topic) => {
+      if (!topic || !topic.id) return [];
+      
+      const hierarchy = [];
+      let currentTopic = topicMap.get(topic.id) || topic;
+      
+      // Start with the current topic (Level 3 - subtopic)
+      hierarchy.push(currentTopic.title);
+      
+      // Traverse up the hierarchy using parent_id
+      while (currentTopic.parent_id) {
+        const parent = topicMap.get(currentTopic.parent_id);
+        if (!parent) break;
+        
+        hierarchy.unshift(parent.title); // Add parent to the beginning
+        currentTopic = parent;
+      }
+      
+      return hierarchy;
+    };
+
+    // Build topic map for hierarchy traversal
+    // First, collect all unique spec_ids from blocks
+    const specIds = new Set();
+    (data || []).forEach(row => {
+      if (row.topics?.spec_id) {
+        specIds.add(row.topics.spec_id);
+      }
+    });
+    
+    // Fetch all topics for these specs to build the map
+    const topicMap = new Map();
+    if (specIds.size > 0) {
+      const { data: allTopics, error: topicsError } = await supabaseAdmin
+        .from('topics')
+        .select('id, title, level, parent_id, spec_id')
+        .in('spec_id', Array.from(specIds));
+      
+      if (!topicsError && allTopics) {
+        allTopics.forEach(t => topicMap.set(t.id, t));
+      }
+    }
+    
+    // Build blocks with hierarchy
     const blocks = (data || []).map((row) => {
       const topic = row.topics;
       
@@ -578,9 +663,13 @@ export async function GET(request) {
           topic_name: 'Unknown Topic',
           parent_topic_name: null,
           subject: 'Unknown subject',
-          exam_board: 'Unknown board'
+          exam_board: 'Unknown board',
+          hierarchy: ['Unknown Topic']
         };
       }
+      
+      // Build hierarchy for this topic
+      const hierarchy = buildTopicHierarchy(topicMap, topic);
       
       return {
         id: row.id,
@@ -590,9 +679,10 @@ export async function GET(request) {
         status: row.status,
         ai_rationale: row.ai_rationale,
         topic_name: topic.title || 'Topic',
-        parent_topic_name: null, // No parent - just show Level 3 subtopic
+        parent_topic_name: null, // Deprecated - use hierarchy instead
         subject: topic.specs?.subject || 'Unknown subject',
-        exam_board: topic.specs?.exam_board || 'Unknown board'
+        exam_board: topic.specs?.exam_board || 'Unknown board',
+        hierarchy: hierarchy.length > 0 ? hierarchy : [topic.title || 'Topic']
       };
     });
     
