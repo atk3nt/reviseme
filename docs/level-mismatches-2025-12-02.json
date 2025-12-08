@@ -1,0 +1,16 @@
+{
+  "summary": {
+    "total": 4649,
+    "correct": 4649,
+    "issues": 0,
+    "breakdown": {
+      "level1WithParent": 0,
+      "level2WithLevel2Parent": 0,
+      "level2WithLevel3Parent": 0,
+      "level3WithLevel1Parent": 0,
+      "level3WithLevel3Parent": 0,
+      "orphaned": 0
+    }
+  },
+  "issues": []
+}

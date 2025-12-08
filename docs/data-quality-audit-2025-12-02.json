@@ -1,0 +1,2566 @@
+{
+  "timestamp": "2025-12-02T01:39:12.785Z",
+  "summary": {
+    "total": 4562,
+    "byLevel": {
+      "1": 179,
+      "2": 801,
+      "3": 3582
+    },
+    "withParentId": 4020,
+    "withoutParentId": 542,
+    "withParentTitleButNoId": 363,
+    "orphaned": {
+      "level2": 35,
+      "level3": 328
+    }
+  },
+  "issues": [],
+  "orphanedTopics": [
+    {
+      "id": "7513df82-2298-46ac-9541-e359dd9baa75",
+      "title": "\"Popular Culture",
+      "level": 3,
+      "parent_title": "Entertainment and Youth\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "d9807106-65ff-4e34-9356-c85f8bdb0701",
+      "title": "\"Creating the ‘Rainbow Nation’",
+      "level": 3,
+      "parent_title": "1992–94\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "a89081c3-908b-458c-ab24-a439b011609c",
+      "title": "\"The Role of Knights",
+      "level": 3,
+      "parent_title": "Chivalry and Settlement\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "661eb3b4-f8ad-4117-b57c-a335815030ce",
+      "title": "\"Extending Authority: Wales",
+      "level": 3,
+      "parent_title": "Scotland and Ireland\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "24d860bc-dea8-4684-b400-f1984408f5b5",
+      "title": "\"Luther",
+      "level": 3,
+      "parent_title": "Radicalism and the Peasants' War\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "6e7e9baa-0996-435e-94b3-c03163cb3dd4",
+      "title": "\"The Failure of Monarchical Rule",
+      "level": 3,
+      "parent_title": "1625–49\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "3134aabd-7d7d-4a33-868d-688c23c8f060",
+      "title": "\"Republican Rule and its Failure",
+      "level": 3,
+      "parent_title": "1649–60\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "682dac1f-b435-42ab-a446-7710c3449931",
+      "title": "\"From Restoration to Revolution",
+      "level": 3,
+      "parent_title": "1660–88\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "894d49fb-5060-497a-981b-8982572404d6",
+      "title": "\"The Outbreak of Revolution",
+      "level": 3,
+      "parent_title": "1789\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "00dd3d56-d6df-43bb-a9be-aa6e89589f0d",
+      "title": "\"Creating a Constitution",
+      "level": 3,
+      "parent_title": "1789–91\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "89192607-b9d6-4b5c-b34a-b8ade4e117ce",
+      "title": "\"The Revolutionary Political Landscape",
+      "level": 3,
+      "parent_title": "1789–93\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "e7613752-c375-49db-8373-1457283d17dd",
+      "title": "\"The Breakdown of Monarchy",
+      "level": 3,
+      "parent_title": "1791–92\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "2b00e349-8360-4afd-8367-5169d65614b2",
+      "title": "\"The Radicalisation of the Revolution",
+      "level": 3,
+      "parent_title": "1792–93\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "aa269b37-e75e-4196-b0c2-5402cdb561be",
+      "title": "\"The Coup of Brumaire",
+      "level": 3,
+      "parent_title": "1799\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "824d16af-9d0f-47ca-868b-afdeec9780b6",
+      "title": "\"Bolshevik Economic Policies",
+      "level": 3,
+      "parent_title": "1917–24\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "84c59dc6-5688-412d-b80b-d8b499b1f0bb",
+      "title": "\"Further Parliamentary Reform",
+      "level": 3,
+      "parent_title": "1852–70\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "8465ab40-e954-4dba-9b59-d64ede598924",
+      "title": "\"Working",
+      "level": 3,
+      "parent_title": "Living Conditions and Protest\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "9e423238-7779-4547-bd4e-6f141a2b6715",
+      "title": "\"Early Nationalism and Challenges",
+      "level": 3,
+      "parent_title": "1830–47\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "e65884c2-dec8-411f-b7be-85bb08d50c6f",
+      "title": "\"The Impact of the War with Austria",
+      "level": 3,
+      "parent_title": "1859–60\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "dac7465a-2343-4604-95fc-22ccc7a3e566",
+      "title": "\"The Outbreak of Revolution",
+      "level": 3,
+      "parent_title": "1848\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "4d34524e-0ba2-48fc-b5bd-429d0b1697d6",
+      "title": "\"The Revolution in Prussia",
+      "level": 3,
+      "parent_title": "1848–49\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "37ee7e60-9518-476c-81d6-52d93fe1fd34",
+      "title": "\"The Rise of Prussia",
+      "level": 3,
+      "parent_title": "1850–62\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "d2e2706a-268c-434a-974e-ebc71ff847cd",
+      "title": "\"The Defeat of Austria",
+      "level": 3,
+      "parent_title": "1862–66\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "9ff04124-4a9f-470d-8df0-b9aedaeffa43",
+      "title": "\"The Road to War with France",
+      "level": 3,
+      "parent_title": "1866–70\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "f79d4a9f-e184-45a4-b239-db0aab0f5a45",
+      "title": "\"Establishing Communist Rule",
+      "level": 3,
+      "parent_title": "1917–24\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "cd3a537e-cb17-435a-8956-dfe7966b3db3",
+      "title": "\"Stalin’s Totalitarian State",
+      "level": 3,
+      "parent_title": "1928–53\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "d7ff7e65-e79b-41bc-a13a-304f90236328",
+      "title": "\"Control: Propaganda",
+      "level": 3,
+      "parent_title": "Media and Religion\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "42de2380-d5dd-404e-8135-e7959ed9fd4b",
+      "title": "\"Social Policy: Women",
+      "level": 3,
+      "parent_title": "Family and Education\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "0af1d45a-a65c-43e8-a992-259df61206c0",
+      "title": "\"Establishing Communist Rule",
+      "level": 3,
+      "parent_title": "1949\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "a4bf81b5-6a8b-429d-bca5-6c880bf8502d",
+      "title": "\"Agricultural Reform and Collectivisation",
+      "level": 3,
+      "parent_title": "1949–57\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "cd49d1aa-ede9-4d91-9f12-3356106cc8cd",
+      "title": "\"The Communes and the Great Famine",
+      "level": 3,
+      "parent_title": "1958–62\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "79580f30-f7fb-4b0d-838e-ab090609ee53",
+      "title": "\"The Great Leap Forward",
+      "level": 3,
+      "parent_title": "1958–62\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "38ae9ced-4c21-48f2-8cce-97650f01c264",
+      "title": "\"The End of the Cultural Revolution",
+      "level": 3,
+      "parent_title": "1968–76\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "42a75b92-a5f3-4a8d-bb04-d0cee4e5ed14",
+      "title": "\"The Fall of the Berlin Wall",
+      "level": 3,
+      "parent_title": "1989\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "46ab610f-c6c0-4883-9708-e4055408c134",
+      "title": "\"The Reunification of Germany",
+      "level": 3,
+      "parent_title": "1989–90\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "054d8022-9d66-4144-817a-00a51573a7be",
+      "title": "\"The Changing Presidency",
+      "level": 3,
+      "parent_title": "1917–80\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "598a7aa7-dd6c-4e55-974c-ca41d0e14959",
+      "title": "\"The Changing Political Landscape",
+      "level": 3,
+      "parent_title": "1917–80\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "e44cbf7e-cbf6-4660-a497-f3747bf299d8",
+      "title": "\"The Civil Rights Movement",
+      "level": 3,
+      "parent_title": "1955–80\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "665bb294-0a96-43b9-ac07-b3961e40f8ac",
+      "title": "\"The Campaign for Minority Rights",
+      "level": 3,
+      "parent_title": "1960–80\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "7469a884-ebf3-4063-8a48-bb0024c13095",
+      "title": "\"The Changing Position of Women",
+      "level": 3,
+      "parent_title": "1917–80\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "a7389a35-f511-4525-b9db-805ad264b8f4",
+      "title": "\"The Impact of Immigration",
+      "level": 3,
+      "parent_title": "1917–80\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "8b0b389c-913b-4992-99a1-1fa106bfd94b",
+      "title": "\"Gandhi and Non-Cooperation",
+      "level": 3,
+      "parent_title": "1920–22\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "f151ba1c-9c41-42ef-a1e1-7c76ebae7daf",
+      "title": "\"Congress and Civil Disobedience",
+      "level": 3,
+      "parent_title": "1922–30\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "fbab2b11-2169-40ce-8d6b-a3c4539c8411",
+      "title": "\"The Changing Britain–India Relationship",
+      "level": 3,
+      "parent_title": "1942–45\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "eb540317-9c67-4f4a-a3a5-cb44c92c1d2e",
+      "title": "\"Post-War Attempts at Settlement",
+      "level": 3,
+      "parent_title": "1945–46\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "aac28a55-abc1-4e73-bc0e-ec57304fbc06",
+      "title": "\"Implementing Apartheid",
+      "level": 3,
+      "parent_title": "1948–59\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "71c16455-e831-475a-ae88-e0eb854446f1",
+      "title": "\"Early African Nationalism and Resistance",
+      "level": 3,
+      "parent_title": "1948–59\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "2caf9b0e-1593-4746-b441-f94683671505",
+      "title": "\"The Sharpeville Massacre and its Aftermath",
+      "level": 3,
+      "parent_title": "1960–61\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "985f8a15-8b13-4d2e-a19c-69e260743169",
+      "title": "\"Creating a Republic",
+      "level": 3,
+      "parent_title": "1960–61\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "2b81d895-201d-4c03-aef3-66f6ef1c1b23",
+      "title": "\"The Move to Armed Struggle",
+      "level": 3,
+      "parent_title": "1961–68\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "73bbb491-9400-4671-8768-d0a43c3aeea0",
+      "title": "\"Apartheid at its Height",
+      "level": 3,
+      "parent_title": "1961–68\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "14cf336d-3eba-44f1-8e73-aff23984d40d",
+      "title": "\"Challenges to National Party Power",
+      "level": 3,
+      "parent_title": "1974–83\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "19e0e332-3cf6-4949-824c-a3768f1bee85",
+      "title": "\"Township Revolts",
+      "level": 3,
+      "parent_title": "1984–87\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "6c073c4c-bc55-4bf0-8cd3-b39034980d6a",
+      "title": "\"The End of Apartheid",
+      "level": 3,
+      "parent_title": "1989–91\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "d48a0a0e-89e0-489f-83c7-f5499fbe7a05",
+      "title": "\"The Weimar Republic",
+      "level": 3,
+      "parent_title": "1918–33\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "7a807977-adb5-4e65-95e5-243e4623e36c",
+      "title": "\"The Nazi Dictatorship",
+      "level": 3,
+      "parent_title": "1933–45\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "9758730f-7a52-49e1-84fe-a5a11e9ceb1b",
+      "title": "\"The Federal Republic of Germany (FRG)",
+      "level": 3,
+      "parent_title": "1945–89\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "fcd9fec8-3ed8-43c0-8659-82a0e8816560",
+      "title": "\"Popular Support for Government",
+      "level": 3,
+      "parent_title": "1919–89\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "b6075f66-99dd-4fae-a2e2-f68dbb470da4",
+      "title": "\"The Weimar Economy",
+      "level": 3,
+      "parent_title": "1918–32\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "3007e4eb-6742-4056-814f-4e2bcb849209",
+      "title": "\"The Nazi Economy",
+      "level": 3,
+      "parent_title": "1933–45\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "27299542-17e1-4cf7-9ff2-de796ec92ec3",
+      "title": "\"The West German Economy",
+      "level": 3,
+      "parent_title": "1945–89\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "16fb8d9d-bfaa-4bea-8af4-889fbb667e54",
+      "title": "\"Liberal Italy and Giolitti",
+      "level": 3,
+      "parent_title": "c.1911\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "d385e9b9-edea-4ef1-86b3-abe94071e38d",
+      "title": "\"The Rise of Fascism and the PNF",
+      "level": 3,
+      "parent_title": "1919–22\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "c309e83c-0515-4a9f-8e1a-60f00acccbbc",
+      "title": "\"Creating the Fascist Dictatorship",
+      "level": 3,
+      "parent_title": "1922–26\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "b393f938-793b-430c-94fd-9df373919487",
+      "title": "\"The Road to War",
+      "level": 3,
+      "parent_title": "1935–40\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "d5e7471b-b27c-46ec-9b39-019ecf30c3ca",
+      "title": "\"The Restoration of Democracy",
+      "level": 3,
+      "parent_title": "1943–46\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "ba891f3e-72f4-4050-91e0-01501a0eca57",
+      "title": "\"The Second Republic and its Challenges",
+      "level": 3,
+      "parent_title": "1930–31\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "34369fc5-5031-4c9c-ab80-e5ec6e1be269",
+      "title": "\"The Years of Reform",
+      "level": 3,
+      "parent_title": "1931–33\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "ece9f8b7-cdd7-4d12-9a7d-6251997a53eb",
+      "title": "\"The Years of Reaction",
+      "level": 3,
+      "parent_title": "1933–36\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "26a1e5e6-a8a3-4f85-8241-b58db0258471",
+      "title": "\"The Failure of the Popular Front",
+      "level": 3,
+      "parent_title": "1936\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "4a46064b-9956-445f-885f-31bd4dfa6d1a",
+      "title": "\"The Spanish Economy and Foreign Relations",
+      "level": 3,
+      "parent_title": "1939–56\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "dea4ebc0-6cef-4291-8a45-5833fa1125dd",
+      "title": "\"The 'Economic Miracle' and Social Change",
+      "level": 3,
+      "parent_title": "1956–75\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "0b66ca1d-4e18-4f64-8234-c84b60d80e4d",
+      "title": "\"Political Change and Opposition",
+      "level": 3,
+      "parent_title": "1956–75\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "92910ce9-1404-4093-a051-4293e231d162",
+      "title": "\"The Transition to Democracy",
+      "level": 3,
+      "parent_title": "1975–78\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "7acaed11-66b4-480f-8aad-9558949e189e",
+      "title": "\"The Political Landscape",
+      "level": 3,
+      "parent_title": "1918–79\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "bddb2e57-a2a5-4b0a-826c-a0a6a020acdd",
+      "title": "\"Economic Challenges",
+      "level": 3,
+      "parent_title": "1918–79\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "8608d0fc-ed90-4ddc-9fd9-abf09886cc86",
+      "title": "\"The Workplace and Industrial Relations",
+      "level": 3,
+      "parent_title": "1918–79\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "6cf91192-e044-4db4-9733-77e0bb199149",
+      "title": "\"The Welfare State",
+      "level": 3,
+      "parent_title": "1918–79\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "bbfc5d51-aa0f-4e5f-89e1-5c361fd2079b",
+      "title": "\"Education and Opportunity",
+      "level": 3,
+      "parent_title": "1918–79\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "c7ab1ac5-43b1-43ae-b379-b92ecb619e24",
+      "title": "\"Class",
+      "level": 3,
+      "parent_title": "Social Values and the 'Liberal Society'\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "0eb7d7c3-8dec-45b1-a328-80c8a3adb73e",
+      "title": "\"The Changing Role and Status of Women",
+      "level": 3,
+      "parent_title": "1918–79\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "6a763c5a-1dc7-46b2-b347-57ce2100be82",
+      "title": "\"The First New Deal",
+      "level": 3,
+      "parent_title": "1933–35\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "9a096e20-a765-4627-9df5-d6ec18e2db25",
+      "title": "\"The Second New Deal",
+      "level": 3,
+      "parent_title": "1935–38\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "d7fe68ec-78e6-4a7c-aa10-6481d7f0cf26",
+      "title": "\"The War Economy",
+      "level": 3,
+      "parent_title": "1941–45\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "30b2adc5-620c-4172-adff-4a9b0cfafeb7",
+      "title": "\"Affluence and the Consumer Society",
+      "level": 3,
+      "parent_title": "1955–63\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "9c701d7a-8a9f-4f2d-be31-987597feac3e",
+      "title": "\"Cultural Conformity and Challenge",
+      "level": 3,
+      "parent_title": "1955–63\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "b7e5e149-1466-48b0-9a90-fa7b7743db12",
+      "title": "\"The Civil Rights Movement",
+      "level": 3,
+      "parent_title": "1955–63\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "331905e1-526c-4489-90d2-7133c284c5d8",
+      "title": "\"Protest",
+      "level": 3,
+      "parent_title": "Counter-Culture and Liberation Movements\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "7edca7fa-6501-444e-88ac-974dc1f9564a",
+      "title": "\"Johnson’s Great Society",
+      "level": 3,
+      "parent_title": "1964–68\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "6ad614a8-6575-418f-9678-d6d40df32279",
+      "title": "\"The 'Silent Majority' and Nixon’s Appeal",
+      "level": 3,
+      "parent_title": "1968–72\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "775e642c-56e0-4636-b95d-62a6a13ae683",
+      "title": "\"The Crisis of Political Leadership",
+      "level": 3,
+      "parent_title": "1973–80\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "3d9119d4-39c6-4979-a20e-6131a2a81b30",
+      "title": "\"Economic Crisis and its Social Impact",
+      "level": 3,
+      "parent_title": "1973–80\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "70f846af-66f9-4d66-a3ae-5c2e0048d9c2",
+      "title": "\"Progress in Individual and Civil Rights",
+      "level": 3,
+      "parent_title": "1973–80\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "3bb4978c-83e7-4a24-a460-dca344453231",
+      "title": "\"The Reagan–Bush Economic Policies",
+      "level": 3,
+      "parent_title": "1981–92\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "92304857-b01f-45c6-b0c1-b89ffdd10a02",
+      "title": "\"War",
+      "level": 3,
+      "parent_title": "Diplomacy and Royal Power\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "14da0226-0a53-4d2c-b54f-24b4ad673799",
+      "title": "\"Henry IV and the Rebellions",
+      "level": 3,
+      "parent_title": "1403–05\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "e09bd534-1e13-4bf0-8ed5-d23e0558bb64",
+      "title": "\"Changes in Crown",
+      "level": 3,
+      "parent_title": "Church and Parliament Relations\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "9056616d-fd5e-45fa-bfeb-8ae3e72cd00b",
+      "title": "\"Securing the Tudor Succession",
+      "level": 3,
+      "parent_title": "1485–87\"",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "028381c3-ae33-4a5b-84af-ccc65dfe5012",
+      "title": "\"Race",
+      "level": 3,
+      "parent_title": "Immigration and Multiculturalism",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "dcd55bc9-a7bd-4c8d-b66a-f573dc55bbcc",
+      "title": "\"Withdrawal",
+      "level": 3,
+      "parent_title": "Partition and Independence",
+      "spec_id": "098ba4b3-9b03-4679-9f9d-4551bfe2fe7c"
+    },
+    {
+      "id": "056a3536-71f2-4a25-bca4-6908b8a0c3ab",
+      "title": "\"Classification by temperature",
+      "level": 2,
+      "parent_title": "black-body radiation\"",
+      "spec_id": "0cb2f0e7-44b3-4b0f-b221-d3644169a9de"
+    },
+    {
+      "id": "2efa00be-15b4-44dc-837b-504b15691401",
+      "title": "\"Supernovae",
+      "level": 2,
+      "parent_title": "neutron stars and black holes\"",
+      "spec_id": "0cb2f0e7-44b3-4b0f-b221-d3644169a9de"
+    },
+    {
+      "id": "ca6dfed1-c878-474b-aaf7-c9c53df61c7d",
+      "title": "\"Particles",
+      "level": 2,
+      "parent_title": "antiparticles and photons\"",
+      "spec_id": "0cb2f0e7-44b3-4b0f-b221-d3644169a9de"
+    },
+    {
+      "id": "133afd18-c525-4e03-8a90-1addb47fb9b5",
+      "title": "\"Work",
+      "level": 2,
+      "parent_title": "energy and power\"",
+      "spec_id": "0cb2f0e7-44b3-4b0f-b221-d3644169a9de"
+    },
+    {
+      "id": "3e596861-492b-46c4-9428-715168726a39",
+      "title": "\"α",
+      "level": 2,
+      "parent_title": "β and γ radiation\"",
+      "spec_id": "0cb2f0e7-44b3-4b0f-b221-d3644169a9de"
+    },
+    {
+      "id": "ed590444-1e84-46f2-86b6-d449e41590b3",
+      "title": "\"α",
+      "level": 2,
+      "parent_title": "β and γ radiation\"",
+      "spec_id": "0cb2f0e7-44b3-4b0f-b221-d3644169a9de"
+    },
+    {
+      "id": "e63268b7-998f-4d5d-a4a7-0a11f38eb4cc",
+      "title": "\"Single dish radio telescopes",
+      "level": 2,
+      "parent_title": "I–R",
+      "spec_id": "0cb2f0e7-44b3-4b0f-b221-d3644169a9de"
+    },
+    {
+      "id": "5ffa6818-8083-48f7-8f6b-0ab599784235",
+      "title": "\"Absolute magnitude",
+      "level": 2,
+      "parent_title": "M\"",
+      "spec_id": "0cb2f0e7-44b3-4b0f-b221-d3644169a9de"
+    },
+    {
+      "id": "d4d4c892-3e02-4d5c-83a9-d9f1fa1628f8",
+      "title": "\"Maxwell",
+      "level": 3,
+      "parent_title": "Hertz and the Speed of EM Waves\"",
+      "spec_id": "0cb2f0e7-44b3-4b0f-b221-d3644169a9de"
+    },
+    {
+      "id": "10d90979-bfa5-47a0-9d02-92318a51d2ee",
+      "title": "\"Physical",
+      "level": 3,
+      "parent_title": "Biological and Effective Half-lives\"",
+      "spec_id": "0cb2f0e7-44b3-4b0f-b221-d3644169a9de"
+    },
+    {
+      "id": "48406d4d-974e-4b40-88b0-b28a4a8c84b9",
+      "title": "\"Distance",
+      "level": 3,
+      "parent_title": "Parsecs and Absolute Magnitude\"",
+      "spec_id": "0cb2f0e7-44b3-4b0f-b221-d3644169a9de"
+    },
+    {
+      "id": "352a93f6-7170-4bfe-b1d2-b5ff79cb31a8",
+      "title": "\"Fission",
+      "level": 3,
+      "parent_title": "Fusion and the Binding Energy Curve\"",
+      "spec_id": "0cb2f0e7-44b3-4b0f-b221-d3644169a9de"
+    },
+    {
+      "id": "6886b095-d27c-4f68-9c35-4821b269bbf1",
+      "title": "\"Energy",
+      "level": 3,
+      "parent_title": "Escape Velocity and Synchronous Orbit\"",
+      "spec_id": "0cb2f0e7-44b3-4b0f-b221-d3644169a9de"
+    },
+    {
+      "id": "f22a4246-a5e3-41f0-b990-e6f1e53959d5",
+      "title": "\"Current",
+      "level": 3,
+      "parent_title": "Potential Difference and Resistance\"",
+      "spec_id": "0cb2f0e7-44b3-4b0f-b221-d3644169a9de"
+    },
+    {
+      "id": "717d6ea7-2fa0-47be-878f-2dceae867213",
+      "title": "\"Density",
+      "level": 3,
+      "parent_title": "Hooke's Law and Stress-Strain\"",
+      "spec_id": "0cb2f0e7-44b3-4b0f-b221-d3644169a9de"
+    },
+    {
+      "id": "d7b99220-2608-40c7-9271-15b4aa62bcbb",
+      "title": "\"Work",
+      "level": 3,
+      "parent_title": "Power and Efficiency\"",
+      "spec_id": "0cb2f0e7-44b3-4b0f-b221-d3644169a9de"
+    },
+    {
+      "id": "970d3e8f-66cc-402c-832d-2141bb0ccdbb",
+      "title": "\"Moments",
+      "level": 3,
+      "parent_title": "Couples and the Principle of Moments\"",
+      "spec_id": "0cb2f0e7-44b3-4b0f-b221-d3644169a9de"
+    },
+    {
+      "id": "c557ed8f-80d5-4eb4-b929-c108ceb922dc",
+      "title": "\"Ionisation",
+      "level": 3,
+      "parent_title": "Excitation and the Electron Volt\"",
+      "spec_id": "0cb2f0e7-44b3-4b0f-b221-d3644169a9de"
+    },
+    {
+      "id": "7cea5b67-c93e-4ad7-ab70-eaa7879f8427",
+      "title": "\"Hadrons",
+      "level": 3,
+      "parent_title": "Baryons and Mesons\"",
+      "spec_id": "0cb2f0e7-44b3-4b0f-b221-d3644169a9de"
+    },
+    {
+      "id": "21282456-bde0-4719-bb81-47fcbff48fd1",
+      "title": "\"Photons",
+      "level": 3,
+      "parent_title": "Annihilation and Pair Production\"",
+      "spec_id": "0cb2f0e7-44b3-4b0f-b221-d3644169a9de"
+    },
+    {
+      "id": "653f3533-6bf5-42d8-ad76-decd95878469",
+      "title": "\"Specific Charge",
+      "level": 3,
+      "parent_title": "Nuclide Notation and Isotopes\"",
+      "spec_id": "0cb2f0e7-44b3-4b0f-b221-d3644169a9de"
+    },
+    {
+      "id": "2f5880d0-7023-4141-a1e9-dc23cd98c7c7",
+      "title": "\"Sketching Polynomial",
+      "level": 3,
+      "parent_title": "Modulus",
+      "spec_id": "19eb50cb-db5f-4b1f-9254-143d690d49a7"
+    },
+    {
+      "id": "085e9fdb-59eb-4240-83b4-7e97ca36ca79",
+      "title": "\"Correlation",
+      "level": 3,
+      "parent_title": "Causation",
+      "spec_id": "19eb50cb-db5f-4b1f-9254-143d690d49a7"
+    },
+    {
+      "id": "8285ffd0-8177-4c0b-8044-a4b28952e32d",
+      "title": "\"Populations",
+      "level": 3,
+      "parent_title": "Sampling",
+      "spec_id": "19eb50cb-db5f-4b1f-9254-143d690d49a7"
+    },
+    {
+      "id": "bc0362df-d31d-40ba-a676-d69b0e4db9f0",
+      "title": "\"Genomics",
+      "level": 3,
+      "parent_title": "Personalised Medicine",
+      "spec_id": "1f8030ec-9757-4465-89c1-117abab528e1"
+    },
+    {
+      "id": "67ca9f01-b07f-4f58-8fb3-4a34eb0cd252",
+      "title": "\"Brain Chemistry",
+      "level": 3,
+      "parent_title": "Disease",
+      "spec_id": "1f8030ec-9757-4465-89c1-117abab528e1"
+    },
+    {
+      "id": "7600108b-6e04-48d4-86ac-2ee643f12ef8",
+      "title": "\"Brain Structure",
+      "level": 3,
+      "parent_title": "Function",
+      "spec_id": "1f8030ec-9757-4465-89c1-117abab528e1"
+    },
+    {
+      "id": "cbecd7b3-56fc-4552-a22d-6eb43aecc1a6",
+      "title": "\"Ecosystems",
+      "level": 3,
+      "parent_title": "Populations and Controlling Factors\"",
+      "spec_id": "1f8030ec-9757-4465-89c1-117abab528e1"
+    },
+    {
+      "id": "25b11618-c63a-432f-b244-4b4f42dbef34",
+      "title": "\"Adaptation",
+      "level": 3,
+      "parent_title": "Natural Selection and Evolution\"",
+      "spec_id": "1f8030ec-9757-4465-89c1-117abab528e1"
+    },
+    {
+      "id": "a8a8e7e1-b9ed-4c64-873c-25fa784f4f36",
+      "title": "\"Genotype",
+      "level": 3,
+      "parent_title": "Environment and Epigenetics\"",
+      "spec_id": "1f8030ec-9757-4465-89c1-117abab528e1"
+    },
+    {
+      "id": "1178f8ef-e24f-481a-80f4-71a17df8ac75",
+      "title": "\"The Structure of Mononucleotides",
+      "level": 3,
+      "parent_title": "DNA and RNA\"",
+      "spec_id": "1f8030ec-9757-4465-89c1-117abab528e1"
+    },
+    {
+      "id": "c8c247c8-29b0-4e6b-bcb1-96d2a4059249",
+      "title": "\"Cholesterol",
+      "level": 3,
+      "parent_title": "Lipoproteins",
+      "spec_id": "1f8030ec-9757-4465-89c1-117abab528e1"
+    },
+    {
+      "id": "48be903b-4f7b-414f-a6ab-03da2afa7d66",
+      "title": "Errors and Uncertainty in Measurements",
+      "level": 2,
+      "parent_title": "\"Formulae",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "91f4b2e2-6528-415c-a313-c7ede70fe74f",
+      "title": "Quantitative Chemistry and Titrations",
+      "level": 2,
+      "parent_title": "\"Formulae",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "b133c784-2f6d-4ea7-b92e-059bf3f338bf",
+      "title": "Practical Skills and Safety",
+      "level": 2,
+      "parent_title": "\"Formulae",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "01008043-4dcd-4350-801e-4def3b0dfb5b",
+      "title": "Yield and Atom Economy",
+      "level": 2,
+      "parent_title": "\"Formulae",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "1fa1c1ef-dfdf-4681-8c8b-a63696145331",
+      "title": "\"Amines",
+      "level": 3,
+      "parent_title": "Amides and Amino Acids\"",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "b451f03f-4dcd-4d14-8dec-8c2f012267fe",
+      "title": "\"Water",
+      "level": 3,
+      "parent_title": "Strong Bases and pKa\"",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "62073734-ab60-4cd6-bd68-e730372bf92b",
+      "title": "Industrial Processes and Kc",
+      "level": 3,
+      "parent_title": "\"The Equilibrium Constant",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "58872579-54f0-42cd-84ef-3a5de9423219",
+      "title": "Intermolecular Forces",
+      "level": 3,
+      "parent_title": "Intermolecular Forces",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "f84d6914-1b55-49bb-9202-4872bae5e7da",
+      "title": "Ionic Bonding",
+      "level": 3,
+      "parent_title": "Ionic Bonding",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "72719072-909a-4aa7-8d3e-184f4a8b07b1",
+      "title": "Radical Reactions",
+      "level": 3,
+      "parent_title": "Radical Substitution",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "1c936438-46a2-4a9b-96e7-e46c9d369045",
+      "title": "Constructing Redox Equations",
+      "level": 3,
+      "parent_title": "Constructing Redox Equations",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "310e9422-d057-4ee0-84d0-8e14c2888aba",
+      "title": "Flame Tests",
+      "level": 3,
+      "parent_title": "Flame Tests",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "3c1ef158-e029-4e36-8629-7b0505d7a407",
+      "title": "Introduction to Organic Chemistry",
+      "level": 3,
+      "parent_title": "Introduction to Organic Chemistry",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "83df695f-4f3d-4699-849c-01576425e463",
+      "title": "Yield and Atom Economy",
+      "level": 3,
+      "parent_title": "Yield and Atom Economy",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "96fe8cdb-7371-4699-bc81-d883572dcc46",
+      "title": "Dynamic Equilibrium",
+      "level": 3,
+      "parent_title": "Dynamic Equilibrium",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "d7703e47-2b6c-42a1-bc77-8321fa30f33b",
+      "title": "Bond Enthalpies",
+      "level": 3,
+      "parent_title": "Bond Enthalpies",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "8a4a004d-7cfa-458d-b5f4-eaa89cc2f6da",
+      "title": "Infrared Spectroscopy",
+      "level": 3,
+      "parent_title": "Infrared Spectroscopy",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "03f7a8d8-eeca-40e7-860e-7326ec57a46e",
+      "title": "Entropy",
+      "level": 3,
+      "parent_title": "Entropy",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "d6e28b99-7f0a-47f5-b616-09f7ff75b58a",
+      "title": "Lattice Energy and Born–Haber Cycles",
+      "level": 3,
+      "parent_title": "Lattice Energy and Born–Haber Cycles",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "774d9684-2e9c-4396-b7fe-9050a5c37690",
+      "title": "Redox Titrations",
+      "level": 3,
+      "parent_title": "Redox Titrations",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "d2c4db87-93d9-4645-8ba4-e220e587d609",
+      "title": "Chromatography",
+      "level": 3,
+      "parent_title": "Chromatography",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "c84d5018-3f2a-4d04-9919-8656ed842334",
+      "title": "¹H NMR Spectroscopy",
+      "level": 3,
+      "parent_title": "¹H NMR Spectroscopy",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "601c40cb-7114-47be-99d2-64ded6a51e17",
+      "title": "Gibbs Free Energy and Feasibility",
+      "level": 3,
+      "parent_title": "Gibbs Free Energy and Feasibility",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "0b7eb027-25b1-48a0-a600-efad3b0fe65f",
+      "title": "High Resolution Mass Spectrometry",
+      "level": 3,
+      "parent_title": "High Resolution Mass Spectrometry",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "99918ecd-8461-4c26-83fb-2737b979ae34",
+      "title": "Le Châtelier's Principle",
+      "level": 3,
+      "parent_title": "Le Châtelier's Principle",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "2535b3ad-fea7-481b-b8cf-60eb06283ea0",
+      "title": "¹³C NMR Spectroscopy",
+      "level": 3,
+      "parent_title": "¹³C NMR Spectroscopy",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "ba28e7b7-f8ba-4997-87d8-218df57d8bd1",
+      "title": "Enthalpies of Solution and Hydration",
+      "level": 3,
+      "parent_title": "Enthalpies of Solution and Hydration",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "636fc305-912a-41cc-85c3-8a39dc955294",
+      "title": "Hydrogen Bonding",
+      "level": 3,
+      "parent_title": "Intermolecular Forces",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "78877e87-6915-46bc-88f6-22618eed3ca6",
+      "title": "Ionic Diagrams and Radii",
+      "level": 3,
+      "parent_title": "Ionic Bonding",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "b0dc6269-dfe6-4819-93df-d174dfe27086",
+      "title": "Nomenclature and Isomerism",
+      "level": 3,
+      "parent_title": "Introduction to Organic Chemistry",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "60581ac2-f0ed-4e6a-b95c-0fbaeaae5082",
+      "title": "Radical Substitution",
+      "level": 3,
+      "parent_title": "Radical Substitution",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "4c9117af-638f-492e-9a72-d24dede6f683",
+      "title": "Calculating Entropy Changes",
+      "level": 3,
+      "parent_title": "Entropy",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "162dd038-89c1-4d60-a1b1-10efaca1c82c",
+      "title": "Polarisation and Covalent Character",
+      "level": 3,
+      "parent_title": "Lattice Energy and Born–Haber Cycles",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "8a7c0bd4-3db0-4018-80bc-f7e6bc405f53",
+      "title": "Anomalous Properties of Water",
+      "level": 3,
+      "parent_title": "Intermolecular Forces",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "99e292b7-0765-4642-ad8a-7e5f2801163e",
+      "title": "Classifying Reactions",
+      "level": 3,
+      "parent_title": "Introduction to Organic Chemistry",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "02cd2895-2874-4ef1-a733-9d0d4de0fdfa",
+      "title": "Relating IMFs to Physical Properties",
+      "level": 3,
+      "parent_title": "Intermolecular Forces",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "dd23cc13-ca29-4703-9159-d0f5884e7860",
+      "title": "Solubility",
+      "level": 3,
+      "parent_title": "Intermolecular Forces",
+      "spec_id": "2320471d-0615-49de-b5b1-b8a2a3594027"
+    },
+    {
+      "id": "7b9b20e8-c06b-4299-a3d5-82bc0fb1d6d7",
+      "title": "\"Complex Crosses: Linkage",
+      "level": 3,
+      "parent_title": "Multiple Alleles and Epistasis\"",
+      "spec_id": "2497b543-52bf-46b1-897f-97e3b5b3e484"
+    },
+    {
+      "id": "f6407d14-b875-465e-81a4-46f4bde47c0b",
+      "title": "\"Epigenetics",
+      "level": 3,
+      "parent_title": "RNAi",
+      "spec_id": "2497b543-52bf-46b1-897f-97e3b5b3e484"
+    },
+    {
+      "id": "cf874561-322e-4e72-98ec-1a6ffd0f4018",
+      "title": "\"Pluripotent",
+      "level": 3,
+      "parent_title": "Multipotent and Unipotent Stem Cells\"",
+      "spec_id": "2497b543-52bf-46b1-897f-97e3b5b3e484"
+    },
+    {
+      "id": "535b1e8c-13a0-478b-b86a-af340ae74d1b",
+      "title": "\"Ecosystems",
+      "level": 3,
+      "parent_title": "Niches",
+      "spec_id": "2497b543-52bf-46b1-897f-97e3b5b3e484"
+    },
+    {
+      "id": "d5e7ef3d-aae6-4726-a671-59dc025b585f",
+      "title": "\"Populations",
+      "level": 3,
+      "parent_title": "Gene Pools and Allele Frequency\"",
+      "spec_id": "2497b543-52bf-46b1-897f-97e3b5b3e484"
+    },
+    {
+      "id": "aa90af75-a480-47d1-917b-e9680b8937b8",
+      "title": "Gravitational Fields and Orbits",
+      "level": 2,
+      "parent_title": "Gravitational Fields and Orbits",
+      "spec_id": "25465b24-d391-4348-9b01-5303246ff0fa"
+    },
+    {
+      "id": "aa16b42d-87b8-4da9-aed7-a43ae45c748a",
+      "title": "\"EMF",
+      "level": 3,
+      "parent_title": "Internal Resistance and Core Practical 3\"",
+      "spec_id": "25465b24-d391-4348-9b01-5303246ff0fa"
+    },
+    {
+      "id": "5434e7d6-5d90-4e4b-a839-b32252835fd3",
+      "title": "\"Viscosity",
+      "level": 3,
+      "parent_title": "Stokes' Law and Core Practical 4\"",
+      "spec_id": "25465b24-d391-4348-9b01-5303246ff0fa"
+    },
+    {
+      "id": "6eeecb60-f8a5-41c5-9346-d0412f5f4dcb",
+      "title": "\"Stress",
+      "level": 3,
+      "parent_title": "Strain and the Young Modulus\"",
+      "spec_id": "25465b24-d391-4348-9b01-5303246ff0fa"
+    },
+    {
+      "id": "963586b2-1186-4830-9a8d-0d59073263f2",
+      "title": "Gravitational Fields and Field Strength",
+      "level": 3,
+      "parent_title": "Gravitational Fields and Orbits",
+      "spec_id": "25465b24-d391-4348-9b01-5303246ff0fa"
+    },
+    {
+      "id": "0d549e5b-ba59-49a2-b916-06f1514c6d87",
+      "title": "Newton's Law of Universal Gravitation",
+      "level": 3,
+      "parent_title": "Gravitational Fields and Orbits",
+      "spec_id": "25465b24-d391-4348-9b01-5303246ff0fa"
+    },
+    {
+      "id": "e62fbc42-46ef-4f1b-af87-8a8e2136b1bc",
+      "title": "Field Strength of a Point Mass",
+      "level": 3,
+      "parent_title": "Gravitational Fields and Orbits",
+      "spec_id": "25465b24-d391-4348-9b01-5303246ff0fa"
+    },
+    {
+      "id": "f5696022-7b5a-4c2e-a20d-97dda8a4e0ce",
+      "title": "Gravitational Potential",
+      "level": 3,
+      "parent_title": "Gravitational Fields and Orbits",
+      "spec_id": "25465b24-d391-4348-9b01-5303246ff0fa"
+    },
+    {
+      "id": "47beb63d-12db-4e1b-bfc4-d843bd6c79aa",
+      "title": "Comparing Fields and Orbital Motion",
+      "level": 3,
+      "parent_title": "Gravitational Fields and Orbits",
+      "spec_id": "25465b24-d391-4348-9b01-5303246ff0fa"
+    },
+    {
+      "id": "3710c3cb-d288-450c-9797-365a26bc2c58",
+      "title": "\"Health",
+      "level": 2,
+      "parent_title": "Human Rights and Intervention\"",
+      "spec_id": "4527df80-bdb5-4a65-8e89-13d86e4dcaa9"
+    },
+    {
+      "id": "99ca71d1-2155-4690-9087-10904df23cec",
+      "title": "\"Migration",
+      "level": 2,
+      "parent_title": "Identity and Sovereignty\"",
+      "spec_id": "4527df80-bdb5-4a65-8e89-13d86e4dcaa9"
+    },
+    {
+      "id": "881d76ba-4239-47db-bdb7-a0cd3fd8e6ae",
+      "title": "\"Globalisation",
+      "level": 3,
+      "parent_title": "Tax Havens",
+      "spec_id": "4527df80-bdb5-4a65-8e89-13d86e4dcaa9"
+    },
+    {
+      "id": "482a7a76-9e95-49f8-bdd3-6c8056bc2000",
+      "title": "\"Economic Theory",
+      "level": 3,
+      "parent_title": "Integration",
+      "spec_id": "4527df80-bdb5-4a65-8e89-13d86e4dcaa9"
+    },
+    {
+      "id": "163a617f-f6cd-4134-8320-39f8dc867e91",
+      "title": "\"Evaluating Military",
+      "level": 3,
+      "parent_title": "Non-Military",
+      "spec_id": "4527df80-bdb5-4a65-8e89-13d86e4dcaa9"
+    },
+    {
+      "id": "712f1ca4-a6de-41a0-8cf3-4e8796b39a37",
+      "title": "\"Human Rights",
+      "level": 3,
+      "parent_title": "Democracy",
+      "spec_id": "4527df80-bdb5-4a65-8e89-13d86e4dcaa9"
+    },
+    {
+      "id": "0a9d81b6-110e-4258-94b8-93f14fa3a2d8",
+      "title": "\"Emerging Powers",
+      "level": 3,
+      "parent_title": "Developing Nations",
+      "spec_id": "4527df80-bdb5-4a65-8e89-13d86e4dcaa9"
+    },
+    {
+      "id": "fd799109-05de-4d31-a0f3-4ce4aa3fcaa0",
+      "title": "\"Renewable",
+      "level": 3,
+      "parent_title": "Recyclable",
+      "spec_id": "4527df80-bdb5-4a65-8e89-13d86e4dcaa9"
+    },
+    {
+      "id": "1cb0834e-984a-4b47-85f9-c70af8a2d2d7",
+      "title": "\"Energy Players",
+      "level": 3,
+      "parent_title": "Pathways",
+      "spec_id": "4527df80-bdb5-4a65-8e89-13d86e4dcaa9"
+    },
+    {
+      "id": "486038c0-1129-4e61-90bb-1abd2b49cd47",
+      "title": "\"Water Supply",
+      "level": 3,
+      "parent_title": "Development",
+      "spec_id": "4527df80-bdb5-4a65-8e89-13d86e4dcaa9"
+    },
+    {
+      "id": "4eaf6bb4-aecc-48d4-abc4-37502deec741",
+      "title": "\"External Influences",
+      "level": 3,
+      "parent_title": "Representations",
+      "spec_id": "4527df80-bdb5-4a65-8e89-13d86e4dcaa9"
+    },
+    {
+      "id": "4903715d-8992-42fd-a160-c82a679d537b",
+      "title": "\"External Influences",
+      "level": 3,
+      "parent_title": "Representations",
+      "spec_id": "4527df80-bdb5-4a65-8e89-13d86e4dcaa9"
+    },
+    {
+      "id": "af6a32ac-b6e5-4d15-afa1-e8a239d9997c",
+      "title": "\"Globalisation",
+      "level": 3,
+      "parent_title": "Inequality",
+      "spec_id": "4527df80-bdb5-4a65-8e89-13d86e4dcaa9"
+    },
+    {
+      "id": "88b72e65-7871-4bc6-ae6b-959eca5b1f65",
+      "title": "\"Lithology",
+      "level": 3,
+      "parent_title": "Cliff Profiles",
+      "spec_id": "4527df80-bdb5-4a65-8e89-13d86e4dcaa9"
+    },
+    {
+      "id": "eaf1cd7d-e634-446e-93d7-4a9f2b6aefb6",
+      "title": "\"Glacial Processes: Erosion",
+      "level": 3,
+      "parent_title": "Transport",
+      "spec_id": "4527df80-bdb5-4a65-8e89-13d86e4dcaa9"
+    },
+    {
+      "id": "21d93b77-a1a4-48d9-853f-9537ff15519c",
+      "title": "\"Periglacial Landscapes",
+      "level": 3,
+      "parent_title": "Processes",
+      "spec_id": "4527df80-bdb5-4a65-8e89-13d86e4dcaa9"
+    },
+    {
+      "id": "de34a23d-1cf3-4f4d-8fe7-dd5acd043b6b",
+      "title": "\"Prediction",
+      "level": 3,
+      "parent_title": "Forecasting and The Hazard Management Cycle\"",
+      "spec_id": "4527df80-bdb5-4a65-8e89-13d86e4dcaa9"
+    },
+    {
+      "id": "d2967afc-7717-4a0a-ab58-277ec1201a61",
+      "title": "\"Defining Hazards",
+      "level": 3,
+      "parent_title": "Disasters",
+      "spec_id": "4527df80-bdb5-4a65-8e89-13d86e4dcaa9"
+    },
+    {
+      "id": "cbd39b52-1c0f-4fb0-a67d-848ee76539b8",
+      "title": "\"Work",
+      "level": 2,
+      "parent_title": "Poverty and Welfare\"",
+      "spec_id": "68712490-0ee1-4a5c-a20d-ca71202f9cd0"
+    },
+    {
+      "id": "28a8a9a6-47f2-4727-9235-3dee51f111b3",
+      "title": "\"Distribution of Poverty",
+      "level": 3,
+      "parent_title": "Wealth and Income\"",
+      "spec_id": "68712490-0ee1-4a5c-a20d-ca71202f9cd0"
+    },
+    {
+      "id": "fb7bfa3b-9ecd-4060-a920-ff1141263c01",
+      "title": "\"Health Inequalities by Class",
+      "level": 3,
+      "parent_title": "Gender",
+      "spec_id": "68712490-0ee1-4a5c-a20d-ca71202f9cd0"
+    },
+    {
+      "id": "8c36bca5-3abd-4a5c-98c0-6a6602540e64",
+      "title": "\"Demographic Trends: Births",
+      "level": 3,
+      "parent_title": "Deaths and Family Size\"",
+      "spec_id": "68712490-0ee1-4a5c-a20d-ca71202f9cd0"
+    },
+    {
+      "id": "1710d476-509e-40ca-ab56-70dfc322bbe3",
+      "title": "\"The Family",
+      "level": 3,
+      "parent_title": "Social Structure and Social Change\"",
+      "spec_id": "68712490-0ee1-4a5c-a20d-ca71202f9cd0"
+    },
+    {
+      "id": "bff23821-4c0e-424f-863e-afde19631ed7",
+      "title": "\"Identity",
+      "level": 3,
+      "parent_title": "Production and Consumption\"",
+      "spec_id": "68712490-0ee1-4a5c-a20d-ca71202f9cd0"
+    },
+    {
+      "id": "fbf0740a-bb65-41a2-afdd-aaf19cbcebd1",
+      "title": "\"Identity: Gender",
+      "level": 3,
+      "parent_title": "Nationality",
+      "spec_id": "68712490-0ee1-4a5c-a20d-ca71202f9cd0"
+    },
+    {
+      "id": "ee3cef7b-4107-4c90-9746-96d50172a429",
+      "title": "\"Positivism",
+      "level": 3,
+      "parent_title": "Interpretivism and Methods\"",
+      "spec_id": "68712490-0ee1-4a5c-a20d-ca71202f9cd0"
+    },
+    {
+      "id": "9245cfaf-f5f2-4e6a-8b5f-b7157d281f0d",
+      "title": "\"Research Considerations: Theoretical",
+      "level": 3,
+      "parent_title": "Practical",
+      "spec_id": "68712490-0ee1-4a5c-a20d-ca71202f9cd0"
+    },
+    {
+      "id": "b5f484be-154a-4b05-826d-2d47581f1250",
+      "title": "\"Modernity",
+      "level": 3,
+      "parent_title": "Post-modernity and Theory\"",
+      "spec_id": "68712490-0ee1-4a5c-a20d-ca71202f9cd0"
+    },
+    {
+      "id": "c7f87fc0-364c-4a13-8123-0cc00721cd80",
+      "title": "\"Debates on Subjectivity",
+      "level": 3,
+      "parent_title": "Objectivity and Value Freedom\"",
+      "spec_id": "68712490-0ee1-4a5c-a20d-ca71202f9cd0"
+    },
+    {
+      "id": "e7999e44-5d6d-4872-9d87-1b742e7709c2",
+      "title": "\"Identity: Age",
+      "level": 3,
+      "parent_title": "Disability and Ethnicity\"",
+      "spec_id": "68712490-0ee1-4a5c-a20d-ca71202f9cd0"
+    },
+    {
+      "id": "11e7654c-2d26-44ae-80b2-1b3ee87ad36e",
+      "title": "\"Debates on Subjectivity",
+      "level": 3,
+      "parent_title": "Objectivity and Value Freedom\"",
+      "spec_id": "68712490-0ee1-4a5c-a20d-ca71202f9cd0"
+    },
+    {
+      "id": "07b916f2-db25-4cfd-bcff-243f63b42b1d",
+      "title": "\"Modernity",
+      "level": 3,
+      "parent_title": "Post-modernity and Theory\"",
+      "spec_id": "68712490-0ee1-4a5c-a20d-ca71202f9cd0"
+    },
+    {
+      "id": "aa577e36-6260-4082-a2ed-5da4788c77d7",
+      "title": "\"Research Considerations: Theoretical",
+      "level": 3,
+      "parent_title": "Practical",
+      "spec_id": "68712490-0ee1-4a5c-a20d-ca71202f9cd0"
+    },
+    {
+      "id": "3379ad92-5595-4d4c-b3c5-cdb1f043977e",
+      "title": "\"Positivism",
+      "level": 3,
+      "parent_title": "Interpretivism and Methods\"",
+      "spec_id": "68712490-0ee1-4a5c-a20d-ca71202f9cd0"
+    },
+    {
+      "id": "8e469c19-9667-44bf-bbda-13f3fd296acc",
+      "title": "\"Crime Control",
+      "level": 3,
+      "parent_title": "Surveillance and Prevention\"",
+      "spec_id": "68712490-0ee1-4a5c-a20d-ca71202f9cd0"
+    },
+    {
+      "id": "3a8bba26-fbf1-4ea1-849c-a686f4e00121",
+      "title": "\"Green Crime",
+      "level": 3,
+      "parent_title": "Human Rights and State Crime\"",
+      "spec_id": "68712490-0ee1-4a5c-a20d-ca71202f9cd0"
+    },
+    {
+      "id": "203e86f6-67fb-427f-877c-d29d2bb3f85a",
+      "title": "\"Occupation",
+      "level": 3,
+      "parent_title": "Gender and Social Class\"",
+      "spec_id": "68712490-0ee1-4a5c-a20d-ca71202f9cd0"
+    },
+    {
+      "id": "fdac1166-fa9c-49fb-8b44-dde1d8e1d16c",
+      "title": "\"Dimensions of Inequality: Class",
+      "level": 3,
+      "parent_title": "Status and Power\"",
+      "spec_id": "68712490-0ee1-4a5c-a20d-ca71202f9cd0"
+    },
+    {
+      "id": "6beff36d-2822-461b-a15b-79b26b57ebc5",
+      "title": "\"Media Representations: Gender",
+      "level": 3,
+      "parent_title": "Sexuality and Identity\"",
+      "spec_id": "68712490-0ee1-4a5c-a20d-ca71202f9cd0"
+    },
+    {
+      "id": "8c0b6e2b-3569-4535-867f-e958ec7c99ff",
+      "title": "\"Media Representations: Age",
+      "level": 3,
+      "parent_title": "Class and Ethnicity\"",
+      "spec_id": "68712490-0ee1-4a5c-a20d-ca71202f9cd0"
+    },
+    {
+      "id": "61e5a60e-5ad3-4bcd-8c94-bc85e1910f6a",
+      "title": "\"Media",
+      "level": 3,
+      "parent_title": "Globalisation and Popular Culture\"",
+      "spec_id": "68712490-0ee1-4a5c-a20d-ca71202f9cd0"
+    },
+    {
+      "id": "5cb1e759-29d0-4ad4-995b-9ad3d6691fcb",
+      "title": "\"Employment",
+      "level": 3,
+      "parent_title": "Education and Health as Aspects of Development\"",
+      "spec_id": "68712490-0ee1-4a5c-a20d-ca71202f9cd0"
+    },
+    {
+      "id": "54452ca5-9113-450f-82b2-f714e3da5636",
+      "title": "\"Development: Environment",
+      "level": 3,
+      "parent_title": "War and Conflict\"",
+      "spec_id": "68712490-0ee1-4a5c-a20d-ca71202f9cd0"
+    },
+    {
+      "id": "d7061d3e-85f6-4299-aa17-59d50c2b41f4",
+      "title": "\"Development: Aid",
+      "level": 3,
+      "parent_title": "Trade",
+      "spec_id": "68712490-0ee1-4a5c-a20d-ca71202f9cd0"
+    },
+    {
+      "id": "1a868a2c-0c5b-4eed-8934-e5a40d0f33c2",
+      "title": "\"Role of TNCs",
+      "level": 3,
+      "parent_title": "NGOs and International Agencies\"",
+      "spec_id": "68712490-0ee1-4a5c-a20d-ca71202f9cd0"
+    },
+    {
+      "id": "f0349786-5d2b-413f-8ec6-b6c060d043e8",
+      "title": "\"Development",
+      "level": 3,
+      "parent_title": "Underdevelopment and Global Inequality\"",
+      "spec_id": "68712490-0ee1-4a5c-a20d-ca71202f9cd0"
+    },
+    {
+      "id": "a88deff0-f41b-41ac-a662-ed3dfc76418c",
+      "title": "\"Religion",
+      "level": 3,
+      "parent_title": "Social Change and Stability\"",
+      "spec_id": "68712490-0ee1-4a5c-a20d-ca71202f9cd0"
+    },
+    {
+      "id": "668a241d-a6fe-4c12-b653-a6e9a730c1a3",
+      "title": "\"Ideology",
+      "level": 3,
+      "parent_title": "Science and Religion\"",
+      "spec_id": "68712490-0ee1-4a5c-a20d-ca71202f9cd0"
+    },
+    {
+      "id": "74f8c5f6-c487-448e-a48d-be2f0aff1a67",
+      "title": "\"Technology",
+      "level": 3,
+      "parent_title": "Skill and De-skilling\"",
+      "spec_id": "68712490-0ee1-4a5c-a20d-ca71202f9cd0"
+    },
+    {
+      "id": "82603a04-2349-4f13-a92b-0940326776e0",
+      "title": "\"Price",
+      "level": 3,
+      "parent_title": "Income",
+      "spec_id": "69164334-1f9c-4b5e-82b8-f6189c13e2b4"
+    },
+    {
+      "id": "51d39124-2e3b-4a96-a84d-b4e8ad4f34c7",
+      "title": "\"Scarcity",
+      "level": 3,
+      "parent_title": "Choice and Opportunity Cost\"",
+      "spec_id": "69164334-1f9c-4b5e-82b8-f6189c13e2b4"
+    },
+    {
+      "id": "49fb95e6-1117-4eea-b107-29553e4021a1",
+      "title": "\"Public Ownership",
+      "level": 3,
+      "parent_title": "Privatisation",
+      "spec_id": "69164334-1f9c-4b5e-82b8-f6189c13e2b4"
+    },
+    {
+      "id": "90a03adf-a747-41ec-b4f2-5c55b5dc20db",
+      "title": "\"Firm’s Revenue: TR",
+      "level": 3,
+      "parent_title": "AR",
+      "spec_id": "69164334-1f9c-4b5e-82b8-f6189c13e2b4"
+    },
+    {
+      "id": "84a070bd-b33e-4362-bac8-89f1ec8f9193",
+      "title": "\"Production",
+      "level": 3,
+      "parent_title": "Productivity",
+      "spec_id": "69164334-1f9c-4b5e-82b8-f6189c13e2b4"
+    },
+    {
+      "id": "2772e64e-bae8-4e19-a5da-0bad10c72864",
+      "title": "\"Stopping",
+      "level": 3,
+      "parent_title": "Thinking",
+      "spec_id": "6b23a74c-6b30-48c5-b111-33cd522a8a2e"
+    },
+    {
+      "id": "1b0ed012-aad1-46d6-b64e-31f5a7f419eb",
+      "title": "\"Stress",
+      "level": 3,
+      "parent_title": "Strain",
+      "spec_id": "6b23a74c-6b30-48c5-b111-33cd522a8a2e"
+    },
+    {
+      "id": "8e326085-365e-4584-8c84-1bbe29e6ede7",
+      "title": "\"Circuit Symbols",
+      "level": 3,
+      "parent_title": "EMF",
+      "spec_id": "6b23a74c-6b30-48c5-b111-33cd522a8a2e"
+    },
+    {
+      "id": "7b0d8c4d-8308-4355-8b11-e16debf1dfb9",
+      "title": "\"Errors",
+      "level": 3,
+      "parent_title": "Precision",
+      "spec_id": "6b23a74c-6b30-48c5-b111-33cd522a8a2e"
+    },
+    {
+      "id": "58b2ff87-60d2-46eb-b71d-2e4d0f808006",
+      "title": "Electric Charge and Current",
+      "level": 3,
+      "parent_title": "Electric Charge and Current",
+      "spec_id": "6b23a74c-6b30-48c5-b111-33cd522a8a2e"
+    },
+    {
+      "id": "dcd87528-d814-4984-a7a5-993a74a6e29e",
+      "title": "Charge Carriers and Kirchhoff's First Law",
+      "level": 3,
+      "parent_title": "Electric Charge and Current",
+      "spec_id": "6b23a74c-6b30-48c5-b111-33cd522a8a2e"
+    },
+    {
+      "id": "85ee6a0b-30ad-4cab-840c-8b6a15cec3c6",
+      "title": "Mean Drift Velocity",
+      "level": 3,
+      "parent_title": "Electric Charge and Current",
+      "spec_id": "6b23a74c-6b30-48c5-b111-33cd522a8a2e"
+    },
+    {
+      "id": "3e49a58e-d616-40d6-8684-dc2cbea60bd0",
+      "title": "\"Profit",
+      "level": 3,
+      "parent_title": "Profitability",
+      "spec_id": "6fc27c15-3bac-468a-afb9-94a85e220193"
+    },
+    {
+      "id": "94cef9de-f326-4572-a0c1-829ac9ac2cbc",
+      "title": "\"Calculating Sales",
+      "level": 3,
+      "parent_title": "Revenue and Costs\"",
+      "spec_id": "6fc27c15-3bac-468a-afb9-94a85e220193"
+    },
+    {
+      "id": "bfa44c17-7662-4557-ba29-8ffdf0fc4c24",
+      "title": "\"Liability",
+      "level": 3,
+      "parent_title": "Business Plans and Appropriate Finance\"",
+      "spec_id": "6fc27c15-3bac-468a-afb9-94a85e220193"
+    },
+    {
+      "id": "52cac295-34e9-4787-83d4-fa9183f19d00",
+      "title": "\"The Entrepreneurial Role",
+      "level": 3,
+      "parent_title": "Risks",
+      "spec_id": "6fc27c15-3bac-468a-afb9-94a85e220193"
+    },
+    {
+      "id": "9d13cc60-c93a-4ca0-bbec-78d4604f8900",
+      "title": "\"Recruitment",
+      "level": 3,
+      "parent_title": "Selection",
+      "spec_id": "6fc27c15-3bac-468a-afb9-94a85e220193"
+    },
+    {
+      "id": "88326b41-7dfe-4f38-a302-693ebcac1694",
+      "title": "\"Competition",
+      "level": 3,
+      "parent_title": "Risk and Uncertainty\"",
+      "spec_id": "6fc27c15-3bac-468a-afb9-94a85e220193"
+    },
+    {
+      "id": "fa72319a-b2c1-42bd-b602-4a139ce1597c",
+      "title": "\"Trade",
+      "level": 3,
+      "parent_title": "Specialisation",
+      "spec_id": "6fc27c15-3bac-468a-afb9-94a85e220193"
+    },
+    {
+      "id": "619f2e00-8607-4423-be8e-226ad4f14ae8",
+      "title": "\"Nitrogen Compounds",
+      "level": 2,
+      "parent_title": "Polymers",
+      "spec_id": "6fecf38a-2830-4bac-a00e-cb5b222a8f15"
+    },
+    {
+      "id": "cddc0c21-0145-47ea-a2bb-18021ca7c8ff",
+      "title": "\"Kinetics",
+      "level": 2,
+      "parent_title": "Equilibria",
+      "spec_id": "6fecf38a-2830-4bac-a00e-cb5b222a8f15"
+    },
+    {
+      "id": "4a405520-c66e-46a2-9195-cf8a59877a63",
+      "title": "\"Energetics",
+      "level": 2,
+      "parent_title": "Redox",
+      "spec_id": "6fecf38a-2830-4bac-a00e-cb5b222a8f15"
+    },
+    {
+      "id": "71af3a2c-34be-4da9-8195-676dddf5c35e",
+      "title": "\"Aromatics",
+      "level": 2,
+      "parent_title": "Carbonyls",
+      "spec_id": "6fecf38a-2830-4bac-a00e-cb5b222a8f15"
+    },
+    {
+      "id": "464b32b8-9edf-4f67-bdc0-fe1150f29e4f",
+      "title": "\"Atomic Structure",
+      "level": 2,
+      "parent_title": "Moles",
+      "spec_id": "6fecf38a-2830-4bac-a00e-cb5b222a8f15"
+    },
+    {
+      "id": "99b7d4a3-139c-4160-8a4d-6437f1e8908a",
+      "title": "\"Electron Configuration",
+      "level": 2,
+      "parent_title": "Bonding",
+      "spec_id": "6fecf38a-2830-4bac-a00e-cb5b222a8f15"
+    },
+    {
+      "id": "1c80c64f-0c37-4839-86be-9655d5ef1753",
+      "title": "\"Energy",
+      "level": 2,
+      "parent_title": "Rates",
+      "spec_id": "6fecf38a-2830-4bac-a00e-cb5b222a8f15"
+    },
+    {
+      "id": "fbf92792-5087-4eb1-92f1-12023cb5cd74",
+      "title": "\"Alcohols",
+      "level": 2,
+      "parent_title": "Haloalkanes",
+      "spec_id": "6fecf38a-2830-4bac-a00e-cb5b222a8f15"
+    },
+    {
+      "id": "88c877c3-b0e2-4e99-a658-20d0838ee867",
+      "title": "\"Complex Ions",
+      "level": 3,
+      "parent_title": "Ligands",
+      "spec_id": "6fecf38a-2830-4bac-a00e-cb5b222a8f15"
+    },
+    {
+      "id": "e984503f-d92b-4f6b-8ade-bc53a1b26b24",
+      "title": "\"Yield",
+      "level": 3,
+      "parent_title": "Atom Economy",
+      "spec_id": "6fecf38a-2830-4bac-a00e-cb5b222a8f15"
+    },
+    {
+      "id": "e0e300a5-0427-4557-85d3-46bf80f45c27",
+      "title": "\"Acids",
+      "level": 3,
+      "parent_title": "Bases and Neutralisation\"",
+      "spec_id": "6fecf38a-2830-4bac-a00e-cb5b222a8f15"
+    },
+    {
+      "id": "bacee0d4-6e28-491a-8054-5f8e1184718a",
+      "title": "\"Electron Shells",
+      "level": 3,
+      "parent_title": "Sub-shells",
+      "spec_id": "6fecf38a-2830-4bac-a00e-cb5b222a8f15"
+    },
+    {
+      "id": "132f3256-be3f-4ccc-9ef7-f4e8357ab2fb",
+      "title": "\"Rates",
+      "level": 3,
+      "parent_title": "Orders",
+      "spec_id": "6fecf38a-2830-4bac-a00e-cb5b222a8f15"
+    },
+    {
+      "id": "f120d865-cee1-4b63-b39c-bb3705b81db2",
+      "title": "\"Mole Fractions",
+      "level": 3,
+      "parent_title": "Partial Pressures",
+      "spec_id": "6fecf38a-2830-4bac-a00e-cb5b222a8f15"
+    },
+    {
+      "id": "52060ecc-9a6a-4e1d-9933-bf6f33f65bc1",
+      "title": "\"pH",
+      "level": 3,
+      "parent_title": "Kw",
+      "spec_id": "6fecf38a-2830-4bac-a00e-cb5b222a8f15"
+    },
+    {
+      "id": "7f24567d-6e92-422a-b8c1-e74ef13be076",
+      "title": "\"Populations",
+      "level": 3,
+      "parent_title": "Samples",
+      "spec_id": "90ef3f2d-06b5-4942-ba21-a23fb90cd8d6"
+    },
+    {
+      "id": "7217bbe5-072e-4598-85c8-eb8710755846",
+      "title": "\"Kinematics",
+      "level": 3,
+      "parent_title": "Scalars",
+      "spec_id": "90ef3f2d-06b5-4942-ba21-a23fb90cd8d6"
+    },
+    {
+      "id": "46a7a24f-1187-480c-bb89-5826d0e61ac5",
+      "title": "\"Tangents",
+      "level": 3,
+      "parent_title": "Normals and Stationary Points\"",
+      "spec_id": "90ef3f2d-06b5-4942-ba21-a23fb90cd8d6"
+    },
+    {
+      "id": "620ead4f-e83b-47cf-a2f2-be4fe0c31877",
+      "title": "\"Magnitude",
+      "level": 3,
+      "parent_title": "Direction and Vector Arithmetic\"",
+      "spec_id": "90ef3f2d-06b5-4942-ba21-a23fb90cd8d6"
+    },
+    {
+      "id": "04cba24c-9f71-48d3-b4a8-fe5d27f4683c",
+      "title": "\"Revenues",
+      "level": 2,
+      "parent_title": "Costs and Profits\"",
+      "spec_id": "9a8ba382-a056-4e1a-9ad6-c0d85d31ce96"
+    },
+    {
+      "id": "cd621a34-cfd2-4c3e-834a-d4b7a6b7dcf2",
+      "title": "\"Protecting Suppliers",
+      "level": 3,
+      "parent_title": "Employees and Nationalisation\"",
+      "spec_id": "9a8ba382-a056-4e1a-9ad6-c0d85d31ce96"
+    },
+    {
+      "id": "61347dcd-ef3c-47ab-a8da-bbe0ac707a8e",
+      "title": "\"Firm Size",
+      "level": 3,
+      "parent_title": "Ownership and Objectives\"",
+      "spec_id": "9a8ba382-a056-4e1a-9ad6-c0d85d31ce96"
+    },
+    {
+      "id": "70999576-c67f-40a8-b322-dac71e239b19",
+      "title": "\"Specialisation",
+      "level": 3,
+      "parent_title": "Trade",
+      "spec_id": "9a8ba382-a056-4e1a-9ad6-c0d85d31ce96"
+    },
+    {
+      "id": "73ecaa42-04b9-4da4-afb2-030d64d27bbc",
+      "title": "\"Individual (moral)",
+      "level": 2,
+      "parent_title": "social (ethical)",
+      "spec_id": "aa664d26-0e8f-414e-be82-42537895c9b7"
+    },
+    {
+      "id": "6fddbeb6-d3cc-494d-9186-439f52251a23",
+      "title": "\"Representing images",
+      "level": 2,
+      "parent_title": "sound and other data\"",
+      "spec_id": "aa664d26-0e8f-414e-be82-42537895c9b7"
+    },
+    {
+      "id": "d606f440-b168-4c7c-a77b-d0f7e21ce95a",
+      "title": "Big Data",
+      "level": 2,
+      "parent_title": "Big Data",
+      "spec_id": "aa664d26-0e8f-414e-be82-42537895c9b7"
+    },
+    {
+      "id": "bea25bcb-d02e-4703-96a1-9dfddfaa4d79",
+      "title": "\"Web Applications (CRUD",
+      "level": 3,
+      "parent_title": "REST)\"",
+      "spec_id": "aa664d26-0e8f-414e-be82-42537895c9b7"
+    },
+    {
+      "id": "1da33139-ea6b-41f6-b6d3-22b833ef40f3",
+      "title": "\"DHCP",
+      "level": 3,
+      "parent_title": "NAT and Port Forwarding\"",
+      "spec_id": "aa664d26-0e8f-414e-be82-42537895c9b7"
+    },
+    {
+      "id": "42263c1b-28ca-4097-84cc-fc75cca46b20",
+      "title": "\"The Internet",
+      "level": 3,
+      "parent_title": "Packet Switching and Routing\"",
+      "spec_id": "aa664d26-0e8f-414e-be82-42537895c9b7"
+    },
+    {
+      "id": "a10f6ae4-407e-4213-b0cf-56fea1554ff4",
+      "title": "\"Responsibilities",
+      "level": 3,
+      "parent_title": "Legislation and Teaching Applications\"",
+      "spec_id": "aa664d26-0e8f-414e-be82-42537895c9b7"
+    },
+    {
+      "id": "17204d5f-686a-43d0-8116-ffa24934839d",
+      "title": "\"Range",
+      "level": 3,
+      "parent_title": "Precision",
+      "spec_id": "aa664d26-0e8f-414e-be82-42537895c9b7"
+    },
+    {
+      "id": "b948ab26-48c1-4aa0-a45d-9a1df8e909bf",
+      "title": "\"Bits",
+      "level": 3,
+      "parent_title": "Bytes and Prefixes\"",
+      "spec_id": "aa664d26-0e8f-414e-be82-42537895c9b7"
+    },
+    {
+      "id": "e1650a2a-e95e-4dc9-8a6f-7f4f00e06748",
+      "title": "\"Variables",
+      "level": 3,
+      "parent_title": "Constants",
+      "spec_id": "aa664d26-0e8f-414e-be82-42537895c9b7"
+    },
+    {
+      "id": "4196d3c5-27ac-4b65-ba48-bd2196d2fc98",
+      "title": "Defining Big Data",
+      "level": 3,
+      "parent_title": "Big Data",
+      "spec_id": "aa664d26-0e8f-414e-be82-42537895c9b7"
+    },
+    {
+      "id": "2729cbec-6bce-458a-8fee-dc563279e798",
+      "title": "Challenges and Processing Techniques",
+      "level": 3,
+      "parent_title": "Big Data",
+      "spec_id": "aa664d26-0e8f-414e-be82-42537895c9b7"
+    },
+    {
+      "id": "11805334-e15a-4483-b68f-a75f66559a05",
+      "title": "Functional Programming for Big Data",
+      "level": 3,
+      "parent_title": "Big Data",
+      "spec_id": "aa664d26-0e8f-414e-be82-42537895c9b7"
+    },
+    {
+      "id": "37c513db-c0af-4c17-8f93-824874275ef9",
+      "title": "Representing Big Data",
+      "level": 3,
+      "parent_title": "Big Data",
+      "spec_id": "aa664d26-0e8f-414e-be82-42537895c9b7"
+    },
+    {
+      "id": "99d50dd6-50c3-4acf-b476-3422f3c969e0",
+      "title": "\"Environment",
+      "level": 3,
+      "parent_title": "Health and Disease\"",
+      "spec_id": "bcbda438-84e3-4619-8d0a-b749a7e3150e"
+    },
+    {
+      "id": "9cebde9d-bfaf-48ab-a02d-a827bba636e6",
+      "title": "\"Energy Security: Supply",
+      "level": 3,
+      "parent_title": "Management and Sustainability\"",
+      "spec_id": "bcbda438-84e3-4619-8d0a-b749a7e3150e"
+    },
+    {
+      "id": "a9658d03-1970-4182-8867-60c30fef0920",
+      "title": "\"Mineral Security: Extraction",
+      "level": 3,
+      "parent_title": "Impacts and Sustainability\"",
+      "spec_id": "bcbda438-84e3-4619-8d0a-b749a7e3150e"
+    },
+    {
+      "id": "9286f780-d65c-45a4-9100-3befb09c184a",
+      "title": "\"Runoff",
+      "level": 3,
+      "parent_title": "Hydrographs and Water Cycle Change\"",
+      "spec_id": "bcbda438-84e3-4619-8d0a-b749a7e3150e"
+    },
+    {
+      "id": "7848bb44-da5e-4b5f-81e1-f9922b4326fd",
+      "title": "\"Cycle Interactions",
+      "level": 3,
+      "parent_title": "Feedbacks and Management\"",
+      "spec_id": "bcbda438-84e3-4619-8d0a-b749a7e3150e"
+    },
+    {
+      "id": "ec872586-6b97-44ac-b9a2-5125115297b3",
+      "title": "\"Desertification: Causes",
+      "level": 3,
+      "parent_title": "Impacts and Futures\"",
+      "spec_id": "bcbda438-84e3-4619-8d0a-b749a7e3150e"
+    },
+    {
+      "id": "892e2667-423b-4c74-b314-a760771806e3",
+      "title": "\"Coastal Energy",
+      "level": 3,
+      "parent_title": "Sediment and Processes\"",
+      "spec_id": "bcbda438-84e3-4619-8d0a-b749a7e3150e"
+    },
+    {
+      "id": "3dba6b32-8e05-46f3-88ff-262cb3b047f3",
+      "title": "\"Plate Tectonics: Theory",
+      "level": 3,
+      "parent_title": "Margins and Landforms\"",
+      "spec_id": "bcbda438-84e3-4619-8d0a-b749a7e3150e"
+    },
+    {
+      "id": "c574e619-fcea-4f3d-b7b0-8248a757af53",
+      "title": "\"Volcanic Hazards",
+      "level": 3,
+      "parent_title": "Impacts and Responses\"",
+      "spec_id": "bcbda438-84e3-4619-8d0a-b749a7e3150e"
+    },
+    {
+      "id": "22ff5999-20d2-44c9-a437-297c820a9a8d",
+      "title": "\"Seismic Hazards",
+      "level": 3,
+      "parent_title": "Impacts and Responses\"",
+      "spec_id": "bcbda438-84e3-4619-8d0a-b749a7e3150e"
+    },
+    {
+      "id": "cd85f277-5e26-4275-a94a-bd44fb97e541",
+      "title": "\"Storm Hazards",
+      "level": 3,
+      "parent_title": "Impacts and Responses\"",
+      "spec_id": "bcbda438-84e3-4619-8d0a-b749a7e3150e"
+    },
+    {
+      "id": "24d678e7-10b3-4b19-bdba-52664c4190ba",
+      "title": "\"Ecosystems",
+      "level": 3,
+      "parent_title": "Biodiversity and Sustainability\"",
+      "spec_id": "bcbda438-84e3-4619-8d0a-b749a7e3150e"
+    },
+    {
+      "id": "5962d434-e1bf-4385-9f63-bb9ec252ef5b",
+      "title": "\"International Trade: Patterns",
+      "level": 3,
+      "parent_title": "Relationships and Access\"",
+      "spec_id": "bcbda438-84e3-4619-8d0a-b749a7e3150e"
+    },
+    {
+      "id": "7d4b1c89-e422-48aa-baa3-b744d5ba98a7",
+      "title": "\"Population",
+      "level": 3,
+      "parent_title": "Environment and Food Security\"",
+      "spec_id": "bcbda438-84e3-4619-8d0a-b749a7e3150e"
+    },
+    {
+      "id": "9f8ecb01-4f9b-4618-b2f5-f271e3654b4e",
+      "title": "\"PCR",
+      "level": 3,
+      "parent_title": "DNA Profiling and Electrophoresis\"",
+      "spec_id": "c05be8fc-227e-4c3f-b87c-c05677c6a8e4"
+    },
+    {
+      "id": "94a7b849-e658-4b50-b81e-5892f4f2bba5",
+      "title": "\"Linkage",
+      "level": 3,
+      "parent_title": "Epistasis and Chi-Squared Test\"",
+      "spec_id": "c05be8fc-227e-4c3f-b87c-c05677c6a8e4"
+    },
+    {
+      "id": "9d65874d-480f-40bc-a806-d61c17a9313f",
+      "title": "\"Kingdoms",
+      "level": 3,
+      "parent_title": "Domains and Phylogeny\"",
+      "spec_id": "c05be8fc-227e-4c3f-b87c-c05677c6a8e4"
+    },
+    {
+      "id": "341eedfe-4525-45af-91a6-d43fe3f6b9c1",
+      "title": "\"Water",
+      "level": 3,
+      "parent_title": "Monomers and Polymers\"",
+      "spec_id": "c05be8fc-227e-4c3f-b87c-c05677c6a8e4"
+    },
+    {
+      "id": "4424b90e-c8ea-4dcf-9847-8e9e5f5415cb",
+      "title": "\"Quadratics",
+      "level": 2,
+      "parent_title": "Inequalities and Sets\"",
+      "spec_id": "c2a0c61e-3d92-45ac-b5d8-e19ba0baf4f3"
+    },
+    {
+      "id": "bf9950aa-aa8b-4ddc-91b8-d993b2a17d2c",
+      "title": "\"Regions",
+      "level": 3,
+      "parent_title": "p-values and Tails\"",
+      "spec_id": "c2a0c61e-3d92-45ac-b5d8-e19ba0baf4f3"
+    },
+    {
+      "id": "efb6fe5c-5c71-495b-8b7c-406d70a67371",
+      "title": "\"Populations",
+      "level": 3,
+      "parent_title": "Samples and Inferences\"",
+      "spec_id": "c2a0c61e-3d92-45ac-b5d8-e19ba0baf4f3"
+    },
+    {
+      "id": "113573f6-71c7-4151-91c8-e139c5d14fdc",
+      "title": "\"The Second Derivative",
+      "level": 3,
+      "parent_title": "Convexity and Concavity\"",
+      "spec_id": "c2a0c61e-3d92-45ac-b5d8-e19ba0baf4f3"
+    },
+    {
+      "id": "a3a23d5b-f5d3-4fa6-a3a9-66949636ff2a",
+      "title": "\"Gradients",
+      "level": 3,
+      "parent_title": "Tangents and Normals\"",
+      "spec_id": "c2a0c61e-3d92-45ac-b5d8-e19ba0baf4f3"
+    },
+    {
+      "id": "b0babee8-9fa4-45f8-baa6-6142f2ec6ea8",
+      "title": "\"The Product",
+      "level": 3,
+      "parent_title": "Quotient and Chain Rules\"",
+      "spec_id": "c2a0c61e-3d92-45ac-b5d8-e19ba0baf4f3"
+    },
+    {
+      "id": "96508eee-4fdc-4427-84e8-b64cb8efc26c",
+      "title": "\"Radian Measure",
+      "level": 3,
+      "parent_title": "Arc Length and Sector Area\"",
+      "spec_id": "c2a0c61e-3d92-45ac-b5d8-e19ba0baf4f3"
+    },
+    {
+      "id": "ddbd08d2-6893-452b-9469-ff8880c17c94",
+      "title": "\"Definitions of Sine",
+      "level": 3,
+      "parent_title": "Cosine and Tangent\"",
+      "spec_id": "c2a0c61e-3d92-45ac-b5d8-e19ba0baf4f3"
+    },
+    {
+      "id": "229e513a-a152-4640-bd8b-2e4ec6f37327",
+      "title": "\"Definition of a Function",
+      "level": 3,
+      "parent_title": "Domain and Range\"",
+      "spec_id": "c2a0c61e-3d92-45ac-b5d8-e19ba0baf4f3"
+    },
+    {
+      "id": "10f87581-95a7-4c0e-b763-3fb6ea6b7277",
+      "title": "\"Position",
+      "level": 3,
+      "parent_title": "Displacement",
+      "spec_id": "c2a0c61e-3d92-45ac-b5d8-e19ba0baf4f3"
+    },
+    {
+      "id": "b2a6d45c-1c69-49a9-b978-eefd4a1faff1",
+      "title": "\"New Labour in Power",
+      "level": 3,
+      "parent_title": "1997–2007\"",
+      "spec_id": "e0927233-43e6-4cca-afb2-2ef6e6790b1a"
+    },
+    {
+      "id": "2e5efc7b-cfbf-4990-bc97-3e015544ea5e",
+      "title": "\"The End of the Post-War Consensus",
+      "level": 3,
+      "parent_title": "1970–1979\"",
+      "spec_id": "e0927233-43e6-4cca-afb2-2ef6e6790b1a"
+    },
+    {
+      "id": "2743e413-bec7-4b9c-b839-b9d1abbe893b",
+      "title": "\"The Affluent Society",
+      "level": 3,
+      "parent_title": "1951–1964\"",
+      "spec_id": "e0927233-43e6-4cca-afb2-2ef6e6790b1a"
+    },
+    {
+      "id": "63011523-1c0b-4c33-8362-4ef32a021dbe",
+      "title": "\"The USA after Watergate: Ford",
+      "level": 3,
+      "parent_title": "Carter and the ‘Ne\"",
+      "spec_id": "e0927233-43e6-4cca-afb2-2ef6e6790b1a"
+    },
+    {
+      "id": "a088a222-76b6-49b9-b809-516efcf3b55d",
+      "title": "\"The GMD",
+      "level": 3,
+      "parent_title": "CCP",
+      "spec_id": "e0927233-43e6-4cca-afb2-2ef6e6790b1a"
+    },
+    {
+      "id": "e0f7516f-4b7c-4772-8227-f272c6d1d2e3",
+      "title": "\"The Collapse of the Republic",
+      "level": 3,
+      "parent_title": "1929–1933\"",
+      "spec_id": "e0927233-43e6-4cca-afb2-2ef6e6790b1a"
+    },
+    {
+      "id": "2cafa7da-6d4e-40fd-bdfc-87b7955a873e",
+      "title": "\"The ‘Golden Age’ of Weimar",
+      "level": 3,
+      "parent_title": "1924–1929\"",
+      "spec_id": "e0927233-43e6-4cca-afb2-2ef6e6790b1a"
+    },
+    {
+      "id": "d6e8dbf1-d135-48c8-a3fc-cb6c34d259a9",
+      "title": "\"The Troubled Birth of the Republic",
+      "level": 3,
+      "parent_title": "1918–1924\"",
+      "spec_id": "e0927233-43e6-4cca-afb2-2ef6e6790b1a"
+    },
+    {
+      "id": "f01ed962-b16c-4c37-87b7-3f6823b50ab0",
+      "title": "\"Consolidation",
+      "level": 3,
+      "parent_title": "Civil War",
+      "spec_id": "e0927233-43e6-4cca-afb2-2ef6e6790b1a"
+    },
+    {
+      "id": "05fb7b8e-758f-40b6-93d6-1771451876f9",
+      "title": "\"The Liberal Governments",
+      "level": 3,
+      "parent_title": "1906–1914\"",
+      "spec_id": "e0927233-43e6-4cca-afb2-2ef6e6790b1a"
+    },
+    {
+      "id": "805d18c2-9f2f-413b-ac25-8039914b6e72",
+      "title": "\"Instability and Alliances",
+      "level": 3,
+      "parent_title": "1900–1911\"",
+      "spec_id": "e0927233-43e6-4cca-afb2-2ef6e6790b1a"
+    },
+    {
+      "id": "2d2e9a00-263c-43ac-93ac-6dff46f73ae7",
+      "title": "\"The Great Powers and their Rivalries",
+      "level": 3,
+      "parent_title": "c.1900\"",
+      "spec_id": "e0927233-43e6-4cca-afb2-2ef6e6790b1a"
+    },
+    {
+      "id": "13954246-e422-4c49-803a-c55bd0ad452c",
+      "title": "\"War",
+      "level": 3,
+      "parent_title": "Terror",
+      "spec_id": "e0927233-43e6-4cca-afb2-2ef6e6790b1a"
+    },
+    {
+      "id": "79807f2c-a7e9-4cb3-99a2-a3205cc2516d",
+      "title": "\"Magna Carta",
+      "level": 3,
+      "parent_title": "Civil War",
+      "spec_id": "e0927233-43e6-4cca-afb2-2ef6e6790b1a"
+    },
+    {
+      "id": "a34302b7-98c7-4746-89b4-b2474e538773",
+      "title": "\"The Interwar Empire: Policy",
+      "level": 3,
+      "parent_title": "Attitudes",
+      "spec_id": "e0927233-43e6-4cca-afb2-2ef6e6790b1a"
+    },
+    {
+      "id": "3476d435-ece2-41f4-b411-6daa6ef8564b",
+      "title": "\"Trade",
+      "level": 3,
+      "parent_title": "Attitudes",
+      "spec_id": "e0927233-43e6-4cca-afb2-2ef6e6790b1a"
+    },
+    {
+      "id": "a3c58395-5c0e-4e44-9980-d9f130d05810",
+      "title": "\"Reaction",
+      "level": 3,
+      "parent_title": "Russification",
+      "spec_id": "e0927233-43e6-4cca-afb2-2ef6e6790b1a"
+    },
+    {
+      "id": "57bc8efb-63d7-4080-8c42-fe53c1ef006d",
+      "title": "\"Post-War Society: Change",
+      "level": 3,
+      "parent_title": "Division",
+      "spec_id": "e0927233-43e6-4cca-afb2-2ef6e6790b1a"
+    },
+    {
+      "id": "73cad588-f3be-4760-a21e-97f290cd4e64",
+      "title": "\"Interwar Britain: Politics",
+      "level": 3,
+      "parent_title": "Economy",
+      "spec_id": "e0927233-43e6-4cca-afb2-2ef6e6790b1a"
+    },
+    {
+      "id": "fcb36470-7c6b-4e60-8e05-814e009fcc6e",
+      "title": "\"Mid-Victorian Politics",
+      "level": 3,
+      "parent_title": "Economy",
+      "spec_id": "e0927233-43e6-4cca-afb2-2ef6e6790b1a"
+    },
+    {
+      "id": "1c3371a0-39e8-4d2d-ad6f-ee08cfd32773",
+      "title": "\"Peel",
+      "level": 3,
+      "parent_title": "the Economy",
+      "spec_id": "e0927233-43e6-4cca-afb2-2ef6e6790b1a"
+    },
+    {
+      "id": "24fccc7c-0951-47c0-819d-51d8eae60060",
+      "title": "\"Conflict and Breakdown",
+      "level": 3,
+      "parent_title": "1603–1629\"",
+      "spec_id": "e0927233-43e6-4cca-afb2-2ef6e6790b1a"
+    },
+    {
+      "id": "95d9ad0a-585a-46f4-8996-71e6fd268a1c",
+      "title": "\"The Late Elizabethan State: Economy",
+      "level": 3,
+      "parent_title": "Culture",
+      "spec_id": "e0927233-43e6-4cca-afb2-2ef6e6790b1a"
+    },
+    {
+      "id": "9beb31dd-6aaf-4703-8be5-e76a032704e3",
+      "title": "\"Society",
+      "level": 3,
+      "parent_title": "Economy",
+      "spec_id": "e0927233-43e6-4cca-afb2-2ef6e6790b1a"
+    },
+    {
+      "id": "e5d3fd80-3b30-40ac-a39f-8bce4a3df7ad",
+      "title": "\"Henry VIII: Government",
+      "level": 3,
+      "parent_title": "Supremacy",
+      "spec_id": "e0927233-43e6-4cca-afb2-2ef6e6790b1a"
+    },
+    {
+      "id": "9c156e40-a968-46bd-aa26-f8585dec639f",
+      "title": "\"Society",
+      "level": 3,
+      "parent_title": "Economy",
+      "spec_id": "e0927233-43e6-4cca-afb2-2ef6e6790b1a"
+    },
+    {
+      "id": "9db4b10d-d437-4ee9-aaa1-4638f34cf90e",
+      "title": "\"Philip II’s Spain: Economy",
+      "level": 3,
+      "parent_title": "Culture",
+      "spec_id": "e0927233-43e6-4cca-afb2-2ef6e6790b1a"
+    },
+    {
+      "id": "f096b824-01f0-41f2-a536-097c0e16ef79",
+      "title": "\"Charles I: Religion",
+      "level": 3,
+      "parent_title": "Empire",
+      "spec_id": "e0927233-43e6-4cca-afb2-2ef6e6790b1a"
+    },
+    {
+      "id": "c6553c3f-8acd-415d-9cce-3a48704b3272",
+      "title": "\"The Catholic Monarchs: Religion",
+      "level": 3,
+      "parent_title": "Economy",
+      "spec_id": "e0927233-43e6-4cca-afb2-2ef6e6790b1a"
+    },
+    {
+      "id": "75e38984-f744-440a-a5f1-088685cf1b66",
+      "title": "\"Outremer: Establishment",
+      "level": 3,
+      "parent_title": "Defence",
+      "spec_id": "e0927233-43e6-4cca-afb2-2ef6e6790b1a"
+    },
+    {
+      "id": "63f4787e-ba10-41dc-bc8c-608371a71957",
+      "title": "\"The First Crusade: Call",
+      "level": 3,
+      "parent_title": "Motivations",
+      "spec_id": "e0927233-43e6-4cca-afb2-2ef6e6790b1a"
+    },
+    {
+      "id": "4029b23f-fe40-4566-a479-049c593f69ae",
+      "title": "\"The Pre-Crusade World: West",
+      "level": 3,
+      "parent_title": "East",
+      "spec_id": "e0927233-43e6-4cca-afb2-2ef6e6790b1a"
+    },
+    {
+      "id": "4577a9f1-fa84-465e-bb33-63c964e72925",
+      "title": "\"Mind",
+      "level": 2,
+      "parent_title": "Body",
+      "spec_id": "e815e640-8c5d-4b9f-ab60-6b62fbb392ce"
+    },
+    {
+      "id": "04117505-c6f3-4df1-a452-4f587e2d6d0a",
+      "title": "\"Understanding a Second Disorder (e.g.",
+      "level": 3,
+      "parent_title": "OCD/Depression)\"",
+      "spec_id": "e815e640-8c5d-4b9f-ab60-6b62fbb392ce"
+    },
+    {
+      "id": "acac0ce7-5c6a-4f85-8eeb-d5b5e2a638b4",
+      "title": "\"Research Methods: Validity",
+      "level": 3,
+      "parent_title": "Reliability and Bias\"",
+      "spec_id": "e815e640-8c5d-4b9f-ab60-6b62fbb392ce"
+    },
+    {
+      "id": "3353e7ab-a87c-4b24-b934-e0f4ec3e7b51",
+      "title": "\"Understanding Amino Acids",
+      "level": 2,
+      "parent_title": "Proteins and DNA\"",
+      "spec_id": "e8790e0a-1601-47a4-b7f9-b7945819b3ee"
+    },
+    {
+      "id": "d7653926-1686-49ae-9c62-9d28e71d1eb4",
+      "title": "\"Understanding Chemical Equilibria",
+      "level": 2,
+      "parent_title": "Le Chatelier’s Principle and Kc\"",
+      "spec_id": "e8790e0a-1601-47a4-b7f9-b7945819b3ee"
+    },
+    {
+      "id": "05a0f775-2acf-4882-a5f3-4fbb469982aa",
+      "title": "\"Understanding Oxidation",
+      "level": 2,
+      "parent_title": "Reduction and Redox Equations\"",
+      "spec_id": "e8790e0a-1601-47a4-b7f9-b7945819b3ee"
+    },
+    {
+      "id": "21cdffb8-b3e8-4ddb-ab95-55c99e954d10",
+      "title": "\"Understanding Group 2",
+      "level": 2,
+      "parent_title": "the Alkaline Earth Metals\"",
+      "spec_id": "e8790e0a-1601-47a4-b7f9-b7945819b3ee"
+    },
+    {
+      "id": "b34d11c9-e055-4a94-a47c-82c7a7905b67",
+      "title": "\"Understanding Group 7 (17)",
+      "level": 2,
+      "parent_title": "the Halogens\"",
+      "spec_id": "e8790e0a-1601-47a4-b7f9-b7945819b3ee"
+    },
+    {
+      "id": "ebf96fb5-c983-4707-bb6f-46f9a93c048b",
+      "title": "\"Entropy",
+      "level": 3,
+      "parent_title": "Gibbs Free Energy and Feasibility\"",
+      "spec_id": "e8790e0a-1601-47a4-b7f9-b7945819b3ee"
+    },
+    {
+      "id": "fd7aa7cc-7dbe-41b2-859a-f34fe5dcf450",
+      "title": "\"Financial Investment Appraisal: Payback",
+      "level": 3,
+      "parent_title": "ARR",
+      "spec_id": "f32e29d1-2b96-4106-a58c-56d4dc916a9a"
+    },
+    {
+      "id": "71c53263-ddd1-4980-911e-c1dcf5360fc4",
+      "title": "\"Strategy",
+      "level": 3,
+      "parent_title": "Tactics",
+      "spec_id": "f32e29d1-2b96-4106-a58c-56d4dc916a9a"
+    },
+    {
+      "id": "e5a3e5eb-5246-4525-8e90-f36b985e161b",
+      "title": "\"Motivation Theories: Taylor",
+      "level": 3,
+      "parent_title": "Maslow",
+      "spec_id": "f32e29d1-2b96-4106-a58c-56d4dc916a9a"
+    },
+    {
+      "id": "3c7bdc3d-47ea-4118-b4bf-af2154e8241f",
+      "title": "\"The Extended Marketing Mix: People",
+      "level": 3,
+      "parent_title": "Process",
+      "spec_id": "f32e29d1-2b96-4106-a58c-56d4dc916a9a"
+    },
+    {
+      "id": "086015c8-6458-411d-ba20-8bff80b2ab2a",
+      "title": "\"Liability",
+      "level": 3,
+      "parent_title": "Shares",
+      "spec_id": "f32e29d1-2b96-4106-a58c-56d4dc916a9a"
+    },
+    {
+      "id": "04f69786-c0da-41cd-8514-ff86d69471a6",
+      "title": "\"Private",
+      "level": 3,
+      "parent_title": "Public",
+      "spec_id": "f32e29d1-2b96-4106-a58c-56d4dc916a9a"
+    }
+  ],
+  "topicsInActiveBlocks": [],
+  "encodingIssues": [],
+  "circularReferences": [],
+  "invalidParentIds": []
+}

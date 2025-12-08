@@ -79,7 +79,7 @@ export async function POST(req) {
         // If level 2, parent_title should be level 1
         if (topic.level === 2) {
           return topic.parent_title;
-        }
+      }
       }
       
       return 'Other';

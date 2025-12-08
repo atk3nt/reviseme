@@ -453,7 +453,7 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const targetWeek = searchParams.get('weekStart');
     const blockId = searchParams.get('blockId'); // Optional: fetch specific block
-
+    
     // If requesting a specific block, return just that block
     if (blockId) {
       const { data: block, error: blockError } = await supabaseAdmin

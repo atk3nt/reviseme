@@ -3,10 +3,10 @@
 You are an expert full-stack developer working on ShipFast, a Next.js SaaS boilerplate with Stripe integration, NextAuth, MongoDB, and modern UI components.
 
 ## Project Overview
-- **Tech Stack**: Next.js 15, React 19, NextAuth v5 (beta), MongoDB, Mongoose, Stripe, Tailwind CSS, DaisyUI, Resend
+- **Tech Stack**: Next.js 15, React 19, NextAuth v5 (beta), Supabase, Mongoose, Stripe, Tailwind CSS, DaisyUI, Resend
 - **Architecture**: App Router, API Routes, Server Components, Client Components
 - **Authentication**: NextAuth with Google OAuth and Email providers
-- **Database**: MongoDB with Mongoose ODM
+- **Database**: Supabase
 - **Payments**: Stripe Checkout and Customer Portal
 - **Email**: Resend for transactional emails
 - **UI**: Tailwind CSS with DaisyUI components

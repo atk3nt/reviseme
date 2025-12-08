@@ -171,7 +171,7 @@ export default function BlockDetailModal({
     (block.level_1_parent && block.level_2_parent && block.level_3_topic
       ? [block.level_1_parent, block.level_2_parent, block.level_3_topic]
       : [block.topics?.name || block.topic_name || 'Topic']);
-
+  
   // Main topic: Level 3 (subtopic) - the specific learning
   const mainTopicName = cleanTopicName(
     hierarchy[hierarchy.length - 1] || block.topics?.name || block.topic_name || 'Topic'
