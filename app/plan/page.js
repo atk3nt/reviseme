@@ -22,10 +22,12 @@ function PlanPageContent() {
   // Timer state storage: { [blockKey]: { running: boolean, phase: 'study'|'rest', endTime: number|null, pausedAt: number|null, remainingMs: number|null } }
   const [timerStates, setTimerStates] = useState({});
   const [weekStartDate, setWeekStartDate] = useState(() => {
-    const d = new Date();
-    const day = d.getDay();
-    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-    const monday = new Date(d.setDate(diff));
+    // Calculate current week's Monday (not next week)
+    const today = new Date();
+    const day = today.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+    const diff = today.getDate() - day + (day === 0 ? -6 : 1); // Monday of current week
+    const monday = new Date(today);
+    monday.setDate(diff);
     monday.setHours(0, 0, 0, 0);
     return monday;
   });
@@ -35,6 +37,7 @@ function PlanPageContent() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [settingsDropdownOpen, setSettingsDropdownOpen] = useState(false);
   const [supportModalOpen, setSupportModalOpen] = useState(false);
+  const [timePreferences, setTimePreferences] = useState(null); // Load from database
 
   // Clean topic names by removing leading apostrophes/quotes
   // Optionally include parent topic name (for TodayView and BlockDetailModal)
@@ -51,34 +54,102 @@ function PlanPageContent() {
     return cleaned;
   }, []);
 
-  useEffect(() => {
-    // Check if we're in dev mode
-    const isDev = typeof window !== 'undefined' && (
-      window.location.hostname === 'localhost' ||
-      window.location.hostname === '127.0.0.1' ||
-      window.location.hostname.includes('localhost')
-    );
-    
-    if (!isDev && status === 'unauthenticated') {
-      console.log('⚠️ Not authenticated, redirecting to sign in');
-      router.push('/api/auth/signin');
-    } else {
-      // In dev mode or if authenticated, load blocks
-      if (isDev) {
-        console.log('🔧 Dev mode: Loading blocks without authentication');
-      }
-      loadBlocks();
-    }
-  }, [status, router]);
+  // Get current week start (Monday) - Define early to avoid initialization issues
+  const getCurrentWeekStart = useCallback(() => {
+    const today = new Date();
+    const day = today.getDay();
+    const diff = today.getDate() - day + (day === 0 ? -6 : 1);
+    const monday = new Date(today);
+    monday.setDate(diff);
+    monday.setHours(0, 0, 0, 0);
+    return monday;
+  }, []);
 
-  const loadBlocks = async () => {
+  // Check if we're viewing next week - Define early to avoid initialization issues
+  const isViewingNextWeek = useMemo(() => {
+    const currentWeekStart = getCurrentWeekStart();
+    const viewingWeekStart = new Date(weekStartDate);
+    viewingWeekStart.setHours(0, 0, 0, 0);
+    currentWeekStart.setHours(0, 0, 0, 0);
+    return viewingWeekStart.getTime() > currentWeekStart.getTime();
+  }, [weekStartDate, getCurrentWeekStart]);
+
+  // Check if we're viewing previous week
+  const isViewingPreviousWeek = useMemo(() => {
+    const currentWeekStart = getCurrentWeekStart();
+    const viewingWeekStart = new Date(weekStartDate);
+    viewingWeekStart.setHours(0, 0, 0, 0);
+    currentWeekStart.setHours(0, 0, 0, 0);
+    return viewingWeekStart.getTime() < currentWeekStart.getTime();
+  }, [weekStartDate, getCurrentWeekStart]);
+
+  // Format week label for display
+  const getWeekLabel = useCallback(() => {
+    const currentWeekStart = getCurrentWeekStart();
+    const viewingWeekStart = new Date(weekStartDate);
+    viewingWeekStart.setHours(0, 0, 0, 0);
+    currentWeekStart.setHours(0, 0, 0, 0);
+    
+    if (viewingWeekStart.getTime() === currentWeekStart.getTime()) {
+      return "This Week";
+    } else if (viewingWeekStart.getTime() > currentWeekStart.getTime()) {
+      return "Next Week";
+    } else {
+      return "Previous Week";
+    }
+  }, [weekStartDate, getCurrentWeekStart]);
+
+  // Format week date range for display
+  const getWeekDateRange = useCallback(() => {
+    const weekStart = new Date(weekStartDate);
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 6); // Sunday
+    
+    const startMonth = weekStart.toLocaleDateString('en-US', { month: 'short' });
+    const startDay = weekStart.getDate();
+    const endMonth = weekEnd.toLocaleDateString('en-US', { month: 'short' });
+    const endDay = weekEnd.getDate();
+    
+    if (startMonth === endMonth) {
+      return `${startMonth} ${startDay} - ${endDay}`;
+    } else {
+      return `${startMonth} ${startDay} - ${endMonth} ${endDay}`;
+    }
+  }, [weekStartDate]);
+
+  // Check if we can navigate to previous week (only if viewing next week or later)
+  const canGoToPreviousWeek = useMemo(() => {
+    const currentWeekStart = getCurrentWeekStart();
+    const viewingWeekStart = new Date(weekStartDate);
+    viewingWeekStart.setHours(0, 0, 0, 0);
+    currentWeekStart.setHours(0, 0, 0, 0);
+    // Can go to previous week if we're viewing next week or later (not current week)
+    return viewingWeekStart.getTime() > currentWeekStart.getTime();
+  }, [weekStartDate, getCurrentWeekStart]);
+
+
+  // Load blocks for a specific week
+  const loadBlocksForWeek = useCallback(async (targetWeekStart = null) => {
     try {
       setIsLoading(true);
       
+      // Use provided weekStart, or fall back to weekStartDate state
+      const weekStart = targetWeekStart || weekStartDate;
+      const weekStartStr = weekStart.toISOString().split('T')[0];
+      
+      const currentWeekStart = getCurrentWeekStart();
+      console.log('🔍 Loading blocks for week:', {
+        requestedWeek: weekStartStr,
+        currentWeekStart: currentWeekStart.toISOString().split('T')[0],
+        weekStartDateState: weekStartDate.toISOString().split('T')[0],
+        targetWeekStart: targetWeekStart ? targetWeekStart.toISOString().split('T')[0] : null,
+        today: new Date().toISOString().split('T')[0],
+        todayDay: new Date().getDay() // 0=Sunday, 1=Monday, etc.
+      });
+      
       // Step 1: First try to GET existing blocks from the database
-      console.log('🔍 Attempting to load existing blocks from database...');
       try {
-        const getResponse = await fetch('/api/plan/generate', {
+        const getResponse = await fetch(`/api/plan/generate?weekStart=${weekStartStr}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -93,6 +164,20 @@ function PlanPageContent() {
             hasBlocks: !!getData.blocks && getData.blocks.length > 0,
             responseStatus: getResponse.status
           });
+          
+          // Log Sunday blocks specifically for debugging
+          if (getData.blocks && getData.blocks.length > 0) {
+            const sundayBlocks = getData.blocks.filter(block => {
+              if (!block.scheduled_at) return false;
+              const blockDate = new Date(block.scheduled_at);
+              return blockDate.getDay() === 0; // Sunday
+            });
+            console.log('📅 Sunday blocks found in GET response:', sundayBlocks.length, sundayBlocks.map(b => ({
+              id: b.id,
+              scheduled_at: b.scheduled_at,
+              topic_name: b.topic_name || b.topics?.name
+            })));
+          }
 
           // If we have existing blocks, format and display them
           if (getData.blocks && getData.blocks.length > 0) {
@@ -115,7 +200,7 @@ function PlanPageContent() {
               return {
                 id: block.id,
                 scheduled_at,
-                duration_minutes: block.duration_minutes || (block.duration ? block.duration * 60 : 90),
+                duration_minutes: block.duration_minutes || (block.duration ? block.duration * 60 : 30),
                 status: block.status || 'scheduled',
                 ai_rationale: block.ai_rationale || `Priority: ${block.priority_score || 'N/A'} - ${block.topic_description || 'Focus on this topic to improve your understanding.'}`,
                 hierarchy: block.hierarchy || block.topics?.hierarchy || null,
@@ -138,18 +223,62 @@ function PlanPageContent() {
             if (formattedBlocks.length > 0) {
               setBlocks(formattedBlocks);
               
-              // Load blocked times
+              // Load time preferences from database
               try {
-                const blockedResponse = await fetch('/api/availability/save');
-                if (blockedResponse.ok) {
-                  const blockedData = await blockedResponse.json();
-                  setBlockedTimeRanges((blockedData.blockedTimes || []).map(bt => ({
-                    start_time: bt.start,
-                    end_time: bt.end
-                  })));
+                const timePrefResponse = await fetch('/api/debug/time-preferences');
+                if (timePrefResponse.ok) {
+                  const timePrefData = await timePrefResponse.json();
+                  if (timePrefData.success && timePrefData.timePreferences) {
+                    const prefs = timePrefData.timePreferences;
+                    setTimePreferences({
+                      weekdayEarliest: prefs.weekdayEarliest !== 'NOT SET' ? prefs.weekdayEarliest : null,
+                      weekdayLatest: prefs.weekdayLatest !== 'NOT SET' ? prefs.weekdayLatest : null,
+                      weekendEarliest: prefs.weekendEarliest !== 'NOT SET' ? prefs.weekendEarliest : null,
+                      weekendLatest: prefs.weekendLatest !== 'NOT SET' ? prefs.weekendLatest : null,
+                      useSameWeekendTimes: prefs.useSameWeekendTimes
+                    });
+                  }
                 }
               } catch (error) {
-                console.error('Error loading blocked times:', error);
+                console.error('Failed to load time preferences:', error);
+              }
+
+              // Load blocked times - use from GET response if available (already aligned to target week)
+              // Otherwise fall back to loading from availability API
+              if (getData.blockedTimes && Array.isArray(getData.blockedTimes) && getData.blockedTimes.length > 0) {
+                // Use blocked times from API response (already aligned to target week)
+                const blockedTimes = getData.blockedTimes.map(bt => ({
+                  start_time: bt.start || bt.start_datetime,
+                  end_time: bt.end || bt.end_datetime
+                }));
+                setBlockedTimeRanges(blockedTimes);
+                if (process.env.NODE_ENV === 'development') {
+                  console.log('🚫 Loaded blocked times from GET response (aligned to target week):', {
+                    count: blockedTimes.length,
+                    sample: blockedTimes.slice(0, 3)
+                  });
+                }
+              } else {
+                // Fall back to loading from availability API (for current week)
+                try {
+                  const blockedResponse = await fetch('/api/availability/save');
+                  if (blockedResponse.ok) {
+                    const blockedData = await blockedResponse.json();
+                    const blockedTimes = (blockedData.blockedTimes || []).map(bt => ({
+                      start_time: bt.start,
+                      end_time: bt.end
+                    }));
+                    setBlockedTimeRanges(blockedTimes);
+                    if (process.env.NODE_ENV === 'development') {
+                      console.log('🚫 Loaded blocked times from availability API:', {
+                        count: blockedTimes.length,
+                        sample: blockedTimes.slice(0, 3)
+                      });
+                    }
+                  }
+                } catch (error) {
+                  console.error('Error loading blocked times:', error);
+                }
               }
               
               return; // Exit early - we have blocks to display
@@ -172,6 +301,21 @@ function PlanPageContent() {
       }
 
       // Step 2: No existing blocks found, so generate new ones using POST
+      // IMPORTANT: Don't regenerate current week - only regenerate future weeks
+      // This prevents deleting existing blocks when returning to current week
+      const viewingWeekStart = new Date(weekStart);
+      viewingWeekStart.setHours(0, 0, 0, 0);
+      const currentWeekStartDate = getCurrentWeekStart();
+      currentWeekStartDate.setHours(0, 0, 0, 0);
+      const isViewingCurrentWeek = viewingWeekStart.getTime() === currentWeekStartDate.getTime();
+      
+      if (isViewingCurrentWeek) {
+        console.log('⚠️ Viewing current week with no blocks found - NOT regenerating to preserve existing blocks');
+        setBlocks([]);
+        setIsLoading(false);
+        return;
+      }
+      
       console.log('📝 No existing blocks found, generating new plan...');
       
       // Load data from localStorage (from onboarding)
@@ -200,7 +344,7 @@ function PlanPageContent() {
         return;
       }
 
-      // Generate study plan using scheduler
+      // Generate study plan using scheduler - include targetWeek for next week generation
       const postResponse = await fetch('/api/plan/generate', {
         method: 'POST',
         headers: {
@@ -212,7 +356,8 @@ function PlanPageContent() {
           topicStatus,
           availability,
           examDates,
-          studyBlockDuration: 1.5
+          studyBlockDuration: 0.5,
+          targetWeek: weekStartStr // Pass the target week so it generates for the correct week
         })
       });
 
@@ -254,7 +399,7 @@ function PlanPageContent() {
         return {
           id: block.id,
           scheduled_at,
-          duration_minutes: block.duration_minutes || (block.duration ? block.duration * 60 : 90),
+          duration_minutes: block.duration_minutes || (block.duration ? block.duration * 60 : 30),
           status: block.status || 'scheduled',
           ai_rationale: block.ai_rationale || `Priority: ${block.priority_score || 'N/A'} - ${block.topic_description || 'Focus on this topic to improve your understanding.'}`,
           hierarchy: block.hierarchy || block.topics?.hierarchy || null,
@@ -276,18 +421,42 @@ function PlanPageContent() {
       console.log('✅ Formatted generated blocks:', formattedBlocks.length);
       setBlocks(formattedBlocks);
       
-      // Load blocked times
-      try {
-        const blockedResponse = await fetch('/api/availability/save');
-        if (blockedResponse.ok) {
-          const blockedData = await blockedResponse.json();
-          setBlockedTimeRanges((blockedData.blockedTimes || []).map(bt => ({
-            start_time: bt.start,
-            end_time: bt.end
-          })));
+      // Load blocked times - use from POST response if available (already aligned to target week)
+      // Otherwise fall back to loading from availability API
+      if (postData.blockedTimes && Array.isArray(postData.blockedTimes) && postData.blockedTimes.length > 0) {
+        // Use blocked times from API response (already aligned to target week)
+        const blockedTimes = postData.blockedTimes.map(bt => ({
+          start_time: bt.start || bt.start_datetime,
+          end_time: bt.end || bt.end_datetime
+        }));
+        setBlockedTimeRanges(blockedTimes);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('🚫 Loaded blocked times from POST response (aligned to target week):', {
+            count: blockedTimes.length,
+            sample: blockedTimes.slice(0, 3)
+          });
         }
-      } catch (error) {
-        console.error('Error loading blocked times:', error);
+      } else {
+        // Fall back to loading from availability API (for current week)
+        try {
+          const blockedResponse = await fetch('/api/availability/save');
+          if (blockedResponse.ok) {
+            const blockedData = await blockedResponse.json();
+            const blockedTimes = (blockedData.blockedTimes || []).map(bt => ({
+              start_time: bt.start,
+              end_time: bt.end
+            }));
+            setBlockedTimeRanges(blockedTimes);
+            if (process.env.NODE_ENV === 'development') {
+              console.log('🚫 Loaded blocked times from availability API:', {
+                count: blockedTimes.length,
+                sample: blockedTimes.slice(0, 3)
+              });
+            }
+          }
+        } catch (error) {
+          console.error('Error loading blocked times:', error);
+        }
       }
     } catch (error) {
       console.error('❌ Error loading blocks:', error);
@@ -296,7 +465,112 @@ function PlanPageContent() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [weekStartDate, getCurrentWeekStart, cleanTopicName]);
+
+  // Wrapper function that uses current weekStartDate
+  const loadBlocks = useCallback(() => {
+    return loadBlocksForWeek();
+  }, [loadBlocksForWeek]);
+
+  // Listen for availability updates to refresh blocks
+  useEffect(() => {
+    const handleAvailabilityUpdate = (event) => {
+      console.log('🔄 Availability updated, refreshing blocks...', event.detail);
+      loadBlocksForWeek();
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('availabilityUpdated', handleAvailabilityUpdate);
+      
+      return () => {
+        window.removeEventListener('availabilityUpdated', handleAvailabilityUpdate);
+      };
+    }
+  }, [loadBlocksForWeek]);
+
+  // Load time preferences on component mount
+  useEffect(() => {
+    const loadTimePreferences = async () => {
+      try {
+        const timePrefResponse = await fetch('/api/debug/time-preferences');
+        if (timePrefResponse.ok) {
+          const timePrefData = await timePrefResponse.json();
+          if (timePrefData.success && timePrefData.timePreferences) {
+            const prefs = timePrefData.timePreferences;
+            setTimePreferences({
+              weekdayEarliest: prefs.weekdayEarliest !== 'NOT SET' ? prefs.weekdayEarliest : null,
+              weekdayLatest: prefs.weekdayLatest !== 'NOT SET' ? prefs.weekdayLatest : null,
+              weekendEarliest: prefs.weekendEarliest !== 'NOT SET' ? prefs.weekendEarliest : null,
+              weekendLatest: prefs.weekendLatest !== 'NOT SET' ? prefs.weekendLatest : null,
+              useSameWeekendTimes: prefs.useSameWeekendTimes
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load time preferences:', error);
+      }
+    };
+    loadTimePreferences();
+  }, []);
+
+  // Navigation functions
+  const navigateToPreviousWeek = useCallback(() => {
+    if (!canGoToPreviousWeek) return;
+    const newWeekStart = new Date(weekStartDate);
+    newWeekStart.setDate(weekStartDate.getDate() - 7);
+    setWeekStartDate(newWeekStart);
+  }, [weekStartDate, canGoToPreviousWeek]);
+
+  const navigateToNextWeek = useCallback(() => {
+    const newWeekStart = new Date(weekStartDate);
+    newWeekStart.setDate(weekStartDate.getDate() + 7);
+    setWeekStartDate(newWeekStart);
+  }, [weekStartDate]);
+
+  useEffect(() => {
+    // Check if we're in dev mode
+    const devMode = typeof window !== 'undefined' && (
+      window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1' ||
+      window.location.hostname.includes('localhost')
+    );
+    
+    if (!devMode && status === 'unauthenticated') {
+      console.log('⚠️ Not authenticated, redirecting to sign in');
+      router.push('/api/auth/signin');
+    } else {
+      // In dev mode or if authenticated, load blocks
+      if (devMode) {
+        console.log('🔧 Dev mode: Loading blocks without authentication');
+      }
+      loadBlocks();
+    }
+  }, [status, router, loadBlocks]);
+
+  // Ensure weekStartDate is synced to current week on mount
+  useEffect(() => {
+    const currentWeekStart = getCurrentWeekStart();
+    const currentWeekStr = currentWeekStart.toISOString().split('T')[0];
+    const stateWeekStr = weekStartDate.toISOString().split('T')[0];
+    
+    // If weekStartDate doesn't match current week, reset it
+    if (currentWeekStr !== stateWeekStr) {
+      console.log('🔄 Syncing weekStartDate to current week:', currentWeekStr, 'was:', stateWeekStr);
+      setWeekStartDate(currentWeekStart);
+    }
+  }, []); // Only run on mount
+
+  // Reload blocks when weekStartDate changes
+  useEffect(() => {
+    loadBlocksForWeek();
+  }, [weekStartDate, loadBlocksForWeek]);
+
+  // Auto-switch to week view when viewing next week
+  useEffect(() => {
+    if (isViewingNextWeek && activeTab === 'today') {
+      setActiveTab('week');
+    }
+  }, [isViewingNextWeek, activeTab]);
 
   const getStartOfWeek = (date) => {
     const d = new Date(date);
@@ -477,13 +751,20 @@ function PlanPageContent() {
     if (typeof window === 'undefined') return [];
     
     const labels = [];
-    const timePreferences = JSON.parse(localStorage.getItem('timePreferences') || '{}');
+    // Use time preferences from state (loaded from database) or fallback to localStorage
+    const prefs = timePreferences || JSON.parse(localStorage.getItem('timePreferences') || '{}');
     
-    // Get earliest and latest times across all days
-    const weekdayStart = timePreferences.weekdayEarliest || '09:00';
-    const weekdayEnd = timePreferences.weekdayLatest || '20:00';
-    const weekendStart = timePreferences.weekendEarliest || timePreferences.weekdayEarliest || '09:00';
-    const weekendEnd = timePreferences.weekendLatest || timePreferences.weekdayLatest || '20:00';
+    // Get earliest and latest times across all days - use database values, no defaults
+    const weekdayStart = prefs.weekdayEarliest;
+    const weekdayEnd = prefs.weekdayLatest;
+    const weekendStart = prefs.weekendEarliest || prefs.weekdayEarliest;
+    const weekendEnd = prefs.weekendLatest || prefs.weekdayLatest;
+    
+    // If no preferences available, return empty array (shouldn't happen if user completed onboarding)
+    if (!weekdayStart || !weekdayEnd) {
+      console.warn('⚠️ No time preferences available');
+      return [];
+    }
     
     // Use the earliest start and latest end
     const [startHour, startMin] = weekdayStart.split(':').map(Number);
@@ -509,11 +790,18 @@ function PlanPageContent() {
   const weekTimeBounds = useMemo(() => {
     if (typeof window === 'undefined') return { start: 9 * 60, end: 20 * 60 };
     
-    const timePreferences = JSON.parse(localStorage.getItem('timePreferences') || '{}');
-    const weekdayStart = timePreferences.weekdayEarliest || '09:00';
-    const weekdayEnd = timePreferences.weekdayLatest || '20:00';
-    const weekendStart = timePreferences.weekendEarliest || weekdayStart;
-    const weekendEnd = timePreferences.weekendLatest || weekdayEnd;
+    // Use time preferences from state (loaded from database) or fallback to localStorage
+    const prefs = timePreferences || JSON.parse(localStorage.getItem('timePreferences') || '{}');
+    const weekdayStart = prefs.weekdayEarliest;
+    const weekdayEnd = prefs.weekdayLatest;
+    const weekendStart = prefs.weekendEarliest || weekdayStart;
+    const weekendEnd = prefs.weekendLatest || weekdayEnd;
+    
+    // If no preferences available, return empty (shouldn't happen if user completed onboarding)
+    if (!weekdayStart || !weekdayEnd) {
+      console.warn('⚠️ No time preferences available for time slot filtering');
+      return false; // Don't filter if no preferences
+    }
     
     const parseTime = (timeStr) => {
       const [h, m] = timeStr.split(':').map(Number);
@@ -531,24 +819,8 @@ function PlanPageContent() {
 
   const timeLabels = useMemo(() => buildTimeLabels(), [buildTimeLabels]);
 
-  // Create a map of blocked slots for quick lookup
-  const blockedSlotMap = useMemo(() => {
-    const map = new Map();
-    blockedTimeRanges.forEach(range => {
-      const start = new Date(range.start_time);
-      const end = new Date(range.end_time);
-      const dayKey = start.toDateString();
-      
-      const startMin = start.getHours() * 60 + start.getMinutes();
-      const endMin = end.getHours() * 60 + end.getMinutes();
-      
-      for (let min = startMin; min < endMin; min += 30) {
-        const key = `${dayKey}-${Math.floor((min - weekTimeBounds.start) / 30)}`;
-        map.set(key, true);
-      }
-    });
-    return map;
-  }, [blockedTimeRanges, weekTimeBounds]);
+  // Note: blockedSlotMap is now created inside WeekView to match its timeIndex format
+  // This ensures the key format matches exactly
 
   // Timer state helpers
   const getTimerState = useCallback((blockKey) => {
@@ -702,24 +974,66 @@ function PlanPageContent() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold">Your Revision Plan</h1>
-              <p className="text-base-content/70">
-                  {activeTab === 'today' ? 'Today\'s schedule' : 'This week\'s overview'}
+              <div className="flex items-center gap-3 mt-1">
+                <p className="text-base-content/70">
+                  {activeTab === 'today' && !isViewingNextWeek && !isViewingPreviousWeek 
+                    ? 'Today\'s schedule' 
+                    : `${getWeekLabel()} - ${getWeekDateRange()}`}
                 </p>
+              </div>
             </div>
             
-            <div className="flex space-x-2">
-              <button
-                onClick={() => setActiveTab('today')}
-                className={`btn ${activeTab === 'today' ? 'btn-primary' : 'btn-outline'}`}
-              >
-                Today
-              </button>
-              <button
-                onClick={() => setActiveTab('week')}
-                className={`btn ${activeTab === 'week' ? 'btn-primary' : 'btn-outline'}`}
-              >
-                Week
-              </button>
+            <div className="flex items-center gap-2">
+              {/* Navigation Arrows - Always show */}
+              <div className="flex items-center gap-1 bg-base-100 rounded-lg p-1">
+                {/* Previous Week Arrow */}
+                <button
+                  onClick={navigateToPreviousWeek}
+                  disabled={!canGoToPreviousWeek}
+                  className={`btn btn-ghost btn-circle btn-sm ${!canGoToPreviousWeek ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  aria-label="Previous week"
+                  title={canGoToPreviousWeek ? "Go to previous week" : "Already at current week"}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20px" height="20px" viewBox="0 0 24 24">
+                    <path fillRule="evenodd" clipRule="evenodd" d="M16.0001 1.58576L5.58588 12L16.0001 22.4142L17.4143 21L8.41431 12L17.4143 2.99997L16.0001 1.58576Z" fill="currentColor"></path>
+                  </svg>
+                </button>
+                
+                {/* Week Label */}
+                <div className="px-3 py-1 text-sm font-medium min-w-[120px] text-center">
+                  {getWeekLabel()}
+                </div>
+                
+                {/* Next Week Arrow */}
+                <button
+                  onClick={navigateToNextWeek}
+                  className="btn btn-ghost btn-circle btn-sm"
+                  aria-label="Next week"
+                  title="Go to next week"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20px" height="20px" viewBox="0 0 24 24">
+                    <path fillRule="evenodd" clipRule="evenodd" d="M7.99991 1.58576L18.4141 12L7.99991 22.4142L6.58569 21L15.5857 12L6.58569 2.99997L7.99991 1.58576Z" fill="currentColor"></path>
+                  </svg>
+                </button>
+              </div>
+              
+              {/* Today/Week Tabs - Hide Today tab when viewing next week */}
+              <div className="flex space-x-2">
+                {!isViewingNextWeek && !isViewingPreviousWeek && (
+                  <button
+                    onClick={() => setActiveTab('today')}
+                    className={`btn btn-sm ${activeTab === 'today' ? 'btn-primary' : 'btn-outline'}`}
+                  >
+                    Today
+                  </button>
+                )}
+                <button
+                  onClick={() => setActiveTab('week')}
+                  className={`btn btn-sm ${activeTab === 'week' ? 'btn-primary' : 'btn-outline'}`}
+                >
+                  Week
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -921,10 +1235,11 @@ function PlanPageContent() {
             getBlockKey={deriveBlockKey}
             timeLabels={timeLabels}
             weekTimeBounds={weekTimeBounds}
-            blockedSlotMap={blockedSlotMap}
+            blockedTimeRanges={blockedTimeRanges}
             weekStartDate={weekStartDate}
             isLoading={isLoading}
-            cleanTopicName={cleanTopicName}
+          cleanTopicName={cleanTopicName}
+          timePreferences={timePreferences}
           />
         )}
       </div>
@@ -1095,56 +1410,64 @@ function WeekView({
   getBlockKey,
   timeLabels,
   weekTimeBounds,
-  blockedSlotMap,
+  blockedTimeRanges,
   weekStartDate,
   isLoading,
-  cleanTopicName
+  cleanTopicName,
+  timePreferences
 }) {
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   
-  const getStartOfWeek = (date) => {
-    const d = new Date(date);
-    const day = d.getDay();
-    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-    const monday = new Date(d.setDate(diff));
+  // Use weekStartDate prop if provided, otherwise calculate from current date
+  const baseDate = useMemo(() => {
+    if (weekStartDate) {
+      const date = new Date(weekStartDate);
+      date.setHours(0, 0, 0, 0);
+      return date;
+    }
+    // Fallback: calculate current week's Monday
+    const today = new Date();
+    const day = today.getDay();
+    const diff = today.getDate() - day + (day === 0 ? -6 : 1);
+    const monday = new Date(today);
+    monday.setDate(diff);
     monday.setHours(0, 0, 0, 0);
     return monday;
-  };
-  
-  const baseDate = getStartOfWeek(new Date());
+  }, [weekStartDate]);
   
   // Get time preferences for weekday/weekend
-  const timePreferences = useMemo(() => {
-    if (typeof window === 'undefined') {
-      return {
-        weekdayEarliest: '09:00',
-        weekdayLatest: '20:00',
-        weekendEarliest: '09:00',
-        weekendLatest: '20:00',
-        useSameWeekendTimes: true
-      };
+  // Use time preferences from state (loaded from database) or fallback to localStorage
+  // NO DEFAULTS - if not available, it means user hasn't completed onboarding
+  const effectiveTimePreferences = useMemo(() => {
+    if (timePreferences) {
+      return timePreferences;
     }
-    return JSON.parse(localStorage.getItem('timePreferences') || JSON.stringify({
-      weekdayEarliest: '09:00',
-      weekdayLatest: '20:00',
-      weekendEarliest: '09:00',
-      weekendLatest: '20:00',
-      useSameWeekendTimes: true
-    }));
-  }, []);
+    if (typeof window !== 'undefined') {
+      const localPrefs = JSON.parse(localStorage.getItem('timePreferences') || '{}');
+      if (localPrefs.weekdayEarliest && localPrefs.weekdayLatest) {
+        return localPrefs;
+      }
+    }
+    // Return null if no preferences available (UI should handle this gracefully)
+    return null;
+  }, [timePreferences]);
   
   // Build time labels for each day type (weekday vs weekend)
   const getTimeLabelsForDay = useCallback((dayIndex) => {
+    if (!effectiveTimePreferences) {
+      return { startTime: null, endTime: null };
+    }
+    
     const isWeekend = dayIndex >= 5; // Saturday (5) or Sunday (6)
-    const useSameTimes = timePreferences.useSameWeekendTimes;
+    const useSameTimes = effectiveTimePreferences.useSameWeekendTimes;
     
     let startTime, endTime;
     if (isWeekend && !useSameTimes) {
-      startTime = timePreferences.weekendEarliest || '09:00';
-      endTime = timePreferences.weekendLatest || '20:00';
+      startTime = effectiveTimePreferences.weekendEarliest || effectiveTimePreferences.weekdayEarliest;
+      endTime = effectiveTimePreferences.weekendLatest || effectiveTimePreferences.weekdayLatest;
     } else {
-      startTime = timePreferences.weekdayEarliest || '09:00';
-      endTime = timePreferences.weekdayLatest || '20:00';
+      startTime = effectiveTimePreferences.weekdayEarliest;
+      endTime = effectiveTimePreferences.weekdayLatest;
     }
     
     const [startHour, startMin] = startTime.split(':').map(Number);
@@ -1189,6 +1512,64 @@ function WeekView({
       });
   }, [getTimeLabelsForDay]);
   
+  // Create a map of blocked slots for quick lookup - using same key format as blocksBySlot
+  const blockedSlotMap = useMemo(() => {
+    const map = new Map();
+    if (!blockedTimeRanges || blockedTimeRanges.length === 0) {
+      return map;
+    }
+    
+    blockedTimeRanges.forEach(range => {
+      // Normalize dates to local timezone for proper comparison
+      const start = new Date(range.start_time || range.start);
+      const end = new Date(range.end_time || range.end);
+      
+      // Normalize to local date (strip timezone info for day comparison)
+      const startDate = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+      const dayKey = startDate.toDateString();
+      
+      // Use local hours/minutes for time matching
+      const startMin = start.getHours() * 60 + start.getMinutes();
+      const endMin = end.getHours() * 60 + end.getMinutes();
+      
+      // Find matching timeIndex in allTimeLabels for each 30-minute slot
+      for (let min = startMin; min < endMin; min += 30) {
+        // Find the closest timeIndex in allTimeLabels
+        let closestIndex = -1;
+        let minDiff = Infinity;
+        allTimeLabels.forEach((label, idx) => {
+          const diff = Math.abs(label.minutes - min);
+          if (diff < minDiff && diff <= 15) { // Within 15 minutes (half slot)
+            minDiff = diff;
+            closestIndex = idx;
+          }
+        });
+        
+        if (closestIndex >= 0) {
+          const key = `${dayKey}-${closestIndex}`;
+          map.set(key, true);
+        }
+      }
+    });
+    
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🚫 Blocked slots map created:', {
+        totalBlockedSlots: map.size,
+        sampleKeys: Array.from(map.keys()).slice(0, 5),
+        blockedTimeRangesCount: blockedTimeRanges.length,
+        allTimeLabelsCount: allTimeLabels.length,
+        sampleBlockedTimes: blockedTimeRanges.slice(0, 3).map(bt => ({
+          start: bt.start_time || bt.start,
+          end: bt.end_time || bt.end,
+          parsedStart: new Date(bt.start_time || bt.start).toDateString(),
+          parsedEnd: new Date(bt.end_time || bt.end).toDateString()
+        }))
+      });
+    }
+    
+    return map;
+  }, [blockedTimeRanges, allTimeLabels]);
+  
   // Group blocks by day and time slot
   const blocksBySlot = useMemo(() => {
     const map = new Map();
@@ -1224,15 +1605,23 @@ function WeekView({
   // Check if a time slot is within the day's available window
   const isTimeSlotAvailable = useCallback((dayIndex, timeMinutes) => {
     const isWeekend = dayIndex >= 5;
-    const useSameTimes = timePreferences.useSameWeekendTimes;
+    if (!effectiveTimePreferences) {
+      return false; // No preferences available
+    }
+    
+    const useSameTimes = effectiveTimePreferences.useSameWeekendTimes;
     
     let startTime, endTime;
     if (isWeekend && !useSameTimes) {
-      startTime = timePreferences.weekendEarliest || '09:00';
-      endTime = timePreferences.weekendLatest || '20:00';
+      startTime = effectiveTimePreferences.weekendEarliest || effectiveTimePreferences.weekdayEarliest;
+      endTime = effectiveTimePreferences.weekendLatest || effectiveTimePreferences.weekdayLatest;
     } else {
-      startTime = timePreferences.weekdayEarliest || '09:00';
-      endTime = timePreferences.weekdayLatest || '20:00';
+      startTime = effectiveTimePreferences.weekdayEarliest;
+      endTime = effectiveTimePreferences.weekdayLatest;
+    }
+    
+    if (!startTime || !endTime) {
+      return false; // No valid time preferences
     }
     
     const [startHour, startMin] = startTime.split(':').map(Number);
@@ -1241,7 +1630,7 @@ function WeekView({
     const endMinutes = endHour * 60 + endMin;
     
     return timeMinutes >= startMinutes && timeMinutes < endMinutes;
-  }, [timePreferences]);
+  }, [effectiveTimePreferences]);
   
   if (isLoading) {
     return (
@@ -1316,14 +1705,14 @@ function WeekView({
                   return (
                     <td
                       key={`${day}-${timeIndex}`}
-                      className={`border border-base-300 px-1 py-1 h-[70px] w-[calc((100%-70px)/7)] ${
+                      className={`border px-1 py-1 h-[70px] w-[calc((100%-70px)/7)] ${
                         !isAvailable
-                          ? 'bg-base-300/30' // Outside available window
+                          ? 'bg-base-300/30 border-base-300' // Outside available window
                           : isBlocked 
-                            ? 'bg-base-300/50' // Blocked by user
+                            ? 'bg-error/20 border-error/40 border-2' // Blocked by user - clearly visible with red tint
                             : isToday 
-                              ? 'bg-primary/5' 
-                              : 'bg-base-100'
+                              ? 'bg-primary/5 border-base-300' 
+                              : 'bg-base-100 border-base-300'
                       }`}
                     >
                       {slotBlocks.length > 0 ? (

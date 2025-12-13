@@ -5,31 +5,38 @@
 /**
  * @param {Array<{id: string, title: string, subject: string, examBoard: string, orderIndex: number}>} topics
  * @param {{ [topicId: string]: number }} ratings
- * @returns {Array<{id: string, title: string, subject: string, examBoard: string, orderIndex: number, rating: number}>}
+ * @param {Array<string>} missedTopicIds - Topic IDs that were missed/incomplete from previous weeks
+ * @returns {Array<{id: string, title: string, subject: string, examBoard: string, orderIndex: number, rating: number, priorityIndex: number, isMissed: boolean}>}
  */
-export function prioritizeTopics(topics = [], ratings = {}) {
+export function prioritizeTopics(topics = [], ratings = {}, missedTopicIds = []) {
   if (!Array.isArray(topics) || topics.length === 0) {
     return [];
   }
 
+  const missedSet = new Set(missedTopicIds || []);
+
   const withRatings = topics.map((topic, idx) => {
     const rating = ratings[topic.id] ?? 3;
     const orderIndex = topic.orderIndex ?? idx;
+    const isMissed = missedSet.has(topic.id);
     const bucket =
-      rating <= 1 ? 'r1'
-        : rating === 2 ? 'r2'
-          : rating === 3 ? 'r3'
-            : 'exam';
+      isMissed ? 'missed' // New bucket for missed topics (highest priority)
+        : rating <= 1 ? 'r1'
+          : rating === 2 ? 'r2'
+            : rating === 3 ? 'r3'
+              : 'exam';
 
     return {
       ...topic,
       rating,
       orderIndex,
-      bucket
+      bucket,
+      isMissed
     };
   });
 
   const buckets = {
+    missed: [], // Add missed bucket (highest priority)
     r1: [],
     r2: [],
     r3: [],
@@ -46,11 +53,19 @@ export function prioritizeTopics(topics = [], ratings = {}) {
 
   const totalTopics = withRatings.length;
 
+  // Ratios are for TOPICS, but we think in terms of BLOCKS (study time)
+  // Rating 1 = 3 sessions, Rating 2 = 2 sessions, Rating 3-5 = 1 session
+  // So 30% r1 topics × 3 sessions ≈ 50% of blocks
+  //    30% r2 topics × 2 sessions ≈ 33% of blocks
+  //    25% r3 topics × 1 session  ≈ 14% of blocks
+  //    15% exam topics × 1 session ≈ 5% of blocks
+  // Result: ~83% of study time on weak topics (Rating 1-2)
   const ratioDefs = [
-    { key: 'r1', percent: 0.45 },
-    { key: 'r2', percent: 0.25 },
-    { key: 'r3', percent: 0.20 },
-    { key: 'exam', percent: 0.10 }
+    { key: 'missed', percent: 1.0 }, // Missed topics get 100% priority (all of them first)
+    { key: 'r1', percent: 0.30 },    // 30% of topics → ~50% of blocks
+    { key: 'r2', percent: 0.30 },    // 30% of topics → ~33% of blocks
+    { key: 'r3', percent: 0.25 },    // 25% of topics → ~14% of blocks
+    { key: 'exam', percent: 0.15 }   // 15% of topics → ~5% of blocks
   ];
 
   const targets = {};
@@ -113,6 +128,7 @@ export function prioritizeTopics(topics = [], ratings = {}) {
   }
 
   const bucketQueues = {
+    missed: [...buckets.missed],
     r1: [...buckets.r1],
     r2: [...buckets.r2],
     r3: [...buckets.r3],
@@ -121,13 +137,14 @@ export function prioritizeTopics(topics = [], ratings = {}) {
 
   const selectedTopics = [];
   const remainingTargets = {
+    missed: targets.missed ?? 0,
     r1: targets.r1 ?? 0,
     r2: targets.r2 ?? 0,
     r3: targets.r3 ?? 0,
     exam: targets.exam ?? 0
   };
   const targetTotal = Math.min(totalTopics,
-    (remainingTargets.r1 + remainingTargets.r2 + remainingTargets.r3 + remainingTargets.exam)
+    (remainingTargets.missed + remainingTargets.r1 + remainingTargets.r2 + remainingTargets.r3 + remainingTargets.exam)
   );
 
   while (selectedTopics.length < targetTotal) {
@@ -264,8 +281,9 @@ export function prioritizeTopics(topics = [], ratings = {}) {
     selectedTopics.splice(0, selectedTopics.length, ...subjectOrdered);
   }
 
+  // Assign priorityIndex: missed topics get -1 (highest priority), others get their index
   return selectedTopics.map((topic, index) => ({
     ...topic,
-    priorityIndex: index
+    priorityIndex: topic.isMissed ? -1 : index
   }));
 }

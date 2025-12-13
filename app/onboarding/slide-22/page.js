@@ -16,6 +16,16 @@ export default function Slide22Page() {
     totalHours: 0
   });
   const [loadingStep, setLoadingStep] = useState("");
+  const [isDev, setIsDev] = useState(false);
+
+  // Set isDev only on client side to avoid hydration mismatch
+  useEffect(() => {
+    setIsDev(
+      window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1' ||
+      window.location.hostname.includes('localhost')
+    );
+  }, []);
 
   const sanitizeQuizAnswers = (answers) => {
     if (!answers || typeof answers !== 'object') return {};
@@ -152,12 +162,7 @@ export default function Slide22Page() {
   };
 
   const handleGeneratePlan = async () => {
-    // In dev mode, skip authentication check (check hostname since process.env isn't available client-side)
-    const isDev = typeof window !== 'undefined' && (
-      window.location.hostname === 'localhost' ||
-      window.location.hostname === '127.0.0.1' ||
-      window.location.hostname.includes('localhost')
-    );
+    // isDev is now a state variable set in useEffect
     
     console.log('🔍 Auth check:', {
       isDev,
@@ -290,12 +295,7 @@ export default function Slide22Page() {
     }
   };
 
-  // Calculate dev mode once
-  const isDev = typeof window !== 'undefined' && (
-    window.location.hostname === 'localhost' ||
-    window.location.hostname === '127.0.0.1' ||
-    window.location.hostname.includes('localhost')
-  );
+  // isDev is now a state variable set in useEffect above
 
   return (
     <div className="text-center space-y-8">

@@ -75,7 +75,10 @@ export async function generateStudyPlan({
   timePreferences = {},
   blockedTimes = [],
   studyBlockDuration = 0.5,
-  targetWeekStart
+  targetWeekStart,
+  actualStartDate, // For partial weeks - skip days before this date
+  missedTopicIds = [], // Topic IDs that were missed/incomplete from previous weeks
+  ongoingTopics = {} // { topicId: { sessionsScheduled: number, sessionsRequired: number, lastSessionDate: Date } }
 } = {}) {
   if (!Array.isArray(subjects) || subjects.length === 0) {
     return [];
@@ -87,13 +90,17 @@ export async function generateStudyPlan({
     return [];
   }
 
-  const prioritizedTopics = prioritizeTopics(filteredTopics, ratings);
+  const prioritizedTopics = prioritizeTopics(filteredTopics, ratings, missedTopicIds);
   const weekStart = resolveTargetWeekStart(targetWeekStart);
   const alignedBlockedTimes = alignBlockedTimes(blockedTimes, weekStart);
   console.log('Scheduler debug', JSON.stringify({
     weekStart,
+    actualStartDate: actualStartDate || weekStart,
+    isPartialWeek: actualStartDate && actualStartDate !== weekStart,
     blockedCount: Array.isArray(blockedTimes) ? blockedTimes.length : 0,
-    firstBlocked: alignedBlockedTimes.slice(0, 5)
+    firstBlocked: alignedBlockedTimes.slice(0, 5),
+    missedTopicsCount: missedTopicIds.length,
+    ongoingTopicsCount: Object.keys(ongoingTopics).length
   }, null, 2));
 
   const targetIso = `${weekStart}T00:00:00Z`;
@@ -103,14 +110,44 @@ export async function generateStudyPlan({
     timePreferences,
     blockedTimes: alignedBlockedTimes,
     blockDuration: studyBlockDuration,
-    targetWeekStart: targetIso
+    targetWeekStart: targetIso,
+    actualStartDate // For partial weeks
   });
 
   if (slots.length === 0) {
     return [];
-}
+  }
 
-  const scheduledBlocks = assignTopicsToSlots(slots, prioritizedTopics);
+  // Validate all slots have required properties before passing to assignTopicsToSlots
+  const validSlots = slots.filter(slot => {
+    if (!slot || typeof slot !== 'object') {
+      console.warn('⚠️ Invalid slot (not an object):', slot);
+      return false;
+    }
+    if (!slot.startDate || !(slot.startDate instanceof Date) || isNaN(slot.startDate.getTime())) {
+      console.warn('⚠️ Invalid slot (missing or invalid startDate):', slot);
+      return false;
+    }
+    if (!slot.endDate || !(slot.endDate instanceof Date) || isNaN(slot.endDate.getTime())) {
+      console.warn('⚠️ Invalid slot (missing or invalid endDate):', slot);
+      return false;
+    }
+    return true;
+  });
+
+  if (validSlots.length === 0) {
+    console.error('❌ No valid slots after validation. Total slots:', slots.length);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Sample invalid slots:', slots.slice(0, 3));
+    }
+    return [];
+  }
+
+  if (validSlots.length !== slots.length) {
+    console.warn(`⚠️ Filtered out ${slots.length - validSlots.length} invalid slots`);
+  }
+
+  const scheduledBlocks = assignTopicsToSlots(validSlots, prioritizedTopics, ongoingTopics);
   if (process.env.NODE_ENV === 'development') {
     console.log('Scheduled sample', scheduledBlocks.slice(0, 10).map(b => `${b.day} ${b.start_time}`));
     }

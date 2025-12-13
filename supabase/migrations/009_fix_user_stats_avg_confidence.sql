@@ -16,3 +16,4 @@ LEFT JOIN blocks b ON u.id = b.user_id
 LEFT JOIN user_topic_confidence utc ON u.id = utc.user_id
 GROUP BY u.id;
 
+

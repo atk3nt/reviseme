@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/libs/auth";
 import { supabaseAdmin } from "@/libs/supabase";
 
 const DEV_USER_EMAIL = 'dev-test@markr.local';
@@ -16,7 +15,8 @@ async function ensureDevUser() {
       .from('users')
       .insert({
         email: DEV_USER_EMAIL,
-        name: 'Dev Tester',
+        name: 'Dev Test User',
+        email_verified: new Date().toISOString(),
         has_completed_onboarding: false
       })
       .select('id')
@@ -26,6 +26,7 @@ async function ensureDevUser() {
       console.error('Failed to auto-create dev user:', createError);
       return null;
     }
+    console.log('✅ Dev mode: Created fresh test user:', created?.id);
     return created?.id ?? null;
   }
 
@@ -37,71 +38,39 @@ async function ensureDevUser() {
   return data?.id ?? null;
 }
 
-async function resolveUserId() {
-  const session = await auth();
-  const userId = session?.user?.id;
-
-  if (userId || process.env.NODE_ENV !== 'development') {
-    return userId;
-  }
-
-  return await ensureDevUser();
-}
-
 export async function POST(req) {
   try {
-    const userId = await resolveUserId();
-
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    // Delete all blocks for this user
-    const { error: blocksError } = await supabaseAdmin
-      .from('blocks')
-      .delete()
-      .eq('user_id', userId);
-
-    if (blocksError) {
-      console.error('Error deleting blocks:', blocksError);
-    }
-
-    // Reset onboarding status and access
-    const { error: userError } = await supabaseAdmin
+    // This is a dev-only endpoint - always delete and recreate the dev user
+    console.log('🔄 Dev mode: Deleting existing dev user to create fresh one...');
+    
+    // Delete the existing dev user (this will cascade delete all related data)
+    const { error: deleteError } = await supabaseAdmin
       .from('users')
-      .update({ 
-        has_completed_onboarding: false,
-        has_access: false 
-      })
-      .eq('id', userId);
-
-    if (userError) {
-      console.error('Error resetting user onboarding:', userError);
-    }
-
-    // Delete unavailable times
-    const { error: unavailableError } = await supabaseAdmin
-      .from('unavailable_times')
       .delete()
-      .eq('user_id', userId);
+      .eq('email', DEV_USER_EMAIL);
 
-    if (unavailableError) {
-      console.error('Error deleting unavailable times:', unavailableError);
+    if (deleteError && deleteError.code !== 'PGRST116') {
+      console.error('Error deleting dev user:', deleteError);
+      // Continue anyway - might not exist
+    } else {
+      console.log('✅ Dev mode: Deleted old dev user');
     }
 
-    // Delete repeatable events
-    const { error: eventsError } = await supabaseAdmin
-      .from('repeatable_events')
-      .delete()
-      .eq('user_id', userId);
-
-    if (eventsError) {
-      console.error('Error deleting repeatable events:', eventsError);
+    // Create a fresh dev user
+    const newUserId = await ensureDevUser();
+    
+    if (!newUserId) {
+      return NextResponse.json({ 
+        error: 'Failed to create fresh dev user' 
+      }, { status: 500 });
     }
+
+    console.log('✅ Dev mode: Created fresh dev user with ID:', newUserId);
 
     return NextResponse.json({ 
       success: true,
-      message: 'All data cleared. Please clear localStorage in your browser (quizAnswers key) and refresh.'
+      message: 'Fresh dev user created. Please clear localStorage in your browser (quizAnswers key) and refresh.',
+      newUserId
     });
   } catch (error) {
     console.error('Reset error:', error);

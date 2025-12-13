@@ -22,21 +22,8 @@ const nextConfig = {
       },
     ],
   },
-  webpack: (config, { webpack, isServer }) => {
-    // Ignore MongoDB's optional dependencies to prevent build warnings
-    if (isServer) {
-      config.plugins.push(
-        new webpack.IgnorePlugin({
-          resourceRegExp: /^(kerberos|@mongodb-js\/zstd|@aws-sdk\/credential-providers|gcp-metadata|snappy|socks|aws4|mongodb-client-encryption)$/,
-        })
-      );
-    }
-    
-    return config;
-  },
-  // Add empty turbopack config to silence the warning
-  // Next.js 16 uses Turbopack by default, but we're keeping webpack config for MongoDB
-  turbopack: {},
+  // No webpack config needed - using Supabase, not MongoDB
+  // Fast Refresh works by default in Next.js
 };
 
 module.exports = nextConfig;

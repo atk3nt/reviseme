@@ -3,6 +3,7 @@ import { auth } from "@/libs/auth";
 import { supabaseAdmin } from "@/libs/supabase";
 import { generateStudyPlan } from "@/libs/scheduler";
 
+// Spaced repetition fix: Track ongoing topics across weeks - v2
 const DEV_USER_EMAIL = 'dev-test@markr.local';
 
 async function ensureDevUser() {
@@ -60,12 +61,16 @@ function getMonday(date) {
 
 function resolveTargetWeek({ targetWeek, signupDate }) {
   if (targetWeek) {
-    return targetWeek;
+    return { weekStart: targetWeek, actualStartDate: targetWeek };
   }
   const base = signupDate ? new Date(signupDate) : new Date();
   base.setDate(base.getDate() + 1); // day after signup/current day
   base.setHours(0, 0, 0, 0);
-  return getMonday(base).toISOString().split('T')[0];
+  
+  const actualStartDate = base.toISOString().split('T')[0];
+  const weekStart = getMonday(base).toISOString().split('T')[0];
+  
+  return { weekStart, actualStartDate };
 }
 
 function sanitizeBlockedTimes(blockedTimes = []) {
@@ -213,7 +218,34 @@ async function loadRepeatableEvents(userId, weekStartDate, weekEndDate) {
   }
 }
 
+async function loadRatingsFromDatabase(userId) {
+  try {
+    const { data: ratingsData, error: ratingsError } = await supabaseAdmin
+      .from('user_topic_confidence')
+      .select('topic_id, rating')
+      .eq('user_id', userId);
+
+    if (ratingsError) {
+      console.error('Error loading ratings from database:', ratingsError);
+      return {};
+    }
+
+    // Convert array to object format { topicId: rating }
+    const ratingsObj = {};
+    (ratingsData || []).forEach(rating => {
+      ratingsObj[rating.topic_id] = rating.rating;
+    });
+
+    console.log(`📊 Loaded ${Object.keys(ratingsObj).length} ratings from database`);
+    return ratingsObj;
+  } catch (error) {
+    console.error('Exception loading ratings from database:', error);
+    return {};
+  }
+}
+
 export async function POST(req) {
+  console.log('🔥🔥🔥 POST /api/plan/generate called - NEW CODE VERSION 3 🔥🔥🔥');
   try {
     const userId = await resolveUserId();
     
@@ -245,37 +277,126 @@ export async function POST(req) {
       return NextResponse.json({ error: 'At least one subject is required' }, { status: 400 });
     }
 
-    const targetWeekStart = resolveTargetWeek({ targetWeek, signupDate });
+    const { weekStart: targetWeekStart, actualStartDate } = resolveTargetWeek({ targetWeek, signupDate });
     const weekStartDate = getMonday(new Date(`${targetWeekStart}T00:00:00Z`));
     const weekEndDate = new Date(weekStartDate);
     weekEndDate.setDate(weekStartDate.getDate() + 7);
+    
+    // For partial weeks (e.g., signup on Friday, start on Saturday), track when scheduling actually begins
+    const schedulingStartDate = new Date(`${actualStartDate}T00:00:00Z`);
+    const isPartialWeek = schedulingStartDate > weekStartDate;
+    
+    if (isPartialWeek) {
+      console.log('📅 Partial week detected:', {
+        weekStart: targetWeekStart,
+        actualStart: actualStartDate,
+        daysInWeek: Math.ceil((weekEndDate - schedulingStartDate) / (1000 * 60 * 60 * 24))
+      });
+    }
 
-    // Load time preferences from database if not provided
-    let effectiveTimePreferences = timePreferences;
-    if (!timePreferences.weekdayEarliest || !timePreferences.weekdayLatest) {
-      const { data: userData } = await supabaseAdmin
-        .from('users')
-        .select('weekday_earliest_time, weekday_latest_time, weekend_earliest_time, weekend_latest_time, use_same_weekend_times')
-        .eq('id', userId)
-        .single();
+    // Load time preferences from database - REQUIRED, no defaults
+    let effectiveTimePreferences = { ...timePreferences };
+    
+    // Always load from database to ensure we have the user's actual preferences
+    const { data: userData } = await supabaseAdmin
+      .from('users')
+      .select('weekday_earliest_time, weekday_latest_time, weekend_earliest_time, weekend_latest_time, use_same_weekend_times')
+      .eq('id', userId)
+      .single();
+    
+    if (userData) {
+      // Format time from database (HH:MM:SS) to HH:MM for frontend
+      const formatTime = (timeStr) => {
+        if (!timeStr) return null;
+        return timeStr.substring(0, 5); // Extract HH:MM from HH:MM:SS
+      };
       
-      if (userData) {
-        // Format time from database (HH:MM:SS) to HH:MM for frontend
-        const formatTime = (timeStr) => {
-          if (!timeStr) return null;
-          return timeStr.substring(0, 5); // Extract HH:MM from HH:MM:SS
-        };
-        
-        effectiveTimePreferences = {
-          weekdayEarliest: timePreferences.weekdayEarliest || formatTime(userData.weekday_earliest_time) || '09:00',
-          weekdayLatest: timePreferences.weekdayLatest || formatTime(userData.weekday_latest_time) || '20:00',
-          weekendEarliest: timePreferences.weekendEarliest || formatTime(userData.weekend_earliest_time) || '09:00',
-          weekendLatest: timePreferences.weekendLatest || formatTime(userData.weekend_latest_time) || '20:00',
-          useSameWeekendTimes: timePreferences.useSameWeekendTimes !== undefined 
-            ? timePreferences.useSameWeekendTimes 
-            : (userData.use_same_weekend_times !== null ? userData.use_same_weekend_times : true)
-        };
+      // Check for per-week time preferences for the target week
+      const weekStartDateStr = targetWeekStart;
+      let weekPreferences = null;
+      
+      const { data: weekPrefs } = await supabaseAdmin
+        .from('week_time_preferences')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('week_start_date', weekStartDateStr)
+        .maybeSingle();
+      
+      if (weekPrefs) {
+        weekPreferences = weekPrefs;
+        console.log('📅 Found per-week time preferences for week:', weekStartDateStr, weekPreferences);
+      } else {
+        console.log('📅 No per-week preferences found, using global preferences for week:', weekStartDateStr);
       }
+      
+      console.log('🔍 Database time preferences:', {
+        weekday_earliest_time: userData.weekday_earliest_time,
+        weekday_latest_time: userData.weekday_latest_time,
+        weekend_earliest_time: userData.weekend_earliest_time,
+        weekend_latest_time: userData.weekend_latest_time,
+        use_same_weekend_times: userData.use_same_weekend_times,
+        hasWeekPreferences: !!weekPreferences
+      });
+      
+      // Use per-week preferences if available, otherwise use global preferences
+      // NEVER use defaults - if database is missing values, that's an error
+      const dbWeekdayEarliest = formatTime(
+        weekPreferences?.weekday_earliest_time || userData.weekday_earliest_time
+      );
+      const dbWeekdayLatest = formatTime(
+        weekPreferences?.weekday_latest_time || userData.weekday_latest_time
+      );
+      const dbWeekendEarliest = formatTime(
+        weekPreferences?.weekend_earliest_time || userData.weekend_earliest_time
+      );
+      const dbWeekendLatest = formatTime(
+        weekPreferences?.weekend_latest_time || userData.weekend_latest_time
+      );
+      
+      const dbUseSameWeekendTimes = weekPreferences?.use_same_weekend_times !== undefined
+        ? weekPreferences.use_same_weekend_times
+        : (userData.use_same_weekend_times !== null ? userData.use_same_weekend_times : true);
+      
+      console.log('🔍 Formatted database times:', {
+        dbWeekdayEarliest,
+        dbWeekdayLatest,
+        dbWeekendEarliest,
+        dbWeekendLatest,
+        dbUseSameWeekendTimes,
+        source: weekPreferences ? 'per-week' : 'global'
+      });
+      
+      effectiveTimePreferences = {
+        weekdayEarliest: effectiveTimePreferences.weekdayEarliest || dbWeekdayEarliest,
+        weekdayLatest: effectiveTimePreferences.weekdayLatest || dbWeekdayLatest,
+        weekendEarliest: effectiveTimePreferences.weekendEarliest || dbWeekendEarliest,
+        weekendLatest: effectiveTimePreferences.weekendLatest || dbWeekendLatest,
+        useSameWeekendTimes: effectiveTimePreferences.useSameWeekendTimes !== undefined 
+          ? effectiveTimePreferences.useSameWeekendTimes 
+          : dbUseSameWeekendTimes
+      };
+      
+      console.log('✅ Final effectiveTimePreferences:', effectiveTimePreferences);
+      
+      // Validate that we have required weekday times
+      if (!effectiveTimePreferences.weekdayEarliest || !effectiveTimePreferences.weekdayLatest) {
+        console.error('❌ Missing time preferences in database for user:', userId, {
+          effectiveTimePreferences,
+          userData,
+          weekPreferences
+        });
+        return NextResponse.json({ 
+          error: 'Time preferences are required. Please complete onboarding to set your study window.',
+          success: false
+        }, { status: 400 });
+      }
+    } else {
+      // No user data found - this shouldn't happen but handle gracefully
+      console.error('❌ User not found:', userId);
+      return NextResponse.json({ 
+        error: 'User not found',
+        success: false
+      }, { status: 404 });
     }
 
     console.log('API plan generate payload', {
@@ -288,6 +409,53 @@ export async function POST(req) {
     let effectiveBlockedTimes = incomingBlockedTimes;
     if (!effectiveBlockedTimes || effectiveBlockedTimes.length === 0) {
       effectiveBlockedTimes = await loadBlockedTimes(userId, weekStartDate, weekEndDate);
+      
+      // If no unavailable times found for target week, and we're generating for a future week,
+      // fall back to current week's unavailable times (aligned to target week)
+      if (effectiveBlockedTimes.length === 0) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const currentWeekStart = getMonday(today);
+        const currentWeekEnd = new Date(currentWeekStart);
+        currentWeekEnd.setDate(currentWeekStart.getDate() + 7);
+        
+        // Check if target week is in the future
+        const isFutureWeek = weekStartDate > currentWeekStart;
+        
+        if (isFutureWeek) {
+          console.log('📅 No unavailable times for target week, using current week\'s times (aligned to target week)');
+          const currentWeekUnavailable = await loadBlockedTimes(userId, currentWeekStart, currentWeekEnd);
+          
+          // Align current week blocked times to target week (by day of week)
+          effectiveBlockedTimes = currentWeekUnavailable.map((range) => {
+            const originalStart = new Date(range.start);
+            const originalEnd = new Date(range.end);
+            
+            // Get day of week (0=Sunday, 1=Monday, etc.) and convert to Monday=0
+            const dayIndex = (originalStart.getUTCDay() + 6) % 7; // Monday = 0
+            
+            // Align to target week's same day
+            const alignedStart = new Date(weekStartDate);
+            alignedStart.setUTCDate(weekStartDate.getUTCDate() + dayIndex);
+            alignedStart.setUTCHours(originalStart.getUTCHours(), originalStart.getUTCMinutes(), 0, 0);
+            
+            const alignedEnd = new Date(weekStartDate);
+            alignedEnd.setUTCDate(weekStartDate.getUTCDate() + dayIndex);
+            alignedEnd.setUTCHours(originalEnd.getUTCHours(), originalEnd.getUTCMinutes(), 0, 0);
+            
+            if (alignedEnd <= alignedStart) {
+              alignedEnd.setUTCDate(alignedEnd.getUTCDate() + 1);
+            }
+            
+            return {
+              start: alignedStart.toISOString(),
+              end: alignedEnd.toISOString()
+            };
+          });
+          
+          console.log(`✅ Aligned ${effectiveBlockedTimes.length} unavailable times from current week to target week`);
+        }
+      }
     }
 
     const repeatableEvents = await loadRepeatableEvents(userId, weekStartDate, weekEndDate);
@@ -298,16 +466,256 @@ export async function POST(req) {
       ])
     );
 
-    const plan = await generateStudyPlan({
-      subjects,
-      ratings,
-      topicStatus,
-      availability,
-      timePreferences: effectiveTimePreferences,
-      blockedTimes: combinedBlockedTimes,
-      studyBlockDuration,
-      targetWeekStart
+    // ALWAYS recalculate availability from database time preferences (ignore frontend calculation)
+    // This ensures we always use the user's actual preferences from the database, not stale localStorage values
+    console.log('📊 Recalculating availability from database time preferences (ignoring frontend availability)');
+    console.log('📊 Using effectiveTimePreferences:', effectiveTimePreferences);
+    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    let effectiveAvailability = {};
+    
+    days.forEach((day, dayIndex) => {
+      const isWeekend = dayIndex >= 5;
+      let earliest, latest;
+      if (isWeekend && !effectiveTimePreferences.useSameWeekendTimes) {
+        // Use weekend times if specified, otherwise fall back to weekday times
+        earliest = effectiveTimePreferences.weekendEarliest || effectiveTimePreferences.weekdayEarliest;
+        latest = effectiveTimePreferences.weekendLatest || effectiveTimePreferences.weekdayLatest;
+      } else {
+        // Always use weekday times (required)
+        earliest = effectiveTimePreferences.weekdayEarliest;
+        latest = effectiveTimePreferences.weekdayLatest;
+      }
+      
+      console.log(`📅 ${day} (${isWeekend ? 'weekend' : 'weekday'}): earliest=${earliest}, latest=${latest}`);
+      
+      // Validate we have times
+      if (!earliest || !latest) {
+        console.error('❌ Missing time preferences for day:', day, {
+          isWeekend,
+          useSameWeekendTimes: effectiveTimePreferences.useSameWeekendTimes,
+          weekdayEarliest: effectiveTimePreferences.weekdayEarliest,
+          weekdayLatest: effectiveTimePreferences.weekdayLatest,
+          weekendEarliest: effectiveTimePreferences.weekendEarliest,
+          weekendLatest: effectiveTimePreferences.weekendLatest
+        });
+        return; // Skip this day if times are missing (return from forEach callback)
+      }
+      
+      const [earliestHour, earliestMin] = earliest.split(':').map(Number);
+      const [latestHour, latestMin] = latest.split(':').map(Number);
+      const earliestMinutes = earliestHour * 60 + earliestMin;
+      const latestMinutes = latestHour * 60 + latestMin;
+      const totalMinutes = latestMinutes - earliestMinutes;
+      
+      // Calculate blocked minutes for this day
+      const dayDate = new Date(weekStartDate);
+      dayDate.setUTCDate(weekStartDate.getUTCDate() + dayIndex);
+      dayDate.setUTCHours(0, 0, 0, 0);
+      
+      let blockedMinutes = 0;
+      combinedBlockedTimes.forEach(blocked => {
+        const blockedStart = new Date(blocked.start);
+        const blockedEnd = new Date(blocked.end);
+        
+        // Use UTC for date comparison to avoid timezone issues
+        if (blockedStart.getUTCFullYear() === dayDate.getUTCFullYear() &&
+            blockedStart.getUTCMonth() === dayDate.getUTCMonth() &&
+            blockedStart.getUTCDate() === dayDate.getUTCDate()) {
+          const blockedStartMinutes = blockedStart.getUTCHours() * 60 + blockedStart.getUTCMinutes();
+          const blockedEndMinutes = blockedEnd.getUTCHours() * 60 + blockedEnd.getUTCMinutes();
+          const overlapStart = Math.max(earliestMinutes, blockedStartMinutes);
+          const overlapEnd = Math.min(latestMinutes, blockedEndMinutes);
+          if (overlapStart < overlapEnd) {
+            blockedMinutes += overlapEnd - overlapStart;
+          }
+        }
+      });
+      
+      const availableMinutes = totalMinutes - blockedMinutes;
+      effectiveAvailability[day] = Math.max(0, availableMinutes / 60);
     });
+    
+    console.log('✅ Calculated availability from database:', effectiveAvailability);
+
+    // For future weeks (including next week generated on Sunday), load latest ratings from database
+    // For current/past weeks, use provided ratings to avoid disrupting existing plans
+    let effectiveRatings = ratings;
+    let effectiveTopicStatus = topicStatus || {};
+    const currentWeekStart = getMonday(new Date());
+    currentWeekStart.setHours(0, 0, 0, 0);
+    const targetWeekStartDate = new Date(weekStartDate);
+    targetWeekStartDate.setHours(0, 0, 0, 0);
+    
+    const isFutureWeek = targetWeekStartDate > currentWeekStart;
+    
+    console.log('🚀 SPACED REPETITION: Starting block counting and ongoing topic tracking');
+    console.log('📅 Target week:', targetWeekStart);
+    console.log('📅 Week start date:', weekStartDate.toISOString());
+    
+    // Load ALL previous blocks for this user (for counting and tracking last session dates)
+    const { data: previousBlocks, error: blocksError } = await supabaseAdmin
+      .from('blocks')
+      .select('topic_id, scheduled_at')
+      .eq('user_id', userId)
+      .lt('scheduled_at', weekStartDate.toISOString())
+      .in('status', ['scheduled', 'done']); // Only count scheduled or completed blocks
+
+    console.log('📦 Loaded previous blocks:', {
+      count: previousBlocks?.length || 0,
+      error: blocksError?.message
+    });
+
+    const completedTopics = new Set(); // Track topics that have completed all required sessions
+    const ongoingTopics = {}; // Track topics currently in spaced repetition (for gap days)
+    
+    // Helper: Determine required sessions based on rating (1=3, 2=2, 3-5=1)
+    const getRequiredSessions = (rating) => {
+      if (rating === 1) return 3;
+      if (rating === 2) return 2;
+      return 1; // ratings 3, 4, 5
+    };
+    
+    if (previousBlocks && previousBlocks.length > 0) {
+      // Count blocks per topic AND track last session date
+      const topicData = new Map(); // { topicId: { count, lastDate } }
+      
+      previousBlocks.forEach(block => {
+        if (!block.topic_id) return; // Skip blocks without topic_id
+        
+        const existing = topicData.get(block.topic_id);
+        const blockDate = new Date(block.scheduled_at);
+        
+        if (!existing) {
+          topicData.set(block.topic_id, { count: 1, lastDate: blockDate });
+        } else {
+          topicData.set(block.topic_id, {
+            count: existing.count + 1,
+            lastDate: blockDate > existing.lastDate ? blockDate : existing.lastDate
+          });
+        }
+      });
+      
+      console.log('📊 Block count analysis:', {
+        total: previousBlocks.length,
+        uniqueTopics: topicData.size,
+        sample: Array.from(topicData.entries()).slice(0, 5).map(([id, data]) => ({
+          topicId: id.substring(0, 8) + '...',
+          blockCount: data.count,
+          lastDate: data.lastDate.toISOString().split('T')[0]
+        }))
+      });
+      
+      // Separate topics into completed vs ongoing (for within-week spaced repetition)
+      topicData.forEach((data, topicId) => {
+        const rating = effectiveRatings[topicId];
+        const requiredSessions = rating !== undefined ? getRequiredSessions(rating) : 1;
+        
+        if (data.count >= requiredSessions) {
+          // Topic completed all sessions
+          completedTopics.add(topicId);
+        } else {
+          // Topic is ongoing (incomplete sessions) - track for gap day enforcement
+          ongoingTopics[topicId] = {
+            sessionsScheduled: data.count,
+            sessionsRequired: requiredSessions,
+            lastSessionDate: data.lastDate
+          };
+        }
+      });
+      
+      console.log('✅ Topic status:', {
+        completed: completedTopics.size,
+        ongoing: Object.keys(ongoingTopics).length,
+        completedSample: Array.from(completedTopics).slice(0, 3).map(id => id.substring(0, 8) + '...'),
+        ongoingSample: Object.entries(ongoingTopics).slice(0, 3).map(([id, data]) => ({
+          topicId: id.substring(0, 8) + '...',
+          sessions: `${data.sessionsScheduled}/${data.sessionsRequired}`,
+          lastDate: data.lastSessionDate.toISOString().split('T')[0]
+        }))
+      });
+    }
+
+    // For future weeks, load latest ratings from database (may have changed since plan was made)
+    if (isFutureWeek) {
+      console.log('📅 Target week is in the future - loading latest ratings from database');
+      const dbRatings = await loadRatingsFromDatabase(userId);
+      // Database ratings take precedence (reflects any re-rating changes)
+      effectiveRatings = { ...ratings, ...dbRatings };
+      console.log(`✅ Using database ratings for future week. Total ratings: ${Object.keys(effectiveRatings).length}`);
+    } else {
+      console.log('📅 Target week is current or past - using provided ratings to avoid disrupting existing plan');
+    }
+    
+    // Exclude all completed topics from scheduling
+    completedTopics.forEach(topicId => {
+      effectiveTopicStatus[topicId] = 'skip';
+    });
+    
+    console.log(`✅ Excluding ${completedTopics.size} completed topics from scheduling`);
+
+    let plan;
+    try {
+      console.log('🔍 Calling generateStudyPlan with:', {
+        subjectsCount: subjects.length,
+        ratingsCount: Object.keys(effectiveRatings).length,
+        availabilityKeys: Object.keys(effectiveAvailability || {}),
+        hasTimePreferences: !!effectiveTimePreferences,
+        blockedTimesCount: combinedBlockedTimes.length,
+        completedTopicsCount: completedTopics.size,
+        ongoingTopicsCount: Object.keys(ongoingTopics).length,
+        targetWeekStart
+      });
+      
+      plan = await generateStudyPlan({
+        subjects,
+        ratings: effectiveRatings,
+        topicStatus: effectiveTopicStatus,
+        availability: effectiveAvailability,
+        timePreferences: effectiveTimePreferences,
+        blockedTimes: combinedBlockedTimes,
+        studyBlockDuration,
+        targetWeekStart,
+        actualStartDate, // For partial weeks - skip days before this date
+        ongoingTopics // Pass ongoing topics for gap day enforcement and session tracking
+      });
+      
+      console.log('✅ generateStudyPlan returned:', {
+        planLength: plan?.length || 0,
+        planType: Array.isArray(plan) ? 'array' : typeof plan,
+        firstBlock: plan?.[0] ? {
+          hasScheduledAt: !!plan[0].scheduled_at,
+          scheduledAt: plan[0].scheduled_at,
+          topicId: plan[0].topic_id
+        } : 'no blocks'
+      });
+      
+      // Validate plan blocks before processing
+      if (plan && Array.isArray(plan)) {
+        const invalidBlocks = plan.filter(block => {
+          if (!block) return true;
+          if (block.topic_id !== null && !block.scheduled_at) return true;
+          return false;
+        });
+        if (invalidBlocks.length > 0) {
+          console.warn('⚠️ Found invalid blocks in plan:', invalidBlocks.length, 'out of', plan.length);
+        }
+      }
+    } catch (error) {
+      console.error('❌ Error in generateStudyPlan:', error);
+      console.error('Error name:', error.name);
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+      console.error('Error at:', {
+        fileName: error.fileName,
+        lineNumber: error.lineNumber,
+        columnNumber: error.columnNumber
+      });
+      return NextResponse.json({ 
+        error: error.message || 'Failed to generate study plan',
+        details: process.env.NODE_ENV === 'development' ? error.stack : undefined,
+        success: false
+      }, { status: 500 });
+    }
 
     console.log('Generated plan:', {
       planLength: plan.length,
@@ -335,16 +743,25 @@ export async function POST(req) {
     // Only delete existing blocks AFTER confirming we have new ones to insert
     console.log(`🗑️ Deleting existing blocks for week ${targetWeekStart} (${records.length} new blocks ready to insert)...`);
     const deleteStart = new Date(weekStartDate);
-    deleteStart.setDate(deleteStart.getDate() - 1); // Day before to catch timezone edge cases
-    const deleteEnd = new Date(weekEndDate);
-    deleteEnd.setDate(deleteEnd.getDate() + 1); // Day after to catch timezone edge cases
+    deleteStart.setHours(0, 0, 0, 0);
+    // Calculate Sunday explicitly: Monday (weekStartDate) + 6 days = Sunday
+    const deleteEnd = new Date(weekStartDate);
+    deleteEnd.setDate(weekStartDate.getDate() + 6); // Sunday (6 days after Monday)
+    deleteEnd.setHours(23, 59, 59, 999); // End of Sunday to include all Sunday blocks
+    
+    console.log('🗑️ Deletion range:', {
+      deleteStart: deleteStart.toISOString(),
+      deleteEnd: deleteEnd.toISOString(),
+      deleteStartDay: deleteStart.getDay(), // Should be 1 (Monday)
+      deleteEndDay: deleteEnd.getDay() // Should be 0 (Sunday)
+    });
     
     const { error: deleteError } = await supabaseAdmin
       .from('blocks')
       .delete()
       .eq('user_id', userId)
       .gte('scheduled_at', deleteStart.toISOString())
-      .lt('scheduled_at', deleteEnd.toISOString());
+      .lte('scheduled_at', deleteEnd.toISOString()); // Use lte to include end of Sunday
     
     if (deleteError) {
       console.error('Error deleting existing blocks:', deleteError);
@@ -425,9 +842,12 @@ export async function POST(req) {
       });
     }
     
+    // Filter out break blocks (they have topic_id === null) - we don't use them anymore
+    const studyBlocksOnly = allBlocks.filter(block => block.topic_id !== null);
+    
     return NextResponse.json({
       success: true,
-      blocks: allBlocks,
+      blocks: studyBlocksOnly,
       weekStart: targetWeekStart,
       blockedTimes: blockedTimesResponse,
       debug: debugInfo
@@ -532,42 +952,107 @@ export async function GET(request) {
       });
     }
     
-    // Try to find blocks for the current week, but also check a much wider range
-    // to catch blocks that might be slightly outside the current week
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const weekStartDate = getMonday(today);
+    // Determine which week to fetch blocks for
+    let weekStartDate;
+    if (targetWeek) {
+      // Parse date string as local time (not UTC) to avoid timezone issues
+      // The frontend sends YYYY-MM-DD format, parse it as local date components
+      const [year, month, day] = targetWeek.split('-').map(Number);
+      const dateObj = new Date(year, month - 1, day); // month is 0-indexed, creates local date
+      weekStartDate = getMonday(dateObj);
+    } else {
+      // Default to current week
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      weekStartDate = getMonday(today);
+    }
     const weekEndDate = new Date(weekStartDate);
     weekEndDate.setDate(weekStartDate.getDate() + 7);
     
-    console.log('🔍 Fetching ALL blocks for user (no date filter):', {
+    console.log('🔍 Fetching blocks for user:', {
       userId,
-      weekStart: weekStartDate.toISOString(),
-      weekEnd: weekEndDate.toISOString()
+      targetWeek: targetWeek || 'none (using current week)',
+      weekStartDate: weekStartDate.toISOString(),
+      weekStartDateLocal: weekStartDate.toLocaleString(),
+      weekStartDateYear: weekStartDate.getFullYear(),
+      weekEndDate: weekEndDate.toISOString(),
+      weekEndDateLocal: weekEndDate.toLocaleString(),
+      weekEndDateYear: weekEndDate.getFullYear(),
+      weekStartDay: weekStartDate.getDay(), // 0=Sunday, 1=Monday
+      weekStartDateStr: weekStartDate.toISOString().split('T')[0],
+      serverDate: new Date().toISOString(),
+      serverDateYear: new Date().getFullYear()
     });
 
-      // Fetch ALL blocks for the user (no date filter) to ensure we don't miss any
-      // The frontend can filter by date if needed
-      // First, try the simplest query that we know works (like check-blocks)
-      // Simple query: just get blocks with topic info
-      // Match the working check-blocks route exactly
-      // First, check total count
+      // Fetch blocks for the requested week (or all blocks if no week specified)
+      // First, check total count and get sample dates
       const { count: totalBlockCount } = await supabaseAdmin
         .from('blocks')
         .select('*', { count: 'exact', head: true })
         .eq('user_id', userId);
       
-      console.log('🔍 Total blocks in database for user:', totalBlockCount);
+      // Get a sample of all blocks to see what dates they have
+      const { data: sampleBlocks } = await supabaseAdmin
+        .from('blocks')
+        .select('id, scheduled_at, status')
+        .eq('user_id', userId)
+        .order('scheduled_at', { ascending: true })
+        .limit(10);
       
-      // Fetch blocks with topic info including parent_id for hierarchy building
-      const { data, error } = await supabaseAdmin
+      console.log('🔍 Total blocks in database for user:', totalBlockCount);
+      console.log('📅 Sample of all blocks (first 10):', sampleBlocks?.map(b => ({
+        id: b.id,
+        scheduled_at: b.scheduled_at,
+        date_only: b.scheduled_at?.split('T')[0],
+        status: b.status
+      })));
+      
+      // Build query - filter by week if targetWeek is provided
+      let query = supabaseAdmin
         .from('blocks')
         .select(
           `id, topic_id, scheduled_at, duration_minutes, status, ai_rationale,
            topics(id, title, level, parent_id, spec_id, specs(subject, exam_board))`
         )
-        .eq('user_id', userId)
-        .order('scheduled_at', { ascending: true });
+        .eq('user_id', userId);
+      
+      // Filter by week if targetWeek is provided
+      if (targetWeek) {
+        const weekStart = new Date(weekStartDate);
+        // Calculate Sunday explicitly: Monday (weekStartDate) + 6 days = Sunday
+        const weekEnd = new Date(weekStartDate);
+        weekEnd.setDate(weekStartDate.getDate() + 6); // Sunday (6 days after Monday)
+        
+        // Ensure times are set correctly for range comparison
+        weekStart.setHours(0, 0, 0, 0);
+        // Set weekEnd to end of Sunday (23:59:59.999) to explicitly include all Sunday blocks
+        weekEnd.setHours(23, 59, 59, 999);
+        
+        console.log('🔍 Filtering blocks by date range:', {
+          weekStartISO: weekStart.toISOString(),
+          weekEndISO: weekEnd.toISOString(),
+          weekStartLocal: weekStart.toLocaleString(),
+          weekEndLocal: weekEnd.toLocaleString(),
+          weekStartDay: weekStart.getDay(), // Should be 1 (Monday)
+          weekEndDay: weekEnd.getDay() // Should be 0 (Sunday)
+        });
+        
+        query = query
+          .gte('scheduled_at', weekStart.toISOString())
+          .lte('scheduled_at', weekEnd.toISOString()); // Use lte to include end of Sunday
+      }
+      
+      const { data, error } = await query.order('scheduled_at', { ascending: true });
+    
+    // Log sample of scheduled_at dates to debug
+    if (data && data.length > 0) {
+      console.log('📅 Sample block dates (first 5):', data.slice(0, 5).map(b => ({
+        id: b.id,
+        scheduled_at: b.scheduled_at,
+        scheduled_at_local: new Date(b.scheduled_at).toLocaleString(),
+        date_only: b.scheduled_at.split('T')[0]
+      })));
+    }
     
     console.log('📊 Blocks query result:', {
       found: data?.length || 0,
@@ -692,9 +1177,9 @@ export async function GET(request) {
       blocksWithoutTopics: blocks.filter(b => b.topic_name === 'Unknown Topic').length
     });
 
-    // Determine the actual week start from the blocks (use the earliest block's week)
+    // Use the requested week start, or determine from blocks if not specified
     let actualWeekStart = weekStartDate.toISOString().split('T')[0];
-    if (blocks.length > 0) {
+    if (!targetWeek && blocks.length > 0) {
       const earliestBlock = new Date(blocks[0].scheduled_at);
       const earliestWeekStart = getMonday(earliestBlock);
       actualWeekStart = earliestWeekStart.toISOString().split('T')[0];

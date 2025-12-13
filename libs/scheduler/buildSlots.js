@@ -3,7 +3,6 @@
  */
 
 const DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-const DEFAULT_WEEKDAY = { earliest: '09:00', latest: '20:00' };
 
 function parseTimeToMinutes(timeString = '00:00') {
   const [hours, minutes] = timeString.split(':').map((part) => Number(part) || 0);
@@ -44,6 +43,7 @@ function overlaps(slotStart, slotEnd, blockedIntervals) {
  * @param {Array<{ start: string, end: string }>} params.blockedTimes - ISO ranges to avoid.
  * @param {number} params.blockDuration - Duration of each block in hours.
  * @param {string} params.targetWeekStart - ISO date string for week Monday.
+ * @param {string} params.actualStartDate - ISO date string for actual start (for partial weeks).
  * @returns {Array<{ day: string, start_time: string, duration_minutes: number, startDate: Date, endDate: Date, slotIndex: number }>} slots
  */
 export function buildWeeklySlots({
@@ -51,11 +51,29 @@ export function buildWeeklySlots({
   timePreferences = {},
   blockedTimes = [],
   blockDuration = 0.5,
-  targetWeekStart
+  targetWeekStart,
+  actualStartDate // For partial weeks - skip days before this
 } = {}) {
   const slots = [];
   const durationMinutes = Math.round((blockDuration || 0.5) * 60);
   const weekStartDate = getWeekStartDate(targetWeekStart);
+  
+  // Validate weekStartDate
+  if (!weekStartDate || isNaN(weekStartDate.getTime())) {
+    console.error('⚠️ Invalid weekStartDate:', weekStartDate, 'targetWeekStart:', targetWeekStart);
+    return [];
+  }
+  
+  // For partial weeks, determine the actual start date
+  let schedulingStartDate = weekStartDate;
+  if (actualStartDate) {
+    const parsedActualStart = new Date(`${actualStartDate}T00:00:00Z`);
+    if (!isNaN(parsedActualStart.getTime()) && parsedActualStart > weekStartDate) {
+      schedulingStartDate = parsedActualStart;
+      console.log('📅 Partial week: scheduling starts from', actualStartDate, 'instead of', targetWeekStart);
+    }
+  }
+  
   const blockedIntervals = (blockedTimes || []).map((range) => ({
     start: new Date(range.start),
     end: new Date(range.end)
@@ -63,6 +81,17 @@ export function buildWeeklySlots({
 
   for (let dayIndex = 0; dayIndex < DAYS.length; dayIndex += 1) {
     const dayName = DAYS[dayIndex];
+    
+    // Calculate the date for this day
+    const dayDate = new Date(weekStartDate);
+    dayDate.setUTCDate(weekStartDate.getUTCDate() + dayIndex);
+    dayDate.setUTCHours(0, 0, 0, 0);
+    
+    // Skip days before the actual start date (for partial weeks)
+    if (dayDate < schedulingStartDate) {
+      continue;
+    }
+    
     const availableHours = availability[dayName] ?? 0;
     if (!availableHours || availableHours <= 0) {
       continue;
@@ -80,13 +109,25 @@ export function buildWeeklySlots({
     const isWeekend = dayIndex >= 5;
     const weekendSplit = timePreferences.useSameWeekendTimes === false;
 
-    const earliestStr = isWeekend && weekendSplit
-      ? timePreferences.weekendEarliest || DEFAULT_WEEKDAY.earliest
-      : timePreferences.weekdayEarliest || DEFAULT_WEEKDAY.earliest;
-
-    const latestStr = isWeekend && weekendSplit
-      ? timePreferences.weekendLatest || DEFAULT_WEEKDAY.latest
-      : timePreferences.weekdayLatest || DEFAULT_WEEKDAY.latest;
+    // Use user's actual preferences - NO DEFAULTS
+    // If weekend times are set and we're on a weekend, use them; otherwise use weekday times
+    let earliestStr, latestStr;
+    if (isWeekend && weekendSplit && timePreferences.weekendEarliest && timePreferences.weekendLatest) {
+      earliestStr = timePreferences.weekendEarliest;
+      latestStr = timePreferences.weekendLatest;
+    } else {
+      // Use weekday times (required)
+      earliestStr = timePreferences.weekdayEarliest;
+      latestStr = timePreferences.weekdayLatest;
+    }
+    
+    // Validate we have times - skip this day if missing
+    if (!earliestStr || !latestStr) {
+      if (process.env.NODE_ENV === 'development') {
+        console.warn(`⚠️ Skipping ${dayName}: Missing time preferences (earliest: ${earliestStr}, latest: ${latestStr})`);
+      }
+      continue;
+    }
 
     const earliestMinutes = parseTimeToMinutes(earliestStr);
     const latestMinutes = parseTimeToMinutes(latestStr);
@@ -105,15 +146,41 @@ export function buildWeeklySlots({
       const slotEndDate = new Date(slotStartDate);
       slotEndDate.setUTCMinutes(slotStartDate.getUTCMinutes() + durationMinutes);
 
+      // Validate dates before creating slot
+      if (isNaN(slotStartDate.getTime()) || isNaN(slotEndDate.getTime())) {
+        console.warn('⚠️ Invalid date created for slot, skipping:', { slotStartDate, slotEndDate, candidateMinutes, dayIndex });
+        candidateMinutes += 15;
+        iterations += 1;
+        continue;
+      }
+      
       if (!overlaps(slotStartDate, slotEndDate, blockedIntervals)) {
-        slots.push({
+        // Final validation before adding slot
+        if (isNaN(slotStartDate.getTime()) || isNaN(slotEndDate.getTime())) {
+          console.warn('⚠️ Skipping slot with invalid dates:', { slotStartDate, slotEndDate, candidateMinutes, dayIndex });
+          candidateMinutes += 15;
+          iterations += 1;
+          continue;
+        }
+        
+        const slot = {
           day: dayName,
           start_time: formatMinutesToTime(candidateMinutes),
           duration_minutes: durationMinutes,
           startDate: slotStartDate,
           endDate: slotEndDate,
           slotIndex: createdSlots
-        });
+        };
+        
+        // Validate slot object before pushing
+        if (!slot.startDate || !slot.endDate) {
+          console.error('❌ Created slot missing dates:', slot);
+          candidateMinutes += 15;
+          iterations += 1;
+          continue;
+        }
+        
+        slots.push(slot);
         createdSlots += 1;
       } else {
         if (process.env.NODE_ENV === 'development') {
@@ -135,5 +202,30 @@ export function buildWeeklySlots({
     }
   }
 
-  return slots;
+  // Final validation - ensure all slots are valid before returning
+  const validSlots = slots.filter(slot => {
+    if (!slot || typeof slot !== 'object') {
+      console.warn('⚠️ buildSlots: Invalid slot (not an object):', slot);
+      return false;
+    }
+    if (!slot.startDate || !(slot.startDate instanceof Date) || isNaN(slot.startDate.getTime())) {
+      console.warn('⚠️ buildSlots: Invalid slot (missing/invalid startDate):', slot);
+      return false;
+    }
+    if (!slot.endDate || !(slot.endDate instanceof Date) || isNaN(slot.endDate.getTime())) {
+      console.warn('⚠️ buildSlots: Invalid slot (missing/invalid endDate):', slot);
+      return false;
+    }
+    return true;
+  });
+
+  if (validSlots.length !== slots.length) {
+    console.warn(`⚠️ buildSlots: Filtered out ${slots.length - validSlots.length} invalid slots. Returning ${validSlots.length} valid slots.`);
+  }
+
+  if (process.env.NODE_ENV === 'development' && validSlots.length > 0) {
+    console.log('✅ buildSlots: Created', validSlots.length, 'valid slots');
+  }
+
+  return validSlots;
 }

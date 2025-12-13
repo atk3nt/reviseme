@@ -27,6 +27,7 @@ function AvailabilitySettingsPageContent() {
     weekendLatest: '23:30', // Default, will be replaced when loaded
   });
   const [timePreferencesLoaded, setTimePreferencesLoaded] = useState(false);
+  const [isWeekScheduled, setIsWeekScheduled] = useState(false); // Track if current week has scheduled blocks
 
   // Blocked times - stored per week (week offset as key)
   const [blockedTimesByWeek, setBlockedTimesByWeek] = useState({});
@@ -42,6 +43,8 @@ function AvailabilitySettingsPageContent() {
   const [successMessage, setSuccessMessage] = useState('');
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [showRescheduleModal, setShowRescheduleModal] = useState(false);
+  const [rescheduleDetails, setRescheduleDetails] = useState([]);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [eventToDelete, setEventToDelete] = useState(null);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
@@ -60,6 +63,8 @@ function AvailabilitySettingsPageContent() {
     // Each week starts blank - don't copy blocked times from previous weeks
     // Repeatable events are handled separately and appear in all weeks automatically
     setSelectedWeek(weekOffset);
+    // Reload time preferences for the new week
+    loadTimePreferencesForWeek(weekOffset);
   };
 
   // Reset blocked times for current week (keep repeatable events)
@@ -162,6 +167,8 @@ function AvailabilitySettingsPageContent() {
       loadAvailability();
       loadScheduledBlocks();
       loadRepeatableEvents();
+      // Load time preferences for the initially selected week
+      loadTimePreferencesForWeek(selectedWeek);
     }
   }, [status, router]);
 
@@ -174,6 +181,31 @@ function AvailabilitySettingsPageContent() {
     const weekStart = new Date(thisMonday);
     weekStart.setDate(thisMonday.getDate() + (weekOffset * 7));
     return weekStart;
+  };
+
+  // Load time preferences for a specific week
+  const loadTimePreferencesForWeek = async (weekOffset) => {
+    try {
+      const weekStart = getWeekStart(weekOffset);
+      const weekStartDateStr = weekStart.toISOString().split('T')[0];
+      
+      const response = await fetch(`/api/availability/save?weekStartDate=${weekStartDateStr}`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.timePreferences) {
+          setTimePreferences({
+            weekdayEarliest: data.timePreferences.weekdayEarliest || '6:00',
+            weekdayLatest: data.timePreferences.weekdayLatest || '23:30',
+            useSameWeekendTimes: data.timePreferences.useSameWeekendTimes !== false,
+            weekendEarliest: data.timePreferences.weekendEarliest || '8:00',
+            weekendLatest: data.timePreferences.weekendLatest || '23:30',
+          });
+          setIsWeekScheduled(data.isScheduled || false);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading time preferences for week:', error);
+    }
   };
 
   // Load availability preferences
@@ -195,24 +227,26 @@ function AvailabilitySettingsPageContent() {
         });
       }
       
-      // Then try to load from API (this will override localStorage if available)
-      // Load blocked times for current week and next 3 weeks (weeks 0-3)
-      const week0Start = getWeekStart(0);
-      const week3End = new Date(getWeekStart(3));
-      week3End.setDate(week3End.getDate() + 7); // End of week 3
+      // Load time preferences for the currently selected week
+      await loadTimePreferencesForWeek(selectedWeek);
       
-      const response = await fetch(`/api/availability/save?startDate=${week0Start.toISOString()}&endDate=${week3End.toISOString()}`);
+      // Then try to load from API (this will override localStorage if available)
+      // Load ALL blocked times (not just weeks 0-3) so we can see everything
+      // We'll filter them by week in the frontend for display
+      const response = await fetch(`/api/availability/save`);
       if (response.ok) {
         const data = await response.json();
         if (data.success && data.timePreferences) {
-          // Update time preferences with saved values from database (overrides localStorage)
-          setTimePreferences({
-            weekdayEarliest: data.timePreferences.weekdayEarliest || onboardingTimePrefs.weekdayEarliest || '6:00',
-            weekdayLatest: data.timePreferences.weekdayLatest || onboardingTimePrefs.weekdayLatest || '23:30',
-            useSameWeekendTimes: data.timePreferences.useSameWeekendTimes !== false,
-            weekendEarliest: data.timePreferences.weekendEarliest || onboardingTimePrefs.weekendEarliest || '8:00',
-            weekendLatest: data.timePreferences.weekendLatest || onboardingTimePrefs.weekendLatest || '23:30',
-          });
+          // Only update if we haven't loaded per-week preferences
+          if (!data.isScheduled) {
+            setTimePreferences({
+              weekdayEarliest: data.timePreferences.weekdayEarliest || onboardingTimePrefs.weekdayEarliest || '6:00',
+              weekdayLatest: data.timePreferences.weekdayLatest || onboardingTimePrefs.weekdayLatest || '23:30',
+              useSameWeekendTimes: data.timePreferences.useSameWeekendTimes !== false,
+              weekendEarliest: data.timePreferences.weekendEarliest || onboardingTimePrefs.weekendEarliest || '8:00',
+              weekendLatest: data.timePreferences.weekendLatest || onboardingTimePrefs.weekendLatest || '23:30',
+            });
+          }
           setTimePreferencesLoaded(true);
           
           // Map loaded blocked times to their respective weeks (0-3)
@@ -500,6 +534,10 @@ function AvailabilitySettingsPageContent() {
         .flat()
         .filter(blocked => blocked.source !== 'repeatable_event');
       
+      // Get week start date for the currently selected week
+      const weekStart = getWeekStart(selectedWeek);
+      const weekStartDateStr = weekStart.toISOString().split('T')[0];
+      
       const response = await fetch('/api/availability/save', {
         method: 'POST',
         headers: {
@@ -507,24 +545,58 @@ function AvailabilitySettingsPageContent() {
         },
         body: JSON.stringify({
           timePreferences,
-          blockedTimes: allBlockedTimes
+          blockedTimes: allBlockedTimes,
+          weekStartDate: weekStartDateStr // Include week start date for per-week preferences
         }),
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
+        const errorData = await response.json().catch(() => ({ error: 'Failed to save' }));
         throw new Error(errorData.error || 'Failed to save');
       }
 
-      setSuccessMessage('Availability settings saved successfully!');
-      setShowSuccessModal(true);
-      setTimeout(() => setShowSuccessModal(false), 3000);
+      const result = await response.json();
       
-      // Reload preferences to ensure calendar updates with saved values
-      await loadAvailability();
+      // Check if the response indicates success
+      if (result.success !== false) {
+        // Check if blocks were rescheduled
+        if (result.rescheduledDetails && result.rescheduledDetails.length > 0) {
+          // Show reschedule modal with details
+          setRescheduleDetails(result.rescheduledDetails);
+          setShowRescheduleModal(true);
+        } else {
+          // No reschedules, show regular success message
+          setSuccessMessage('Availability settings saved successfully!');
+          setShowSuccessModal(true);
+          setTimeout(() => setShowSuccessModal(false), 3000);
+        }
+        
+        // Reload preferences to ensure calendar updates with saved values
+        // Don't fail the whole operation if reload fails
+        try {
+          await loadTimePreferencesForWeek(selectedWeek);
+          await loadAvailability();
+        } catch (reloadError) {
+          console.warn('Failed to reload availability after save (non-critical):', reloadError);
+          // Don't show error - the save succeeded
+        }
+        
+        // Dispatch event to notify plan page to refresh
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('availabilityUpdated', {
+            detail: { 
+              rescheduled: result.rescheduled || 0,
+              conflicts: result.conflicts || 0
+            }
+          }));
+          console.log('📢 Dispatched availabilityUpdated event to refresh plan page');
+        }
+      } else {
+        throw new Error(result.error || 'Failed to save');
+      }
     } catch (error) {
       console.error('Error saving availability:', error);
-      setErrorMessage('Failed to save availability settings. Please try again.');
+      setErrorMessage(error.message || 'Failed to save availability settings. Please try again.');
       setShowErrorModal(true);
       setTimeout(() => setShowErrorModal(false), 3000);
     } finally {
@@ -1059,6 +1131,14 @@ function AvailabilitySettingsPageContent() {
               Study Window Times
             </h2>
             
+            {isWeekScheduled && (
+              <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <p className="text-sm text-yellow-800">
+                  ⚠️ This week is already scheduled. Study window times cannot be changed.
+                </p>
+              </div>
+            )}
+            
             <div className="space-y-6">
               {/* Weekday Times */}
               <div>
@@ -1086,7 +1166,10 @@ function AvailabilitySettingsPageContent() {
                               handleTimePreferenceChange('weekdayEarliest', selectedTime);
                             }
                           }}
-                          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                          disabled={isWeekScheduled}
+                          className={`w-full h-2 bg-gray-200 rounded-lg appearance-none accent-blue-500 ${
+                            isWeekScheduled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+                          }`}
                         />
                       </div>
                       <div>
@@ -1103,7 +1186,10 @@ function AvailabilitySettingsPageContent() {
                               handleTimePreferenceChange('weekdayLatest', selectedTime);
                             }
                           }}
-                          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                          disabled={isWeekScheduled}
+                          className={`w-full h-2 bg-gray-200 rounded-lg appearance-none accent-blue-500 ${
+                            isWeekScheduled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+                          }`}
                         />
                       </div>
                     </div>
@@ -1119,7 +1205,10 @@ function AvailabilitySettingsPageContent() {
                     id="weekendToggle"
                     checked={timePreferences.useSameWeekendTimes}
                     onChange={handleWeekendToggle}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    disabled={isWeekScheduled}
+                    className={`w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 ${
+                      isWeekScheduled ? 'cursor-not-allowed opacity-50' : ''
+                    }`}
                   />
                   <label htmlFor="weekendToggle" className="text-sm font-medium text-gray-700">
                     Use same times for weekends
@@ -1152,7 +1241,10 @@ function AvailabilitySettingsPageContent() {
                                   handleTimePreferenceChange('weekendEarliest', selectedTime);
                                 }
                               }}
-                              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                              disabled={isWeekScheduled}
+                              className={`w-full h-2 bg-gray-200 rounded-lg appearance-none accent-blue-500 ${
+                                isWeekScheduled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+                              }`}
                             />
                           </div>
                           <div>
@@ -1169,7 +1261,10 @@ function AvailabilitySettingsPageContent() {
                                   handleTimePreferenceChange('weekendLatest', selectedTime);
                                 }
                               }}
-                              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                              disabled={isWeekScheduled}
+                              className={`w-full h-2 bg-gray-200 rounded-lg appearance-none accent-blue-500 ${
+                                isWeekScheduled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+                              }`}
                             />
                           </div>
                         </div>
@@ -1436,6 +1531,103 @@ function AvailabilitySettingsPageContent() {
               >
                 Got it
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reschedule Details Modal */}
+      {showRescheduleModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-md">
+          <div className="bg-white rounded-xl shadow-2xl p-8 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto transform transition-all animate-popup">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900">Blocks Rescheduled</h3>
+                  <p className="text-gray-600 mt-1">
+                    {rescheduleDetails.length} block{rescheduleDetails.length !== 1 ? 's' : ''} {rescheduleDetails.some(d => d.markedAsMissed) ? 'were affected' : 'were rescheduled'} due to unavailable times
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    setShowRescheduleModal(false);
+                    setSuccessMessage('Availability settings saved successfully!');
+                    setShowSuccessModal(true);
+                    setTimeout(() => setShowSuccessModal(false), 3000);
+                  }}
+                  className="btn btn-sm btn-circle btn-ghost"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                {rescheduleDetails.map((detail, index) => {
+                  const oldDate = new Date(detail.oldTime);
+                  const newDate = detail.newTime ? new Date(detail.newTime) : null;
+                  
+                  const formatDateTime = (date) => {
+                    if (!date) return 'N/A';
+                    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                    const dayName = dayNames[date.getDay()];
+                    const time = date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+                    return `${dayName}, ${time}`;
+                  };
+
+                  return (
+                    <div key={detail.blockId || index} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-gray-900 mb-1">
+                            {detail.topicName}
+                          </h4>
+                          <p className="text-sm text-gray-600 mb-2">{detail.subject}</p>
+                          
+                          <div className="space-y-1 text-sm">
+                            <div className="flex items-center gap-2">
+                              <span className="text-gray-500">From:</span>
+                              <span className="font-medium text-gray-900">{formatDateTime(oldDate)}</span>
+                            </div>
+                            {detail.markedAsMissed ? (
+                              <div className="flex items-center gap-2">
+                                <span className="text-red-600 font-medium">⚠️ Marked as missed (no available slot found)</span>
+                              </div>
+                            ) : (
+                              <div className="flex items-center gap-2">
+                                <span className="text-gray-500">To:</span>
+                                <span className="font-medium text-green-600">{formatDateTime(newDate)}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        {!detail.markedAsMissed && (
+                          <div className="ml-4">
+                            <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                            </svg>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  onClick={() => {
+                    setShowRescheduleModal(false);
+                    setSuccessMessage('Availability settings saved successfully!');
+                    setShowSuccessModal(true);
+                    setTimeout(() => setShowSuccessModal(false), 3000);
+                  }}
+                  className="flex-1 bg-blue-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors"
+                >
+                  Got it
+                </button>
+              </div>
             </div>
           </div>
         </div>
