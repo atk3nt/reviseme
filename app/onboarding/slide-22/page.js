@@ -278,9 +278,9 @@ export default function Slide22Page() {
       setLoadingStep("Plan generated successfully!");
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      // Navigate directly to plan page
-      console.log('🚀 Navigating to /plan');
-      router.push("/plan");
+      // Navigate directly to plan page with week view
+      console.log('🚀 Navigating to /plan?view=week');
+      router.push("/plan?view=week");
     } catch (error) {
       console.error('Plan generation error:', error);
       const errorMessage = error.message || 'Failed to generate plan. Please try again.';

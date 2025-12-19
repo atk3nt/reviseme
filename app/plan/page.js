@@ -8,13 +8,14 @@ import { toast } from "react-hot-toast";
 import config from "@/config";
 import BlockDetailModal from "@/components/BlockDetailModal";
 import SupportModal from "@/components/SupportModal";
+import ConfirmAvailabilityModal from "@/components/ConfirmAvailabilityBanner";
 
 function PlanPageContent() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [activeTab, setActiveTab] = useState('today');
+  const [activeTab, setActiveTab] = useState('today'); // Default to today, will be updated after blocks load
   const [blocks, setBlocks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -38,6 +39,9 @@ function PlanPageContent() {
   const [settingsDropdownOpen, setSettingsDropdownOpen] = useState(false);
   const [supportModalOpen, setSupportModalOpen] = useState(false);
   const [timePreferences, setTimePreferences] = useState(null); // Load from database
+  const [showAvailabilityModal, setShowAvailabilityModal] = useState(false);
+  const [nextWeekStart, setNextWeekStart] = useState(null);
+  const hasSetInitialView = useRef(false); // Track if we've set the initial view based on blocks
 
   // Clean topic names by removing leading apostrophes/quotes
   // Optionally include parent topic name (for TodayView and BlockDetailModal)
@@ -125,6 +129,16 @@ function PlanPageContent() {
     currentWeekStart.setHours(0, 0, 0, 0);
     // Can go to previous week if we're viewing next week or later (not current week)
     return viewingWeekStart.getTime() > currentWeekStart.getTime();
+  }, [weekStartDate, getCurrentWeekStart]);
+
+  // Check if we can navigate to next week (only allow going 1 week ahead max)
+  const canGoToNextWeek = useMemo(() => {
+    const currentWeekStart = getCurrentWeekStart();
+    const viewingWeekStart = new Date(weekStartDate);
+    viewingWeekStart.setHours(0, 0, 0, 0);
+    currentWeekStart.setHours(0, 0, 0, 0);
+    // Can only go to next week if we're viewing current week (not already viewing next week)
+    return viewingWeekStart.getTime() === currentWeekStart.getTime();
   }, [weekStartDate, getCurrentWeekStart]);
 
 
@@ -521,11 +535,34 @@ function PlanPageContent() {
     setWeekStartDate(newWeekStart);
   }, [weekStartDate, canGoToPreviousWeek]);
 
-  const navigateToNextWeek = useCallback(() => {
+  const navigateToNextWeek = useCallback(async () => {
+    // Only allow navigating one week ahead
+    if (!canGoToNextWeek) return;
+    
     const newWeekStart = new Date(weekStartDate);
     newWeekStart.setDate(weekStartDate.getDate() + 7);
+    
+    // Check if user has confirmed availability for next week
+    try {
+      const response = await fetch('/api/availability/confirm?weekOffset=1');
+      if (response.ok) {
+        const data = await response.json();
+        if (!data.isConfirmed) {
+          // Block navigation - show modal requiring them to set availability
+          setNextWeekStart(data.weekStart);
+          setShowAvailabilityModal(true);
+          return; // Don't navigate - they must go to settings first
+        }
+      }
+    } catch (error) {
+      console.error('Error checking availability confirmation:', error);
+      // On error, block navigation to be safe
+      setShowAvailabilityModal(true);
+      return;
+    }
+    
     setWeekStartDate(newWeekStart);
-  }, [weekStartDate]);
+  }, [weekStartDate, canGoToNextWeek]);
 
   useEffect(() => {
     // Check if we're in dev mode
@@ -571,6 +608,41 @@ function PlanPageContent() {
       setActiveTab('week');
     }
   }, [isViewingNextWeek, activeTab]);
+
+  // Set initial view based on whether there are blocks today (only on first load)
+  useEffect(() => {
+    // Only run once after initial blocks load
+    if (hasSetInitialView.current || isLoading) return;
+    
+    // Check if we came from onboarding (view=week param)
+    const viewParam = searchParams?.get('view');
+    
+    // Check if there are any blocks scheduled for today
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    const todayBlocks = blocks.filter(block => {
+      if (!block.scheduled_at) return false;
+      const blockDate = new Date(block.scheduled_at);
+      return blockDate >= today && blockDate < tomorrow;
+    });
+    
+    const hasTodayBlocks = todayBlocks.length > 0;
+    
+    // If coming from onboarding (view=week) or no blocks today, show week view
+    // Otherwise show today view
+    if (viewParam === 'week' && !hasTodayBlocks) {
+      setActiveTab('week');
+    } else if (hasTodayBlocks) {
+      setActiveTab('today');
+    } else {
+      setActiveTab('week');
+    }
+    
+    hasSetInitialView.current = true;
+  }, [blocks, isLoading, searchParams]);
 
   const getStartOfWeek = (date) => {
     const d = new Date(date);
@@ -1007,9 +1079,10 @@ function PlanPageContent() {
                 {/* Next Week Arrow */}
                 <button
                   onClick={navigateToNextWeek}
-                  className="btn btn-ghost btn-circle btn-sm"
+                  disabled={!canGoToNextWeek}
+                  className={`btn btn-ghost btn-circle btn-sm ${!canGoToNextWeek ? 'opacity-50 cursor-not-allowed' : ''}`}
                   aria-label="Next week"
-                  title="Go to next week"
+                  title={canGoToNextWeek ? "Go to next week" : "Already viewing next week"}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20px" height="20px" viewBox="0 0 24 24">
                     <path fillRule="evenodd" clipRule="evenodd" d="M7.99991 1.58576L18.4141 12L7.99991 22.4142L6.58569 21L15.5857 12L6.58569 2.99997L7.99991 1.58576Z" fill="currentColor"></path>
@@ -1238,8 +1311,12 @@ function PlanPageContent() {
             blockedTimeRanges={blockedTimeRanges}
             weekStartDate={weekStartDate}
             isLoading={isLoading}
-          cleanTopicName={cleanTopicName}
-          timePreferences={timePreferences}
+            cleanTopicName={cleanTopicName}
+            timePreferences={timePreferences}
+            planStartDate={blocks.length > 0 ? blocks.reduce((earliest, block) => {
+              const blockDate = new Date(block.scheduled_at);
+              return blockDate < earliest ? blockDate : earliest;
+            }, new Date(blocks[0].scheduled_at)) : null}
           />
         )}
       </div>
@@ -1259,6 +1336,13 @@ function PlanPageContent() {
       />
       
       <SupportModal isOpen={supportModalOpen} onClose={() => setSupportModalOpen(false)} />
+
+      {/* Availability confirmation modal - shown when navigating to next week without saved availability */}
+      <ConfirmAvailabilityModal 
+        isOpen={showAvailabilityModal}
+        onClose={() => setShowAvailabilityModal(false)}
+        weekStart={nextWeekStart}
+      />
 
       {showRescheduledModal && rescheduledBlockInfo && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -1414,7 +1498,8 @@ function WeekView({
   weekStartDate,
   isLoading,
   cleanTopicName,
-  timePreferences
+  timePreferences,
+  planStartDate // The date when the user's plan started (first scheduled block)
 }) {
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   
@@ -1670,15 +1755,29 @@ function WeekView({
                 const dayDate = new Date(baseDate);
                 dayDate.setDate(baseDate.getDate() + dayIndex);
                 const isToday = dayDate.toDateString() === new Date().toDateString();
+                
+                // Check if this day is before the plan started
+                const isBeforePlanStart = planStartDate && (() => {
+                  const planStart = new Date(planStartDate);
+                  planStart.setHours(0, 0, 0, 0);
+                  const currentDay = new Date(dayDate);
+                  currentDay.setHours(0, 0, 0, 0);
+                  return currentDay < planStart;
+                })();
+                
                 return (
                   <th 
                     key={day} 
                     className={`border border-base-300 px-2 py-3 text-sm font-semibold text-center ${
-                      isToday ? 'bg-primary/10' : 'bg-base-200'
+                      isBeforePlanStart 
+                        ? 'bg-base-300/50 text-base-content/50' // Greyed out - before plan started
+                        : isToday 
+                          ? 'bg-primary/10' 
+                          : 'bg-base-200'
                     }`}
                   >
                     <div className="truncate">{day.substring(0, 3)}</div>
-                    <div className="text-xs font-normal text-base-content/70 truncate">
+                    <div className={`text-xs font-normal truncate ${isBeforePlanStart ? 'text-base-content/40' : 'text-base-content/70'}`}>
                       {dayDate.toLocaleDateString([], { month: 'short', day: 'numeric' })}
                     </div>
                   </th>
@@ -1702,17 +1801,28 @@ function WeekView({
                   const isToday = dayDate.toDateString() === new Date().toDateString();
                   const isAvailable = isTimeSlotAvailable(dayIndex, label.minutes);
                   
+                  // Check if this day is before the plan started (user signed up mid-week)
+                  const isBeforePlanStart = planStartDate && (() => {
+                    const planStart = new Date(planStartDate);
+                    planStart.setHours(0, 0, 0, 0);
+                    const currentDay = new Date(dayDate);
+                    currentDay.setHours(0, 0, 0, 0);
+                    return currentDay < planStart;
+                  })();
+                  
                   return (
                     <td
                       key={`${day}-${timeIndex}`}
                       className={`border px-1 py-1 h-[70px] w-[calc((100%-70px)/7)] ${
-                        !isAvailable
-                          ? 'bg-base-300/30 border-base-300' // Outside available window
-                          : isBlocked 
-                            ? 'bg-error/20 border-error/40 border-2' // Blocked by user - clearly visible with red tint
-                            : isToday 
-                              ? 'bg-primary/5 border-base-300' 
-                              : 'bg-base-100 border-base-300'
+                        isBeforePlanStart
+                          ? 'bg-base-300/50 border-base-300' // Day before plan started - greyed out
+                          : !isAvailable
+                            ? 'bg-base-300/30 border-base-300' // Outside available window
+                            : isBlocked 
+                              ? 'bg-error/20 border-error/40 border-2' // Blocked by user - clearly visible with red tint
+                              : isToday 
+                                ? 'bg-primary/5 border-base-300' 
+                                : 'bg-base-100 border-base-300'
                       }`}
                     >
                       {slotBlocks.length > 0 ? (

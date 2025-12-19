@@ -103,20 +103,35 @@ function AvailabilitySettingsPageContent() {
       return;
     }
     
-    // Adjust dates to the current week
-    const currentWeekStart = getWeekStart(selectedWeek);
-    const previousWeekStart = getWeekStart(previousWeek);
-    const daysDiff = (currentWeekStart - previousWeekStart) / (1000 * 60 * 60 * 24);
+    // Get the target week start (Monday of the current week)
+    const targetWeekStart = getWeekStart(selectedWeek);
+    // Ensure it's set to start of day
+    targetWeekStart.setHours(0, 0, 0, 0);
     
+    // Align blocked times to the target week by preserving day of week
     const adjustedBlockedTimes = manualBlockedTimes.map(blocked => {
       const originalStart = new Date(blocked.start);
       const originalEnd = new Date(blocked.end);
       
-      const newStart = new Date(originalStart);
-      newStart.setDate(newStart.getDate() + daysDiff);
+      // Get day of week index (Monday = 0, Tuesday = 1, ..., Sunday = 6)
+      // getDay() returns 0=Sunday, 1=Monday, ..., 6=Saturday
+      // We convert to Monday=0 format: (day + 6) % 7
+      const dayIndex = (originalStart.getDay() + 6) % 7;
       
-      const newEnd = new Date(originalEnd);
-      newEnd.setDate(newEnd.getDate() + daysDiff);
+      // Create new start date: target Monday + dayIndex, preserving time
+      const newStart = new Date(targetWeekStart);
+      newStart.setDate(targetWeekStart.getDate() + dayIndex);
+      newStart.setHours(originalStart.getHours(), originalStart.getMinutes(), originalStart.getSeconds(), originalStart.getMilliseconds());
+      
+      // Create new end date: same day, preserving end time
+      const newEnd = new Date(targetWeekStart);
+      newEnd.setDate(targetWeekStart.getDate() + dayIndex);
+      newEnd.setHours(originalEnd.getHours(), originalEnd.getMinutes(), originalEnd.getSeconds(), originalEnd.getMilliseconds());
+      
+      // Handle edge case where end time is before start time (spans midnight)
+      if (newEnd <= newStart) {
+        newEnd.setDate(newEnd.getDate() + 1);
+      }
       
       return {
         ...blocked,

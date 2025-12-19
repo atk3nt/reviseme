@@ -28,3 +28,5 @@ CREATE POLICY "Users can manage own week time preferences" ON week_time_preferen
   FOR ALL
   USING (auth.uid() = user_id)
   WITH CHECK (auth.uid() = user_id);
+
+

@@ -425,40 +425,16 @@ export async function GET(req) {
         };
 
         // Load blocked times for next week
-        let unavailableTimes = await loadBlockedTimes(userId, nextWeekStart, nextWeekEnd);
+        const unavailableTimes = await loadBlockedTimes(userId, nextWeekStart, nextWeekEnd);
         const repeatableEvents = await loadRepeatableEvents(userId, nextWeekStart, nextWeekEnd);
 
-        // If no unavailable times for next week, use current week's times (aligned to next week)
+        // IMPORTANT: We no longer copy one-off blocked times from current week
+        // Only use times that are specifically set for next week + repeatable events
+        // Users are prompted via the ConfirmAvailabilityBanner to set their availability for next week
         if (unavailableTimes.length === 0) {
-          console.log(`📅 User ${userId}: No unavailable times for next week, using current week's times`);
-          const currentWeekUnavailable = await loadBlockedTimes(userId, currentWeekStart, currentWeekEnd);
-          
-          // Align current week blocked times to next week (by day of week)
-          unavailableTimes = currentWeekUnavailable.map((range) => {
-            const originalStart = new Date(range.start);
-            const originalEnd = new Date(range.end);
-            
-            // Get day of week (0=Sunday, 1=Monday, etc.) and convert to Monday=0
-            const dayIndex = (originalStart.getUTCDay() + 6) % 7; // Monday = 0
-            
-            // Align to next week's same day
-            const alignedStart = new Date(nextWeekStart);
-            alignedStart.setUTCDate(nextWeekStart.getUTCDate() + dayIndex);
-            alignedStart.setUTCHours(originalStart.getUTCHours(), originalStart.getUTCMinutes(), 0, 0);
-            
-            const alignedEnd = new Date(nextWeekStart);
-            alignedEnd.setUTCDate(nextWeekStart.getUTCDate() + dayIndex);
-            alignedEnd.setUTCHours(originalEnd.getUTCHours(), originalEnd.getUTCMinutes(), 0, 0);
-            
-            if (alignedEnd <= alignedStart) {
-              alignedEnd.setUTCDate(alignedEnd.getUTCDate() + 1);
-            }
-            
-            return {
-              start: alignedStart.toISOString(),
-              end: alignedEnd.toISOString()
-            };
-          });
+          console.log(`📅 User ${userId}: No unavailable times set for next week - using only repeatable events and time preferences`);
+          // Don't copy current week's unavailable times - they were one-off events
+          // The user should set next week's availability separately via the confirmation flow
         }
 
         const blockedTimes = dedupeBlockedTimes(

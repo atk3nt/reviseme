@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import DevPanel from "@/components/DevPanel";
 
 export default function OnboardingLayout({ children }) {
   const { data: session, status } = useSession();
@@ -78,6 +79,9 @@ export default function OnboardingLayout({ children }) {
             {children}
           </div>
         </main>
+        
+        {/* Dev Panel */}
+        <DevPanel />
       </div>
     </div>
   );

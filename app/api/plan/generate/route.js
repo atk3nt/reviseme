@@ -105,7 +105,9 @@ function toDatabaseRows(blocks, userId) {
       scheduled_at: block.scheduled_at,
       duration_minutes: block.duration_minutes,
       status: 'scheduled',
-      ai_rationale: block.ai_rationale ?? null
+      ai_rationale: block.ai_rationale ?? null,
+      session_number: block.session_number ?? null,
+      session_total: block.session_total ?? null
     }));
 }
 
@@ -240,6 +242,49 @@ async function loadRatingsFromDatabase(userId) {
     return ratingsObj;
   } catch (error) {
     console.error('Exception loading ratings from database:', error);
+    return {};
+  }
+}
+
+/**
+ * Load the last re-rating timestamp for each topic.
+ * This is used to reset session counts when a topic has been re-rated.
+ * Only blocks AFTER the last re-rating should count toward the new cycle.
+ * 
+ * @param {string} userId - The user's ID
+ * @returns {Object} - Map of topicId -> { lastReratingDate: Date, newRating: number }
+ */
+async function loadLastReratingDates(userId) {
+  try {
+    const { data: reratingLogs, error } = await supabaseAdmin
+      .from('logs')
+      .select('event_data, created_at')
+      .eq('user_id', userId)
+      .eq('event_type', 'topic_rerated')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error loading re-rating logs:', error);
+      return {};
+    }
+
+    // Build map of topic -> most recent re-rating info
+    // Since we order by created_at DESC, first occurrence is the most recent
+    const reratingMap = {};
+    (reratingLogs || []).forEach(log => {
+      const topicId = log.event_data?.topic_id;
+      if (topicId && !reratingMap[topicId]) {
+        reratingMap[topicId] = {
+          lastReratingDate: new Date(log.created_at),
+          newRating: log.event_data?.rerating_score
+        };
+      }
+    });
+
+    console.log(`🔄 Loaded re-rating history for ${Object.keys(reratingMap).length} topics`);
+    return reratingMap;
+  } catch (error) {
+    console.error('Exception loading re-rating dates:', error);
     return {};
   }
 }
@@ -537,9 +582,7 @@ export async function POST(req) {
     
     console.log('✅ Calculated availability from database:', effectiveAvailability);
 
-    // For future weeks (including next week generated on Sunday), load latest ratings from database
-    // For current/past weeks, use provided ratings to avoid disrupting existing plans
-    let effectiveRatings = ratings;
+    // Determine if this is a future week (for loading latest ratings from database)
     let effectiveTopicStatus = topicStatus || {};
     const currentWeekStart = getMonday(new Date());
     currentWeekStart.setHours(0, 0, 0, 0);
@@ -548,9 +591,26 @@ export async function POST(req) {
     
     const isFutureWeek = targetWeekStartDate > currentWeekStart;
     
+    // IMPORTANT: Load latest ratings from database FIRST (before block counting)
+    // This ensures re-rated topics use their NEW rating when calculating required sessions
+    let effectiveRatings = ratings;
+    if (isFutureWeek) {
+      console.log('📅 Target week is in the future - loading latest ratings from database BEFORE block counting');
+      const dbRatings = await loadRatingsFromDatabase(userId);
+      // Database ratings take precedence (reflects any re-rating changes)
+      effectiveRatings = { ...ratings, ...dbRatings };
+      console.log(`✅ Using database ratings for future week. Total ratings: ${Object.keys(effectiveRatings).length}`);
+    } else {
+      console.log('📅 Target week is current or past - using provided ratings');
+    }
+    
     console.log('🚀 SPACED REPETITION: Starting block counting and ongoing topic tracking');
     console.log('📅 Target week:', targetWeekStart);
     console.log('📅 Week start date:', weekStartDate.toISOString());
+    
+    // Load re-rating history to detect when topics have been re-rated
+    // Blocks before the last re-rating don't count toward the new cycle
+    const reratingHistory = await loadLastReratingDates(userId);
     
     // Load ALL previous blocks for this user (for counting and tracking last session dates)
     const { data: previousBlocks, error: blocksError } = await supabaseAdmin
@@ -577,13 +637,24 @@ export async function POST(req) {
     
     if (previousBlocks && previousBlocks.length > 0) {
       // Count blocks per topic AND track last session date
+      // IMPORTANT: Skip ALL blocks for topics that have been re-rated (they start fresh)
       const topicData = new Map(); // { topicId: { count, lastDate } }
+      let skippedDueToRerate = 0;
       
       previousBlocks.forEach(block => {
         if (!block.topic_id) return; // Skip blocks without topic_id
         
-        const existing = topicData.get(block.topic_id);
         const blockDate = new Date(block.scheduled_at);
+        
+        // If this topic was re-rated, skip ALL its blocks (fresh cycle starts)
+        // Re-rating resets everything - no date comparison needed
+        if (reratingHistory[block.topic_id]) {
+          skippedDueToRerate++;
+          return; // Skip ALL blocks for re-rated topics
+        }
+        
+        // Only count blocks for topics that haven't been re-rated
+        const existing = topicData.get(block.topic_id);
         
         if (!existing) {
           topicData.set(block.topic_id, { count: 1, lastDate: blockDate });
@@ -595,23 +666,47 @@ export async function POST(req) {
         }
       });
       
-      console.log('📊 Block count analysis:', {
+      if (skippedDueToRerate > 0) {
+        console.log(`🔄 Skipped ${skippedDueToRerate} blocks from previous rating cycles (before/at re-rating)`);
+      }
+      
+      // Log detailed info about re-rated topics
+      if (Object.keys(reratingHistory).length > 0) {
+        console.log('🔄 Re-rated topics detail:', Object.entries(reratingHistory).map(([topicId, info]) => {
+          const blocksForTopic = topicData.get(topicId);
+          const newRating = effectiveRatings[topicId];
+          const sessionsNeeded = newRating === 1 ? 3 : newRating === 2 ? 2 : 1;
+          return {
+            topicId: topicId.substring(0, 8) + '...',
+            newRating,
+            sessionsNeeded,
+            blocksCountedAfterRerate: blocksForTopic?.count || 0,
+            reratedAt: info.lastReratingDate.toISOString()
+          };
+        }));
+      }
+      
+      console.log('📊 Block count analysis (after re-rating filter):', {
         total: previousBlocks.length,
+        countedBlocks: previousBlocks.length - skippedDueToRerate,
         uniqueTopics: topicData.size,
+        reratedTopics: Object.keys(reratingHistory).length,
         sample: Array.from(topicData.entries()).slice(0, 5).map(([id, data]) => ({
           topicId: id.substring(0, 8) + '...',
           blockCount: data.count,
-          lastDate: data.lastDate.toISOString().split('T')[0]
+          lastDate: data.lastDate.toISOString().split('T')[0],
+          wasRerated: !!reratingHistory[id]
         }))
       });
       
       // Separate topics into completed vs ongoing (for within-week spaced repetition)
+      // NOTE: effectiveRatings already contains the LATEST ratings (including re-ratings)
       topicData.forEach((data, topicId) => {
         const rating = effectiveRatings[topicId];
         const requiredSessions = rating !== undefined ? getRequiredSessions(rating) : 1;
         
         if (data.count >= requiredSessions) {
-          // Topic completed all sessions
+          // Topic completed all sessions for the CURRENT rating
           completedTopics.add(topicId);
         } else {
           // Topic is ongoing (incomplete sessions) - track for gap day enforcement
@@ -634,17 +729,6 @@ export async function POST(req) {
         }))
       });
     }
-
-    // For future weeks, load latest ratings from database (may have changed since plan was made)
-    if (isFutureWeek) {
-      console.log('📅 Target week is in the future - loading latest ratings from database');
-      const dbRatings = await loadRatingsFromDatabase(userId);
-      // Database ratings take precedence (reflects any re-rating changes)
-      effectiveRatings = { ...ratings, ...dbRatings };
-      console.log(`✅ Using database ratings for future week. Total ratings: ${Object.keys(effectiveRatings).length}`);
-    } else {
-      console.log('📅 Target week is current or past - using provided ratings to avoid disrupting existing plan');
-    }
     
     // Exclude all completed topics from scheduling
     completedTopics.forEach(topicId => {
@@ -652,6 +736,29 @@ export async function POST(req) {
     });
     
     console.log(`✅ Excluding ${completedTopics.size} completed topics from scheduling`);
+
+    // Collect re-rated topic IDs that need new sessions (not yet completed in new cycle)
+    // These should be PRIORITIZED over new topics that haven't been covered yet
+    const reratedTopicIds = Object.keys(reratingHistory).filter(topicId => {
+      // Only include if:
+      // 1. Not already completed in the new cycle
+      // 2. Has a rating that requires sessions (1-3)
+      if (completedTopics.has(topicId)) return false;
+      
+      const rating = effectiveRatings[topicId];
+      // Ratings 1-3 need spaced repetition, 4-5 are "mastered" (maintenance only)
+      return rating !== undefined && rating <= 3;
+    });
+
+    if (reratedTopicIds.length > 0) {
+      console.log(`🔄 Found ${reratedTopicIds.length} re-rated topics that need priority scheduling:`, 
+        reratedTopicIds.slice(0, 5).map(id => ({
+          topicId: id.substring(0, 8) + '...',
+          newRating: effectiveRatings[id],
+          sessionsNeeded: effectiveRatings[id] === 1 ? 3 : effectiveRatings[id] === 2 ? 2 : 1
+        }))
+      );
+    }
 
     let plan;
     try {
@@ -663,6 +770,7 @@ export async function POST(req) {
         blockedTimesCount: combinedBlockedTimes.length,
         completedTopicsCount: completedTopics.size,
         ongoingTopicsCount: Object.keys(ongoingTopics).length,
+        reratedTopicsCount: reratedTopicIds.length,
         targetWeekStart
       });
       
@@ -676,6 +784,7 @@ export async function POST(req) {
         studyBlockDuration,
         targetWeekStart,
         actualStartDate, // For partial weeks - skip days before this date
+        missedTopicIds: reratedTopicIds, // Re-rated topics get priority (treated like missed topics)
         ongoingTopics // Pass ongoing topics for gap day enforcement and session tracking
       });
       
@@ -778,7 +887,7 @@ export async function POST(req) {
       const { data: inserted, error: insertError } = await supabaseAdmin
         .from('blocks')
         .insert(records)
-        .select('id, topic_id, scheduled_at, duration_minutes, status, ai_rationale');
+        .select('id, topic_id, scheduled_at, duration_minutes, status, ai_rationale, session_number, session_total');
       
       if (insertError) {
         console.error('Failed to insert blocks:', insertError);
@@ -1011,7 +1120,7 @@ export async function GET(request) {
       let query = supabaseAdmin
         .from('blocks')
         .select(
-          `id, topic_id, scheduled_at, duration_minutes, status, ai_rationale,
+          `id, topic_id, scheduled_at, duration_minutes, status, ai_rationale, session_number, session_total, rerating_score,
            topics(id, title, level, parent_id, spec_id, specs(subject, exam_board))`
         )
         .eq('user_id', userId);
@@ -1145,6 +1254,9 @@ export async function GET(request) {
           duration_minutes: row.duration_minutes,
           status: row.status,
           ai_rationale: row.ai_rationale,
+          session_number: row.session_number,
+          session_total: row.session_total,
+          rerating_score: row.rerating_score,
           topic_name: 'Unknown Topic',
           parent_topic_name: null,
           subject: 'Unknown subject',
@@ -1163,6 +1275,9 @@ export async function GET(request) {
         duration_minutes: row.duration_minutes,
         status: row.status,
         ai_rationale: row.ai_rationale,
+        session_number: row.session_number,
+        session_total: row.session_total,
+        rerating_score: row.rerating_score,
         topic_name: topic.title || 'Topic',
         parent_topic_name: null, // Deprecated - use hierarchy instead
         subject: topic.specs?.subject || 'Unknown subject',
