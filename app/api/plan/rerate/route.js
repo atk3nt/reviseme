@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/libs/auth";
 import { supabaseAdmin } from "@/libs/supabase";
 
-const DEV_USER_EMAIL = 'dev-test@markr.local';
+const DEV_USER_EMAIL = 'appmarkrai@gmail.com';
 
 // Progressive maintenance intervals (days until next review)
 // After each successful high rating, interval increases

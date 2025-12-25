@@ -330,7 +330,9 @@ export function assignTopicsToSlots(slots = [], topics = [], ongoingTopics = {})
       gapDays: config.gapDays,
       sessionType: config.type,
       sessionsScheduled,
-      nextAvailableDate
+      nextAvailableDate,
+      // Store last session date for cross-week gap enforcement
+      lastSessionDate: ongoing?.lastSessionDate ? new Date(ongoing.lastSessionDate) : null
     };
   });
 
@@ -539,7 +541,39 @@ export function assignTopicsToSlots(slots = [], topics = [], ongoingTopics = {})
             if (topic.nextAvailableDate && slot.startDate < topic.nextAvailableDate) return false;
             if (topicsScheduledToday.has(topic.id)) return false;
             
-            // NEW: For topics that haven't started yet (session 0), check if ALL sessions can fit in the week
+            // Cross-week gap enforcement: For ongoing topics, verify the actual gap is respected
+            // This catches cases where nextAvailableDate may have been in a previous week
+            if (topic.lastSessionDate && topic.sessionsScheduled > 0) {
+              const lastSession = new Date(topic.lastSessionDate);
+              const gapIndex = topic.sessionsScheduled - 1;
+              const requiredGap = (gapIndex >= 0 && gapIndex < topic.gapDays.length) 
+                ? topic.gapDays[gapIndex] 
+                : 1;
+              
+              // Calculate actual calendar days between last session and this slot
+              // Use UTC dates at midnight to compare calendar days, not hours
+              const lastSessionDay = new Date(Date.UTC(
+                lastSession.getUTCFullYear(),
+                lastSession.getUTCMonth(),
+                lastSession.getUTCDate()
+              ));
+              const slotDay = new Date(Date.UTC(
+                slot.startDate.getUTCFullYear(),
+                slot.startDate.getUTCMonth(),
+                slot.startDate.getUTCDate()
+              ));
+              const daysDiff = Math.round((slotDay - lastSessionDay) / (1000 * 60 * 60 * 24));
+              
+              if (daysDiff < requiredGap) {
+                // Not enough days have passed since last session
+                if (process.env.NODE_ENV === 'development') {
+                  console.log(`⏳ Gap enforcement: "${topic.title?.substring(0, 30)}..." blocked for ${slot.startDate.toISOString().split('T')[0]} - only ${daysDiff} days since last session (need ${requiredGap})`);
+                }
+                return false;
+              }
+            }
+            
+            // For topics that haven't started yet (session 0), check if ALL sessions can fit in the week
             if (topic.sessionsScheduled === 0) {
               const config = getSessionConfig(topic.rating);
               if (!canFitAllSessionsInWeek(config, slot.startDate, topic.title)) {
@@ -607,6 +641,16 @@ export function assignTopicsToSlots(slots = [], topics = [], ongoingTopics = {})
         dayData.scheduledBlocks += 1;
         blocksPlacedInCluster += 1; // Track blocks actually placed in this cluster
 
+        // Log cross-week gap success for ongoing topics
+        if (process.env.NODE_ENV === 'development' && topic.lastSessionDate) {
+          const lastSession = new Date(topic.lastSessionDate);
+          // Use calendar days for accurate logging
+          const lastSessionDay = new Date(Date.UTC(lastSession.getUTCFullYear(), lastSession.getUTCMonth(), lastSession.getUTCDate()));
+          const slotDay = new Date(Date.UTC(slot.startDate.getUTCFullYear(), slot.startDate.getUTCMonth(), slot.startDate.getUTCDate()));
+          const daysDiff = Math.round((slotDay - lastSessionDay) / (1000 * 60 * 60 * 24));
+          console.log(`✅ Gap respected: "${topic.title?.substring(0, 30)}..." Session ${sessionNumber}/${sessionTotal} scheduled on ${slot.startDate.toISOString().split('T')[0]} (${daysDiff} days after last session)`);
+        }
+
         if (topic.sessionsScheduled >= topic.sessionsRequired) {
           topic.nextAvailableDate = null;
         } else {
@@ -615,6 +659,10 @@ export function assignTopicsToSlots(slots = [], topics = [], ongoingTopics = {})
             ? topic.gapDays[gapIndex] 
             : 1;
           topic.nextAvailableDate = addDays(slot.startDate, Math.max(1, nextGap));
+          
+          if (process.env.NODE_ENV === 'development') {
+            console.log(`   📅 Next session earliest: ${topic.nextAvailableDate.toISOString().split('T')[0]} (+${nextGap} days)`);
+          }
         }
       }
       
@@ -758,23 +806,54 @@ export function assignTopicsToSlots(slots = [], topics = [], ongoingTopics = {})
         }
         
         const availableTopics = topicStates
-          .filter((topic) => (
-            topic.sessionsScheduled < topic.sessionsRequired
-            && (!topic.nextAvailableDate || slot.startDate >= topic.nextAvailableDate)
-            && !topicsScheduledToday.has(topic.id)
-          ));
+          .filter((topic) => {
+            if (topic.sessionsScheduled >= topic.sessionsRequired) return false;
+            if (topic.nextAvailableDate && slot.startDate < topic.nextAvailableDate) return false;
+            if (topicsScheduledToday.has(topic.id)) return false;
+            
+            // Cross-week gap enforcement: For ongoing topics, verify the actual gap is respected
+            if (topic.lastSessionDate && topic.sessionsScheduled > 0) {
+              const lastSession = new Date(topic.lastSessionDate);
+              const gapIndex = topic.sessionsScheduled - 1;
+              const requiredGap = (gapIndex >= 0 && gapIndex < topic.gapDays.length) 
+                ? topic.gapDays[gapIndex] 
+                : 1;
+              
+              // Calculate actual calendar days between last session and this slot
+              // Use UTC dates at midnight to compare calendar days, not hours
+              const lastSessionDay = new Date(Date.UTC(
+                lastSession.getUTCFullYear(),
+                lastSession.getUTCMonth(),
+                lastSession.getUTCDate()
+              ));
+              const slotDay = new Date(Date.UTC(
+                slot.startDate.getUTCFullYear(),
+                slot.startDate.getUTCMonth(),
+                slot.startDate.getUTCDate()
+              ));
+              const daysDiff = Math.round((slotDay - lastSessionDay) / (1000 * 60 * 60 * 24));
+              
+              if (daysDiff < requiredGap) {
+                if (process.env.NODE_ENV === 'development') {
+                  console.log(`⏳ Gap enforcement (fallback): "${topic.title?.substring(0, 30)}..." blocked - only ${daysDiff} days since last session (need ${requiredGap})`);
+                }
+                return false;
+              }
+            }
+            
+            return true;
+          });
 
-        const remainingTopics = topicStates
-          .filter((topic) => topic.sessionsScheduled < topic.sessionsRequired);
-
-        if (availableTopics.length === 0 && remainingTopics.length === 0) {
+        // Only use availableTopics - do NOT fall back to remainingTopics
+        // as that would bypass gap enforcement for spaced repetition
+        if (availableTopics.length === 0) {
           if (process.env.NODE_ENV === 'development' && i === searchStartIndex) {
-            console.log(`⚠️ ${dayKey}: No available topics for final safety check`);
+            console.log(`⚠️ ${dayKey}: No available topics for slot (gap enforcement may be blocking)`);
           }
           continue;
         }
 
-        const candidates = (availableTopics.length > 0 ? availableTopics : remainingTopics)
+        const candidates = availableTopics
           .sort((a, b) => {
             if (a.priorityIndex === -1 && b.priorityIndex !== -1) return -1;
             if (a.priorityIndex !== -1 && b.priorityIndex === -1) return 1;

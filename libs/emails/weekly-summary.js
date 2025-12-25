@@ -5,7 +5,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 export async function sendWeeklySummaryEmail(userEmail, userName, summary, stats) {
   try {
     const { data, error } = await resend.emails.send({
-      from: 'ReviseMe <noreply@reviseme.co>',
+      from: 'ReviseMe <hello@reviseme.co>',
       to: [userEmail],
       subject: `Your Weekly Revision Summary - ${stats.weekStart}`,
       html: `

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/libs/supabase";
 
-const DEV_USER_EMAIL = 'dev-test@markr.local';
+const DEV_USER_EMAIL = 'appmarkrai@gmail.com';
 
 async function ensureDevUser() {
   const { data, error } = await supabaseAdmin

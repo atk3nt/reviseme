@@ -91,9 +91,9 @@ export default function Slide17Page() {
           {/* Value Framing */}
           <div className="text-center">
             <div className="text-sm text-gray-500 line-through mb-1">Monthly Plan £12.99</div>
-            <div className="text-4xl font-bold text-gray-900">£4.16</div>
+            <div className="text-4xl font-bold text-gray-900">£5.00</div>
             <div className="text-lg text-gray-600">per month</div>
-            <div className="text-sm text-gray-500 mb-2">One-time payment: £24.99</div>
+            <div className="text-sm text-gray-500 mb-2">One-time payment: £29.99</div>
             <div className="text-sm text-blue-600 font-medium">Exam Season Pass: Jan–July 2026</div>
           </div>
           
@@ -151,16 +151,17 @@ export default function Slide17Page() {
           disabled={isLoading}
           className="w-full bg-blue-500 text-white py-4 px-8 rounded-lg font-medium text-lg hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isLoading ? "Processing..." : "Get Exam Season Pass - £24.99"}
+          {isLoading ? "Processing..." : "Get Exam Season Pass - £29.99"}
         </button>
         
         {/* Dev-only skip button */}
         {isDev && (
           <button
             onClick={handleSkip}
-            className="w-full bg-yellow-500 text-white py-2 px-4 rounded-lg font-medium text-sm hover:bg-yellow-600 transition-colors"
+            className="btn btn-xs btn-ghost text-xs opacity-50 hover:opacity-100 mt-2"
+            style={{ fontSize: '0.65rem', padding: '0.25rem 0.5rem' }}
           >
-            [DEV] Skip Payment
+            [DEV] Skip
           </button>
         )}
         

@@ -74,6 +74,8 @@ export async function POST(req) {
             console.error('Error updating user:', updateError);
             throw updateError;
           }
+          
+          user = { id: userId };
         } else if (customer.email) {
           // Try to find user by email
           const { data: existingUser } = await supabaseAdmin
@@ -97,6 +99,8 @@ export async function POST(req) {
               console.error('Error updating user:', updateError);
               throw updateError;
             }
+            
+            user = existingUser;
           } else {
             console.error("No user found for email:", customer.email);
             throw new Error("No user found");
@@ -104,6 +108,36 @@ export async function POST(req) {
         } else {
           console.error("No user ID or email found");
           throw new Error("No user found");
+        }
+
+        // Create payment record for one-time payments (mode: 'payment')
+        // This is needed for refund functionality
+        if (session.mode === 'payment' && session.payment_intent && user?.id) {
+          const paymentIntent = await stripe.paymentIntents.retrieve(session.payment_intent);
+          
+          // Create payment record
+          const { error: paymentError } = await supabaseAdmin
+            .from('payments')
+            .insert({
+              user_id: user.id,
+              stripe_session_id: session.id,
+              stripe_customer_id: customerId,
+              amount: session.amount_total, // Amount in cents
+              currency: session.currency || 'GBP',
+              status: 'paid',
+              paid_at: new Date().toISOString()
+            });
+
+          if (paymentError) {
+            // Log error but don't fail the webhook - payment might already exist
+            console.error('Error creating payment record:', paymentError);
+            // Check if payment already exists (unique constraint on stripe_session_id)
+            if (paymentError.code !== '23505') { // Not a duplicate key error
+              throw paymentError;
+            }
+          } else {
+            console.log('✅ Payment record created for user:', user.id);
+          }
         }
 
         // Extra: send email with user link, product page, etc...

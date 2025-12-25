@@ -16,6 +16,7 @@ import { useState, useRef, useEffect } from "react";
  * @param {Function} props.onBlockToggle - Callback when block is toggled (day, timeSlot, isBlocked)
  * @param {Boolean} props.readOnly - If true, blocks cannot be clicked
  * @param {Object} props.timePreferences - Time preferences {weekdayEarliest, weekdayLatest, weekendEarliest, weekendLatest, useSameWeekendTimes}
+ * @param {Boolean} props.isWeekScheduled - If true, blocked times are greyed out and cannot be changed
  */
 export default function TimeBlockCalendar({
   weekStart = new Date(),
@@ -23,7 +24,8 @@ export default function TimeBlockCalendar({
   scheduledBlocks = [],
   onBlockToggle,
   readOnly = false,
-  timePreferences = null
+  timePreferences = null,
+  isWeekScheduled = false
 }) {
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState(null);
@@ -285,6 +287,12 @@ export default function TimeBlockCalendar({
       // If same block, single click
       if (currentDragStart.dayIndex === currentDragEnd.dayIndex && currentDragStart.timeSlot === currentDragEnd.timeSlot) {
         const wasBlocked = isBlocked(currentDragStart.dayIndex, currentDragStart.timeSlot);
+        
+        // Don't allow toggling blocked times when week is scheduled
+        if (isWeekScheduled && wasBlocked) {
+          return;
+        }
+        
         const dayName = days[currentDragStart.dayIndex];
         const timeSlotValue = currentDragStart.timeSlot;
         
@@ -311,6 +319,12 @@ export default function TimeBlockCalendar({
           for (let timeIndex = startTimeIndex; timeIndex <= endTimeIndex; timeIndex++) {
             const timeSlotToToggle = timeSlots[timeIndex];
             const wasBlocked = isBlocked(day, timeSlotToToggle);
+            
+            // Skip blocked times when week is scheduled (they cannot be changed)
+            if (isWeekScheduled && wasBlocked) {
+              continue;
+            }
+            
             cellsToToggle.push({ 
               day: days[day], 
               timeSlot: timeSlotToToggle, 
@@ -442,6 +456,7 @@ export default function TimeBlockCalendar({
                 let textColor = 'text-gray-400';
                 let opacity = '';
                 let cursor = !readOnly ? 'cursor-pointer' : 'cursor-default';
+                const isBlockedAndScheduled = state === 'blocked' && isWeekScheduled;
                 
                 // Grey out if outside study window (but still show drag range if dragging)
                 if (!withinWindow && !inDragRange) {
@@ -461,9 +476,18 @@ export default function TimeBlockCalendar({
                   borderColor = 'border-blue-300';
                   textColor = 'text-blue-700';
                 } else if (state === 'blocked') {
-                  bgColor = 'bg-red-100';
-                  borderColor = 'border-red-300';
-                  textColor = 'text-red-700';
+                  // If week is scheduled, grey out blocked times like study window times
+                  if (isBlockedAndScheduled) {
+                    bgColor = 'bg-gray-200';
+                    borderColor = 'border-gray-300';
+                    textColor = 'text-gray-400';
+                    opacity = 'opacity-60';
+                    cursor = 'cursor-default';
+                  } else {
+                    bgColor = 'bg-red-100';
+                    borderColor = 'border-red-300';
+                    textColor = 'text-red-700';
+                  }
                 } else {
                   bgColor = 'bg-white hover:bg-gray-50';
                 }
@@ -474,7 +498,8 @@ export default function TimeBlockCalendar({
                     data-day-index={dayIndex}
                     data-time-slot={timeSlot}
                     onMouseDown={(e) => {
-                      if (!withinWindow || readOnly) {
+                      // Prevent clicking if outside study window, readOnly, or if blocked and week is scheduled
+                      if (!withinWindow || readOnly || isBlockedAndScheduled) {
                         e.preventDefault();
                         return;
                       }

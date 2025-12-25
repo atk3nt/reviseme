@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/libs/auth";
 import { supabaseAdmin } from "@/libs/supabase";
 
-const DEV_USER_EMAIL = 'dev-test@markr.local';
+const DEV_USER_EMAIL = 'appmarkrai@gmail.com';
 
 async function ensureDevUser() {
   const { data, error } = await supabaseAdmin
@@ -48,6 +48,30 @@ async function resolveUserId() {
   return await ensureDevUser();
 }
 
+function getMonday(date) {
+  const copy = new Date(date);
+  const day = copy.getDay();
+  const diff = copy.getDate() - day + (day === 0 ? -6 : 1);
+  copy.setDate(diff);
+  copy.setHours(0, 0, 0, 0);
+  return copy;
+}
+
+function getNextMonday() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const currentMonday = getMonday(today);
+  const nextMonday = new Date(currentMonday);
+  // If today is Monday, next Monday is in 7 days
+  // If today is any other day, next Monday is the Monday of next week
+  if (today.getTime() === currentMonday.getTime()) {
+    nextMonday.setDate(currentMonday.getDate() + 7);
+  } else {
+    nextMonday.setDate(currentMonday.getDate() + 7);
+  }
+  return nextMonday;
+}
+
 /**
  * Save availability preferences and unavailable times
  * POST /api/availability/save
@@ -81,18 +105,20 @@ export async function POST(req) {
 
     // If weekStartDate is provided, save per-week preferences
     if (weekStartDate) {
-      // Check if the week has scheduled blocks - if so, don't allow changes
       const weekStart = new Date(weekStartDate);
       const weekEnd = new Date(weekStart);
       weekEnd.setDate(weekStart.getDate() + 7);
       
+      // Check if the week has ANY blocks (generated or rescheduled)
+      // Users can only change preferences if the week has ZERO blocks
+      // Once blocks exist (even rescheduled), the week is "locked" and must be regenerated
       const { data: existingBlocks, error: blocksError } = await supabaseAdmin
         .from('blocks')
         .select('id')
         .eq('user_id', userId)
         .gte('scheduled_at', weekStart.toISOString())
         .lt('scheduled_at', weekEnd.toISOString())
-        .limit(1);
+        .limit(1); // Only need to check if any exist
 
       if (blocksError) {
         console.error('Error checking for scheduled blocks:', blocksError);
@@ -102,9 +128,11 @@ export async function POST(req) {
         );
       }
 
+      // If ANY blocks exist (generated or rescheduled), block changes
+      // Users must regenerate the week after changing preferences
       if (existingBlocks && existingBlocks.length > 0) {
         return NextResponse.json(
-          { error: "Cannot change study window times for a week that is already scheduled" },
+          { error: "Cannot change study window times for a week that already has blocks scheduled. Please regenerate the week after changing preferences." },
           { status: 400 }
         );
       }
@@ -275,17 +303,99 @@ export async function POST(req) {
           console.log('✅ Successfully saved week time preferences for week:', weekStartDateStr);
         }
       }
+
+      // Also ensure changes are applied to the next upcoming week (if different from weekStartDate)
+      // This ensures changes always apply to the next week, regardless of which week user is viewing
+      const nextMonday = getNextMonday();
+      const nextWeekStartDateStr = nextMonday.toISOString().split('T')[0];
+
+      // Only apply to next week if it's different from the weekStartDate provided
+      if (nextWeekStartDateStr !== weekStartDateStr) {
+        const nextWeekEnd = new Date(nextMonday);
+        nextWeekEnd.setDate(nextMonday.getDate() + 7);
+        
+        const { data: nextWeekBlocks } = await supabaseAdmin
+          .from('blocks')
+          .select('id')
+          .eq('user_id', userId)
+          .gte('scheduled_at', nextMonday.toISOString())
+          .lt('scheduled_at', nextWeekEnd.toISOString())
+          .limit(1);
+
+        // Only save to next week if it has no blocks
+        if (!nextWeekBlocks || nextWeekBlocks.length === 0) {
+          // Check if week_time_preferences table exists
+          const { error: tableCheckError } = await supabaseAdmin
+            .from('week_time_preferences')
+            .select('id')
+            .limit(0);
+          
+          if (!tableCheckError) {
+            // Table exists, save per-week preferences for next week
+            const { data: existingNextWeekPref } = await supabaseAdmin
+              .from('week_time_preferences')
+              .select('id')
+              .eq('user_id', userId)
+              .eq('week_start_date', nextWeekStartDateStr)
+              .maybeSingle();
+
+            const nextWeekPrefData = {
+              weekday_earliest_time: formatTimeForDB(timePreferences.weekdayEarliest),
+              weekday_latest_time: formatTimeForDB(timePreferences.weekdayLatest),
+              weekend_earliest_time: formatTimeForDB(timePreferences.weekendEarliest),
+              weekend_latest_time: formatTimeForDB(timePreferences.weekendLatest),
+              use_same_weekend_times: timePreferences.useSameWeekendTimes !== false,
+              updated_at: new Date().toISOString()
+            };
+
+            if (existingNextWeekPref) {
+              // Update existing
+              await supabaseAdmin
+                .from('week_time_preferences')
+                .update(nextWeekPrefData)
+                .eq('id', existingNextWeekPref.id)
+                .eq('user_id', userId);
+            } else {
+              // Insert new
+              await supabaseAdmin
+                .from('week_time_preferences')
+                .insert({
+                  user_id: userId,
+                  week_start_date: nextWeekStartDateStr,
+                  ...nextWeekPrefData
+                });
+            }
+            
+            console.log(`✅ Also applied time preferences to next upcoming week: ${nextWeekStartDateStr}`);
+          }
+        } else {
+          console.log(`ℹ️ Next week (${nextWeekStartDateStr}) already has blocks, skipping per-week preference save`);
+        }
+      }
     } else {
-      // No weekStartDate provided - update global user time preferences (for backward compatibility)
+      // No weekStartDate provided - update global user time preferences AND apply to next upcoming week
+      // Format time strings to TIME format (HH:MM:SS)
+      const formatTimeForDB = (timeStr) => {
+        if (!timeStr) return null;
+        // If already in HH:MM:SS format, return as is
+        if (timeStr.split(':').length === 3) return timeStr;
+        // If in HH:MM format, add seconds
+        if (timeStr.split(':').length === 2) return `${timeStr}:00`;
+        return timeStr;
+      };
+
+      const updateData = {
+        weekday_earliest_time: formatTimeForDB(timePreferences.weekdayEarliest),
+        weekday_latest_time: formatTimeForDB(timePreferences.weekdayLatest),
+        weekend_earliest_time: formatTimeForDB(timePreferences.weekendEarliest),
+        weekend_latest_time: formatTimeForDB(timePreferences.weekendLatest),
+        use_same_weekend_times: timePreferences.useSameWeekendTimes !== false
+      };
+
+      // Update global preferences
       const { error: userUpdateError } = await supabaseAdmin
         .from('users')
-        .update({
-          weekday_earliest_time: timePreferences.weekdayEarliest,
-          weekday_latest_time: timePreferences.weekdayLatest,
-          weekend_earliest_time: timePreferences.weekendEarliest || null,
-          weekend_latest_time: timePreferences.weekendLatest || null,
-          use_same_weekend_times: timePreferences.useSameWeekendTimes !== false
-        })
+        .update(updateData)
         .eq('id', userId);
 
       if (userUpdateError) {
@@ -294,6 +404,68 @@ export async function POST(req) {
           { error: "Failed to save time preferences" },
           { status: 500 }
         );
+      }
+
+      // Also save to next upcoming week (if no blocks exist yet)
+      const nextMonday = getNextMonday();
+      const nextWeekStartDateStr = nextMonday.toISOString().split('T')[0];
+
+      // Check if next week has blocks
+      const weekEnd = new Date(nextMonday);
+      weekEnd.setDate(nextMonday.getDate() + 7);
+      
+      const { data: nextWeekBlocks } = await supabaseAdmin
+        .from('blocks')
+        .select('id')
+        .eq('user_id', userId)
+        .gte('scheduled_at', nextMonday.toISOString())
+        .lt('scheduled_at', weekEnd.toISOString())
+        .limit(1);
+
+      // Only save to next week if it has no blocks
+      if (!nextWeekBlocks || nextWeekBlocks.length === 0) {
+        // Check if week_time_preferences table exists
+        const { error: tableCheckError } = await supabaseAdmin
+          .from('week_time_preferences')
+          .select('id')
+          .limit(0);
+        
+        if (!tableCheckError) {
+          // Table exists, save per-week preferences for next week
+          const { data: existingWeekPref } = await supabaseAdmin
+            .from('week_time_preferences')
+            .select('id')
+            .eq('user_id', userId)
+            .eq('week_start_date', nextWeekStartDateStr)
+            .maybeSingle();
+
+          const weekPrefData = {
+            ...updateData,
+            updated_at: new Date().toISOString()
+          };
+
+          if (existingWeekPref) {
+            // Update existing
+            await supabaseAdmin
+              .from('week_time_preferences')
+              .update(weekPrefData)
+              .eq('id', existingWeekPref.id)
+              .eq('user_id', userId);
+          } else {
+            // Insert new
+            await supabaseAdmin
+              .from('week_time_preferences')
+              .insert({
+                user_id: userId,
+                week_start_date: nextWeekStartDateStr,
+                ...weekPrefData
+              });
+          }
+          
+          console.log(`✅ Applied time preferences to next upcoming week: ${nextWeekStartDateStr}`);
+        }
+      } else {
+        console.log(`ℹ️ Next week (${nextWeekStartDateStr}) already has blocks, skipping per-week preference save`);
       }
     }
 

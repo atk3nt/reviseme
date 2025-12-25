@@ -21,7 +21,7 @@ if (!supabaseUrl || !supabaseKey) {
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function createDevUser() {
-  const devEmail = 'dev-test@markr.local';
+  const devEmail = 'appmarkrai@gmail.com';
   
   console.log('🔧 Creating dev test user...');
   

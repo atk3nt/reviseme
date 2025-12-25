@@ -351,7 +351,7 @@ export default function Slide22Page() {
             You'll need to sign in to save your plan. We'll redirect you after you click the button.
           </p>
         ) : isDev ? (
-          <p className="text-sm text-blue-600 bg-blue-50 px-4 py-2 rounded-lg">
+          <p className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded opacity-75">
             🔧 Dev mode: Authentication check bypassed
           </p>
         ) : null}

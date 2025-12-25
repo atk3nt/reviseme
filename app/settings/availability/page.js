@@ -1398,6 +1398,14 @@ function AvailabilitySettingsPageContent() {
             )}
           </div>
 
+          {isWeekScheduled && (
+            <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <p className="text-sm text-yellow-800">
+                ⚠️ This week is already scheduled. Unavailable times cannot be changed.
+              </p>
+            </div>
+          )}
+
           {/* Week Tabs */}
           <div className="flex space-x-2 mb-6 border-b border-gray-200">
             {[0, 1, 2, 3].map(weekOffset => {
@@ -1433,6 +1441,7 @@ function AvailabilitySettingsPageContent() {
             onBlockToggle={handleBlockToggle}
             readOnly={false}
             timePreferences={timePreferences}
+            isWeekScheduled={isWeekScheduled}
           />
         </div>
 

@@ -137,8 +137,23 @@ function PlanPageContent() {
     const viewingWeekStart = new Date(weekStartDate);
     viewingWeekStart.setHours(0, 0, 0, 0);
     currentWeekStart.setHours(0, 0, 0, 0);
+    
     // Can only go to next week if we're viewing current week (not already viewing next week)
-    return viewingWeekStart.getTime() === currentWeekStart.getTime();
+    if (viewingWeekStart.getTime() !== currentWeekStart.getTime()) {
+      return false;
+    }
+    
+    // DEV BYPASS: In development, always allow next week navigation
+    if (process.env.NODE_ENV === 'development') {
+      return true;
+    }
+    
+    // Only allow from Saturday onwards (day 6 = Saturday, day 0 = Sunday)
+    const today = new Date();
+    const dayOfWeek = today.getDay(); // 0 = Sunday, 6 = Saturday
+    const isSaturdayOrLater = dayOfWeek === 6 || dayOfWeek === 0; // Saturday or Sunday
+    
+    return isSaturdayOrLater;
   }, [weekStartDate, getCurrentWeekStart]);
 
 
@@ -1082,7 +1097,7 @@ function PlanPageContent() {
                   disabled={!canGoToNextWeek}
                   className={`btn btn-ghost btn-circle btn-sm ${!canGoToNextWeek ? 'opacity-50 cursor-not-allowed' : ''}`}
                   aria-label="Next week"
-                  title={canGoToNextWeek ? "Go to next week" : "Already viewing next week"}
+                  title={canGoToNextWeek ? "Go to next week" : isViewingNextWeek ? "Already viewing next week" : "Next week's plan is available from Saturday"}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20px" height="20px" viewBox="0 0 24 24">
                     <path fillRule="evenodd" clipRule="evenodd" d="M7.99991 1.58576L18.4141 12L7.99991 22.4142L6.58569 21L15.5857 12L6.58569 2.99997L7.99991 1.58576Z" fill="currentColor"></path>
@@ -1598,62 +1613,107 @@ function WeekView({
   }, [getTimeLabelsForDay]);
   
   // Create a map of blocked slots for quick lookup - using same key format as blocksBySlot
+  // Values: true = user-blocked (red), 'outside-window' = outside study window (different color)
   const blockedSlotMap = useMemo(() => {
     const map = new Map();
-    if (!blockedTimeRanges || blockedTimeRanges.length === 0) {
-      return map;
+    
+    // First, add user-blocked times (red)
+    if (blockedTimeRanges && blockedTimeRanges.length > 0) {
+      blockedTimeRanges.forEach(range => {
+        // Normalize dates to local timezone for proper comparison
+        const start = new Date(range.start_time || range.start);
+        const end = new Date(range.end_time || range.end);
+        
+        // Normalize to local date (strip timezone info for day comparison)
+        const startDate = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+        const dayKey = startDate.toDateString();
+        
+        // Use local hours/minutes for time matching
+        const startMin = start.getHours() * 60 + start.getMinutes();
+        const endMin = end.getHours() * 60 + end.getMinutes();
+        
+        // Find matching timeIndex in allTimeLabels for each 30-minute slot
+        for (let min = startMin; min < endMin; min += 30) {
+          // Find the closest timeIndex in allTimeLabels
+          let closestIndex = -1;
+          let minDiff = Infinity;
+          allTimeLabels.forEach((label, idx) => {
+            const diff = Math.abs(label.minutes - min);
+            if (diff < minDiff && diff <= 15) { // Within 15 minutes (half slot)
+              minDiff = diff;
+              closestIndex = idx;
+            }
+          });
+          
+          if (closestIndex >= 0) {
+            const key = `${dayKey}-${closestIndex}`;
+            map.set(key, true); // true = user-blocked (red)
+          }
+        }
+      });
     }
     
-    blockedTimeRanges.forEach(range => {
-      // Normalize dates to local timezone for proper comparison
-      const start = new Date(range.start_time || range.start);
-      const end = new Date(range.end_time || range.end);
+    // Second, add slots outside study window (different color)
+    if (effectiveTimePreferences && allTimeLabels.length > 0) {
+      // Get week start date for calculating day indices
+      const weekStart = new Date(weekStartDate);
+      weekStart.setHours(0, 0, 0, 0);
       
-      // Normalize to local date (strip timezone info for day comparison)
-      const startDate = new Date(start.getFullYear(), start.getMonth(), start.getDate());
-      const dayKey = startDate.toDateString();
+      // Inline availability check logic to avoid dependency on isTimeSlotAvailable
+      const useSameTimes = effectiveTimePreferences.useSameWeekendTimes;
       
-      // Use local hours/minutes for time matching
-      const startMin = start.getHours() * 60 + start.getMinutes();
-      const endMin = end.getHours() * 60 + end.getMinutes();
-      
-      // Find matching timeIndex in allTimeLabels for each 30-minute slot
-      for (let min = startMin; min < endMin; min += 30) {
-        // Find the closest timeIndex in allTimeLabels
-        let closestIndex = -1;
-        let minDiff = Infinity;
-        allTimeLabels.forEach((label, idx) => {
-          const diff = Math.abs(label.minutes - min);
-          if (diff < minDiff && diff <= 15) { // Within 15 minutes (half slot)
-            minDiff = diff;
-            closestIndex = idx;
+      allTimeLabels.forEach((label, timeIndex) => {
+        // Check each day of the week
+        for (let dayIndex = 0; dayIndex < 7; dayIndex++) {
+          const dayDate = new Date(weekStart);
+          dayDate.setDate(weekStart.getDate() + dayIndex);
+          const dayKey = dayDate.toDateString();
+          const slotKey = `${dayKey}-${timeIndex}`;
+          
+          // Skip if already marked as user-blocked
+          if (map.has(slotKey)) continue;
+          
+          // Check if this slot is outside the study window (inline logic)
+          const isWeekend = dayIndex >= 5;
+          let startTime, endTime;
+          if (isWeekend && !useSameTimes) {
+            startTime = effectiveTimePreferences.weekendEarliest || effectiveTimePreferences.weekdayEarliest;
+            endTime = effectiveTimePreferences.weekendLatest || effectiveTimePreferences.weekdayLatest;
+          } else {
+            startTime = effectiveTimePreferences.weekdayEarliest;
+            endTime = effectiveTimePreferences.weekdayLatest;
           }
-        });
-        
-        if (closestIndex >= 0) {
-          const key = `${dayKey}-${closestIndex}`;
-          map.set(key, true);
+          
+          if (startTime && endTime) {
+            const [startHour, startMin] = startTime.split(':').map(Number);
+            const [endHour, endMin] = endTime.split(':').map(Number);
+            const startMinutes = startHour * 60 + startMin;
+            const endMinutes = endHour * 60 + endMin;
+            
+            // Check if slot is outside study window
+            if (label.minutes < startMinutes || label.minutes >= endMinutes) {
+              map.set(slotKey, 'outside-window'); // 'outside-window' = outside study window
+            }
+          }
         }
-      }
-    });
+      });
+    }
     
     if (process.env.NODE_ENV === 'development') {
+      const userBlockedCount = Array.from(map.values()).filter(v => v === true).length;
+      const outsideWindowCount = Array.from(map.values()).filter(v => v === 'outside-window').length;
       console.log('🚫 Blocked slots map created:', {
         totalBlockedSlots: map.size,
+        userBlockedSlots: userBlockedCount,
+        outsideWindowSlots: outsideWindowCount,
         sampleKeys: Array.from(map.keys()).slice(0, 5),
-        blockedTimeRangesCount: blockedTimeRanges.length,
-        allTimeLabelsCount: allTimeLabels.length,
-        sampleBlockedTimes: blockedTimeRanges.slice(0, 3).map(bt => ({
-          start: bt.start_time || bt.start,
-          end: bt.end_time || bt.end,
-          parsedStart: new Date(bt.start_time || bt.start).toDateString(),
-          parsedEnd: new Date(bt.end_time || bt.end).toDateString()
-        }))
+        blockedTimeRangesCount: blockedTimeRanges?.length || 0,
+        allTimeLabelsCount: allTimeLabels.length
       });
     }
     
     return map;
-  }, [blockedTimeRanges, allTimeLabels]);
+  }, [blockedTimeRanges, allTimeLabels, effectiveTimePreferences, weekStartDate]);
   
   // Group blocks by day and time slot
   const blocksBySlot = useMemo(() => {
@@ -1797,7 +1857,10 @@ function WeekView({
                   const dayKey = dayDate.toDateString();
                   const slotKey = `${dayKey}-${timeIndex}`;
                   const slotBlocks = blocksBySlot.get(slotKey) || [];
-                  const isBlocked = blockedSlotMap.has(slotKey);
+                  const blockedStatus = blockedSlotMap.get(slotKey);
+                  const isUserBlocked = blockedStatus === true; // User explicitly blocked (red)
+                  const isOutsideWindow = blockedStatus === 'outside-window'; // Outside study window (different color)
+                  const isBlocked = isUserBlocked || isOutsideWindow;
                   const isToday = dayDate.toDateString() === new Date().toDateString();
                   const isAvailable = isTimeSlotAvailable(dayIndex, label.minutes);
                   
@@ -1816,10 +1879,10 @@ function WeekView({
                       className={`border px-1 py-1 h-[70px] w-[calc((100%-70px)/7)] ${
                         isBeforePlanStart
                           ? 'bg-base-300/50 border-base-300' // Day before plan started - greyed out
-                          : !isAvailable
-                            ? 'bg-base-300/30 border-base-300' // Outside available window
-                            : isBlocked 
-                              ? 'bg-error/20 border-error/40 border-2' // Blocked by user - clearly visible with red tint
+                          : isUserBlocked
+                            ? 'bg-error/20 border-error/40 border-2' // Blocked by user - clearly visible with red tint
+                            : isOutsideWindow
+                              ? 'bg-warning/10 border-warning/30 border-2' // Outside study window - yellow/orange tint (different from red)
                               : isToday 
                                 ? 'bg-primary/5 border-base-300' 
                                 : 'bg-base-100 border-base-300'
@@ -1901,12 +1964,12 @@ function WeekView({
                           tabIndex={0}
                           onClick={() => {
                             // Show message based on slot status
-                            if (!isAvailable) {
+                            if (isOutsideWindow) {
                               toast('This time slot is outside your available study window.', {
                                 icon: '⏰',
                                 duration: 3000,
                               });
-                            } else if (isBlocked) {
+                            } else if (isUserBlocked) {
                               toast('Unavailable - You are busy during this time.', {
                                 icon: '🚫',
                                 duration: 3000,
@@ -1921,12 +1984,12 @@ function WeekView({
                           onKeyDown={(event) => {
                             if (event.key === 'Enter' || event.key === ' ') {
                               event.preventDefault();
-                              if (!isAvailable) {
+                              if (isOutsideWindow) {
                                 toast('This time slot is outside your available study window.', {
                                   icon: '⏰',
                                   duration: 3000,
                                 });
-                              } else if (isBlocked) {
+                              } else if (isUserBlocked) {
                                 toast('Unavailable - You are busy during this time.', {
                                   icon: '🚫',
                                   duration: 3000,

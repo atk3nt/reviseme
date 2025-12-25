@@ -5,7 +5,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 export async function sendRefundConfirmationEmail(userEmail, userName, refundAmount, refundId) {
   try {
     const { data, error } = await resend.emails.send({
-      from: 'ReviseMe <noreply@reviseme.co>',
+      from: 'ReviseMe <hello@reviseme.co>',
       to: [userEmail],
       subject: 'Refund Processed - Markr Planner',
       html: `

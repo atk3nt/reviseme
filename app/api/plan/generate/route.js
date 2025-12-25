@@ -4,7 +4,7 @@ import { supabaseAdmin } from "@/libs/supabase";
 import { generateStudyPlan } from "@/libs/scheduler";
 
 // Spaced repetition fix: Track ongoing topics across weeks - v2
-const DEV_USER_EMAIL = 'dev-test@markr.local';
+const DEV_USER_EMAIL = 'appmarkrai@gmail.com';
 
 async function ensureDevUser() {
   const { data, error } = await supabaseAdmin
@@ -326,6 +326,27 @@ export async function POST(req) {
     const weekStartDate = getMonday(new Date(`${targetWeekStart}T00:00:00Z`));
     const weekEndDate = new Date(weekStartDate);
     weekEndDate.setDate(weekStartDate.getDate() + 7);
+    
+    // Check if target week is in the future - only allow from Saturday onwards
+    // DEV BYPASS: Skip this check in development mode
+    if (process.env.NODE_ENV !== 'development') {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const targetDate = new Date(targetWeekStart);
+      const isNextWeek = targetDate > today;
+      
+      if (isNextWeek) {
+        const dayOfWeek = new Date().getDay(); // Use current day with time for accurate check
+        const isSaturdayOrLater = dayOfWeek === 6 || dayOfWeek === 0; // Saturday (6) or Sunday (0)
+        
+        if (!isSaturdayOrLater) {
+          return NextResponse.json({
+            error: 'Next week\'s plan can only be generated from Saturday onwards. Please wait until Saturday to plan next week.',
+            success: false
+          }, { status: 400 });
+        }
+      }
+    }
     
     // For partial weeks (e.g., signup on Friday, start on Saturday), track when scheduling actually begins
     const schedulingStartDate = new Date(`${actualStartDate}T00:00:00Z`);
@@ -760,6 +781,46 @@ export async function POST(req) {
       );
     }
 
+    // Query missed blocks from previous weeks (before target week start)
+    // Fetch full block details so we can UPDATE them instead of creating new ones
+    const { data: missedBlocks = [], error: missedBlocksError } = await supabaseAdmin
+      .from('blocks')
+      .select('id, topic_id, scheduled_at, duration_minutes, ai_rationale')
+      .eq('user_id', userId)
+      .eq('status', 'missed')
+      .lt('scheduled_at', weekStartDate.toISOString());
+
+    if (missedBlocksError) {
+      console.error('Error querying missed blocks:', missedBlocksError);
+      // Don't fail - continue with just re-rated topics
+    }
+
+    // Extract unique topic IDs from missed blocks
+    const missedTopicIdsFromDB = [...new Set(
+      (missedBlocks || [])
+        .filter(b => b.topic_id) // Only include blocks with valid topic_id
+        .map(b => b.topic_id)
+    )];
+
+    // Group missed blocks by topic_id for later use when updating
+    const missedBlocksByTopic = {};
+    (missedBlocks || []).forEach(block => {
+      if (block.topic_id) {
+        if (!missedBlocksByTopic[block.topic_id]) {
+          missedBlocksByTopic[block.topic_id] = [];
+        }
+        missedBlocksByTopic[block.topic_id].push(block);
+      }
+    });
+
+    if (missedTopicIdsFromDB.length > 0) {
+      console.log(`📋 Found ${missedTopicIdsFromDB.length} missed topic(s) from previous weeks that need rescheduling`);
+      console.log(`📋 Total missed blocks: ${missedBlocks.length}`);
+    }
+
+    // Combine with re-rated topics (re-rated topics still get priority)
+    const allMissedTopicIds = [...new Set([...reratedTopicIds, ...missedTopicIdsFromDB])];
+
     let plan;
     try {
       console.log('🔍 Calling generateStudyPlan with:', {
@@ -771,6 +832,8 @@ export async function POST(req) {
         completedTopicsCount: completedTopics.size,
         ongoingTopicsCount: Object.keys(ongoingTopics).length,
         reratedTopicsCount: reratedTopicIds.length,
+        missedTopicsFromDBCount: missedTopicIdsFromDB.length,
+        totalMissedTopicsCount: allMissedTopicIds.length,
         targetWeekStart
       });
       
@@ -784,7 +847,7 @@ export async function POST(req) {
         studyBlockDuration,
         targetWeekStart,
         actualStartDate, // For partial weeks - skip days before this date
-        missedTopicIds: reratedTopicIds, // Re-rated topics get priority (treated like missed topics)
+        missedTopicIds: allMissedTopicIds, // Combined: re-rated topics + missed blocks from previous weeks
         ongoingTopics // Pass ongoing topics for gap day enforcement and session tracking
       });
       
@@ -850,6 +913,8 @@ export async function POST(req) {
     }
 
     // Only delete existing blocks AFTER confirming we have new ones to insert
+    // CRITICAL: Do NOT delete blocks that were rescheduled to next week
+    // Rescheduled blocks should be preserved - they're already in the correct place
     console.log(`🗑️ Deleting existing blocks for week ${targetWeekStart} (${records.length} new blocks ready to insert)...`);
     const deleteStart = new Date(weekStartDate);
     deleteStart.setHours(0, 0, 0, 0);
@@ -865,12 +930,75 @@ export async function POST(req) {
       deleteEndDay: deleteEnd.getDay() // Should be 0 (Sunday)
     });
     
-    const { error: deleteError } = await supabaseAdmin
+    // Find ALL blocks that are already scheduled for next week (including rescheduled ones)
+    // These should be preserved - they're already correctly scheduled
+    const { data: existingBlocksInWeek, error: fetchError } = await supabaseAdmin
       .from('blocks')
-      .delete()
+      .select('id, topic_id, scheduled_at, status')
       .eq('user_id', userId)
       .gte('scheduled_at', deleteStart.toISOString())
-      .lte('scheduled_at', deleteEnd.toISOString()); // Use lte to include end of Sunday
+      .lte('scheduled_at', deleteEnd.toISOString());
+    
+    if (fetchError) {
+      console.error('Error fetching existing blocks:', fetchError);
+      return NextResponse.json({ 
+        error: 'Failed to fetch existing blocks',
+        success: false
+      }, { status: 500 });
+    }
+    
+    // Preserve ALL blocks that are already scheduled in next week
+    // This includes:
+    // 1. Blocks rescheduled from previous weeks (Sunday → Monday, etc.)
+    // 2. Blocks that were already scheduled in next week
+    // EXCEPT: Blocks for re-rated topics (they need fresh blocks with new rating)
+    const blocksToPreserve = new Set();
+    const rescheduledBlocks = [];
+    const reratedTopicBlocks = [];
+    
+    if (existingBlocksInWeek && existingBlocksInWeek.length > 0) {
+      existingBlocksInWeek.forEach(block => {
+        // Preserve all scheduled blocks (including rescheduled ones)
+        if (block.status === 'scheduled' && block.topic_id) {
+          // Check if this topic was re-rated - if so, don't preserve it
+          if (reratingHistory[block.topic_id]) {
+            reratedTopicBlocks.push(block);
+            console.log(`🔄 Not preserving block ${block.id.substring(0, 8)}... for re-rated topic ${block.topic_id.substring(0, 8)}... - will be regenerated with new rating`);
+            return; // Skip this block - it will be deleted and regenerated
+          }
+          
+          blocksToPreserve.add(block.id);
+          rescheduledBlocks.push(block);
+        }
+      });
+      
+      if (rescheduledBlocks.length > 0) {
+        console.log(`🛡️ Preserving ${rescheduledBlocks.length} already-scheduled block(s) in next week (including rescheduled ones)`);
+      }
+      
+      if (reratedTopicBlocks.length > 0) {
+        console.log(`🔄 Found ${reratedTopicBlocks.length} block(s) for re-rated topics - will be deleted and regenerated`);
+      }
+    }
+    
+    // Delete blocks in target week, but exclude rescheduled ones
+    const blockIdsToDelete = (existingBlocksInWeek || [])
+      .map(b => b.id)
+      .filter(id => !blocksToPreserve.has(id));
+    
+    let deleteError = null;
+    if (blockIdsToDelete.length > 0) {
+      const { error } = await supabaseAdmin
+        .from('blocks')
+        .delete()
+        .eq('user_id', userId)
+        .in('id', blockIdsToDelete);
+      
+      deleteError = error;
+      console.log(`🗑️ Deleted ${blockIdsToDelete.length} block(s) from target week, preserved ${blocksToPreserve.size} rescheduled block(s)`);
+    } else {
+      console.log(`ℹ️ No blocks to delete in target week (${blocksToPreserve.size} rescheduled blocks preserved)`);
+    }
     
     if (deleteError) {
       console.error('Error deleting existing blocks:', deleteError);
@@ -880,21 +1008,152 @@ export async function POST(req) {
       }, { status: 500 });
     }
     
-    console.log('✅ Existing blocks deleted, inserting new ones...');
+    console.log('✅ Existing blocks deleted, processing new blocks...');
     let insertedBlocks = [];
+    
     if (records.length > 0) {
-      // Insert and get back the IDs
-      const { data: inserted, error: insertError } = await supabaseAdmin
-        .from('blocks')
-        .insert(records)
-        .select('id, topic_id, scheduled_at, duration_minutes, status, ai_rationale, session_number, session_total');
+      // OPTION 3: Update existing missed blocks instead of always creating new ones
+      // This avoids creating duplicates and keeps the database cleaner
       
-      if (insertError) {
-        console.error('Failed to insert blocks:', insertError);
-        throw new Error('Failed to save blocks to database');
+      // Separate records into:
+      // 1. Records for missed topics (update existing missed block)
+      // 2. Records for other topics (create new blocks)
+      const recordsToInsert = [];
+      const updatesToPerform = [];
+      const missedBlockIdsToUpdate = new Set(); // Track which missed blocks we're updating
+      
+      // Group records by topic_id to handle multiple blocks per topic
+      const recordsByTopic = {};
+      records.forEach(record => {
+        if (record.topic_id) {
+          if (!recordsByTopic[record.topic_id]) {
+            recordsByTopic[record.topic_id] = [];
+          }
+          recordsByTopic[record.topic_id].push(record);
+        } else {
+          // Break blocks or other non-topic blocks - always insert
+          recordsToInsert.push(record);
+        }
+      });
+      
+      // For each topic, decide whether to update missed blocks or create new ones
+      for (const topicId of Object.keys(recordsByTopic)) {
+        const topicRecords = recordsByTopic[topicId];
+        const missedBlocksForTopic = missedBlocksByTopic[topicId] || [];
+        
+        if (missedBlocksForTopic.length > 0) {
+          // This topic has missed blocks - update first one, create rest
+          console.log(`📝 Topic ${topicId}: ${missedBlocksForTopic.length} missed block(s), ${topicRecords.length} new block(s) scheduled`);
+          
+          // Update the first missed block with the first scheduled time
+          const firstMissedBlock = missedBlocksForTopic[0];
+          const firstRecord = topicRecords[0];
+          
+          updatesToPerform.push({
+            blockId: firstMissedBlock.id,
+            updates: {
+              scheduled_at: firstRecord.scheduled_at,
+              status: 'scheduled',
+              duration_minutes: firstRecord.duration_minutes,
+              ai_rationale: firstRecord.ai_rationale,
+              session_number: firstRecord.session_number,
+              session_total: firstRecord.session_total
+            }
+          });
+          missedBlockIdsToUpdate.add(firstMissedBlock.id);
+          
+          // If scheduler created more blocks than we have missed blocks, insert the extras
+          for (let i = 1; i < topicRecords.length; i++) {
+            if (i < missedBlocksForTopic.length) {
+              // We have another missed block to update
+              const missedBlock = missedBlocksForTopic[i];
+              const record = topicRecords[i];
+              updatesToPerform.push({
+                blockId: missedBlock.id,
+                updates: {
+                  scheduled_at: record.scheduled_at,
+                  status: 'scheduled',
+                  duration_minutes: record.duration_minutes,
+                  ai_rationale: record.ai_rationale,
+                  session_number: record.session_number,
+                  session_total: record.session_total
+                }
+              });
+              missedBlockIdsToUpdate.add(missedBlock.id);
+            } else {
+              // No more missed blocks to update - create new one
+              recordsToInsert.push(topicRecords[i]);
+            }
+          }
+          
+          // If we have more missed blocks than scheduled blocks, delete the extras
+          const extraMissedBlocks = missedBlocksForTopic.slice(topicRecords.length);
+          if (extraMissedBlocks.length > 0) {
+            console.log(`🧹 Topic ${topicId}: ${extraMissedBlocks.length} extra missed block(s) to clean up`);
+            const extraIds = extraMissedBlocks.map(b => b.id);
+            const { error: deleteExtraError } = await supabaseAdmin
+              .from('blocks')
+              .delete()
+              .in('id', extraIds);
+            
+            if (deleteExtraError) {
+              console.error(`Failed to delete extra missed blocks for topic ${topicId}:`, deleteExtraError);
+            }
+          }
+        } else {
+          // No missed blocks for this topic - create all as new
+          topicRecords.forEach(record => recordsToInsert.push(record));
+        }
       }
       
-      insertedBlocks = inserted || [];
+      console.log(`📊 Block operations: ${updatesToPerform.length} updates, ${recordsToInsert.length} inserts`);
+      
+      // Perform updates
+      for (const update of updatesToPerform) {
+        const { error: updateError } = await supabaseAdmin
+          .from('blocks')
+          .update(update.updates)
+          .eq('id', update.blockId)
+          .eq('user_id', userId);
+        
+        if (updateError) {
+          console.error(`Failed to update missed block ${update.blockId}:`, updateError);
+        } else {
+          console.log(`✅ Updated missed block ${update.blockId} to ${update.updates.scheduled_at}`);
+          insertedBlocks.push({
+            id: update.blockId,
+            topic_id: records.find(r => r.scheduled_at === update.updates.scheduled_at)?.topic_id,
+            ...update.updates
+          });
+        }
+      }
+      
+      // Insert new blocks
+      if (recordsToInsert.length > 0) {
+        const { data: inserted, error: insertError } = await supabaseAdmin
+          .from('blocks')
+          .insert(recordsToInsert)
+          .select('id, topic_id, scheduled_at, duration_minutes, status, ai_rationale, session_number, session_total');
+        
+        if (insertError) {
+          console.error('Failed to insert blocks:', insertError);
+          throw new Error('Failed to save blocks to database');
+        }
+        
+        insertedBlocks.push(...(inserted || []));
+      }
+      
+      // Clean up any remaining missed blocks that weren't updated
+      // (blocks for topics that weren't scheduled this week)
+      const missedBlockIdsNotUpdated = (missedBlocks || [])
+        .filter(b => !missedBlockIdsToUpdate.has(b.id))
+        .map(b => b.id);
+      
+      if (missedBlockIdsNotUpdated.length > 0) {
+        console.log(`🧹 Cleaning up ${missedBlockIdsNotUpdated.length} missed block(s) that weren't rescheduled this week`);
+        // Note: We leave these as 'missed' - they'll be picked up in the next week's generation
+        // This is intentional - if a topic wasn't scheduled this week, it shouldn't be deleted
+      }
     }
 
     // Map database IDs back to plan blocks

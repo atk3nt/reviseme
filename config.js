@@ -19,14 +19,14 @@ const config = {
         // REQUIRED — we use this to find the plan in the webhook
         priceId:
           process.env.NODE_ENV === "development"
-            ? "price_test_exam_season_pass"
+            ? "price_1Si3ZCAgE33YyUIxdlINuIXq"
             : "price_live_exam_season_pass",
         // REQUIRED - Name of the plan, displayed on the pricing page
         name: "Exam Season Pass",
         // A friendly description of the plan, displayed on the pricing page
         description: "Jan–July 2026 • 7-day refund guarantee",
         // The price you want to display, the one user will be charged on Stripe.
-        price: 24.99,
+        price: 29.99,
         // Anchor price for value framing
         priceAnchor: 12.99, // "1-Month Plan" crossed out
         currency: "GBP",
@@ -50,9 +50,12 @@ const config = {
     // REQUIRED — Email 'From' field to be used when sending magic login links
     // For development: use Resend's default email (onboarding@resend.dev works without verification)
     // For production: verify your domain at https://resend.com/domains
-    fromNoReply: `ReviseMe <noreply@reviseme.co>`,
+    // Using friendly address (not "noreply") for better deliverability
+    // TODO: Once mail.reviseme.co subdomain is verified in Resend, change to: hello@mail.reviseme.co
+    fromNoReply: `ReviseMe <hello@reviseme.co>`,
     // REQUIRED — Email 'From' field to be used when sending other emails, like abandoned carts, updates etc..
-    fromAdmin: `ReviseMe <noreply@reviseme.co>`,
+    // TODO: Once mail.reviseme.co subdomain is verified in Resend, change to: hello@mail.reviseme.co
+    fromAdmin: `ReviseMe <hello@reviseme.co>`,
     // Email shown to customer if need support. Leave empty if not needed => if empty, set up Crisp above, otherwise you won't be able to offer customer support."
     supportEmail: "support@reviseme.co",
   },

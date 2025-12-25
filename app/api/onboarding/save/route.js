@@ -12,7 +12,7 @@ export async function POST(req) {
     
     if (!userId && isDev) {
       // In dev mode, get or create a dev test user
-      const devEmail = 'dev-test@markr.local';
+      const devEmail = 'appmarkrai@gmail.com';
       
       // Check if dev user exists
       let { data: devUser, error: fetchError } = await supabaseAdmin

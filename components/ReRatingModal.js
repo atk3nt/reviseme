@@ -59,14 +59,29 @@ export default function ReRatingModal({ isOpen, block, onClose, onSubmit }) {
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-      {/* Backdrop - NO onClick to prevent closing without rating */}
-      <div className="fixed inset-0 bg-black/70 backdrop-blur-sm" />
+      {/* Backdrop - click to close */}
+      <div 
+        className="fixed inset-0 bg-black/70 backdrop-blur-sm"
+        onClick={onClose}
+      />
       
       {/* Modal */}
-      <div className="relative bg-base-100 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
+      <div 
+        className="relative bg-base-100 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
-        <div className="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-5 text-white">
-          <div className="flex items-center gap-2 mb-1">
+        <div className="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-5 text-white relative">
+          <button
+            onClick={onClose}
+            className="btn btn-sm btn-circle btn-ghost absolute top-3 right-3 text-white hover:bg-white/20"
+            aria-label="Close"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+          <div className="flex items-center gap-2 mb-1 pr-8">
             <span className="text-2xl">🎯</span>
             <h2 className="text-xl font-bold">How confident do you feel?</h2>
           </div>
