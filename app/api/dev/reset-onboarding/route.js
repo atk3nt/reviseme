@@ -40,8 +40,41 @@ async function ensureDevUser() {
 
 export async function POST(req) {
   try {
-    // This is a dev-only endpoint - always delete and recreate the dev user
-    console.log('🔄 Dev mode: Deleting existing dev user to create fresh one...');
+    // This is a dev-only endpoint - completely delete the dev user so they can sign up fresh
+    console.log('🔄 Dev mode: Completely deleting dev user for fresh signup...');
+    
+    // First, get the user ID to explicitly delete OAuth accounts
+    const { data: existingUser } = await supabaseAdmin
+      .from('users')
+      .select('id')
+      .eq('email', DEV_USER_EMAIL)
+      .maybeSingle();
+    
+    if (existingUser?.id) {
+      // Explicitly delete OAuth accounts (Google, etc.) before deleting user
+      const { error: accountsError } = await supabaseAdmin
+        .from('accounts')
+        .delete()
+        .eq('user_id', existingUser.id);
+      
+      if (accountsError) {
+        console.error('Error deleting OAuth accounts:', accountsError);
+      } else {
+        console.log('✅ Dev mode: Deleted OAuth accounts (Google, etc.)');
+      }
+      
+      // Delete sessions
+      const { error: sessionsError } = await supabaseAdmin
+        .from('sessions')
+        .delete()
+        .eq('user_id', existingUser.id);
+      
+      if (sessionsError) {
+        console.error('Error deleting sessions:', sessionsError);
+      } else {
+        console.log('✅ Dev mode: Deleted sessions');
+      }
+    }
     
     // Delete the existing dev user (this will cascade delete all related data)
     const { error: deleteError } = await supabaseAdmin
@@ -51,26 +84,18 @@ export async function POST(req) {
 
     if (deleteError && deleteError.code !== 'PGRST116') {
       console.error('Error deleting dev user:', deleteError);
-      // Continue anyway - might not exist
-    } else {
-      console.log('✅ Dev mode: Deleted old dev user');
-    }
-
-    // Create a fresh dev user
-    const newUserId = await ensureDevUser();
-    
-    if (!newUserId) {
       return NextResponse.json({ 
-        error: 'Failed to create fresh dev user' 
+        error: 'Failed to delete user',
+        details: deleteError.message 
       }, { status: 500 });
+    } else {
+      console.log('✅ Dev mode: Completely deleted dev user');
     }
-
-    console.log('✅ Dev mode: Created fresh dev user with ID:', newUserId);
 
     return NextResponse.json({ 
       success: true,
-      message: 'Fresh dev user created. Please clear localStorage in your browser (quizAnswers key) and refresh.',
-      newUserId
+      message: 'Dev user completely deleted. You can now sign up fresh with Google or email.',
+      deleted: true
     });
   } catch (error) {
     console.error('Reset error:', error);

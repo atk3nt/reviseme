@@ -68,24 +68,36 @@
 2. Enable Apple Pay and Google Pay
 3. Configure your business information
 
-## Step 3: OpenAI Setup
+## Step 3: Google OAuth Setup (Optional)
 
-### 3.1 Create OpenAI Account
+Google OAuth allows users to sign in with their Google accounts. This is optional - email authentication will work without it.
+
+**See [GOOGLE_OAUTH_SETUP.md](./GOOGLE_OAUTH_SETUP.md) for detailed step-by-step instructions.**
+
+Quick setup:
+1. Create a Google Cloud project
+2. Enable Google+ API
+3. Create OAuth 2.0 credentials
+4. Add `GOOGLE_ID` and `GOOGLE_SECRET` to environment variables
+
+## Step 4: OpenAI Setup
+
+### 4.1 Create OpenAI Account
 1. Go to [platform.openai.com](https://platform.openai.com)
 2. Create account and add billing
 3. Go to API Keys section
 4. Create new secret key
 5. Copy the key (keep secret)
 
-## Step 4: Vercel Deployment
+## Step 5: Vercel Deployment
 
-### 4.1 Connect Repository
+### 5.1 Connect Repository
 1. Go to [vercel.com](https://vercel.com)
 2. Click "New Project"
 3. Import your GitHub repository
 4. Choose Next.js framework
 
-### 4.2 Configure Environment Variables
+### 5.2 Configure Environment Variables
 Add these in Vercel Dashboard > Settings > Environment Variables:
 
 ```env
@@ -114,25 +126,25 @@ GOOGLE_SECRET=your_google_client_secret
 RESEND_API_KEY=your_resend_api_key
 ```
 
-### 4.3 Deploy
+### 5.3 Deploy
 1. Click "Deploy" in Vercel
 2. Wait for deployment to complete
 3. Note the deployment URL
 
-### 4.4 Configure Custom Domain
+### 5.4 Configure Custom Domain
 1. Go to Settings > Domains
 2. Add your custom domain
 3. Configure DNS records as instructed
 4. Wait for SSL certificate
 
-## Step 5: Import Subject Data
+## Step 6: Import Subject Data
 
-### 5.1 Generate CSV Files
+### 6.1 Generate CSV Files
 ```bash
 npm run generate-csvs
 ```
 
-### 5.2 Import to Supabase
+### 6.2 Import to Supabase
 ```bash
 npm run import-specs
 ```
@@ -142,59 +154,59 @@ Or manually:
 2. Import CSV files to `specs` and `topics` tables
 3. Verify data is imported correctly
 
-## Step 6: Configure Cron Jobs
+## Step 7: Configure Cron Jobs
 
-### 6.1 Vercel Cron
+### 7.1 Vercel Cron
 1. Go to Vercel Dashboard > Functions
 2. The cron job is already configured in `vercel.json`
 3. It will run every Sunday at 23:00 UTC
 
-### 6.2 Test Cron Job
+### 7.2 Test Cron Job
 1. Go to Functions tab in Vercel
 2. Find the weekly-regen function
 3. Test it manually to ensure it works
 
-## Step 7: Final Testing
+## Step 8: Final Testing
 
-### 7.1 Test Payment Flow
+### 8.1 Test Payment Flow
 1. Go to your live site
 2. Click "Get Markr Planner — £24.99"
 3. Complete test payment
 4. Verify webhook processes payment
 5. Check user gets access
 
-### 7.2 Test Onboarding
+### 8.2 Test Onboarding
 1. Sign in with test account
 2. Complete all 3 onboarding steps
 3. Verify plan is generated
 4. Check all data is saved
 
-### 7.3 Test Core Features
+### 8.3 Test Core Features
 1. Mark blocks as done/missed
 2. Check AI insights generate
 3. Test settings page
 4. Verify refund flow
 
-## Step 8: Monitoring Setup
+## Step 9: Monitoring Setup
 
-### 8.1 Error Tracking
+### 9.1 Error Tracking
 1. Sign up for Sentry (optional)
 2. Add Sentry to your project
 3. Configure error reporting
 
-### 8.2 Analytics
+### 9.2 Analytics
 1. Vercel Analytics is enabled by default
 2. Monitor page views and performance
 3. Set up custom events if needed
 
-### 8.3 Uptime Monitoring
+### 9.3 Uptime Monitoring
 1. Use UptimeRobot or similar
 2. Monitor your main pages
 3. Set up alerts for downtime
 
-## Step 9: Launch Checklist
+## Step 10: Launch Checklist
 
-### 9.1 Pre-Launch
+### 10.1 Pre-Launch
 - [ ] All tests pass
 - [ ] Payment flow works
 - [ ] Database is populated
@@ -203,14 +215,14 @@ Or manually:
 - [ ] Domain is configured
 - [ ] SSL certificate is active
 
-### 9.2 Launch Day
+### 10.2 Launch Day
 - [ ] Deploy to production
 - [ ] Test critical paths
 - [ ] Monitor error logs
 - [ ] Check payment processing
 - [ ] Verify email delivery
 
-### 9.3 Post-Launch
+### 10.3 Post-Launch
 - [ ] Monitor user sign-ups
 - [ ] Track payment conversions
 - [ ] Respond to support requests
