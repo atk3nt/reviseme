@@ -26,12 +26,26 @@ export default function BlockDetailModal({
   const [showReRating, setShowReRating] = useState(false);
 
   useEffect(() => {
-    setIsOpen(selection !== null && selection.kind === 'study');
+    const isModalOpen = selection !== null && selection.kind === 'study';
+    setIsOpen(isModalOpen);
+    
+    // Prevent body scroll when modal is open
+    if (isModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
     // Reset states when modal closes
     if (selection === null || selection.kind !== 'study') {
       setConfirmMissed(false);
       setShowReRating(false);
     }
+    
+    // Cleanup function to restore scroll when component unmounts
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
   }, [selection]);
 
   // Auto-reset confirmation after 3 seconds
@@ -286,30 +300,30 @@ export default function BlockDetailModal({
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         {/* Backdrop */}
         <div 
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+          className="fixed inset-0 bg-black/60 backdrop-blur-md"
           onClick={onClose}
         />
         
-        {/* Modal */}
-        <div className="relative bg-base-100 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-          {/* Header */}
-          <div className="bg-base-200 px-6 py-4 border-b border-base-300 flex items-center justify-between">
+        {/* Modal - Full screen gradient background */}
+        <div className="relative rounded-3xl shadow-2xl max-w-3xl w-full max-h-[95vh] overflow-hidden flex flex-col" 
+          style={{
+            background: isStudyPhase 
+              ? 'linear-gradient(135deg, #001433 0%, #003D99 40%, #0066FF 70%, #0052CC 100%)'
+              : 'linear-gradient(135deg, #0066FF 0%, #3B9AE1 50%, #5DADE2 100%)'
+          }}>
+          
+          {/* Header - Minimalist with close button */}
+          <div className="px-6 py-5 flex items-center justify-between relative z-10">
             <div className="flex items-center gap-3">
               <div
-                className="w-3 h-3 rounded-full"
+                className="w-4 h-4 rounded-full shadow-lg"
                 style={{ backgroundColor: getSubjectColor(subject) }}
               />
-              <h2 className="text-xl font-bold">Study Block</h2>
-              {/* Session Badge - show for spaced repetition topics */}
-              {rationaleData.label && (
-                <span className="badge badge-sm badge-outline">
-                  {rationaleData.label}
-                </span>
-              )}
+              <span className="text-white/90 text-sm font-medium uppercase tracking-wide">{subject}</span>
             </div>
             <button
               onClick={onClose}
-              className="btn btn-sm btn-circle btn-ghost"
+              className="btn btn-sm btn-circle bg-white/20 hover:bg-white/30 border-0 text-white backdrop-blur-sm"
               aria-label="Close"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -318,241 +332,230 @@ export default function BlockDetailModal({
             </button>
           </div>
 
-          {/* Content */}
-          <div className="flex-1 overflow-y-auto">
-            <div className="p-6 space-y-6">
-              {/* Block Info Card */}
-              <div className="bg-base-200 rounded-xl p-5 space-y-4">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="mb-3">
-                      <span className="text-sm font-medium text-base-content/70 uppercase tracking-wide">
-                        {subject}
-                      </span>
-                      <h3 className="text-2xl font-bold mt-1">{mainTopicName}</h3>
-                      
-                      {/* Show hierarchy context below main topic */}
-                      {hierarchyContext && (
-                        <div className="mt-3 p-3 bg-base-300/50 rounded-lg">
-                          <div className="text-sm">
-                            <span className="font-semibold text-base-content/70">📚 Find in: </span>
-                            <span className="text-base-content/90">{hierarchyContext}</span>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="space-y-2 text-sm">
-                      <div className="flex items-center gap-2 text-base-content/70">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                        <span className="font-medium">Date:</span>
-                        <span>{formattedDate}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-base-content/70">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span className="font-medium">Time:</span>
-                        <span>{formattedTime}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-base-content/70">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span className="font-medium">Duration:</span>
-                        <span>{block.duration_minutes} minutes</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex flex-col items-end gap-1">
-                    <span className={`text-2xl ${getStatusColor(block.status)}`}>
-                      {getStatusIcon(block.status)}
-                    </span>
-                    <span className="text-xs text-base-content/50 capitalize font-medium">{block.status}</span>
-                  </div>
+          {/* Content - Centered timer design */}
+          <div className="flex-1 overflow-y-auto px-6 pb-6">
+            <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-8">
+              
+              {/* Task Display - Top */}
+              <div className="text-center space-y-2 w-full max-w-md">
+                <div className="flex items-center justify-center gap-2 text-white/90 text-lg mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <span className="font-medium">{mainTopicName}</span>
                 </div>
-
-                {rationaleData.explanation && (
-                  <div className="mt-4 pt-4 border-t border-base-300">
-                    <p className="text-xs font-medium text-base-content/60 mb-2">Why this topic?</p>
-                    <p className="text-sm text-base-content/80 leading-relaxed">{rationaleData.explanation}</p>
+                
+                {/* Hierarchy context - subtle */}
+                {hierarchyContext && (
+                  <p className="text-white/60 text-xs">{hierarchyContext}</p>
+                )}
+                
+                {/* Session Indicator */}
+                {rationaleData.sessionNumber && rationaleData.sessionTotal && (
+                  <div className="text-white/70 text-sm font-medium">
+                    {rationaleData.sessionNumber}/{rationaleData.sessionTotal}
                   </div>
                 )}
               </div>
 
-              {/* Pomodoro Timer Card */}
-              <div className="bg-base-200/50 rounded-xl p-8 border border-base-300/50">
-                <div className="text-center space-y-6">
-                  {/* Phase Label */}
-                  <div className="flex justify-center">
-                    <div className={`badge badge-lg gap-2 px-4 py-2 rounded-full ${
-                      isStudyPhase 
-                        ? 'bg-blue-50 text-blue-700 border-blue-200' 
-                        : 'bg-amber-50 text-amber-700 border-amber-200'
-                    } border`}>
-                      {isStudyPhase ? (
-                        <>
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                          </svg>
-                          Study Phase
-                        </>
-                      ) : (
-                        <>
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                          Rest Phase
-                        </>
-                      )}
-                    </div>
-                  </div>
+              {/* Phase Selection Buttons */}
+              <div className="flex gap-3 justify-center">
+                <button
+                  onClick={() => {
+                    if (onTimerStateChange && timerState) {
+                      onTimerStateChange({
+                        ...timerState,
+                        phase: 'study'
+                      });
+                    }
+                  }}
+                  className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all ${
+                    isStudyPhase
+                      ? 'bg-white/30 text-white backdrop-blur-sm shadow-lg'
+                      : 'bg-white/10 text-white/70 hover:bg-white/20'
+                  }`}
+                >
+                  Focus
+                </button>
+                <button
+                  onClick={() => {
+                    if (onTimerStateChange && timerState) {
+                      onTimerStateChange({
+                        ...timerState,
+                        phase: 'rest'
+                      });
+                    }
+                  }}
+                  className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all ${
+                    !isStudyPhase
+                      ? 'bg-white/30 text-white backdrop-blur-sm shadow-lg'
+                      : 'bg-white/10 text-white/70 hover:bg-white/20'
+                  }`}
+                >
+                  Short Break
+                </button>
+              </div>
 
-                  {/* Timer Display */}
-                  <div className="py-4">
-                    <p className="text-xs font-medium text-base-content/50 mb-3 uppercase tracking-wide">Time Remaining</p>
-                    <div className={`text-7xl font-sans font-light mb-3 tracking-wider ${
-                      isStudyPhase ? 'text-blue-500' : 'text-amber-500'
-                    }`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif', letterSpacing: '0.05em' }}>
-                      {displayTime}
-                    </div>
-                    <p className="text-xs text-base-content/50 max-w-xs mx-auto">
-                      {isStudyPhase 
-                        ? 'Focus on your revision for 25 minutes' 
-                        : 'Take a 5-minute break to recharge'}
-                    </p>
-                  </div>
+              {/* Timer Display - Hero Element */}
+              <div className="text-center space-y-6">
+                <div className={`text-8xl md:text-9xl font-bold tracking-tight text-white drop-shadow-2xl`} style={{ 
+                  fontFamily: 'system-ui, -apple-system, sans-serif', 
+                  letterSpacing: '-0.02em',
+                  textShadow: '0 10px 40px rgba(0,0,0,0.3)'
+                }}>
+                  {displayTime}
+                </div>
+                <p className="text-white/80 text-sm max-w-md">
+                  {isStudyPhase 
+                    ? 'Focus on your revision for 25 minutes' 
+                    : 'Take a 5-minute break to recharge'}
+                </p>
+              </div>
 
-                  {/* Timer Controls */}
-                  <div className="flex gap-3 justify-center pt-2">
-                    {!timerState || (!isRunning && !isPaused) ? (
-                      <button
-                        onClick={handleStartTimer}
-                        className="btn btn-lg gap-2 bg-blue-500 hover:bg-blue-600 border-blue-500 hover:border-blue-600 text-white rounded-full px-8"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        Start Timer
-                      </button>
-                    ) : isRunning ? (
+              {/* Timer Controls - Centered */}
+              <div className="flex gap-3 justify-center flex-wrap">
+                {!timerState || (!isRunning && !isPaused) ? (
+                  <button
+                    onClick={handleStartTimer}
+                    className="btn gap-2 rounded-full px-10 py-3 text-white bg-white/25 hover:bg-white/35 backdrop-blur-md border-white/30 shadow-xl transition-all hover:scale-105"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Start
+                  </button>
+                ) : (
+                  <>
+                    {isRunning ? (
                       <button
                         onClick={handlePauseTimer}
-                        className="btn btn-lg gap-2 bg-amber-500 hover:bg-amber-600 border-amber-500 hover:border-amber-600 text-white rounded-full px-8"
+                        className="btn gap-2 rounded-full px-10 py-3 text-white bg-white/25 hover:bg-white/35 backdrop-blur-md border-white/30 shadow-xl transition-all hover:scale-105"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        Pause Timer
+                        Pause
                       </button>
                     ) : (
                       <button
                         onClick={handleResumeTimer}
-                        className="btn btn-lg gap-2 bg-blue-500 hover:bg-blue-600 border-blue-500 hover:border-blue-600 text-white rounded-full px-8"
+                        className="btn gap-2 rounded-full px-10 py-3 text-white bg-white/25 hover:bg-white/35 backdrop-blur-md border-white/30 shadow-xl transition-all hover:scale-105"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        Resume Timer
+                        Resume
                       </button>
                     )}
-                    {timerState && (
-                      <button
-                        onClick={handleResetTimer}
-                        className="btn btn-outline btn-lg gap-2 border-base-300 hover:bg-base-200 rounded-full px-8"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                        </svg>
-                        Reset Timer
-                      </button>
-                    )}
-                  </div>
-                </div>
+                    <button
+                      onClick={handleResetTimer}
+                      className="btn gap-2 rounded-full px-6 py-3 text-white/90 bg-white/10 hover:bg-white/20 backdrop-blur-md border-white/20 transition-all hover:scale-105"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                    </button>
+                  </>
+                )}
               </div>
 
-              {/* RE-RATE TOPIC BUTTON - Only for final session of low confidence topics (1-3) */}
-              {isLowConfidenceTopic && isFinalSession && (
-                <button
-                  onClick={() => setShowReRating(true)}
-                  className="btn btn-outline btn-block gap-2 border-purple-300 text-purple-600 hover:bg-purple-50 hover:border-purple-400"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                  </svg>
-                  Re-rate Topic Confidence
-                </button>
-              )}
+              {/* Additional Info - Collapsible */}
+              <div className="w-full max-w-md space-y-4 pt-4 border-t border-white/20">
+                
+                {/* Session Info */}
+                {(isLowConfidenceTopic || rationaleData.rating !== null) && (
+                  <div className="text-center text-white/70 text-xs">
+                    {isLowConfidenceTopic && !isFinalSession && rationaleData.sessionNumber && rationaleData.sessionTotal ? (
+                      <span>Session {rationaleData.sessionNumber} of {rationaleData.sessionTotal} • Re-rate on final session</span>
+                    ) : !isLowConfidenceTopic && rationaleData.rating !== null ? (
+                      <span>
+                        Exam practice (confidence: {rationaleData.rating}/5) • 
+                        <a href="/settings/rerate-topics" className="hover:underline ml-1 text-white">
+                          Change
+                        </a>
+                      </span>
+                    ) : null}
+                  </div>
+                )}
 
-              {/* Info for low confidence topics NOT on final session */}
-              {isLowConfidenceTopic && !isFinalSession && rationaleData.sessionNumber && rationaleData.sessionTotal && (
-                <div className="text-center text-sm text-base-content/60 bg-base-200/50 rounded-lg p-3">
-                  <p>Session {rationaleData.sessionNumber} of {rationaleData.sessionTotal}</p>
-                  <p className="text-xs mt-1">
-                    You&apos;ll be asked to re-rate your confidence on the final session
-                  </p>
-                </div>
-              )}
-
-              {/* Info for high confidence topics (4-5) */}
-              {!isLowConfidenceTopic && rationaleData.rating !== null && (
-                <div className="text-center text-sm text-base-content/60 bg-base-200/50 rounded-lg p-3">
-                  <p>This is an exam practice session (confidence: {rationaleData.rating}/5)</p>
-                  <p className="text-xs mt-1">
-                    To change this topic&apos;s rating, go to{' '}
-                    <a href="/settings/rerate-topics" className="link link-primary">
-                      Settings → Rerate Topics
-                    </a>
-                  </p>
-                </div>
-              )}
-
-              {/* Action Buttons */}
-              <div className="flex gap-3">
-                <button
-                  onClick={() => {
-                    if (!confirmMissed) {
-                      // First click: show confirmation
-                      setConfirmMissed(true);
-                    } else {
-                      // Second click: execute action
-                      onBlockAction(blockKey, 'missed');
-                      onClose();
-                    }
-                  }}
-                  className={`btn flex-1 gap-2 ${
-                    confirmMissed 
-                      ? 'btn-error' // Solid red on confirmation
-                      : 'btn-error btn-outline' // Outlined red initially
-                  }`}
-                  disabled={block.status === 'missed' || block.status === 'done'}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                  {confirmMissed ? 'Confirm Missed?' : 'Mark as Missed'}
-                </button>
-                <button
-                  onClick={handleMarkDone}
-                  className={`btn flex-1 gap-2 ${
-                    block.status === 'done' 
-                      ? 'btn-warning btn-outline' 
-                      : 'btn-success'
-                  }`}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    {block.status === 'done' ? (
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    ) : (
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                {/* Block Details - Expandable */}
+                <details className="text-white/80">
+                  <summary className="cursor-pointer text-sm font-medium text-center hover:text-white transition-colors">
+                    View Details
+                  </summary>
+                  <div className="mt-4 space-y-3 text-xs bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-white/70">Date & Time</span>
+                      <span>{new Date(block.scheduled_at).toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' })} • {formattedTime}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-white/70">Duration</span>
+                      <span>{block.duration_minutes} minutes</span>
+                    </div>
+                    {rationaleData.explanation && (
+                      <div className="pt-3 border-t border-white/20">
+                        <p className="text-white/90 leading-relaxed">{rationaleData.explanation}</p>
+                      </div>
                     )}
-                  </svg>
-                  {block.status === 'done' ? 'Mark as Scheduled' : 'Mark as Done'}
-                </button>
+                  </div>
+                </details>
+
+                {/* Action Buttons */}
+                <div className="flex gap-3 pt-2">
+                  {/* RE-RATE TOPIC BUTTON */}
+                  {isLowConfidenceTopic && isFinalSession && (
+                    <button
+                      onClick={() => setShowReRating(true)}
+                      className="btn flex-1 gap-2 rounded-full px-4 py-2.5 text-white bg-white/20 hover:bg-white/30 backdrop-blur-md border-white/30 text-sm"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                      </svg>
+                      Re-rate
+                    </button>
+                  )}
+                  
+                  <button
+                    onClick={() => {
+                      if (!confirmMissed) {
+                        setConfirmMissed(true);
+                      } else {
+                        onBlockAction(blockKey, 'missed');
+                        onClose();
+                      }
+                    }}
+                    className={`btn flex-1 gap-2 rounded-full px-4 py-2.5 text-sm ${
+                      confirmMissed 
+                        ? 'bg-red-500/80 hover:bg-red-500 text-white' 
+                        : 'bg-white/10 hover:bg-white/20 text-white/90 backdrop-blur-md border-white/20'
+                    }`}
+                    disabled={block.status === 'missed' || block.status === 'done'}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    {confirmMissed ? 'Confirm?' : 'Missed'}
+                  </button>
+                  <button
+                    onClick={handleMarkDone}
+                    className={`btn flex-1 gap-2 rounded-full px-4 py-2.5 text-sm ${
+                      block.status === 'done' 
+                        ? 'bg-white/20 hover:bg-white/30 text-white backdrop-blur-md border-white/30' 
+                        : 'bg-white/30 hover:bg-white/40 text-white backdrop-blur-md border-white/40 shadow-lg'
+                    }`}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      {block.status === 'done' ? (
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      ) : (
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      )}
+                    </svg>
+                    {block.status === 'done' ? 'Undo' : 'Done'}
+                  </button>
+                </div>
               </div>
             </div>
           </div>

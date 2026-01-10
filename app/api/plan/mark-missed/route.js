@@ -479,7 +479,7 @@ function findBufferSlotForDay({
   // Get study window for this day
   const earliestStr = isWeekend && weekendSplit
     ? userPreferences.weekend_earliest_time || '08:00'
-    : userPreferences.weekday_earliest_time || '06:00';
+    : userPreferences.weekday_earliest_time || '04:30';
   const latestStr = isWeekend && weekendSplit
     ? userPreferences.weekend_latest_time || '23:30'
     : userPreferences.weekday_latest_time || '22:00';

@@ -53,29 +53,29 @@ export default function OnboardingLayout({ children }) {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="min-h-screen flex flex-col">
+    <div className="h-screen bg-white overflow-y-auto">
+      <div className="min-h-full flex flex-col">
         {/* Reset button in top right */}
-        <div className="absolute top-4 right-4 z-50">
+        <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-50">
           <button
             onClick={handleReset}
-            className="btn btn-sm btn-error"
+            className="btn btn-xs sm:btn-sm btn-error"
             disabled={isResetting}
           >
             {isResetting ? (
               <>
                 <span className="loading loading-spinner loading-xs"></span>
-                Resetting...
+                <span className="hidden sm:inline">Resetting...</span>
               </>
             ) : (
-              '🔄 Reset'
+              <span className="text-xs sm:text-sm">🔄 Reset</span>
             )}
           </button>
         </div>
         
-        {/* Main content area */}
-        <main className="flex-1 flex items-center justify-center p-8">
-          <div className="w-full max-w-2xl mx-auto">
+        {/* Main content area - fills viewport with responsive padding */}
+        <main className="flex-1 flex items-center justify-center px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-12">
+          <div className="w-full max-w-2xl mx-auto h-full flex flex-col justify-center">
             {children}
           </div>
         </main>

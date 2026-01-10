@@ -940,7 +940,7 @@ function findEarliestBufferSlot({ conflictTime, userPreferences, existingBlocks,
 
     const earliestStr = isWeekend && weekendSplit
       ? userPreferences.weekend_earliest_time || '08:00'
-      : userPreferences.weekday_earliest_time || '06:00';
+      : userPreferences.weekday_earliest_time || '04:30';
 
     const latestStr = isWeekend && weekendSplit
       ? userPreferences.weekend_latest_time || '23:30'
@@ -1106,13 +1106,13 @@ export async function GET(req) {
 
     // Return time preferences (per-week if available, otherwise global)
     const timePrefs = weekPreferences ? {
-      weekdayEarliest: formatTimeForInput(weekPreferences.weekday_earliest_time) || formatTimeForInput(user.weekday_earliest_time) || '6:00',
+      weekdayEarliest: formatTimeForInput(weekPreferences.weekday_earliest_time) || formatTimeForInput(user.weekday_earliest_time) || '4:30',
       weekdayLatest: formatTimeForInput(weekPreferences.weekday_latest_time) || formatTimeForInput(user.weekday_latest_time) || '23:30',
       weekendEarliest: formatTimeForInput(weekPreferences.weekend_earliest_time) || formatTimeForInput(user.weekend_earliest_time) || '8:00',
       weekendLatest: formatTimeForInput(weekPreferences.weekend_latest_time) || formatTimeForInput(user.weekend_latest_time) || '23:30',
       useSameWeekendTimes: weekPreferences && weekPreferences.use_same_weekend_times !== undefined ? weekPreferences.use_same_weekend_times : (user.use_same_weekend_times !== false)
     } : {
-      weekdayEarliest: formatTimeForInput(user.weekday_earliest_time) || '6:00',
+      weekdayEarliest: formatTimeForInput(user.weekday_earliest_time) || '4:30',
       weekdayLatest: formatTimeForInput(user.weekday_latest_time) || '23:30',
       weekendEarliest: formatTimeForInput(user.weekend_earliest_time) || '8:00',
       weekendLatest: formatTimeForInput(user.weekend_latest_time) || '23:30',

@@ -6,6 +6,7 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import TimeBlockCalendar from "@/components/TimeBlockCalendar";
 import SupportModal from "@/components/SupportModal";
+import FeedbackModal from "@/components/FeedbackModal";
 
 function AvailabilitySettingsPageContent() {
   const { data: session, status } = useSession();
@@ -16,11 +17,12 @@ function AvailabilitySettingsPageContent() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [settingsDropdownOpen, setSettingsDropdownOpen] = useState(false);
   const [supportModalOpen, setSupportModalOpen] = useState(false);
+  const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   
   // Time preferences - will be loaded from database
   const [timePreferences, setTimePreferences] = useState({
-    weekdayEarliest: '6:00', // Default, will be replaced when loaded
+    weekdayEarliest: '4:30', // Default, will be replaced when loaded
     weekdayLatest: '23:30', // Default, will be replaced when loaded
     useSameWeekendTimes: true, // Default, will be replaced when loaded
     weekendEarliest: '8:00', // Default, will be replaced when loaded
@@ -209,7 +211,7 @@ function AvailabilitySettingsPageContent() {
         const data = await response.json();
         if (data.success && data.timePreferences) {
           setTimePreferences({
-            weekdayEarliest: data.timePreferences.weekdayEarliest || '6:00',
+            weekdayEarliest: data.timePreferences.weekdayEarliest || '4:30',
             weekdayLatest: data.timePreferences.weekdayLatest || '23:30',
             useSameWeekendTimes: data.timePreferences.useSameWeekendTimes !== false,
             weekendEarliest: data.timePreferences.weekendEarliest || '8:00',
@@ -234,7 +236,7 @@ function AvailabilitySettingsPageContent() {
       // Set initial values from onboarding if available
       if (onboardingTimePrefs.weekdayEarliest || onboardingTimePrefs.weekdayLatest) {
         setTimePreferences({
-          weekdayEarliest: onboardingTimePrefs.weekdayEarliest || '6:00',
+          weekdayEarliest: onboardingTimePrefs.weekdayEarliest || '4:30',
           weekdayLatest: onboardingTimePrefs.weekdayLatest || '23:30',
           useSameWeekendTimes: onboardingTimePrefs.useSameWeekendTimes !== false,
           weekendEarliest: onboardingTimePrefs.weekendEarliest || '8:00',
@@ -255,7 +257,7 @@ function AvailabilitySettingsPageContent() {
           // Only update if we haven't loaded per-week preferences
           if (!data.isScheduled) {
             setTimePreferences({
-              weekdayEarliest: data.timePreferences.weekdayEarliest || onboardingTimePrefs.weekdayEarliest || '6:00',
+              weekdayEarliest: data.timePreferences.weekdayEarliest || onboardingTimePrefs.weekdayEarliest || '4:30',
               weekdayLatest: data.timePreferences.weekdayLatest || onboardingTimePrefs.weekdayLatest || '23:30',
               useSameWeekendTimes: data.timePreferences.useSameWeekendTimes !== false,
               weekendEarliest: data.timePreferences.weekendEarliest || onboardingTimePrefs.weekendEarliest || '8:00',
@@ -789,7 +791,7 @@ function AvailabilitySettingsPageContent() {
   // Generate time options for dropdowns
   const generateTimeOptions = () => {
     const options = [];
-    for (let hour = 6; hour < 24; hour++) {
+    for (let hour = 4; hour < 24; hour++) {
       options.push(`${hour.toString().padStart(2, '0')}:00`);
       if (hour < 23) {
         options.push(`${hour.toString().padStart(2, '0')}:30`);
@@ -891,7 +893,7 @@ function AvailabilitySettingsPageContent() {
       {/* Fixed Menu Button - Top Left */}
       <button
         type="button"
-        className="fixed top-4 left-4 z-50 inline-flex items-center justify-center rounded-md p-2 bg-base-200 hover:bg-base-300 transition shadow-lg"
+        className="fixed top-6 left-6 z-50 inline-flex items-center justify-center rounded-md p-4 bg-base-200 hover:bg-base-300 transition shadow-lg"
         onClick={() => setSidebarOpen(true)}
         aria-label="Open menu"
       >
@@ -900,7 +902,7 @@ function AvailabilitySettingsPageContent() {
           width="24"
           height="24"
           viewBox="0 0 24 24"
-          className="w-6 h-6 text-base-content"
+          className="w-8 h-8 text-base-content"
         >
           <rect x="1" y="11" width="22" height="2" fill="currentColor" strokeWidth="0"></rect>
           <rect x="1" y="4" width="22" height="2" strokeWidth="0" fill="currentColor"></rect>
@@ -910,7 +912,7 @@ function AvailabilitySettingsPageContent() {
 
       {/* Header */}
       <div className="bg-base-200">
-        <div className="max-w-7xl mx-auto px-4 py-6">
+        <div className="max-w-7xl mx-auto px-4 py-6 pl-28">
           <div className="flex items-start justify-between">
             <div>
               <h1 className="text-3xl font-bold">Availability Settings</h1>
@@ -1658,12 +1660,12 @@ function AvailabilitySettingsPageContent() {
       )}
 
       {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-base-200 shadow-xl transform transition-transform duration-300 ease-in-out ${
+      <div className={`fixed inset-y-0 left-0 z-50 w-72 bg-base-200 shadow-xl transform transition-transform duration-300 ease-in-out ${
         sidebarOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
         <div className="flex flex-col h-full">
           {/* Sidebar Header */}
-          <div className="flex items-center justify-between p-4 border-b border-base-300">
+          <div className="flex items-center justify-between p-5 border-b border-base-300">
             <h2 className="text-xl font-bold">Menu</h2>
             <button
               type="button"
@@ -1676,7 +1678,7 @@ function AvailabilitySettingsPageContent() {
           </div>
 
           {/* Sidebar Navigation */}
-          <nav className="flex-1 p-4">
+          <nav className="flex-1 p-5">
             <ul className="space-y-2">
               <li>
                 <Link
@@ -1746,11 +1748,7 @@ function AvailabilitySettingsPageContent() {
                 <div>
                   <button
                     onClick={() => setSettingsDropdownOpen(!settingsDropdownOpen)}
-                    className={`w-full block px-4 py-3 rounded-lg transition ${
-                      pathname?.startsWith('/settings') 
-                        ? 'bg-primary text-primary-content' 
-                        : 'hover:bg-base-300'
-                    }`}
+                    className="w-full block px-4 py-3 rounded-lg transition hover:bg-base-300"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
@@ -1771,26 +1769,15 @@ function AvailabilitySettingsPageContent() {
                   {settingsDropdownOpen && (
                     <ul className="ml-4 mt-2 space-y-1">
                       <li>
-                        <Link
-                          href="/settings?section=preferences"
-                          className={`block px-4 py-2 rounded-lg transition text-sm hover:bg-base-300 ${
-                            pathname === '/settings' && searchParams?.get('section') === 'preferences' ? 'bg-primary/20' : ''
-                          }`}
-                          onClick={() => setSidebarOpen(false)}
+                        <button
+                          onClick={() => {
+                            setFeedbackModalOpen(true);
+                            setSidebarOpen(false);
+                          }}
+                          className="block w-full text-left px-4 py-2 rounded-lg transition text-sm hover:bg-base-300"
                         >
-                          Study Preferences
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="/settings?section=account"
-                          className={`block px-4 py-2 rounded-lg transition text-sm hover:bg-base-300 ${
-                            pathname === '/settings' && searchParams?.get('section') === 'account' ? 'bg-primary/20' : ''
-                          }`}
-                          onClick={() => setSidebarOpen(false)}
-                        >
-                          Account Information
-                        </Link>
+                          Feedback
+                        </button>
                       </li>
                       <li>
                         <button
@@ -1832,6 +1819,7 @@ function AvailabilitySettingsPageContent() {
       )}
       
       <SupportModal isOpen={supportModalOpen} onClose={() => setSupportModalOpen(false)} />
+      <FeedbackModal isOpen={feedbackModalOpen} onClose={() => setFeedbackModalOpen(false)} />
     </div>
   );
 }

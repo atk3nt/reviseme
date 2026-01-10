@@ -89,10 +89,10 @@ const ButtonAccount = () => {
 						leaveTo="transform scale-95 opacity-0"
 					>
 						<Popover.Panel className="absolute left-0 z-10 mt-3 w-screen max-w-[16rem] transform">
-							<div className="overflow-hidden rounded-xl shadow-xl ring-1 ring-base-content/10 bg-base-100 p-1">
+							<div className="overflow-hidden rounded-xl shadow-xl ring-1 ring-black/10 bg-white p-1">
 								<div className="space-y-0.5 text-sm">
 									<button
-										className="flex items-center gap-2 hover:bg-base-300 duration-200 py-1.5 px-4 w-full rounded-lg font-medium cursor-pointer"
+										className="flex items-center gap-2 hover:bg-gray-100 duration-200 py-1.5 px-4 w-full rounded-lg font-medium cursor-pointer"
 										onClick={handleBilling}
 									>
 										<svg

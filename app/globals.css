@@ -3,8 +3,24 @@
   themes: light --default;
 }
 
+/* Hybrid approach: Override primary + map semantic colors to brand */
+[data-theme="light"] {
+  /* Primary colors - Brand Guidelines */
+  --p: 214 100% 50%; /* #0066FF - Primary Blue */
+  --pf: 214 100% 40%; /* #0052CC - Hover Blue */
+  --pc: 0 0% 100%; /* White - Primary content */
+  
+  /* Map semantic colors to brand guidelines */
+  --bc: 214 100% 10%; /* #001433 - Text Dark - becomes default text color */
+  --b2: 214 100% 95%; /* #E5F0FF - Background Light - section backgrounds */
+  --b3: 214 100% 95%; /* #E5F0FF - Background Light (lighter variant) */
+  
+  /* base-100 (--b1) stays white - DaisyUI default */
+  /* All other colors use DaisyUI light theme defaults */
+}
+
 @theme {
-  --font-display: "Satoshi", "sans-serif";
+  --font-display: "DM Sans", "sans-serif";
   
   --animate-shimmer: shimmer 3s ease-out infinite alternate;
   --animate-opacity: opacity 0.25s ease-in-out;
@@ -46,6 +62,7 @@
 html,
 body {
   scroll-behavior: smooth !important;
+  font-family: var(--font-dm-sans), "DM Sans", sans-serif;
 }
 
 progress::-webkit-progress-value {
@@ -53,17 +70,16 @@ progress::-webkit-progress-value {
 }
 
 .btn-gradient {
-  background: linear-gradient(60deg, #f79533, #f37055, #ef4e7b, #a166ab, #5073b8, #1098ad, #07b39b, #6fba82) !important;
-  background-size: 300% 300% !important;
-  animation: var(--animate-shimmer) !important;
+  background: linear-gradient(135deg, #0066FF 0%, #0052CC 100%) !important;
   border: 0 !important;
   border-color: transparent !important;
   color: white !important;
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 102, 255, 0.2), 0 2px 4px -2px rgba(0, 102, 255, 0.1) !important;
 }
 
 .btn-gradient:hover {
-  filter: saturate(1.2) !important;
+  background: linear-gradient(135deg, #0052CC 0%, #0047B3 100%) !important;
+  filter: brightness(1.05) !important;
 }
 
 .btn-gradient:disabled {
@@ -72,5 +88,19 @@ progress::-webkit-progress-value {
 }
 
 .btn {
-  text-transform: capitalize !important;
+  text-transform: none !important;
+  font-weight: 600;
+}
+
+/* Custom brand text colors - Brand Guidelines */
+.text-brand-dark {
+  color: #001433; /* Text Dark - H1, H2, important headlines */
+}
+
+.text-brand-medium {
+  color: #003D99; /* Text Medium - body text and descriptions */
+}
+
+.bg-brand-light {
+  background-color: #E5F0FF; /* Background Light - section backgrounds and card backgrounds */
 }

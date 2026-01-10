@@ -187,7 +187,7 @@ export async function POST(req) {
       const { error: timePrefError } = await supabaseAdmin
         .from('users')
         .update({
-          weekday_earliest_time: timePreferences.weekdayEarliest || '6:00',
+          weekday_earliest_time: timePreferences.weekdayEarliest || '4:30',
           weekday_latest_time: timePreferences.weekdayLatest || '23:30',
           weekend_earliest_time: timePreferences.weekendEarliest || null,
           weekend_latest_time: timePreferences.weekendLatest || null,

@@ -41,10 +41,10 @@ function Slide18Content() {
       />
 
       <div className="space-y-6">
-        <h1 className="text-4xl font-bold text-gray-900">
+        <h1 className="text-4xl font-bold text-[#001433]">
           Now let's personalize your plan
         </h1>
-        <p className="text-xl text-gray-600">
+        <p className="text-xl text-[#003D99]">
           Rate your confidence in each topic so we can create the perfect study schedule for you.
         </p>
       </div>
@@ -52,32 +52,32 @@ function Slide18Content() {
       {/* What to expect */}
       <div className="max-w-lg mx-auto space-y-4 text-left">
         <div className="flex items-start space-x-3">
-          <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-            <span className="text-blue-600 text-sm font-medium">1</span>
+          <div className="w-6 h-6 rounded-full bg-[#E5F0FF] border border-[#0066FF]/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <span className="text-[#0066FF] text-sm font-medium">1</span>
           </div>
           <div>
-            <h3 className="font-medium text-gray-900">Rate each topic</h3>
-            <p className="text-sm text-gray-600">Tell us how confident you feel about each topic (Haven't Learned to Very Strong)</p>
+            <h3 className="font-medium text-[#001433]">Rate each topic</h3>
+            <p className="text-sm text-[#003D99]">Rate your confidence from 1 (weak) to 5 (strong). If you haven't learned a topic yet, click "Haven't Learned".</p>
           </div>
         </div>
         
         <div className="flex items-start space-x-3">
-          <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-            <span className="text-blue-600 text-sm font-medium">2</span>
+          <div className="w-6 h-6 rounded-full bg-[#E5F0FF] border border-[#0066FF]/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <span className="text-[#0066FF] text-sm font-medium">2</span>
           </div>
           <div>
-            <h3 className="font-medium text-gray-900">Skip optional topics</h3>
-            <p className="text-sm text-gray-600">Mark any optional topics you're not studying with the X button</p>
+            <h3 className="font-medium text-[#001433]">Optional topics</h3>
+            <p className="text-sm text-[#003D99]">If a topic is optional and you're not studying it, just leave it unrated.</p>
           </div>
         </div>
         
         <div className="flex items-start space-x-3">
-          <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-            <span className="text-blue-600 text-sm font-medium">3</span>
+          <div className="w-6 h-6 rounded-full bg-[#E5F0FF] border border-[#0066FF]/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <span className="text-[#0066FF] text-sm font-medium">3</span>
           </div>
           <div>
-            <h3 className="font-medium text-gray-900">Get your plan</h3>
-            <p className="text-sm text-gray-600">We'll create a personalized schedule based on your ratings</p>
+            <h3 className="font-medium text-[#001433]">Get your plan</h3>
+            <p className="text-sm text-[#003D99]">We'll create a personalized schedule based on your ratings</p>
           </div>
         </div>
       </div>
@@ -86,7 +86,7 @@ function Slide18Content() {
         <button
           onClick={handleNext}
           disabled={isLoading}
-          className="bg-blue-500 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-lg"
+          className="bg-[#0066FF] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#0052CC] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-lg"
         >
           {isLoading ? "Next..." : "Start Rating Topics"}
         </button>

@@ -82,7 +82,7 @@ SELECT
   has_access, -- Should be false
   has_completed_onboarding, -- Should be false
   onboarding_data->>'referral_source' as referral_source, -- Should still exist!
-  weekday_earliest_time, -- Should be reset to '6:00'
+  weekday_earliest_time, -- Should be reset to '04:30'
   weekday_latest_time, -- Should be reset to '23:30'
   created_at
 FROM users 

@@ -62,7 +62,7 @@ export default function Slide22Page() {
         earliest = timePreferences.weekendEarliest || '8:00';
         latest = timePreferences.weekendLatest || '23:30';
       } else {
-        earliest = timePreferences.weekdayEarliest || '6:00';
+        earliest = timePreferences.weekdayEarliest || '4:30';
         latest = timePreferences.weekdayLatest || '23:30';
       }
       
@@ -112,21 +112,48 @@ export default function Slide22Page() {
     return availability;
   };
 
-  useEffect(() => {
-    loadSummary();
+  // Helper function to map subject ID to display name
+  const getSubjectDisplayName = (subjectId) => {
+    const mapping = {
+      'maths': 'Mathematics',
+      'psychology': 'Psychology',
+      'biology': 'Biology',
+      'chemistry': 'Chemistry',
+      'business': 'Business',
+      'sociology': 'Sociology',
+      'physics': 'Physics',
+      'economics': 'Economics',
+      'history': 'History',
+      'geography': 'Geography',
+      'computerscience': 'Computer Science'
+    };
+    return mapping[subjectId] || subjectId.charAt(0).toUpperCase() + subjectId.slice(1);
+  };
+
+  // Helper function to get subject color from config
+  const getSubjectColor = (subjectId) => {
+    return config.subjects[subjectId]?.color || '#6b7280';
+  };
+
+  // Helper function to get subject icon from config
+  const getSubjectIcon = (subjectId) => {
+    return config.subjects[subjectId]?.icon || '📚';
+  };
+
+  // Helper function to create a subtle/light version of a color
+  const getSubtleColor = (hexColor) => {
+    // Convert hex to RGB
+    const r = parseInt(hexColor.slice(1, 3), 16);
+    const g = parseInt(hexColor.slice(3, 5), 16);
+    const b = parseInt(hexColor.slice(5, 7), 16);
     
-    // If user just signed in and we have pending onboarding data, restore it
-    if (status === 'authenticated' && sessionStorage.getItem('pendingOnboarding')) {
-      try {
-        const pendingData = sanitizeQuizAnswers(JSON.parse(sessionStorage.getItem('pendingOnboarding')));
-        localStorage.setItem('quizAnswers', JSON.stringify(pendingData));
-        sessionStorage.removeItem('pendingOnboarding');
-        loadSummary(); // Reload summary with restored data
-      } catch (error) {
-        console.error('Error restoring pending onboarding data:', error);
-      }
-    }
-  }, [status]);
+    // Mix with white (90% white, 10% original color) for a very subtle tint
+    const subtleR = Math.round(r * 0.1 + 255 * 0.9);
+    const subtleG = Math.round(g * 0.1 + 255 * 0.9);
+    const subtleB = Math.round(b * 0.1 + 255 * 0.9);
+    
+    return `rgb(${subtleR}, ${subtleG}, ${subtleB})`;
+  };
 
   const loadSummary = () => {
     const savedAnswers = sanitizeQuizAnswers(JSON.parse(localStorage.getItem('quizAnswers') || '{}'));
@@ -136,7 +163,7 @@ export default function Slide22Page() {
     const subjectBoards = savedAnswers.subjectBoards || {};
     const topicRatings = savedAnswers.topicRatings || {};
     const timePreferences = savedAnswers.timePreferences || {
-      weekdayEarliest: '6:00',
+      weekdayEarliest: '4:30',
       weekdayLatest: '23:30',
       useSameWeekendTimes: true
     };
@@ -153,13 +180,30 @@ export default function Slide22Page() {
     
     setSummary({
       subjects: selectedSubjects.map(sub => ({
-        name: sub.charAt(0).toUpperCase() + sub.slice(1),
+        id: sub,
+        name: getSubjectDisplayName(sub),
         board: subjectBoards[sub]
       })),
       totalTopics: ratedTopics,
       totalHours: Math.round(totalHours * 10) / 10 // Round to 1 decimal
     });
   };
+
+  useEffect(() => {
+    loadSummary();
+    
+    // If user just signed in and we have pending onboarding data, restore it
+    if (status === 'authenticated' && sessionStorage.getItem('pendingOnboarding')) {
+      try {
+        const pendingData = sanitizeQuizAnswers(JSON.parse(sessionStorage.getItem('pendingOnboarding')));
+        localStorage.setItem('quizAnswers', JSON.stringify(pendingData));
+        sessionStorage.removeItem('pendingOnboarding');
+        loadSummary(); // Reload summary with restored data
+      } catch (error) {
+        console.error('Error restoring pending onboarding data:', error);
+      }
+    }
+  }, [status]);
 
   const handleGeneratePlan = async () => {
     // isDev is now a state variable set in useEffect
@@ -220,7 +264,7 @@ export default function Slide22Page() {
       const subjectBoards = quizAnswers.subjectBoards || {};
       const topicRatings = quizAnswers.topicRatings || {};
       const timePreferences = quizAnswers.timePreferences || {
-        weekdayEarliest: '6:00',
+        weekdayEarliest: '4:30',
         weekdayLatest: '23:30',
         useSameWeekendTimes: true
       };
@@ -306,39 +350,55 @@ export default function Slide22Page() {
       />
 
       <div className="space-y-6">
-        <h1 className="text-4xl font-bold text-gray-900">
+        <h1 className="text-4xl font-bold text-[#001433]">
           Ready to build your personalized study plan?
         </h1>
-        <p className="text-xl text-gray-600">
+        <p className="text-xl text-[#003D99]">
           Let's create a schedule tailored to your strengths and availability
         </p>
       </div>
 
       {/* Summary Card */}
-      <div className="max-w-lg mx-auto bg-white border-2 border-gray-200 rounded-xl p-8 shadow-lg">
+      <div className="max-w-lg mx-auto bg-white border-2 border-[#0066FF]/20 rounded-xl p-8 shadow-lg">
         <div className="space-y-6">
           {/* Subjects */}
           <div>
             <h3 className="text-sm font-medium text-gray-500 mb-3">Your Subjects</h3>
             <div className="space-y-2">
-              {summary.subjects.map((subject, index) => (
-                <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                  <span className="font-medium text-gray-900">{subject.name}</span>
-                  <span className="text-sm text-gray-600">{subject.board}</span>
-                </div>
-              ))}
+              {summary.subjects.map((subject, index) => {
+                const subjectColor = getSubjectColor(subject.id);
+                const subjectIcon = getSubjectIcon(subject.id);
+                const subtleColor = getSubtleColor(subjectColor);
+                
+                return (
+                  <div 
+                    key={index} 
+                    className="flex items-center justify-between p-3 rounded-lg border-2 transition-all"
+                    style={{
+                      backgroundColor: subtleColor,
+                      borderColor: `${subjectColor}40`
+                    }}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl">{subjectIcon}</span>
+                      <span className="font-medium text-[#001433]">{subject.name}</span>
+                    </div>
+                    <span className="text-sm text-[#003D99] font-medium">{subject.board}</span>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
+          <div className="grid grid-cols-2 gap-4 pt-4 border-t border-[#0066FF]/20">
             <div>
               <h3 className="text-sm font-medium text-gray-500 mb-2">Topics Rated</h3>
-              <p className="text-2xl font-bold text-gray-900">{summary.totalTopics}</p>
+              <p className="text-2xl font-bold text-[#001433]">{summary.totalTopics}</p>
             </div>
             <div>
               <h3 className="text-sm font-medium text-gray-500 mb-2">Weekly Availability</h3>
-              <p className="text-2xl font-bold text-gray-900">{summary.totalHours}h</p>
+              <p className="text-2xl font-bold text-[#001433]">{summary.totalHours}h</p>
             </div>
           </div>
         </div>
@@ -358,7 +418,7 @@ export default function Slide22Page() {
         <button
           onClick={handleGeneratePlan}
           disabled={isLoading || (!isDev && status === 'loading')}
-          className="bg-blue-500 text-white px-12 py-4 rounded-lg font-medium hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-lg"
+          className="bg-[#0066FF] text-white px-12 py-4 rounded-lg font-medium hover:bg-[#0052CC] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-lg"
         >
           {isLoading ? (
             <div className="flex items-center space-x-2">
@@ -377,7 +437,7 @@ export default function Slide22Page() {
       <div className="flex justify-start">
         <button
           onClick={() => router.push("/onboarding/slide-21")}
-          className="text-gray-500 hover:text-gray-700 text-sm underline"
+          className="bg-[#E5F0FF] border border-[#0066FF]/20 text-[#003D99] px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg text-xs font-medium hover:bg-[#0066FF]/10 hover:border-[#0066FF]/40 transition-colors"
         >
           ← Back
         </button>

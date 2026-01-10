@@ -8,6 +8,7 @@ import { toast } from "react-hot-toast";
 import config from "@/config";
 import BlockDetailModal from "@/components/BlockDetailModal";
 import SupportModal from "@/components/SupportModal";
+import FeedbackModal from "@/components/FeedbackModal";
 import ConfirmAvailabilityModal from "@/components/ConfirmAvailabilityBanner";
 
 function PlanPageContent() {
@@ -38,6 +39,7 @@ function PlanPageContent() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [settingsDropdownOpen, setSettingsDropdownOpen] = useState(false);
   const [supportModalOpen, setSupportModalOpen] = useState(false);
+  const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
   const [timePreferences, setTimePreferences] = useState(null); // Load from database
   const [showAvailabilityModal, setShowAvailabilityModal] = useState(false);
   const [nextWeekStart, setNextWeekStart] = useState(null);
@@ -1038,7 +1040,7 @@ function PlanPageContent() {
       {/* Fixed Menu Button - Top Left */}
       <button
         type="button"
-        className="fixed top-4 left-4 z-50 inline-flex items-center justify-center rounded-md p-2 bg-base-200 hover:bg-base-300 transition shadow-lg"
+        className="fixed top-6 left-6 z-50 inline-flex items-center justify-center rounded-md p-4 bg-base-200 hover:bg-base-300 transition shadow-lg"
         onClick={() => setSidebarOpen(true)}
         aria-label="Open menu"
       >
@@ -1047,7 +1049,7 @@ function PlanPageContent() {
           width="24"
           height="24"
           viewBox="0 0 24 24"
-          className="w-6 h-6 text-base-content"
+          className="w-8 h-8 text-base-content"
         >
           <rect x="1" y="11" width="22" height="2" fill="currentColor" strokeWidth="0"></rect>
           <rect x="1" y="4" width="22" height="2" strokeWidth="0" fill="currentColor"></rect>
@@ -1057,12 +1059,12 @@ function PlanPageContent() {
 
       {/* Header */}
       <div className="bg-base-200">
-        <div className="max-w-7xl mx-auto px-4 py-6">
+        <div className="max-w-7xl mx-auto px-4 py-6 pl-28">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold">Your Revision Plan</h1>
+              <h1 className="text-3xl font-bold text-brand-dark">Your Revision Plan</h1>
               <div className="flex items-center gap-3 mt-1">
-                <p className="text-base-content/70">
+                <p className="text-brand-medium">
                   {activeTab === 'today' && !isViewingNextWeek && !isViewingPreviousWeek 
                     ? 'Today\'s schedule' 
                     : `${getWeekLabel()} - ${getWeekDateRange()}`}
@@ -1106,18 +1108,26 @@ function PlanPageContent() {
               </div>
               
               {/* Today/Week Tabs - Hide Today tab when viewing next week */}
-              <div className="flex space-x-2">
+              <div className="flex items-center gap-1 bg-base-100 rounded-lg p-1">
                 {!isViewingNextWeek && !isViewingPreviousWeek && (
                   <button
                     onClick={() => setActiveTab('today')}
-                    className={`btn btn-sm ${activeTab === 'today' ? 'btn-primary' : 'btn-outline'}`}
+                    className={`h-8 px-3 rounded-md text-sm font-medium transition-all flex items-center justify-center ${
+                      activeTab === 'today' 
+                        ? 'bg-[#0066FF] text-white shadow-sm' 
+                        : 'text-base-content hover:bg-base-200'
+                    }`}
                   >
                     Today
                   </button>
                 )}
                 <button
                   onClick={() => setActiveTab('week')}
-                  className={`btn btn-sm ${activeTab === 'week' ? 'btn-primary' : 'btn-outline'}`}
+                  className={`h-8 px-3 rounded-md text-sm font-medium transition-all flex items-center justify-center ${
+                    activeTab === 'week' 
+                      ? 'bg-[#0066FF] text-white shadow-sm' 
+                      : 'text-base-content hover:bg-base-200'
+                  }`}
                 >
                   Week
                 </button>
@@ -1128,13 +1138,13 @@ function PlanPageContent() {
       </div>
 
       {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-base-200 shadow-xl transform transition-transform duration-300 ease-in-out ${
+      <div className={`fixed inset-y-0 left-0 z-50 w-72 bg-base-200 shadow-xl transform transition-transform duration-300 ease-in-out ${
         sidebarOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
         <div className="flex flex-col h-full">
           {/* Sidebar Header */}
-          <div className="flex items-center justify-between p-4 border-b border-base-300">
-            <h2 className="text-xl font-bold">Menu</h2>
+          <div className="flex items-center justify-between p-5 border-b border-base-300">
+            <h2 className="text-xl font-bold text-brand-dark">Menu</h2>
             <button
               type="button"
               className="btn btn-sm btn-circle btn-ghost"
@@ -1146,7 +1156,7 @@ function PlanPageContent() {
           </div>
 
           {/* Sidebar Navigation */}
-          <nav className="flex-1 p-4">
+          <nav className="flex-1 p-5">
             <ul className="space-y-2">
               <li>
                 <Link
@@ -1216,11 +1226,7 @@ function PlanPageContent() {
                 <div>
                   <button
                     onClick={() => setSettingsDropdownOpen(!settingsDropdownOpen)}
-                    className={`w-full block px-4 py-3 rounded-lg transition ${
-                      pathname?.startsWith('/settings') 
-                        ? 'bg-primary text-primary-content' 
-                        : 'hover:bg-base-300'
-                    }`}
+                    className="w-full block px-4 py-3 rounded-lg transition hover:bg-base-300"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
@@ -1241,22 +1247,15 @@ function PlanPageContent() {
                   {settingsDropdownOpen && (
                     <ul className="ml-4 mt-2 space-y-1">
                       <li>
-                        <Link
-                          href="/settings?section=preferences"
-                          className="block px-4 py-2 rounded-lg transition text-sm hover:bg-base-300"
-                          onClick={() => setSidebarOpen(false)}
+                        <button
+                          onClick={() => {
+                            setFeedbackModalOpen(true);
+                            setSidebarOpen(false);
+                          }}
+                          className="block w-full text-left px-4 py-2 rounded-lg transition text-sm hover:bg-base-300"
                         >
-                          Study Preferences
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="/settings?section=account"
-                          className="block px-4 py-2 rounded-lg transition text-sm hover:bg-base-300"
-                          onClick={() => setSidebarOpen(false)}
-                        >
-                          Account Information
-                        </Link>
+                          Feedback
+                        </button>
                       </li>
                       <li>
                         <button
@@ -1351,6 +1350,7 @@ function PlanPageContent() {
       />
       
       <SupportModal isOpen={supportModalOpen} onClose={() => setSupportModalOpen(false)} />
+      <FeedbackModal isOpen={feedbackModalOpen} onClose={() => setFeedbackModalOpen(false)} />
 
       {/* Availability confirmation modal - shown when navigating to next week without saved availability */}
       <ConfirmAvailabilityModal 
@@ -1366,13 +1366,13 @@ function PlanPageContent() {
             onClick={() => setShowRescheduledModal(false)}
           />
           <div className="relative bg-base-100 rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
-            <h2 className="text-2xl font-bold mb-4">Block Rescheduled</h2>
+            <h2 className="text-2xl font-bold mb-4 text-brand-dark">Block Rescheduled</h2>
             <p className="mb-4">
               The missed block has been rescheduled to:
             </p>
             <div className="bg-base-200 rounded-lg p-4 mb-4">
               <p className="font-semibold">{rescheduledBlockInfo.topicName}</p>
-              <p className="text-sm text-base-content/70">
+              <p className="text-sm text-brand-medium">
                 {new Date(rescheduledBlockInfo.newTime).toLocaleDateString([], {
                   weekday: 'long',
                   year: 'numeric',
@@ -1380,7 +1380,7 @@ function PlanPageContent() {
                   day: 'numeric'
                 })}
               </p>
-              <p className="text-sm text-base-content/70">
+              <p className="text-sm text-brand-medium">
                 {new Date(rescheduledBlockInfo.newTime).toLocaleTimeString([], {
                   hour: '2-digit',
                   minute: '2-digit'
@@ -1798,8 +1798,8 @@ function WeekView({
   
   return (
     <div className="w-full overflow-hidden">
-      <div className="w-full rounded-xl overflow-hidden border border-base-300">
-        <table className="table-fixed w-full border-collapse">
+      <div className="w-full">
+        <table className="table-fixed w-full border-separate" style={{ borderSpacing: '2px', tableLayout: 'fixed' }}>
           <colgroup>
             <col className="w-[70px]" />
             {days.map(() => (
@@ -1808,13 +1808,14 @@ function WeekView({
           </colgroup>
           <thead>
             <tr>
-              <th className="sticky left-0 z-10 bg-base-200 border border-base-300 px-2 py-3 text-sm font-semibold text-center w-[70px]">
+              <th className="sticky left-0 z-10 bg-white border-t border-l border-b border-[#0066FF]/0 px-2 py-3 text-base font-semibold text-center w-[70px] rounded-lg text-[#0047B3]" style={{ fontFamily: '"DM Sans", sans-serif' }}>
                 Time
               </th>
               {days.map((day, dayIndex) => {
                 const dayDate = new Date(baseDate);
                 dayDate.setDate(baseDate.getDate() + dayIndex);
                 const isToday = dayDate.toDateString() === new Date().toDateString();
+                const isLastColumn = dayIndex === days.length - 1;
                 
                 // Check if this day is before the plan started
                 const isBeforePlanStart = planStartDate && (() => {
@@ -1828,16 +1829,20 @@ function WeekView({
                 return (
                   <th 
                     key={day} 
-                    className={`border border-base-300 px-2 py-3 text-sm font-semibold text-center ${
+                    className={`border-b border-[#0066FF]/0 px-2 py-2 text-sm font-semibold text-center rounded-lg ${
+                      dayIndex === 0 && !isToday ? 'border-l border-[#0066FF]/0' : ''
+                    } ${
+                      isToday 
+                        ? 'bg-white border-t-2 border-t-[#0066FF]/80 border-l-2 border-l-[#0066FF]/80 border-r-2 border-r-[#0066FF]/80 border-b-2 border-b-[#0066FF]/80 text-[#0066FF]' 
+                        : 'border-t border-[#0066FF]/0 bg-white text-[#0047B3]'
+                    } ${
                       isBeforePlanStart 
-                        ? 'bg-base-300/50 text-base-content/50' // Greyed out - before plan started
-                        : isToday 
-                          ? 'bg-primary/10' 
-                          : 'bg-base-200'
+                        ? 'bg-white text-[#0047B3]' // Before plan started - use darker blue like other days
+                        : ''
                     }`}
                   >
-                    <div className="truncate">{day.substring(0, 3)}</div>
-                    <div className={`text-xs font-normal truncate ${isBeforePlanStart ? 'text-base-content/40' : 'text-base-content/70'}`}>
+                    <div className={`truncate ${isToday ? 'text-lg font-extrabold' : ''}`}>{day.substring(0, 3)}</div>
+                    <div className={`truncate ${isBeforePlanStart ? 'text-xs font-normal text-[#0047B3]/80' : isToday ? 'text-base font-bold text-[#0066FF]/90' : 'text-xs font-normal text-[#0047B3]/80'}`}>
                       {dayDate.toLocaleDateString([], { month: 'short', day: 'numeric' })}
                     </div>
                   </th>
@@ -1846,49 +1851,84 @@ function WeekView({
             </tr>
           </thead>
           <tbody>
-            {allTimeLabels.map((label, timeIndex) => (
-              <tr key={label.time} className="h-[70px]">
-                <td className="sticky left-0 z-10 bg-base-200 border border-base-300 px-2 py-2 text-sm text-center font-mono h-[70px]">
-                  {label.time}
-                </td>
-                {days.map((day, dayIndex) => {
-                  const dayDate = new Date(baseDate);
-                  dayDate.setDate(baseDate.getDate() + dayIndex);
-                  const dayKey = dayDate.toDateString();
-                  const slotKey = `${dayKey}-${timeIndex}`;
-                  const slotBlocks = blocksBySlot.get(slotKey) || [];
-                  const blockedStatus = blockedSlotMap.get(slotKey);
-                  const isUserBlocked = blockedStatus === true; // User explicitly blocked (red)
-                  const isOutsideWindow = blockedStatus === 'outside-window'; // Outside study window (different color)
-                  const isBlocked = isUserBlocked || isOutsideWindow;
-                  const isToday = dayDate.toDateString() === new Date().toDateString();
-                  const isAvailable = isTimeSlotAvailable(dayIndex, label.minutes);
-                  
-                  // Check if this day is before the plan started (user signed up mid-week)
-                  const isBeforePlanStart = planStartDate && (() => {
-                    const planStart = new Date(planStartDate);
-                    planStart.setHours(0, 0, 0, 0);
-                    const currentDay = new Date(dayDate);
-                    currentDay.setHours(0, 0, 0, 0);
-                    return currentDay < planStart;
-                  })();
-                  
-                  return (
-                    <td
-                      key={`${day}-${timeIndex}`}
-                      className={`border px-1 py-1 h-[70px] w-[calc((100%-70px)/7)] ${
-                        isBeforePlanStart
-                          ? 'bg-base-300/50 border-base-300' // Day before plan started - greyed out
-                          : isUserBlocked
-                            ? 'bg-error/20 border-error/40 border-2' // Blocked by user - clearly visible with red tint
-                            : isOutsideWindow
-                              ? 'bg-warning/10 border-warning/30 border-2' // Outside study window - yellow/orange tint (different from red)
+            {allTimeLabels.map((label, timeIndex) => {
+              const isLastRow = timeIndex === allTimeLabels.length - 1;
+              return (
+                <tr key={label.time} className="h-[70px]">
+                  <td className={`sticky left-0 z-10 bg-white border-l border-r border-[#0066FF]/0 px-2 py-2 text-base text-center h-[70px] rounded-lg text-[#0047B3]`} style={{ fontFamily: '"DM Sans", sans-serif' }}>
+                    {label.time}
+                  </td>
+                  {days.map((day, dayIndex) => {
+                    const dayDate = new Date(baseDate);
+                    dayDate.setDate(baseDate.getDate() + dayIndex);
+                    const dayKey = dayDate.toDateString();
+                    const slotKey = `${dayKey}-${timeIndex}`;
+                    const slotBlocks = blocksBySlot.get(slotKey) || [];
+                    const blockedStatus = blockedSlotMap.get(slotKey);
+                    const isUserBlocked = blockedStatus === true; // User explicitly blocked (red)
+                    const isOutsideWindow = blockedStatus === 'outside-window'; // Outside study window (different color)
+                    const isBlocked = isUserBlocked || isOutsideWindow;
+                    const isToday = dayDate.toDateString() === new Date().toDateString();
+                    const isAvailable = isTimeSlotAvailable(dayIndex, label.minutes);
+                    const isLastColumn = dayIndex === days.length - 1;
+                    
+                    // Check if this day is before the plan started (user signed up mid-week)
+                    const isBeforePlanStart = planStartDate && (() => {
+                      const planStart = new Date(planStartDate);
+                      planStart.setHours(0, 0, 0, 0);
+                      const currentDay = new Date(dayDate);
+                      currentDay.setHours(0, 0, 0, 0);
+                      return currentDay < planStart;
+                    })();
+                    
+                    return (
+                      <td
+                        key={`${day}-${timeIndex}`}
+                        className={`px-1 py-1 h-[70px] w-[calc((100%-70px)/7)] rounded-lg ${
+                          isToday && isLastRow ? 'border-l-2 border-l-[#0066FF]/80 border-r-2 border-r-[#0066FF]/80 border-b-2 border-b-[#0066FF]/80' : ''
+                        } ${
+                          isToday && !isLastRow ? 'border-l-2 border-l-[#0066FF]/80 border-r-2 border-r-[#0066FF]/80' : ''
+                        } ${
+                          isBeforePlanStart
+                            ? 'bg-base-300/50' // Day before plan started - greyed out
+                            : isUserBlocked
+                              ? 'bg-white' // Blocked by user - white background, will show red rounded rectangle inside
+                              : isOutsideWindow && !isToday
+                                ? 'bg-warning/10' // Outside study window - yellow/orange tint (different from red), but not on today
                               : isToday 
-                                ? 'bg-primary/5 border-base-300' 
-                                : 'bg-base-100 border-base-300'
-                      }`}
-                    >
-                      {slotBlocks.length > 0 ? (
+                                ? 'bg-transparent' // Today's column - transparent background (except blocked cells)
+                                : isOutsideWindow
+                                  ? 'bg-warning/10'
+                                  : 'bg-base-100'
+                        }`}
+                      >
+                      {isUserBlocked && slotBlocks.length === 0 ? (
+                        // Show red rounded rectangle for blocked slots - matching study block size
+                        <div 
+                          role={isBeforePlanStart ? "presentation" : "button"}
+                          tabIndex={isBeforePlanStart ? -1 : 0}
+                          onClick={() => {
+                            if (isBeforePlanStart) return;
+                            toast('This block is unavailable as you are busy', {
+                              icon: '🚫',
+                              duration: 3000,
+                            });
+                          }}
+                          onKeyDown={(event) => {
+                            if (isBeforePlanStart) return;
+                            if (event.key === 'Enter' || event.key === ' ') {
+                              event.preventDefault();
+                              toast('This block is unavailable as you are busy', {
+                                icon: '🚫',
+                                duration: 3000,
+                              });
+                            }
+                          }}
+                          className={`p-1.5 rounded-lg border border-error/30 bg-error/10 h-full w-full transition ${
+                            isBeforePlanStart ? 'cursor-default opacity-60' : 'cursor-pointer hover:opacity-80'
+                          }`}
+                        ></div>
+                      ) : slotBlocks.length > 0 ? (
                         (() => {
                           // Only show the first block if multiple blocks exist in the same slot
                           const block = slotBlocks[0];
@@ -1914,23 +1954,29 @@ function WeekView({
                           return (
                             <div
                               key={blockKey}
-                              role="button"
-                              tabIndex={0}
-                              onClick={() => onSelectBlock({ kind: 'study', key: blockKey })}
+                              role={isBeforePlanStart ? "presentation" : "button"}
+                              tabIndex={isBeforePlanStart ? -1 : 0}
+                              onClick={() => {
+                                if (isBeforePlanStart) return;
+                                onSelectBlock({ kind: 'study', key: blockKey });
+                              }}
                               onKeyDown={(event) => {
+                                if (isBeforePlanStart) return;
                                 if (event.key === 'Enter' || event.key === ' ') {
                                   event.preventDefault();
                                   onSelectBlock({ kind: 'study', key: blockKey });
                                 }
                               }}
-                              className={`p-2 rounded-lg text-xs cursor-pointer transition h-full w-full ${
-                                isDone 
-                                  ? 'opacity-60 border border-success/50 bg-success/10' 
-                                  : isMissed
-                                    ? 'border border-error/50 bg-error/10'
-                                    : 'hover:opacity-80'
+                              className={`p-1.5 rounded-lg text-xs transition h-full w-full ${
+                                isBeforePlanStart
+                                  ? 'cursor-default opacity-60'
+                                  : isDone 
+                                    ? 'opacity-60 border border-success/50 bg-success/10 cursor-pointer' 
+                                    : isMissed
+                                      ? 'border border-error/50 bg-error/10 cursor-pointer'
+                                      : 'cursor-pointer hover:opacity-80'
                               }`}
-                              style={!isDone && !isMissed ? {
+                              style={!isDone && !isMissed && !isBeforePlanStart ? {
                                 backgroundColor: getSubjectBgColor(subject),
                                 borderColor: getSubjectBorderColor(subject),
                                 borderWidth: '1px',
@@ -1960,9 +2006,10 @@ function WeekView({
                       ) : (
                         // Empty cell - clickable rounded box
                         <div 
-                          role="button"
-                          tabIndex={0}
+                          role={isBeforePlanStart ? "presentation" : "button"}
+                          tabIndex={isBeforePlanStart ? -1 : 0}
                           onClick={() => {
+                            if (isBeforePlanStart) return;
                             // Show message based on slot status
                             if (isOutsideWindow) {
                               toast('This time slot is outside your available study window.', {
@@ -1982,6 +2029,7 @@ function WeekView({
                             }
                           }}
                           onKeyDown={(event) => {
+                            if (isBeforePlanStart) return;
                             if (event.key === 'Enter' || event.key === ' ') {
                               event.preventDefault();
                               if (isOutsideWindow) {
@@ -2002,12 +2050,16 @@ function WeekView({
                               }
                             }
                           }}
-                          className={`h-full w-full rounded-md border border-dashed transition-all cursor-pointer ${
-                            !isAvailable
-                              ? 'border-base-300/70 bg-base-300/5 hover:bg-base-300/25 hover:border-base-300/90 hover:shadow-sm'
-                              : isBlocked
-                                ? 'border-base-300/70 bg-base-300/8 hover:bg-base-300/30 hover:border-base-300/90 hover:shadow-sm'
-                                : 'border-base-300/70 bg-base-200/10 hover:bg-base-200/35 hover:border-base-300/90 hover:shadow-sm'
+                          className={`h-full w-full rounded-md border border-dashed transition-all ${
+                            isBeforePlanStart
+                              ? 'cursor-default opacity-60 border-base-300/70 bg-base-300/5'
+                              : isToday && !isBlocked
+                                ? 'cursor-pointer border-base-300/70 bg-transparent hover:bg-base-300/10 hover:border-base-300/90 hover:shadow-sm'
+                                : !isAvailable
+                                  ? 'cursor-pointer border-base-300/70 bg-base-300/5 hover:bg-base-300/25 hover:border-base-300/90 hover:shadow-sm'
+                                  : isBlocked
+                                    ? 'cursor-pointer border-base-300/70 bg-base-300/8 hover:bg-base-300/30 hover:border-base-300/90 hover:shadow-sm'
+                                    : 'cursor-pointer border-base-300/70 bg-base-200/10 hover:bg-base-200/35 hover:border-base-300/90 hover:shadow-sm'
                           }`}
                         />
                       )}
@@ -2015,7 +2067,8 @@ function WeekView({
                   );
                 })}
               </tr>
-            ))}
+              );
+            })}
           </tbody>
         </table>
       </div>

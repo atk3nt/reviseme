@@ -151,10 +151,9 @@ export default function SupportModal({ isOpen, onClose }) {
 
   const getTitle = () => {
     if (selectedType === "issue") return "Report an issue";
-    if (selectedType === "idea") return "Share an idea";
     if (selectedType === "other") return "Tell us more";
     if (selectedType === "refund") return "Money Back Guarantee";
-    return "What's on your mind?";
+    return "How can we help?";
   };
 
   return (
@@ -193,7 +192,7 @@ export default function SupportModal({ isOpen, onClose }) {
 
         <form onSubmit={handleSubmit} className="space-y-8">
           {!selectedType ? (
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <button
                 type="button"
                 onClick={() => setSelectedType("issue")}
@@ -203,17 +202,6 @@ export default function SupportModal({ isOpen, onClose }) {
                   <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                 </svg>
                 <span className="text-lg font-semibold">Issue</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setSelectedType("idea")}
-                className="flex flex-col items-center justify-center gap-4 p-6 rounded-lg border-2 border-base-300 hover:border-primary hover:bg-primary/5 transition h-40"
-              >
-                <svg className="w-12 h-12 text-base-content/60" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.477.859h4z" />
-                </svg>
-                <span className="text-lg font-semibold">Idea</span>
               </button>
 
               <button
@@ -247,7 +235,7 @@ export default function SupportModal({ isOpen, onClose }) {
                 </div>
               ) : refundEligibility.eligible ? (
                 <div className="space-y-6">
-                  <div className="bg-base-100 rounded-lg p-6 border-2 border-base-300">
+                  <div className="bg-white rounded-lg p-6 border-2 border-gray-200">
                     <h3 className="text-lg font-semibold mb-4">Refund Details</h3>
                     <div className="space-y-3">
                       <div className="flex justify-between">
@@ -338,8 +326,6 @@ export default function SupportModal({ isOpen, onClose }) {
                   placeholder={
                     selectedType === "issue" 
                       ? "I noticed that..." 
-                      : selectedType === "idea" 
-                      ? "I think that..." 
                       : "Tell us more..."
                   }
                   required

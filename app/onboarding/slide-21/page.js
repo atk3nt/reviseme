@@ -8,10 +8,11 @@ import TimeBlockCalendar from "@/components/TimeBlockCalendar";
 export default function Slide21Page() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [confirmReset, setConfirmReset] = useState(false);
   
   // Time preferences (loaded from previous slide)
   const [timePreferences, setTimePreferences] = useState({
-    weekdayEarliest: '6:00',
+    weekdayEarliest: '4:30',
     weekdayLatest: '23:30',
     useSameWeekendTimes: true,
     weekendEarliest: '8:00',
@@ -31,6 +32,16 @@ export default function Slide21Page() {
       setBlockedTimes(savedAnswers.blockedTimes);
     }
   }, []);
+
+  // Auto-reset confirmation after 3 seconds
+  useEffect(() => {
+    if (confirmReset) {
+      const timer = setTimeout(() => {
+        setConfirmReset(false);
+      }, 3000); // Reset after 3 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [confirmReset]);
 
   // Get this week's Monday (current week)
   const getThisWeekStart = () => {
@@ -146,6 +157,24 @@ export default function Slide21Page() {
     }
   };
 
+  const handleReset = () => {
+    if (blockedTimes.length === 0) return;
+    
+    if (!confirmReset) {
+      // First click: show confirmation
+      setConfirmReset(true);
+    } else {
+      // Second click: execute reset
+      setBlockedTimes([]);
+      // Update localStorage
+      const savedAnswers = JSON.parse(localStorage.getItem('quizAnswers') || '{}');
+      savedAnswers.blockedTimes = [];
+      localStorage.setItem('quizAnswers', JSON.stringify(savedAnswers));
+      setConfirmReset(false);
+      console.log('Slide 21: Reset all blocked times');
+    }
+  };
+
   const handleContinue = async () => {
     console.log('Slide 21: Continue button clicked');
     setIsLoading(true);
@@ -177,17 +206,17 @@ export default function Slide21Page() {
       />
 
       <div className="space-y-4">
-        <h1 className="text-4xl font-bold text-gray-900">
+        <h1 className="text-4xl font-bold text-[#001433]">
           Block Unavailable Times
         </h1>
-        <p className="text-xl text-gray-600">
+        <p className="text-xl text-[#003D99]">
           Click or drag to block times when you can't study
         </p>
       </div>
 
       {/* Calendar Section */}
-      <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
-        <p className="text-sm text-gray-600 mb-6 text-left">
+      <div className="bg-white border-2 border-[#0066FF]/20 rounded-xl p-6">
+        <p className="text-sm text-[#003D99] mb-6 text-left">
           Hours outside your preferred times (from the previous step) are greyed out and cannot be blocked. Only mark times within your available window as unavailable.
         </p>
         
@@ -198,13 +227,15 @@ export default function Slide21Page() {
           onBlockToggle={handleBlockToggle}
           timePreferences={timePreferences}
           readOnly={false}
+          onReset={handleReset}
+          confirmReset={confirmReset}
         />
       </div>
 
       {/* Summary */}
       <div className="text-center">
-        <p className="text-sm text-gray-600">
-          <span className="font-medium text-gray-900">{blockedTimes.length}</span> time blocks marked as unavailable
+        <p className="text-sm text-[#003D99]">
+          <span className="font-medium text-[#001433]">{blockedTimes.length}</span> time blocks marked as unavailable
         </p>
       </div>
 
@@ -212,7 +243,7 @@ export default function Slide21Page() {
       <div className="flex justify-between items-center">
         <button
           onClick={() => router.push("/onboarding/slide-20")}
-          className="text-gray-500 hover:text-gray-700 text-sm underline"
+          className="bg-[#E5F0FF] border border-[#0066FF]/20 text-[#003D99] px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg text-xs font-medium hover:bg-[#0066FF]/10 hover:border-[#0066FF]/40 transition-colors"
         >
           ← Back
         </button>
@@ -220,7 +251,7 @@ export default function Slide21Page() {
         <button
           onClick={handleContinue}
           disabled={isLoading}
-          className="bg-blue-500 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-lg"
+          className="bg-[#0066FF] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#0052CC] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-lg"
         >
           {isLoading ? "Next..." : "Continue to Summary"}
         </button>

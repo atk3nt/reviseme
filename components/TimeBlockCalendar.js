@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import config from "@/config";
 
 /**
  * TimeBlockCalendar Component
  * 
  * Displays a weekly calendar with 30-minute time blocks
- * Time range: 6am - 12am (midnight)
- * 36 blocks per day (6:00, 6:30, 7:00, ... 23:00, 23:30)
+ * Time range: 4am - 12am (midnight)
+ * 40 blocks per day (4:00, 4:30, 5:00, ... 23:00, 23:30)
  * 
  * @param {Object} props
  * @param {Date} props.weekStart - Start date of the week (Monday)
@@ -16,7 +17,9 @@ import { useState, useRef, useEffect } from "react";
  * @param {Function} props.onBlockToggle - Callback when block is toggled (day, timeSlot, isBlocked)
  * @param {Boolean} props.readOnly - If true, blocks cannot be clicked
  * @param {Object} props.timePreferences - Time preferences {weekdayEarliest, weekdayLatest, weekendEarliest, weekendLatest, useSameWeekendTimes}
- * @param {Boolean} props.isWeekScheduled - If true, blocked times are greyed out and cannot be changed
+ * @param {Boolean} props.isWeekScheduled - If true, all times remain visible but cannot be changed (non-interactive)
+ * @param {Function} props.onReset - Optional callback to reset all blocked times
+ * @param {Boolean} props.confirmReset - Optional confirmation state for reset button
  */
 export default function TimeBlockCalendar({
   weekStart = new Date(),
@@ -25,7 +28,9 @@ export default function TimeBlockCalendar({
   onBlockToggle,
   readOnly = false,
   timePreferences = null,
-  isWeekScheduled = false
+  isWeekScheduled = false,
+  onReset = null,
+  confirmReset = false
 }) {
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState(null);
@@ -35,12 +40,12 @@ export default function TimeBlockCalendar({
 
   // Generate time slots based on time preferences
   // If timePreferences is provided, only show times within the study window
-  // Otherwise, show all times from 6am to 12am
+  // Otherwise, show all times from 4am to 12am
   const generateTimeSlots = () => {
     if (!timePreferences) {
-      // Default: 6am to 12am (36 blocks)
+      // Default: 4am to 12am (40 blocks)
       const slots = [];
-  for (let hour = 6; hour < 24; hour++) {
+  for (let hour = 4; hour < 24; hour++) {
         slots.push(`${hour.toString().padStart(2, '0')}:00`);
     if (hour < 23) {
           slots.push(`${hour.toString().padStart(2, '0')}:30`);
@@ -51,7 +56,7 @@ export default function TimeBlockCalendar({
 
     // Generate slots based on time preferences
     // We need to find the earliest and latest times across all days
-    const weekdayEarliest = timePreferences.weekdayEarliest || '6:00';
+    const weekdayEarliest = timePreferences.weekdayEarliest || '4:30';
     const weekdayLatest = timePreferences.weekdayLatest || '23:30';
     const weekendEarliest = timePreferences.weekendEarliest || '8:00';
     const weekendLatest = timePreferences.weekendLatest || '23:30';
@@ -195,7 +200,7 @@ export default function TimeBlockCalendar({
       latestMinutes = parseTime(timePreferences.weekendLatest || '23:30');
     } else {
       // Weekday or weekend with same times as weekday
-      earliestMinutes = parseTime(timePreferences.weekdayEarliest || '6:00');
+      earliestMinutes = parseTime(timePreferences.weekdayEarliest || '4:30');
       latestMinutes = parseTime(timePreferences.weekdayLatest || '23:30');
     }
     
@@ -207,7 +212,7 @@ export default function TimeBlockCalendar({
 
   // Handle mouse down (start drag or single click)
   const handleMouseDown = (e, dayIndex, timeSlot) => {
-    if (readOnly) return;
+    if (readOnly || isWeekScheduled) return;
     
     // Prevent text selection
     e.preventDefault();
@@ -288,8 +293,8 @@ export default function TimeBlockCalendar({
       if (currentDragStart.dayIndex === currentDragEnd.dayIndex && currentDragStart.timeSlot === currentDragEnd.timeSlot) {
         const wasBlocked = isBlocked(currentDragStart.dayIndex, currentDragStart.timeSlot);
         
-        // Don't allow toggling blocked times when week is scheduled
-        if (isWeekScheduled && wasBlocked) {
+        // Don't allow toggling any times when week is scheduled (safety check - should be prevented earlier)
+        if (isWeekScheduled) {
           return;
         }
         
@@ -315,15 +320,16 @@ export default function TimeBlockCalendar({
 
         // Toggle all cells in the range - collect them first, then toggle
         const cellsToToggle = [];
+        
+        // Don't allow toggling any times when week is scheduled (safety check - should be prevented earlier)
+        if (isWeekScheduled) {
+          return;
+        }
+        
         for (let day = startDay; day <= endDay; day++) {
           for (let timeIndex = startTimeIndex; timeIndex <= endTimeIndex; timeIndex++) {
             const timeSlotToToggle = timeSlots[timeIndex];
             const wasBlocked = isBlocked(day, timeSlotToToggle);
-            
-            // Skip blocked times when week is scheduled (they cannot be changed)
-            if (isWeekScheduled && wasBlocked) {
-              continue;
-            }
             
             cellsToToggle.push({ 
               day: days[day], 
@@ -381,6 +387,21 @@ export default function TimeBlockCalendar({
     return `${displayHour}:${minute.toString().padStart(2, '0')}${period}`;
   };
 
+  // Convert hex color to rgba for opacity control
+  const hexToRgba = (hex, alpha) => {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  };
+
+  // Get brand blue colors for highlight
+  const brandBlue = config.colors.brand.primary; // #0066FF
+  const brandBlueBg = hexToRgba(brandBlue, 0.2); // 20% opacity
+  const brandBlueBorder = hexToRgba(brandBlue, 0.4); // 40% opacity
+  const brandBlueRing = hexToRgba(brandBlue, 0.4);
+  const brandBlueRingOffset = hexToRgba(brandBlue, 0.2);
+
   useEffect(() => {
     if (isDragging) {
       const handleMouseMoveWrapper = (e) => {
@@ -413,8 +434,8 @@ export default function TimeBlockCalendar({
         style={{ userSelect: 'none', WebkitUserSelect: 'none' }}
       >
         {/* Header */}
-        <div className="grid grid-cols-8 border-b-2 border-gray-300 bg-gray-50 select-none gap-2 px-2 py-3">
-          <div className="font-semibold text-gray-700 select-none text-center flex items-center justify-center">
+        <div className="grid grid-cols-8 border-b-2 border-gray-300 bg-brand-light select-none gap-2 px-2 py-3">
+          <div className="font-semibold text-brand-medium select-none text-center flex items-center justify-center">
             Time
           </div>
           {days.map((day, index) => {
@@ -424,8 +445,8 @@ export default function TimeBlockCalendar({
                 key={day}
                 className="text-center select-none"
               >
-                <p className="font-semibold text-gray-900 select-none">{dayLabels[index]}</p>
-                <p className="text-xs text-gray-500 select-none">
+                <p className="font-semibold text-brand-dark select-none">{dayLabels[index]}</p>
+                <p className="text-xs text-brand-medium select-none">
                   {date.getDate()}/{date.getMonth() + 1}
                 </p>
               </div>
@@ -441,7 +462,7 @@ export default function TimeBlockCalendar({
               className="grid grid-cols-8 gap-2"
             >
               {/* Time Label */}
-              <div className="text-sm text-gray-600 bg-gray-50 select-none text-center flex items-center justify-center rounded-md py-2">
+              <div className="text-sm text-brand-medium bg-brand-light select-none text-center flex items-center justify-center rounded-md py-2">
                 {formatTime(timeSlot)}
               </div>
 
@@ -455,7 +476,8 @@ export default function TimeBlockCalendar({
                 let borderColor = 'border-gray-300';
                 let textColor = 'text-gray-400';
                 let opacity = '';
-                let cursor = !readOnly ? 'cursor-pointer' : 'cursor-default';
+                let cursor = !readOnly && !isWeekScheduled ? 'cursor-pointer' : 'cursor-default';
+                let inlineStyle = { userSelect: 'none', WebkitUserSelect: 'none' };
                 const isBlockedAndScheduled = state === 'blocked' && isWeekScheduled;
                 
                 // Grey out if outside study window (but still show drag range if dragging)
@@ -466,30 +488,42 @@ export default function TimeBlockCalendar({
                   opacity = 'opacity-60';
                   cursor = 'cursor-default';
                 }
-                // Highlight drag range (even if outside window)
-                else if (inDragRange) {
-                  bgColor = 'bg-blue-200';
-                  borderColor = 'border-blue-400';
-                  textColor = 'text-blue-800';
+                // Highlight drag range (even if outside window) - but not if week is scheduled
+                else if (inDragRange && !isWeekScheduled) {
+                  // Use brand blue color explicitly
+                  inlineStyle = {
+                    ...inlineStyle,
+                    backgroundColor: brandBlueBg,
+                    borderColor: brandBlueBorder,
+                    color: brandBlue,
+                    boxShadow: `0 0 0 2px ${brandBlueRing}, 0 0 0 4px ${brandBlueRingOffset}` // Ring effect with brand blue
+                  };
+                  bgColor = ''; // Empty to use inline style
+                  borderColor = ''; // Empty to use inline style
+                  textColor = ''; // Empty to use inline style
                 } else if (state === 'scheduled') {
-                  bgColor = 'bg-blue-100';
-                  borderColor = 'border-blue-300';
-                  textColor = 'text-blue-700';
+                  bgColor = 'bg-primary/10';
+                  borderColor = 'border-primary/30';
+                  textColor = 'text-primary';
                 } else if (state === 'blocked') {
-                  // If week is scheduled, grey out blocked times like study window times
-                  if (isBlockedAndScheduled) {
-                    bgColor = 'bg-gray-200';
-                    borderColor = 'border-gray-300';
-                    textColor = 'text-gray-400';
-                    opacity = 'opacity-60';
-                    cursor = 'cursor-default';
-                  } else {
+                  // Keep red styling for blocked times even when week is scheduled (just disable interaction)
+                  bgColor = 'bg-red-100';
+                  borderColor = 'border-red-300';
+                  textColor = 'text-red-700';
+                  // Remove hover effect if week is scheduled, add subtle opacity overlay
+                  if (isWeekScheduled) {
                     bgColor = 'bg-red-100';
-                    borderColor = 'border-red-300';
-                    textColor = 'text-red-700';
+                    opacity = 'opacity-80';
                   }
                 } else {
-                  bgColor = 'bg-white hover:bg-gray-50';
+                  // Available block - keep white styling even when week is scheduled (just disable interaction)
+                  bgColor = 'bg-white';
+                  // Remove hover effect if week is scheduled, add subtle opacity overlay
+                  if (isWeekScheduled) {
+                    opacity = 'opacity-80';
+                  } else {
+                    bgColor = 'bg-white hover:bg-brand-light';
+                  }
                 }
 
                 return (
@@ -498,28 +532,27 @@ export default function TimeBlockCalendar({
                     data-day-index={dayIndex}
                     data-time-slot={timeSlot}
                     onMouseDown={(e) => {
-                      // Prevent clicking if outside study window, readOnly, or if blocked and week is scheduled
-                      if (!withinWindow || readOnly || isBlockedAndScheduled) {
+                      // Prevent clicking if outside study window, readOnly, or if week is scheduled
+                      if (!withinWindow || readOnly || isWeekScheduled) {
                         e.preventDefault();
                         return;
                       }
                       handleMouseDown(e, dayIndex, timeSlot);
                     }}
                     onMouseEnter={() => {
-                      if (isDragging && dragStart) {
+                      if (isDragging && dragStart && !isWeekScheduled) {
                         const newDragEnd = { dayIndex, timeSlot };
                         setDragEnd(newDragEnd);
                         dragEndRef.current = newDragEnd;
                       }
                     }}
                     className={`
-                      rounded-md border ${borderColor} ${bgColor} ${textColor} ${opacity} select-none
+                      rounded-md ${inDragRange && !isWeekScheduled ? '' : `border ${borderColor}`} ${inDragRange && !isWeekScheduled ? '' : bgColor} ${inDragRange && !isWeekScheduled ? '' : textColor} ${opacity} select-none
                       transition-all duration-200 flex items-center justify-center
                       ${cursor}
                       min-h-[32px]
-                      ${inDragRange ? 'ring-2 ring-blue-400 ring-offset-1' : ''}
                     `}
-                    style={{ userSelect: 'none', WebkitUserSelect: 'none' }}
+                    style={inlineStyle}
                     title={!withinWindow ? '' : `${day} ${formatTime(timeSlot)} - ${
                       state === 'blocked' ? 'Blocked' : 
                       state === 'scheduled' ? 'Scheduled' : 
@@ -541,19 +574,28 @@ export default function TimeBlockCalendar({
       <div className="mt-4 flex flex-wrap justify-center items-center gap-4 text-sm">
         <div className="flex items-center space-x-2">
           <div className="w-4 h-4 bg-white border border-gray-300 rounded"></div>
-          <span className="text-gray-600">Available</span>
+          <span className="text-brand-medium">Available</span>
         </div>
         <div className="flex items-center space-x-2">
           <div className="w-4 h-4 bg-red-100 border border-red-300 rounded"></div>
-          <span className="text-gray-600">Blocked</span>
+          <span className="text-brand-medium">Blocked</span>
         </div>
-        <div className="flex items-center space-x-2">
-          <div className="w-4 h-4 bg-blue-100 border border-blue-300 rounded"></div>
-          <span className="text-gray-600">Scheduled</span>
-        </div>
-        <div className="text-gray-500 text-xs">
-          Click or drag to block/unblock times
-        </div>
+        {onReset && blockedTimes.length > 0 ? (
+          <button
+            onClick={onReset}
+            className={`px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg text-xs font-medium transition-colors w-[160px] ${
+              confirmReset 
+                ? 'bg-[#0066FF] border border-[#0066FF] text-white hover:bg-[#0052CC] hover:border-[#0052CC]' // Solid blue on confirmation
+                : 'bg-[#E5F0FF] border border-[#0066FF]/20 text-[#003D99] hover:bg-[#0066FF]/10 hover:border-[#0066FF]/40' // Outlined blue initially
+            }`}
+          >
+            {confirmReset ? 'Confirm Reset?' : 'Reset all blocked times'}
+          </button>
+        ) : (
+          <div className="text-brand-medium text-xs">
+            Click or drag to block/unblock times
+          </div>
+        )}
       </div>
     </div>
   );

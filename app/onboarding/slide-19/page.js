@@ -13,6 +13,8 @@ export default function Slide19Page() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isDev, setIsDev] = useState(false);
+  const [selectedSubjects, setSelectedSubjects] = useState([]);
+  const [subjectBoards, setSubjectBoards] = useState({});
 
   useEffect(() => {
     // Check if dev mode
@@ -26,21 +28,26 @@ export default function Slide19Page() {
   }, []);
 
   useEffect(() => {
+    // Scroll to top when component mounts (matching rerating page behavior)
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     loadTopics();
   }, []);
 
   const loadTopics = async () => {
     try {
+      setIsLoading(true);
       const savedAnswers = JSON.parse(localStorage.getItem('quizAnswers') || '{}');
-      const selectedSubjects = savedAnswers.selectedSubjects || [];
-      const subjectBoards = savedAnswers.subjectBoards || {};
+      const subjects = savedAnswers.selectedSubjects || [];
+      const boards = savedAnswers.subjectBoards || {};
       
-      if (selectedSubjects.length === 0) {
+      if (subjects.length === 0) {
         console.log('No subjects selected');
+        setIsLoading(false);
         return;
       }
 
-      console.log('Selected subjects:', selectedSubjects);
+      setSelectedSubjects(subjects);
+      setSubjectBoards(boards);
       
       // Convert subject names to match database format
       const subjectMapping = {
@@ -60,8 +67,8 @@ export default function Slide19Page() {
       const allTopics = [];
       
       // Make separate API calls for each subject with its specific exam board
-      for (const subject of selectedSubjects) {
-        const board = subjectBoards[subject];
+      for (const subject of subjects) {
+        const board = boards[subject];
         if (!board) continue;
         
         const dbSubject = subjectMapping[subject];
@@ -72,7 +79,7 @@ export default function Slide19Page() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ 
             subjects: [dbSubject],
-            boards: [board] // Keep lowercase to match database format
+            boards: [board]
           })
         });
         
@@ -90,11 +97,11 @@ export default function Slide19Page() {
       
       // Convert database format to UI format
       const topics = allTopics.map(topic => ({
-        rating: undefined, // No default rating - students must choose
+        rating: undefined,
         topics: {
           id: topic.id,
-          name: topic.title, // Use title for topic name
-          level: topic.level_1_parent || topic.parent_title || 'Other', // Use level_1_parent for grouping
+          name: topic.title,
+          level: topic.level_1_parent || topic.parent_title || 'Other',
           parent_id: null,
           specs: { 
             subject: topic.subject, 
@@ -108,11 +115,13 @@ export default function Slide19Page() {
       // Initialize ratings
       const initialRatings = {};
       topics.forEach(item => {
-        initialRatings[item.topics.id] = undefined; // No default rating
+        initialRatings[item.topics.id] = undefined;
       });
       setRatings(initialRatings);
+      setIsLoading(false);
     } catch (error) {
       console.error('Error loading topics:', error);
+      setIsLoading(false);
     }
   };
 
@@ -181,19 +190,13 @@ export default function Slide19Page() {
   const toggleSection = (parentId) => {
     setExpandedSections(prev => {
       const isCurrentlyOpen = prev[parentId];
-      
-      // Check if it's a subject (no dash) or a main topic (has dash)
       const isSubject = !parentId.includes('-');
       
       if (isSubject) {
-        // For subjects: close all other subjects and their main topics, toggle this one
         const newState = { ...prev };
-        
-        // Close all other subjects (keys without dashes)
         Object.keys(prev).forEach(key => {
           if (!key.includes('-') && key !== parentId) {
             newState[key] = false;
-            // Also close all main topics in closed subjects
             Object.keys(prev).forEach(mainTopicKey => {
               if (mainTopicKey.startsWith(`${key}-`)) {
                 newState[mainTopicKey] = false;
@@ -201,11 +204,7 @@ export default function Slide19Page() {
             });
           }
         });
-        
-        // Toggle the clicked subject
         newState[parentId] = !isCurrentlyOpen;
-        
-        // If closing the subject, also close all its main topics
         if (isCurrentlyOpen) {
           Object.keys(prev).forEach(key => {
             if (key.startsWith(`${parentId}-`)) {
@@ -214,21 +213,71 @@ export default function Slide19Page() {
           });
         }
         
+        // No scroll when opening subject sections - scroll happens when opening main topics instead
+        
         return newState;
       } else {
-        // For main topics: close all other main topics in the same subject, toggle this one
         const [subject] = parentId.split('-');
         const newState = { ...prev };
         
-        // Close all main topics in this subject
         Object.keys(prev).forEach(key => {
           if (key.startsWith(`${subject}-`) && key !== parentId) {
             newState[key] = false;
           }
         });
-        
-        // Toggle the clicked main topic
         newState[parentId] = !isCurrentlyOpen;
+        
+        // Scroll to show the subject header at top when opening a main topic,
+        // but ONLY if another main topic in this subject was already open
+        if (!isCurrentlyOpen) {
+          // Check if there are other main topics open in this subject
+          const hasOtherMainTopicsOpen = Object.keys(prev).some(key => 
+            key.startsWith(`${subject}-`) && key !== parentId && prev[key]
+          );
+          
+          // Only scroll if another main topic was already open in this subject
+          if (hasOtherMainTopicsOpen) {
+            // Wait for DOM to update, then scroll smoothly to show subject header
+            setTimeout(() => {
+              requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                  // Find the main topic element first to get its parent subject
+                  const mainTopicElement = document.getElementById(`main-topic-${parentId}`);
+                  if (mainTopicElement) {
+                    // Find the parent subject card by traversing up the DOM
+                    let subjectCard = mainTopicElement.closest('[id^="subject-"]');
+                    
+                    // If not found via closest, try finding by the subject from parentId
+                    if (!subjectCard) {
+                      // Extract full subject from parentId - handle cases with multiple dashes
+                      // parentId format is like "Business-Decisions and strategy" or "Mathematics-Algebra"
+                      const subjectFromId = parentId.split('-')[0]; // Gets first part before dash
+                      subjectCard = document.getElementById(`subject-${subjectFromId}`);
+                    }
+                    
+                    if (subjectCard) {
+                      // Use scrollIntoView first to position element, then adjust for spacing
+                      subjectCard.scrollIntoView({ behavior: 'auto', block: 'start', inline: 'nearest' });
+                      
+                      // Then adjust to show space above subject header
+                      setTimeout(() => {
+                        const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+                        const headerOffset = 250; // Increased offset to show more space above subject header
+                        const adjustedScroll = currentScroll - headerOffset;
+                        
+                        window.scrollTo({
+                          top: Math.max(0, adjustedScroll),
+                          behavior: 'smooth'
+                        });
+                      }, 10);
+                    }
+                  }
+                });
+              });
+            }, 200); // Increased timeout to let React update DOM and content expand
+          }
+        }
+        
         return newState;
       }
     });
@@ -239,7 +288,7 @@ export default function Slide19Page() {
     const rated = Object.values(ratings).filter(r => 
       r !== undefined && 
       r !== null &&
-      r !== -2  // Exclude "not doing" topics from progress
+      r !== -2
     ).length;
     return total > 0 ? (rated / total) * 100 : 0;
   };
@@ -249,10 +298,7 @@ export default function Slide19Page() {
     topics.forEach(item => {
       const topic = item.topics;
       const subject = topic.specs?.subject || topic.subject;
-      // parent_title contains the level-1 topic name for grouping
-      // For level-3 topics, we need to find their level-1 parent by looking up parent_title
-      // Since we're only showing level-3 topics, parent_title should give us the level-1 topic
-      const mainTopic = topic.level || 'Other'; // topic.level contains parent_title from our mapping
+      const mainTopic = topic.level || 'Other';
       
       if (!grouped[subject]) {
         grouped[subject] = {};
@@ -274,285 +320,385 @@ export default function Slide19Page() {
   const groupedTopics = groupTopicsBySubject();
   const progress = getProgress();
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-base-100">
+        <div className="text-center space-y-4">
+          <OnboardingProgress 
+            currentSlide={19} 
+            totalSlides={23} 
+            showProgressBar={true}
+          />
+          <span className="loading loading-spinner loading-lg text-primary"></span>
+          <p className="text-brand-medium">Loading topics...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (topics.length === 0) {
+    return (
+      <div className="text-center space-y-8">
+        <OnboardingProgress 
+          currentSlide={19} 
+          totalSlides={23} 
+          showProgressBar={true}
+        />
+        <div className="text-center">
+          <p className="text-lg text-brand-medium mb-4">No topics found. Please complete previous steps first.</p>
+          <button
+            onClick={() => router.push("/onboarding/slide-18")}
+            className="bg-[#E5F0FF] border border-[#0066FF]/20 text-[#003D99] px-4 py-2 rounded-lg font-medium hover:bg-[#0066FF]/10 hover:border-[#0066FF]/40 transition-colors"
+          >
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="text-center space-y-8">
+    <div className="text-center space-y-8 pt-10 pb-20 px-6">
       <OnboardingProgress 
         currentSlide={19} 
         totalSlides={23} 
         showProgressBar={true}
       />
 
-      <div className="space-y-4">
-        <h1 className="text-4xl font-bold text-gray-900">
+      <div className="space-y-3">
+        <h1 className="text-5xl font-bold text-brand-dark">
           Rate Your Confidence
         </h1>
-        <p className="text-xl text-gray-600">
-          Rate your confidence in each topic from 1 (very weak) to 5 (very strong).
-          This helps us prioritize your revision.
+        <p className="text-lg text-brand-medium max-w-2xl mx-auto">
+          Rate your confidence in each topic from 1 (very weak) to 5 (very strong). This helps us prioritize your revision.
         </p>
         
-        <div className="flex items-center justify-center space-x-4">
-          <div className="text-sm text-gray-600">
-            Progress: {Math.round(progress)}% complete
+        <p className="text-sm text-brand-medium max-w-2xl mx-auto">
+          Rate your confidence: <span className="font-semibold">1 (Very Weak)</span> to <span className="font-semibold">5 (Very Strong)</span>
+        </p>
+        
+        {/* Progress Bar */}
+        <div className="flex items-center justify-center space-x-4 max-w-md mx-auto">
+          <div className="text-sm font-medium text-brand-medium">
+            {Math.round(progress)}% complete
           </div>
-          <div className="w-64 bg-gray-200 rounded-full h-2">
+          <div className="flex-1 bg-base-200 rounded-full h-3 overflow-hidden">
             <div 
-              className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-              style={{ width: `${progress}%` }}
+              className="h-full rounded-full transition-all duration-500 ease-out"
+              style={{ 
+                width: `${progress}%`,
+                background: 'linear-gradient(90deg, #0066FF 0%, #0052CC 100%)'
+              }}
             />
           </div>
         </div>
       </div>
 
-      {/* Bulk actions */}
-      <div className="flex flex-wrap gap-2 justify-center">
-        <button
-          onClick={() => handleBulkRating(0)}
-          className="btn btn-sm btn-outline"
-        >
-          Mark All as Haven't Learned
-        </button>
-        <button
-          onClick={() => handleBulkRating(3)}
-          className="btn btn-sm btn-outline"
-        >
-          Rate All as 3 (Medium)
-        </button>
-        <button
-          onClick={() => handleBulkRating(1)}
-          className="btn btn-sm btn-outline btn-error"
-        >
-          Mark All as Weak
-        </button>
-        <button
-          onClick={() => handleBulkRating(5)}
-          className="btn btn-sm btn-outline btn-success"
-        >
-          Mark All as Strong
-        </button>
-        <button
-          onClick={() => handleBulkRating(-1)}
-          className="btn btn-sm btn-outline btn-neutral"
-        >
-          Skip All Topics
-        </button>
-        {isDev && (
+      {/* Bulk actions - Dev only */}
+      {isDev && (
+        <div className="flex flex-wrap gap-2 justify-center">
           <button
             onClick={fillRandomRatings}
             className="btn btn-sm bg-yellow-500 text-white hover:bg-yellow-600 border-0"
           >
             [DEV] Fill Random Ratings
           </button>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Topics by subject */}
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         <div className="space-y-6">
           {Object.entries(groupedTopics)
             .sort(([a], [b]) => a.localeCompare(b))
-            .map(([subject, subjectData]) => (
-            <div key={subject} className="collapse collapse-arrow bg-white border border-gray-200">
-              <input
-                type="checkbox"
-                checked={expandedSections[subject] || false}
-                onChange={() => toggleSection(subject)}
-              />
-              <div className="collapse-title text-xl font-medium">
-                {subject} ({Object.values(subjectData).flat().length} topics)
-              </div>
-              <div className="collapse-content">
-                <div className="space-y-4 pt-4">
-                  {Object.entries(subjectData)
-                    .sort(([a], [b]) => {
-                      // Extract numeric prefix for proper ordering (1-17)
-                      const getNumericPrefix = (topic) => {
-                        const match = topic.match(/^(\d+)/);
-                        return match ? parseInt(match[1], 10) : 999;
-                      };
-                      return getNumericPrefix(a) - getNumericPrefix(b);
-                    })
-                    .map(([mainTopic, mainTopicItems]) => (
-                    <div key={mainTopic} className={`collapse collapse-arrow border relative ${
-                      mainTopicItems.every(item => ratings[item.topics.id] === -2) 
-                        ? 'bg-gray-200 opacity-60' 
-                        : 'bg-white'
-                    }`}>
-                      <input
-                        type="checkbox"
-                        checked={expandedSections[`${subject}-${mainTopic}`] || false}
-                        onChange={() => toggleSection(`${subject}-${mainTopic}`)}
-                      />
-                      <div className={`collapse-title text-lg font-medium ${
-                        mainTopicItems.every(item => ratings[item.topics.id] === -2) ? 'line-through text-gray-500' : ''
-                      }`}>
-                        {mainTopic} ({mainTopicItems.length} topics)
+            .map(([subject, subjectData]) => {
+              const getSubjectKey = (subjectName) => {
+                const mapping = {
+                  'Mathematics': 'maths',
+                  'Psychology': 'psychology',
+                  'Biology': 'biology',
+                  'Chemistry': 'chemistry',
+                  'Business': 'business',
+                  'Sociology': 'sociology',
+                  'Physics': 'physics',
+                  'Economics': 'economics',
+                  'History': 'history',
+                  'Geography': 'geography',
+                  'Computer Science': 'computerscience'
+                };
+                return mapping[subjectName] || subjectName.toLowerCase().replace(/\s+/g, '');
+              };
+              const subjectKey = getSubjectKey(subject);
+              const subjectConfig = config.subjects[subjectKey];
+              const subjectColor = subjectConfig?.color || '#0066FF';
+              
+              // Get exam board for this subject
+              const examBoard = subjectBoards[subjectKey] || 
+                (Object.values(subjectData).flat()[0]?.topics?.specs?.exam_board);
+              const examBoardDisplay = examBoard ? examBoard.toUpperCase() : '';
+              const topicCount = Object.values(subjectData).flat().length;
+              
+              return (
+                <div 
+                  id={`subject-${subject}`}
+                  key={subject} 
+                  className="card bg-base-100 shadow-lg border-2 overflow-hidden"
+                  style={{ borderColor: subjectColor + '40' }}
+                >
+                  {/* Subject Header */}
+                  <div 
+                    className="px-8 py-5 cursor-pointer"
+                    onClick={() => toggleSection(subject)}
+                    style={{ 
+                      background: `linear-gradient(135deg, ${subjectColor}15 0%, ${subjectColor}08 100%)`
+                    }}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <span className="text-2xl">{subjectConfig?.icon || '📚'}</span>
+                        <h2 className="text-xl font-bold text-brand-dark">
+                          {subject}{examBoardDisplay ? ` - ${examBoardDisplay}` : ''} - {topicCount} {topicCount === 1 ? 'topic' : 'topics'}
+                        </h2>
                       </div>
-                      {mainTopic.toLowerCase().includes('optional:') && (
-                        <button
-                          onClick={() => {
-                            const allMarked = mainTopicItems.every(item => ratings[item.topics.id] === -2);
-                            mainTopicItems.forEach(item => handleRatingChange(item.topics.id, allMarked ? 0 : -2));
-                          }}
-                          className={`absolute right-8 top-1/2 transform -translate-y-1/2 btn btn-ghost btn-xs z-10 ${
-                            mainTopicItems.every(item => ratings[item.topics.id] === -2) 
-                              ? 'text-red-500 bg-red-100' 
-                              : 'text-gray-400 hover:text-red-500 hover:bg-red-100'
-                          }`}
-                          title={mainTopicItems.every(item => ratings[item.topics.id] === -2) ? "Mark as covering (will study)" : "Mark as not covering (optional topic)"}
-                        >
-                          ✕
-                        </button>
-                      )}
-                      <div className="collapse-content">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
-                          {mainTopicItems.map(item => {
-                            const topic = item.topics;
-                            const spec = topic.specs;
-                            // Helper to convert full subject names (from database) to config keys
-                            const getSubjectKey = (subjectName) => {
-                              const mapping = {
-                                'Mathematics': 'maths',
-                                'Psychology': 'psychology',
-                                'Biology': 'biology',
-                                'Chemistry': 'chemistry',
-                                'Business': 'business',
-                                'Sociology': 'sociology',
-                                'Physics': 'physics',
-                                'Economics': 'economics',
-                                'History': 'history',
-                                'Geography': 'geography',
-                                'Computer Science': 'computerscience'
-                              };
-                              return mapping[subjectName] || subjectName.toLowerCase().replace(/\s+/g, '');
-                            };
-                            const subjectKey = getSubjectKey(spec.subject);
-                            const subjectConfig = config.subjects[subjectKey];
-                            
-                            return (
-                              <div key={topic.id} className={`card shadow-sm border ${
-                                ratings[topic.id] === -2 
-                                  ? 'bg-gray-200 opacity-60' 
-                                  : 'bg-gray-50'
-                              }`}>
-                                <div className="card-body p-4">
-                                  <div className="flex items-center justify-between mb-3">
-                                    <div className="flex items-center space-x-2">
-                                      <h4 className={`font-medium text-sm ${ratings[topic.id] === -2 ? 'line-through text-gray-500' : ''}`}>
-                                        {topic.name}
-                                      </h4>
-                                      {(topic.name.toLowerCase().includes('optional') || 
-                                        topic.name.toLowerCase().includes('choice') ||
-                                        topic.name.toLowerCase().includes('option')) && (
-                                        <button
-                                          onClick={() => handleRatingChange(topic.id, -2)}
-                                          className={`btn btn-ghost btn-xs ${
-                                            ratings[topic.id] === -2 
-                                              ? 'text-red-500 bg-red-100' 
-                                              : 'text-red-500 hover:bg-red-100'
-                                          }`}
-                                          title={ratings[topic.id] === -2 ? "Mark as doing" : "Mark as not doing (optional topic)"}
-                                        >
-                                          {ratings[topic.id] === -2 ? '↶' : '✕'}
-                                        </button>
-                                      )}
-                                    </div>
-                                    <span className="text-xs text-gray-500">
-                                      {subjectConfig?.icon} {spec.subject}
-                                    </span>
-                                  </div>
-                                  
-                                  {ratings[topic.id] === -2 ? (
-                                    // Show "Not Doing" status for skipped topics
-                                    <div className="text-center py-2">
-                                      <span className="badge badge-error badge-outline">Not Doing (Optional)</span>
-                                      <button
-                                        onClick={() => handleRatingChange(topic.id, 3)}
-                                        className="btn btn-ghost btn-xs ml-2"
-                                      >
-                                        Change Mind
-                                      </button>
-                                    </div>
-                                  ) : (
-                                    // Show normal rating options
-                                    <>
-                                      {/* Number ratings 1-5 on same line */}
-                                      <div className="flex justify-center space-x-1 mb-2">
-                                        {[1, 2, 3, 4, 5].map(rating => (
-                                          <button
-                                            key={rating}
-                                            type="button"
-                                            className={`btn btn-sm w-8 h-8 p-0 ${
-                                              ratings[topic.id] === rating
-                                                ? rating <= 2 ? 'btn-error' : rating === 3 ? 'btn-info' : 'btn-success'
-                                                : ratings[topic.id] === undefined 
-                                                  ? 'btn-outline btn-ghost' // Unrated state
-                                                  : 'btn-outline'
-                                            }`}
-                                            onClick={() => handleRatingChange(topic.id, rating)}
-                                          >
-                                            {rating}
-                                          </button>
-                                        ))}
-                                      </div>
-                                      
-                                      {/* Haven't Learned and Skip Topic below */}
-                                      <div className="flex justify-center space-x-2">
-                                        <button
-                                          type="button"
-                                          className={`btn btn-sm ${
-                                            ratings[topic.id] === 0 
-                                              ? 'btn-primary' 
-                                              : ratings[topic.id] === undefined 
-                                                ? 'btn-outline btn-ghost' // Unrated state
-                                                : 'btn-outline'
-                                          }`}
-                                          onClick={() => handleRatingChange(topic.id, 0)}
-                                        >
-                                          Haven't Learned
-                                        </button>
-                                        <button
-                                          type="button"
-                                          className={`btn btn-sm ${
-                                            ratings[topic.id] === -1 
-                                              ? 'btn-neutral' 
-                                              : ratings[topic.id] === undefined 
-                                                ? 'btn-outline btn-ghost' // Unrated state
-                                                : 'btn-outline'
-                                          }`}
-                                          onClick={() => handleRatingChange(topic.id, -1)}
-                                        >
-                                          Skip Topic
-                                        </button>
-                                      </div>
-                                    </>
+                      <svg
+                        className={`w-5 h-5 transition-transform text-brand-medium ${
+                          expandedSections[subject] ? 'rotate-180' : ''
+                        }`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+
+                  {/* Subject Content */}
+                  {expandedSections[subject] && (
+                    <div className="px-8 py-6 space-y-4">
+                      {Object.entries(subjectData)
+                        .sort(([a], [b]) => {
+                          const getNumericPrefix = (topic) => {
+                            const match = topic.match(/^(\d+)/);
+                            return match ? parseInt(match[1], 10) : 999;
+                          };
+                          return getNumericPrefix(a) - getNumericPrefix(b);
+                        })
+                        .map(([mainTopic, mainTopicItems]) => (
+                          <div 
+                            id={`main-topic-${subject}-${mainTopic}`}
+                            key={mainTopic} 
+                            className={`card bg-base-100 border transition-all ${
+                              mainTopicItems.every(item => ratings[item.topics.id] === -2) 
+                                ? 'opacity-60 border-base-300' 
+                                : 'border-base-300 shadow-sm hover:shadow-md'
+                            }`}
+                          >
+                            {/* Main Topic Header */}
+                            <div 
+                              className="px-6 py-4 cursor-pointer"
+                              onClick={() => toggleSection(`${subject}-${mainTopic}`)}
+                              style={{ 
+                                background: mainTopicItems.every(item => ratings[item.topics.id] === -2)
+                                  ? '#f3f4f6'
+                                  : `linear-gradient(135deg, ${subjectColor}08 0%, ${subjectColor}04 100%)`
+                              }}
+                            >
+                              <div className="flex items-center justify-between">
+                                <h3 className={`font-semibold text-brand-dark ${
+                                  mainTopicItems.every(item => ratings[item.topics.id] === -2) 
+                                    ? 'line-through text-base-content/50' 
+                                    : ''
+                                }`}>
+                                  {mainTopic} - <span className="text-sm font-normal text-brand-medium">{mainTopicItems.length} {mainTopicItems.length === 1 ? 'topic' : 'topics'}</span>
+                                </h3>
+                                <div className="flex items-center gap-2">
+                                  {mainTopic.toLowerCase().includes('optional:') && (
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        const allMarked = mainTopicItems.every(item => ratings[item.topics.id] === -2);
+                                        mainTopicItems.forEach(item => handleRatingChange(item.topics.id, allMarked ? 0 : -2));
+                                      }}
+                                      className={`btn btn-ghost btn-xs ${
+                                        mainTopicItems.every(item => ratings[item.topics.id] === -2) 
+                                          ? 'text-error bg-error/10' 
+                                          : 'text-base-content/40 hover:text-error hover:bg-error/10'
+                                      }`}
+                                      title={mainTopicItems.every(item => ratings[item.topics.id] === -2) ? "Mark as covering" : "Mark as not covering"}
+                                    >
+                                      ✕
+                                    </button>
                                   )}
+                                  <svg
+                                    className={`w-4 h-4 transition-transform text-brand-medium ${
+                                      expandedSections[`${subject}-${mainTopic}`] ? 'rotate-180' : ''
+                                    }`}
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                  </svg>
                                 </div>
                               </div>
-                            );
-                          })}
-                        </div>
-                      </div>
+                            </div>
+
+                            {/* Main Topic Content */}
+                            {expandedSections[`${subject}-${mainTopic}`] && (
+                              <div className="p-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                  {mainTopicItems.map(item => {
+                                    const topic = item.topics;
+                                    const spec = topic.specs;
+                                    
+                                    return (
+                                      <div 
+                                        key={topic.id} 
+                                        className={`card bg-base-100 border-2 transition-all flex flex-col ${
+                                          ratings[topic.id] === -2 
+                                            ? 'opacity-60 border-base-300 bg-base-200' 
+                                            : 'border-base-300 shadow-sm hover:shadow-md hover:border-[#0066FF]/40'
+                                        }`}
+                                      >
+                                        <div className="card-body px-6 pt-6 pb-6 flex flex-col">
+                                          {/* Topic Header - Fixed height container */}
+                                          <div className="flex items-start justify-between mb-3 min-h-[60px]">
+                                            <h4 
+                                              className={`font-semibold text-brand-dark flex-1 leading-tight ${
+                                                ratings[topic.id] === -2 ? 'line-through text-base-content/50' : ''
+                                              }`}
+                                              style={{ 
+                                                fontSize: 'clamp(0.875rem, 1.2vw + 0.5rem, 1.125rem)',
+                                                wordBreak: 'break-word',
+                                                overflowWrap: 'break-word'
+                                              }}
+                                            >
+                                              {topic.name}
+                                            </h4>
+                                            {(topic.name.toLowerCase().includes('optional') || 
+                                              topic.name.toLowerCase().includes('choice') ||
+                                              topic.name.toLowerCase().includes('option')) && (
+                                              <button
+                                                onClick={() => handleRatingChange(topic.id, ratings[topic.id] === -2 ? 3 : -2)}
+                                                className={`btn btn-ghost btn-xs ml-2 shrink-0 self-start ${
+                                                  ratings[topic.id] === -2 
+                                                    ? 'text-error bg-error/10' 
+                                                    : 'text-base-content/40 hover:text-error hover:bg-error/10'
+                                                }`}
+                                                title={ratings[topic.id] === -2 ? "Mark as doing" : "Mark as not doing"}
+                                              >
+                                                {ratings[topic.id] === -2 ? '↶' : '✕'}
+                                              </button>
+                                            )}
+                                          </div>
+                                          
+                                          {/* Content area - Standardized spacing */}
+                                          <div className="flex flex-col">
+                                            {ratings[topic.id] === -2 ? (
+                                              <div className="text-center py-3">
+                                                <span className="badge badge-error badge-outline mb-2">Not Doing (Optional)</span>
+                                                <button
+                                                  onClick={() => handleRatingChange(topic.id, 3)}
+                                                  className="btn btn-ghost btn-xs"
+                                                >
+                                                  Change Mind
+                                                </button>
+                                              </div>
+                                            ) : (
+                                              <>
+                                                {/* Rating Buttons - Consistent spacing */}
+                                                <div className="flex justify-center gap-3 mb-3 mt-1">
+                                                  {[1, 2, 3, 4, 5].map(rating => {
+                                                    const isSelected = ratings[topic.id] === rating;
+                                                    const getRatingColor = (r) => {
+                                                      if (r <= 2) return '#ef4444'; // red
+                                                      if (r === 3) return '#f59e0b'; // amber
+                                                      return '#10b981'; // green
+                                                    };
+                                                    
+                                                    return (
+                                                      <button
+                                                        key={rating}
+                                                        type="button"
+                                                        onClick={() => handleRatingChange(topic.id, rating)}
+                                                        className={`w-12 h-12 rounded-lg font-bold text-base transition-all ${
+                                                          isSelected
+                                                            ? 'scale-110 shadow-lg'
+                                                            : 'hover:scale-105 hover:shadow-md'
+                                                        }`}
+                                                        style={{
+                                                          backgroundColor: isSelected ? getRatingColor(rating) : 'transparent',
+                                                          color: isSelected ? 'white' : '#003D99',
+                                                          border: `2px solid ${isSelected ? getRatingColor(rating) : '#E5F0FF'}`,
+                                                          borderColor: isSelected ? getRatingColor(rating) : '#0066FF40'
+                                                        }}
+                                                      >
+                                                        {rating}
+                                                      </button>
+                                                    );
+                                                  })}
+                                                </div>
+                                                
+                                                {/* Quick Actions - Consistent spacing */}
+                                                <div className="flex justify-center gap-3">
+                                                  <button
+                                                    type="button"
+                                                    onClick={() => handleRatingChange(topic.id, 0)}
+                                                    className="btn btn-sm btn-ghost text-sm"
+                                                    style={ratings[topic.id] === 0 ? {
+                                                      backgroundColor: '#0066FF',
+                                                      color: 'white',
+                                                      border: '2px solid #0066FF'
+                                                    } : {
+                                                      border: '2px solid #E5F0FF',
+                                                      borderColor: '#0066FF40',
+                                                      color: '#003D99'
+                                                    }}
+                                                  >
+                                                    Haven't Learned
+                                                  </button>
+                                                </div>
+                                              </>
+                                            )}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ))}
                     </div>
-                  ))}
+                  )}
                 </div>
-              </div>
-            </div>
-          ))}
+              );
+            })}
         </div>
       </div>
 
-      <div className="flex justify-between items-center">
+      {isSaving && (
+        <div className="fixed bottom-4 right-4 bg-base-100 px-4 py-3 rounded-lg shadow-lg border border-primary/20">
+          <div className="flex items-center gap-2">
+            <span className="loading loading-spinner loading-xs text-primary"></span>
+            <span className="text-sm text-brand-medium">Saving...</span>
+          </div>
+        </div>
+      )}
+
+      <div className="flex justify-between items-center pt-8">
         <button
           onClick={() => router.push("/onboarding/slide-18")}
-          className="text-gray-500 hover:text-gray-700 text-sm underline"
+          className="bg-[#E5F0FF] border border-[#0066FF]/20 text-[#003D99] px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg text-xs font-medium hover:bg-[#0066FF]/10 hover:border-[#0066FF]/40 transition-colors"
         >
           ← Back
         </button>
         
         <div className="flex items-center space-x-4">
           {isSaving && (
-            <span className="text-sm text-gray-600">
+            <span className="text-sm text-[#003D99]">
               <span className="loading loading-spinner loading-xs"></span>
               Saving...
             </span>
@@ -561,7 +707,7 @@ export default function Slide19Page() {
           <button
             onClick={handleContinue}
             disabled={isLoading}
-            className="bg-blue-500 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-lg"
+            className="bg-[#0066FF] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#0052CC] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-lg"
           >
             {isLoading ? (
               <>

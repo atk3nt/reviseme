@@ -5,6 +5,7 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import SupportModal from "@/components/SupportModal";
+import FeedbackModal from "@/components/FeedbackModal";
 import toast from "react-hot-toast";
 import config from "@/config";
 
@@ -21,22 +22,23 @@ function RerateTopicsPageContent() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [settingsDropdownOpen, setSettingsDropdownOpen] = useState(false);
   const [supportModalOpen, setSupportModalOpen] = useState(false);
+  const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
   const [selectedSubjects, setSelectedSubjects] = useState([]);
   const [subjectBoards, setSubjectBoards] = useState({});
-  const [isDev, setIsDev] = useState(false);
+
+  // Close sidebar when route changes
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [searchParams, pathname]);
 
   useEffect(() => {
-    // Check if dev mode
-    setIsDev(
-      typeof window !== 'undefined' && (
-        window.location.hostname === 'localhost' ||
-        window.location.hostname === '127.0.0.1' ||
-        window.location.hostname.includes('.local')
-      )
+    // Check if dev mode (computed inline to avoid race conditions)
+    const isDev = typeof window !== 'undefined' && (
+      window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1' ||
+      window.location.hostname.includes('.local')
     );
-  }, []);
 
-  useEffect(() => {
     // Wait for session to load
     if (status === 'loading') {
       return;
@@ -52,7 +54,7 @@ function RerateTopicsPageContent() {
     // Check authentication
     if (status === 'unauthenticated') {
       console.log('⚠️ Not authenticated, redirecting to sign in');
-      router.push('/api/auth/signin');
+      router.push('/api/auth/signin?callbackUrl=/settings/rerate-topics');
       return;
     }
 
@@ -60,7 +62,7 @@ function RerateTopicsPageContent() {
     if (status === 'authenticated') {
       loadUserSubjects();
     }
-  }, [status, isDev, router]);
+  }, [status, router]);
 
   const loadUserSubjects = async () => {
     try {
@@ -279,6 +281,22 @@ function RerateTopicsPageContent() {
             }
           });
         }
+        
+        // Scroll to the subject card when opening
+        if (!isCurrentlyOpen) {
+          setTimeout(() => {
+            const subjectElement = document.getElementById(`subject-${parentId}`);
+            if (subjectElement) {
+              const elementPosition = subjectElement.getBoundingClientRect().top + window.pageYOffset;
+              const offsetPosition = elementPosition - 80; // 80px offset from top
+              window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+              });
+            }
+          }, 100);
+        }
+        
         return newState;
       } else {
         const [subject] = parentId.split('-');
@@ -289,6 +307,22 @@ function RerateTopicsPageContent() {
           }
         });
         newState[parentId] = !isCurrentlyOpen;
+        
+        // Scroll to the main topic card when opening
+        if (!isCurrentlyOpen) {
+          setTimeout(() => {
+            const mainTopicElement = document.getElementById(`main-topic-${parentId}`);
+            if (mainTopicElement) {
+              const elementPosition = mainTopicElement.getBoundingClientRect().top + window.pageYOffset;
+              const offsetPosition = elementPosition - 80; // 80px offset from top
+              window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+              });
+            }
+          }, 100);
+        }
+        
         return newState;
       }
     });
@@ -328,7 +362,7 @@ function RerateTopicsPageContent() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-base-100">
-        <span className="loading loading-spinner loading-lg"></span>
+        <span className="loading loading-spinner loading-lg text-primary"></span>
       </div>
     );
   }
@@ -337,7 +371,7 @@ function RerateTopicsPageContent() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-base-100">
         <div className="text-center">
-          <p className="text-lg text-gray-600 mb-4">No topics found. Please complete onboarding first.</p>
+          <p className="text-lg text-brand-medium mb-4">No topics found. Please complete onboarding first.</p>
           <Link href="/onboarding/slide-1" className="btn btn-primary">
             Go to Onboarding
           </Link>
@@ -351,405 +385,480 @@ function RerateTopicsPageContent() {
       {/* Menu Button */}
       <button
         onClick={() => setSidebarOpen(true)}
-        className="fixed top-4 left-4 z-50 btn btn-ghost btn-circle"
+        className="fixed top-6 left-6 z-50 inline-flex items-center justify-center rounded-md p-4 bg-base-200 hover:bg-base-300 transition shadow-lg"
         aria-label="Open menu"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="24px" height="24px" viewBox="0 0 24 24">
-          <rect x="1" y="11" width="22" height="2" fill="#1c1f21" strokeWidth="0" data-color="color-2"></rect>
-          <rect x="1" y="4" width="22" height="2" strokeWidth="0" fill="#1c1f21"></rect>
-          <rect x="1" y="18" width="22" height="2" strokeWidth="0" fill="#1c1f21"></rect>
+        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="24px" height="24px" viewBox="0 0 24 24" className="w-8 h-8 text-base-content">
+          <rect x="1" y="11" width="22" height="2" fill="currentColor" strokeWidth="0" data-color="color-2"></rect>
+          <rect x="1" y="4" width="22" height="2" strokeWidth="0" fill="currentColor"></rect>
+          <rect x="1" y="18" width="22" height="2" strokeWidth="0" fill="currentColor"></rect>
         </svg>
       </button>
 
+      {/* Sidebar Backdrop */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40"
+          onClick={() => setSidebarOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
       {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-base-200 shadow-xl transform transition-transform duration-300 ease-in-out ${
+      <div className={`fixed inset-y-0 left-0 z-50 w-72 bg-base-200 shadow-xl transform transition-transform duration-300 ease-in-out ${
         sidebarOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
         <div className="flex flex-col h-full">
-          <div className="flex items-center justify-between p-4 border-b border-base-300">
+          <div className="flex items-center justify-between p-5 border-b border-base-300">
             <h2 className="text-xl font-bold">Menu</h2>
             <button
               onClick={() => setSidebarOpen(false)}
               className="btn btn-ghost btn-sm btn-circle"
+              aria-label="Close menu"
             >
               ✕
             </button>
           </div>
-          <nav className="flex-1 overflow-y-auto p-4 space-y-2">
-            <Link
-              href="/plan"
-              className={`block px-4 py-3 rounded-lg transition ${
-                pathname === '/plan' 
-                  ? 'bg-primary text-primary-content' 
-                  : 'hover:bg-base-300'
-              }`}
-              onClick={() => setSidebarOpen(false)}
-            >
-              Revision Plan
-            </Link>
-            <Link
-              href="/settings/rerate-topics"
-              className={`block px-4 py-3 rounded-lg transition ${
-                pathname === '/settings/rerate-topics' 
-                  ? 'bg-primary text-primary-content' 
-                  : 'hover:bg-base-300'
-              }`}
-              onClick={() => setSidebarOpen(false)}
-            >
-              Rerate Topics
-            </Link>
-            <Link
-              href="/insights"
-              className={`block px-4 py-3 rounded-lg transition ${
-                pathname === '/insights' 
-                  ? 'bg-primary text-primary-content' 
-                  : 'hover:bg-base-300'
-              }`}
-              onClick={() => setSidebarOpen(false)}
-            >
-              Study Stats
-            </Link>
-            <Link
-              href="/settings/availability"
-              className={`block px-4 py-3 rounded-lg transition ${
-                pathname === '/settings/availability' 
-                  ? 'bg-primary text-primary-content' 
-                  : 'hover:bg-base-300'
-              }`}
-              onClick={() => setSidebarOpen(false)}
-            >
-              Availability
-            </Link>
-            <div className="pt-4 border-t border-base-300">
-              <button
-                onClick={() => setSettingsDropdownOpen(!settingsDropdownOpen)}
-                className={`w-full block px-4 py-3 rounded-lg transition ${
-                  pathname?.startsWith('/settings') 
-                    ? 'bg-primary text-primary-content' 
-                    : 'hover:bg-base-300'
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span>Settings</span>
-                  <svg
-                    className={`w-4 h-4 transition-transform ${settingsDropdownOpen ? 'rotate-180' : ''}`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </div>
-              </button>
-              {settingsDropdownOpen && (
-                <div className="mt-2 space-y-1 pl-4">
-                  <Link
-                    href="/settings?section=preferences"
-                    className={`block px-4 py-2 rounded-lg transition text-sm hover:bg-base-300 ${
-                      pathname === '/settings' && searchParams?.get('section') === 'preferences' ? 'bg-primary/20' : ''
-                    }`}
-                    onClick={() => setSidebarOpen(false)}
-                  >
-                    Study Preferences
-                  </Link>
-                  <Link
-                    href="/settings?section=account"
-                    className={`block px-4 py-2 rounded-lg transition text-sm hover:bg-base-300 ${
-                      pathname === '/settings' && searchParams?.get('section') === 'account' ? 'bg-primary/20' : ''
-                    }`}
-                    onClick={() => setSidebarOpen(false)}
-                  >
-                    Account Information
-                  </Link>
+          <nav className="flex-1 p-5">
+            <ul className="space-y-2">
+              <li>
+                <Link
+                  href="/plan"
+                  className={`block px-4 py-3 rounded-lg transition ${
+                    pathname === '/plan' 
+                      ? 'bg-primary text-primary-content' 
+                      : 'hover:bg-base-300'
+                  }`}
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">📅</span>
+                    <span className="font-medium">Revision Plan</span>
+                  </div>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/settings/rerate-topics"
+                  className={`block px-4 py-3 rounded-lg transition ${
+                    pathname === '/settings/rerate-topics' 
+                      ? 'bg-primary text-primary-content' 
+                      : 'hover:bg-base-300'
+                  }`}
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">⭐</span>
+                    <span className="font-medium">Rerate Topics</span>
+                  </div>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/insights"
+                  className={`block px-4 py-3 rounded-lg transition ${
+                    pathname === '/insights' 
+                      ? 'bg-primary text-primary-content' 
+                      : 'hover:bg-base-300'
+                  }`}
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">📊</span>
+                    <span className="font-medium">Study Stats</span>
+                  </div>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/settings/availability"
+                  className={`block px-4 py-3 rounded-lg transition ${
+                    pathname === '/settings/availability' 
+                      ? 'bg-primary text-primary-content' 
+                      : 'hover:bg-base-300'
+                  }`}
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">⏰</span>
+                    <span className="font-medium">Availability</span>
+                  </div>
+                </Link>
+              </li>
+              <li>
+                <div>
                   <button
-                    onClick={() => {
-                      signOut({ callbackUrl: '/' });
-                      setSidebarOpen(false);
-                    }}
-                    className="block w-full text-left px-4 py-2 rounded-lg transition text-sm hover:bg-base-300"
+                    onClick={() => setSettingsDropdownOpen(!settingsDropdownOpen)}
+                    className="w-full block px-4 py-3 rounded-lg transition hover:bg-base-300"
                   >
-                    Sign out
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <span className="text-xl">⚙️</span>
+                        <span className="font-medium">Settings</span>
+                      </div>
+                      <svg
+                        className={`w-4 h-4 transition-transform ${settingsDropdownOpen ? 'rotate-180' : ''}`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
                   </button>
+                  
+                  {settingsDropdownOpen && (
+                    <ul className="ml-4 mt-2 space-y-1">
+                      <li>
+                        <button
+                          onClick={() => {
+                            setFeedbackModalOpen(true);
+                            setSidebarOpen(false);
+                          }}
+                          className="block w-full text-left px-4 py-2 rounded-lg transition text-sm hover:bg-base-300"
+                        >
+                          Feedback
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          onClick={() => {
+                            setSupportModalOpen(true);
+                            setSidebarOpen(false);
+                          }}
+                          className="block w-full text-left px-4 py-2 rounded-lg transition text-sm hover:bg-base-300"
+                        >
+                          Support
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          onClick={() => {
+                            setSidebarOpen(false);
+                            signOut({ callbackUrl: '/' });
+                          }}
+                          className="w-full text-left block px-4 py-2 rounded-lg transition text-sm hover:bg-base-300 text-error"
+                        >
+                          Sign Out
+                        </button>
+                      </li>
+                    </ul>
+                  )}
                 </div>
-              )}
-            </div>
-            <div className="pt-4 border-t border-base-300">
-              <button
-                onClick={() => {
-                  setSupportModalOpen(true);
-                  setSidebarOpen(false);
-                }}
-                className="block w-full text-left px-4 py-3 rounded-lg transition hover:bg-base-300"
-              >
-                Support
-              </button>
-            </div>
+              </li>
+            </ul>
           </nav>
         </div>
       </div>
 
-      {/* Overlay */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
       {/* Main Content */}
-      <div className="text-center space-y-8 pt-8 pb-16">
-        <div className="space-y-4">
-          <h1 className="text-4xl font-bold text-gray-900">
-            Rate Your Confidence
+      <div className="text-center space-y-8 pt-10 pb-20 px-6 pl-28">
+        <div className="space-y-3">
+          <h1 className="text-5xl font-bold text-brand-dark">
+            Re-Rate Your Confidence
           </h1>
-          <p className="text-xl text-gray-600">
-            Rate your confidence in each topic from 1 (very weak) to 5 (very strong).
-            This helps us prioritize your revision.
+          <p className="text-lg text-brand-medium max-w-2xl mx-auto">
+            Update your confidence ratings for each topic. Your ratings help us adjust your revision plan and prioritize topics that need more practice.
           </p>
           
-          <div className="flex items-center justify-center space-x-4">
-            <div className="text-sm text-gray-600">
-              Progress: {Math.round(progress)}% complete
+          <p className="text-sm text-brand-medium max-w-2xl mx-auto">
+            Rate your confidence: <span className="font-semibold">1 (Very Weak)</span> to <span className="font-semibold">5 (Very Strong)</span>
+          </p>
+          
+          {/* Progress Bar */}
+          <div className="flex items-center justify-center space-x-4 max-w-md mx-auto">
+            <div className="text-sm font-medium text-brand-medium">
+              {Math.round(progress)}% complete
             </div>
-            <div className="w-64 bg-gray-200 rounded-full h-2">
+            <div className="flex-1 bg-base-200 rounded-full h-3 overflow-hidden">
               <div 
-                className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                style={{ width: `${progress}%` }}
+                className="h-full rounded-full transition-all duration-500 ease-out"
+                style={{ 
+                  width: `${progress}%`,
+                  background: 'linear-gradient(90deg, #0066FF 0%, #0052CC 100%)'
+                }}
               />
             </div>
           </div>
         </div>
 
-        {/* Bulk actions */}
-        <div className="flex flex-wrap gap-2 justify-center">
-          <button
-            onClick={() => handleBulkRating(0)}
-            className="btn btn-sm btn-outline"
-          >
-            Mark All as Haven't Learned
-          </button>
-          <button
-            onClick={() => handleBulkRating(3)}
-            className="btn btn-sm btn-outline"
-          >
-            Rate All as 3 (Medium)
-          </button>
-          <button
-            onClick={() => handleBulkRating(1)}
-            className="btn btn-sm btn-outline btn-error"
-          >
-            Mark All as Weak
-          </button>
-          <button
-            onClick={() => handleBulkRating(5)}
-            className="btn btn-sm btn-outline btn-success"
-          >
-            Mark All as Strong
-          </button>
-          <button
-            onClick={() => handleBulkRating(-1)}
-            className="btn btn-sm btn-outline btn-neutral"
-          >
-            Skip All Topics
-          </button>
-        </div>
-
         {/* Topics by subject */}
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           <div className="space-y-6">
             {Object.entries(groupedTopics)
               .sort(([a], [b]) => a.localeCompare(b))
-              .map(([subject, subjectData]) => (
-              <div key={subject} className="collapse collapse-arrow bg-white border border-gray-200">
-                <input
-                  type="checkbox"
-                  checked={expandedSections[subject] || false}
-                  onChange={() => toggleSection(subject)}
-                />
-                <div className="collapse-title text-xl font-medium">
-                  {subject} ({Object.values(subjectData).flat().length} topics)
-                </div>
-                <div className="collapse-content">
-                  <div className="space-y-4 pt-4">
-                    {Object.entries(subjectData)
-                      .sort(([a], [b]) => {
-                        const getNumericPrefix = (topic) => {
-                          const match = topic.match(/^(\d+)/);
-                          return match ? parseInt(match[1], 10) : 999;
-                        };
-                        return getNumericPrefix(a) - getNumericPrefix(b);
-                      })
-                      .map(([mainTopic, mainTopicItems]) => (
-                      <div key={mainTopic} className={`collapse collapse-arrow border relative ${
-                        mainTopicItems.every(item => ratings[item.topics.id] === -2) 
-                          ? 'bg-gray-200 opacity-60' 
-                          : 'bg-white'
-                      }`}>
-                        <input
-                          type="checkbox"
-                          checked={expandedSections[`${subject}-${mainTopic}`] || false}
-                          onChange={() => toggleSection(`${subject}-${mainTopic}`)}
-                        />
-                        <div className={`collapse-title text-lg font-medium ${
-                          mainTopicItems.every(item => ratings[item.topics.id] === -2) ? 'line-through text-gray-500' : ''
-                        }`}>
-                          {mainTopic} ({mainTopicItems.length} topics)
+              .map(([subject, subjectData]) => {
+                const getSubjectKey = (subjectName) => {
+                  const mapping = {
+                    'Mathematics': 'maths',
+                    'Psychology': 'psychology',
+                    'Biology': 'biology',
+                    'Chemistry': 'chemistry',
+                    'Business': 'business',
+                    'Sociology': 'sociology',
+                    'Physics': 'physics',
+                    'Economics': 'economics',
+                    'History': 'history',
+                    'Geography': 'geography',
+                    'Computer Science': 'computerscience'
+                  };
+                  return mapping[subjectName] || subjectName.toLowerCase().replace(/\s+/g, '');
+                };
+                const subjectKey = getSubjectKey(subject);
+                const subjectConfig = config.subjects[subjectKey];
+                const subjectColor = subjectConfig?.color || '#0066FF';
+                
+                // Get exam board for this subject
+                const examBoard = subjectBoards[subjectKey] || 
+                  (Object.values(subjectData).flat()[0]?.topics?.specs?.exam_board);
+                const examBoardDisplay = examBoard ? examBoard.toUpperCase() : '';
+                const topicCount = Object.values(subjectData).flat().length;
+                
+                return (
+                  <div 
+                    id={`subject-${subject}`}
+                    key={subject} 
+                    className="card bg-base-100 shadow-lg border-2 overflow-hidden"
+                    style={{ borderColor: subjectColor + '40' }}
+                  >
+                    {/* Subject Header */}
+                    <div 
+                      className="px-8 py-5 cursor-pointer"
+                      onClick={() => toggleSection(subject)}
+                      style={{ 
+                        background: `linear-gradient(135deg, ${subjectColor}15 0%, ${subjectColor}08 100%)`
+                      }}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <span className="text-2xl">{subjectConfig?.icon || '📚'}</span>
+                          <h2 className="text-xl font-bold text-brand-dark">
+                            {subject}{examBoardDisplay ? ` - ${examBoardDisplay}` : ''} - {topicCount} {topicCount === 1 ? 'topic' : 'topics'}
+                          </h2>
                         </div>
-                        {mainTopic.toLowerCase().includes('optional:') && (
-                          <button
-                            onClick={() => {
-                              const allMarked = mainTopicItems.every(item => ratings[item.topics.id] === -2);
-                              mainTopicItems.forEach(item => handleRatingChange(item.topics.id, allMarked ? 0 : -2));
-                            }}
-                            className={`absolute right-8 top-1/2 transform -translate-y-1/2 btn btn-ghost btn-xs z-10 ${
-                              mainTopicItems.every(item => ratings[item.topics.id] === -2) 
-                                ? 'text-red-500 bg-red-100' 
-                                : 'text-gray-400 hover:text-red-500 hover:bg-red-100'
-                            }`}
-                            title={mainTopicItems.every(item => ratings[item.topics.id] === -2) ? "Mark as covering (will study)" : "Mark as not covering (optional topic)"}
-                          >
-                            ✕
-                          </button>
-                        )}
-                        <div className="collapse-content">
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
-                            {mainTopicItems.map(item => {
-                              const topic = item.topics;
-                              const spec = topic.specs;
-                              const getSubjectKey = (subjectName) => {
-                                const mapping = {
-                                  'Mathematics': 'maths',
-                                  'Psychology': 'psychology',
-                                  'Biology': 'biology',
-                                  'Chemistry': 'chemistry',
-                                  'Business': 'business',
-                                  'Sociology': 'sociology',
-                                  'Physics': 'physics',
-                                  'Economics': 'economics',
-                                  'History': 'history',
-                                  'Geography': 'geography',
-                                  'Computer Science': 'computerscience'
-                                };
-                                return mapping[subjectName] || subjectName.toLowerCase().replace(/\s+/g, '');
-                              };
-                              const subjectKey = getSubjectKey(spec.subject);
-                              const subjectConfig = config.subjects[subjectKey];
-                              
-                              return (
-                                <div key={topic.id} className={`card shadow-sm border ${
-                                  ratings[topic.id] === -2 
-                                    ? 'bg-gray-200 opacity-60' 
-                                    : 'bg-gray-50'
-                                }`}>
-                                  <div className="card-body p-4">
-                                    <div className="flex items-center justify-between mb-3">
-                                      <div className="flex items-center space-x-2">
-                                        <h4 className={`font-medium text-sm ${ratings[topic.id] === -2 ? 'line-through text-gray-500' : ''}`}>
-                                          {topic.name}
-                                        </h4>
-                                        {(topic.name.toLowerCase().includes('optional') || 
-                                          topic.name.toLowerCase().includes('choice') ||
-                                          topic.name.toLowerCase().includes('option')) && (
-                                          <button
-                                            onClick={() => handleRatingChange(topic.id, -2)}
-                                            className={`btn btn-ghost btn-xs ${
-                                              ratings[topic.id] === -2 
-                                                ? 'text-red-500 bg-red-100' 
-                                                : 'text-red-500 hover:bg-red-100'
-                                            }`}
-                                            title={ratings[topic.id] === -2 ? "Mark as doing" : "Mark as not doing (optional topic)"}
-                                          >
-                                            {ratings[topic.id] === -2 ? '↶' : '✕'}
-                                          </button>
-                                        )}
-                                      </div>
-                                      <span className="text-xs text-gray-500">
-                                        {subjectConfig?.icon} {spec.subject}
-                                      </span>
-                                    </div>
-                                    
-                                    {ratings[topic.id] === -2 ? (
-                                      <div className="text-center py-2">
-                                        <span className="badge badge-error badge-outline">Not Doing (Optional)</span>
-                                        <button
-                                          onClick={() => handleRatingChange(topic.id, 3)}
-                                          className="btn btn-ghost btn-xs ml-2"
-                                        >
-                                          Change Mind
-                                        </button>
-                                      </div>
-                                    ) : (
-                                      <>
-                                        <div className="flex justify-center space-x-1 mb-2">
-                                          {[1, 2, 3, 4, 5].map(rating => (
-                                            <button
-                                              key={rating}
-                                              type="button"
-                                              className={`btn btn-sm w-8 h-8 p-0 ${
-                                                ratings[topic.id] === rating
-                                                  ? rating <= 2 ? 'btn-error' : rating === 3 ? 'btn-info' : 'btn-success'
-                                                  : ratings[topic.id] === undefined 
-                                                    ? 'btn-outline btn-ghost'
-                                                    : 'btn-outline'
-                                              }`}
-                                              onClick={() => handleRatingChange(topic.id, rating)}
-                                            >
-                                              {rating}
-                                            </button>
-                                          ))}
-                                        </div>
-                                        
-                                        <div className="flex justify-center space-x-2">
-                                          <button
-                                            type="button"
-                                            className={`btn btn-sm ${
-                                              ratings[topic.id] === 0 
-                                                ? 'btn-primary' 
-                                                : ratings[topic.id] === undefined 
-                                                  ? 'btn-outline btn-ghost'
-                                                  : 'btn-outline'
-                                            }`}
-                                            onClick={() => handleRatingChange(topic.id, 0)}
-                                          >
-                                            Haven't Learned
-                                          </button>
-                                          <button
-                                            type="button"
-                                            className={`btn btn-sm ${
-                                              ratings[topic.id] === -1 
-                                                ? 'btn-neutral' 
-                                                : ratings[topic.id] === undefined 
-                                                  ? 'btn-outline btn-ghost'
-                                                  : 'btn-outline'
-                                            }`}
-                                            onClick={() => handleRatingChange(topic.id, -1)}
-                                          >
-                                            Skip Topic
-                                          </button>
-                                        </div>
-                                      </>
+                        <svg
+                          className={`w-5 h-5 transition-transform text-brand-medium ${
+                            expandedSections[subject] ? 'rotate-180' : ''
+                          }`}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </div>
+                    </div>
+
+                    {/* Subject Content */}
+                    {expandedSections[subject] && (
+                      <div className="px-8 py-6 space-y-4">
+                        {Object.entries(subjectData)
+                          .sort(([a], [b]) => {
+                            const getNumericPrefix = (topic) => {
+                              const match = topic.match(/^(\d+)/);
+                              return match ? parseInt(match[1], 10) : 999;
+                            };
+                            return getNumericPrefix(a) - getNumericPrefix(b);
+                          })
+                          .map(([mainTopic, mainTopicItems]) => (
+                            <div 
+                              id={`main-topic-${subject}-${mainTopic}`}
+                              key={mainTopic} 
+                              className={`card bg-base-100 border transition-all ${
+                                mainTopicItems.every(item => ratings[item.topics.id] === -2) 
+                                  ? 'opacity-60 border-base-300' 
+                                  : 'border-base-300 shadow-sm hover:shadow-md'
+                              }`}
+                            >
+                              {/* Main Topic Header */}
+                              <div 
+                                className="px-6 py-4 cursor-pointer"
+                                onClick={() => toggleSection(`${subject}-${mainTopic}`)}
+                                style={{ 
+                                  background: mainTopicItems.every(item => ratings[item.topics.id] === -2)
+                                    ? '#f3f4f6'
+                                    : `linear-gradient(135deg, ${subjectColor}08 0%, ${subjectColor}04 100%)`
+                                }}
+                              >
+                                <div className="flex items-center justify-between">
+                                  <h3 className={`font-semibold text-brand-dark ${
+                                    mainTopicItems.every(item => ratings[item.topics.id] === -2) 
+                                      ? 'line-through text-base-content/50' 
+                                      : ''
+                                  }`}>
+                                    {mainTopic} - <span className="text-sm font-normal text-brand-medium">{mainTopicItems.length} {mainTopicItems.length === 1 ? 'topic' : 'topics'}</span>
+                                  </h3>
+                                  <div className="flex items-center gap-2">
+                                    {mainTopic.toLowerCase().includes('optional:') && (
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          const allMarked = mainTopicItems.every(item => ratings[item.topics.id] === -2);
+                                          mainTopicItems.forEach(item => handleRatingChange(item.topics.id, allMarked ? 0 : -2));
+                                        }}
+                                        className={`btn btn-ghost btn-xs ${
+                                          mainTopicItems.every(item => ratings[item.topics.id] === -2) 
+                                            ? 'text-error bg-error/10' 
+                                            : 'text-base-content/40 hover:text-error hover:bg-error/10'
+                                        }`}
+                                        title={mainTopicItems.every(item => ratings[item.topics.id] === -2) ? "Mark as covering" : "Mark as not covering"}
+                                      >
+                                        ✕
+                                      </button>
                                     )}
+                                    <svg
+                                      className={`w-4 h-4 transition-transform text-brand-medium ${
+                                        expandedSections[`${subject}-${mainTopic}`] ? 'rotate-180' : ''
+                                      }`}
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                    >
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                    </svg>
                                   </div>
                                 </div>
-                              );
-                            })}
-                          </div>
-                        </div>
+                              </div>
+
+                              {/* Main Topic Content */}
+                              {expandedSections[`${subject}-${mainTopic}`] && (
+                                <div className="p-6">
+                                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    {mainTopicItems.map(item => {
+                                      const topic = item.topics;
+                                      const spec = topic.specs;
+                                      
+                                      return (
+                                        <div 
+                                          key={topic.id} 
+                                          className={`card bg-base-100 border-2 transition-all flex flex-col ${
+                                            ratings[topic.id] === -2 
+                                              ? 'opacity-60 border-base-300 bg-base-200' 
+                                              : 'border-base-300 shadow-sm hover:shadow-md hover:border-[#0066FF]/40'
+                                          }`}
+                                        >
+                                          <div className="card-body px-6 pt-6 pb-6 flex flex-col">
+                                            {/* Topic Header - Fixed height container */}
+                                            <div className="flex items-start justify-between mb-3 min-h-[60px]">
+                                              <h4 className={`font-semibold text-brand-dark flex-1 leading-tight ${
+                                                ratings[topic.id] === -2 ? 'line-through text-base-content/50' : ''
+                                              }`}
+                                              style={{ 
+                                                fontSize: 'clamp(0.875rem, 1.2vw + 0.5rem, 1.125rem)',
+                                                wordBreak: 'break-word',
+                                                overflowWrap: 'break-word'
+                                              }}>
+                                                {topic.name}
+                                              </h4>
+                                              {(topic.name.toLowerCase().includes('optional') || 
+                                                topic.name.toLowerCase().includes('choice') ||
+                                                topic.name.toLowerCase().includes('option')) && (
+                                                <button
+                                                  onClick={() => handleRatingChange(topic.id, ratings[topic.id] === -2 ? 3 : -2)}
+                                                  className={`btn btn-ghost btn-xs ml-2 shrink-0 self-start ${
+                                                    ratings[topic.id] === -2 
+                                                      ? 'text-error bg-error/10' 
+                                                      : 'text-base-content/40 hover:text-error hover:bg-error/10'
+                                                  }`}
+                                                  title={ratings[topic.id] === -2 ? "Mark as doing" : "Mark as not doing"}
+                                                >
+                                                  {ratings[topic.id] === -2 ? '↶' : '✕'}
+                                                </button>
+                                              )}
+                                            </div>
+                                            
+                                            {/* Content area - Standardized spacing */}
+                                            <div className="flex flex-col">
+                                              {ratings[topic.id] === -2 ? (
+                                                <div className="text-center py-3">
+                                                  <span className="badge badge-error badge-outline mb-2">Not Doing (Optional)</span>
+                                                  <button
+                                                    onClick={() => handleRatingChange(topic.id, 3)}
+                                                    className="btn btn-ghost btn-xs"
+                                                  >
+                                                    Change Mind
+                                                  </button>
+                                                </div>
+                                              ) : (
+                                                <>
+                                                  {/* Rating Buttons - Consistent spacing */}
+                                                  <div className="flex justify-center gap-3 mb-3 mt-1">
+                                                    {[1, 2, 3, 4, 5].map(rating => {
+                                                      const isSelected = ratings[topic.id] === rating;
+                                                      const getRatingColor = (r) => {
+                                                        if (r <= 2) return '#ef4444'; // red
+                                                        if (r === 3) return '#f59e0b'; // amber
+                                                        return '#10b981'; // green
+                                                      };
+                                                      
+                                                      return (
+                                                        <button
+                                                          key={rating}
+                                                          type="button"
+                                                          onClick={() => handleRatingChange(topic.id, rating)}
+                                                          className={`w-12 h-12 rounded-lg font-bold text-base transition-all ${
+                                                            isSelected
+                                                              ? 'scale-110 shadow-lg'
+                                                              : 'hover:scale-105 hover:shadow-md'
+                                                          }`}
+                                                          style={{
+                                                            backgroundColor: isSelected ? getRatingColor(rating) : 'transparent',
+                                                            color: isSelected ? 'white' : '#003D99',
+                                                            border: `2px solid ${isSelected ? getRatingColor(rating) : '#E5F0FF'}`,
+                                                            borderColor: isSelected ? getRatingColor(rating) : '#0066FF40'
+                                                          }}
+                                                        >
+                                                          {rating}
+                                                        </button>
+                                                      );
+                                                    })}
+                                                  </div>
+                                                  
+                                                  {/* Quick Actions - Consistent spacing */}
+                                                  <div className="flex justify-center gap-3">
+                                                    <button
+                                                      type="button"
+                                                      onClick={() => handleRatingChange(topic.id, 0)}
+                                                      className="btn btn-sm btn-ghost text-sm"
+                                                      style={ratings[topic.id] === 0 ? {
+                                                        backgroundColor: '#0066FF',
+                                                        color: 'white',
+                                                        border: '2px solid #0066FF'
+                                                      } : {
+                                                        border: '2px solid #E5F0FF',
+                                                        borderColor: '#0066FF40',
+                                                        color: '#003D99'
+                                                      }}
+                                                    >
+                                                      Haven't Learned
+                                                    </button>
+                                                  </div>
+                                                </>
+                                              )}
+                                            </div>
+                                          </div>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          ))}
                       </div>
-                    ))}
+                    )}
                   </div>
-                </div>
-              </div>
-            ))}
+                );
+              })}
           </div>
         </div>
 
         {isSaving && (
-          <div className="fixed bottom-4 right-4 bg-base-200 px-4 py-2 rounded-lg shadow-lg">
-            <span className="text-sm text-gray-600">
-              <span className="loading loading-spinner loading-xs"></span>
-              Saving...
-            </span>
+          <div className="fixed bottom-4 right-4 bg-base-100 px-4 py-3 rounded-lg shadow-lg border border-primary/20">
+            <div className="flex items-center gap-2">
+              <span className="loading loading-spinner loading-xs text-primary"></span>
+              <span className="text-sm text-brand-medium">Saving...</span>
+            </div>
           </div>
         )}
       </div>
@@ -759,6 +868,10 @@ function RerateTopicsPageContent() {
         isOpen={supportModalOpen}
         onClose={() => setSupportModalOpen(false)}
       />
+      <FeedbackModal
+        isOpen={feedbackModalOpen}
+        onClose={() => setFeedbackModalOpen(false)}
+      />
     </div>
   );
 }
@@ -767,11 +880,10 @@ export default function RerateTopicsPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center bg-base-100">
-        <span className="loading loading-spinner loading-lg"></span>
+        <span className="loading loading-spinner loading-lg text-primary"></span>
       </div>
     }>
       <RerateTopicsPageContent />
     </Suspense>
   );
 }
-

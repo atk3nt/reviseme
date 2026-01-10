@@ -77,65 +77,113 @@ export default function Slide17Page() {
       />
 
       <div className="space-y-6">
-        <h1 className="text-4xl font-bold text-gray-900">
-          Ready to build your study plan?
+        <h1 className="text-4xl font-bold text-[#001433]">
+          One payment. Your revision plan, done.
         </h1>
-        <p className="text-xl text-gray-600">
-          Get your personalized revision schedule in minutes
+        <p className="text-xl text-[#003D99]">
+          Full access. No subscriptions. No hidden fees.
         </p>
       </div>
 
       {/* Pricing Card */}
-      <div className="max-w-lg mx-auto bg-white border-2 border-gray-200 rounded-xl p-8 shadow-lg">
+      <div className="max-w-lg mx-auto bg-white border-2 border-[#0066FF]/20 rounded-xl p-8 shadow-lg">
         <div className="space-y-6">
-          {/* Value Framing */}
-          <div className="text-center">
-            <div className="text-sm text-gray-500 line-through mb-1">Monthly Plan £12.99</div>
-            <div className="text-4xl font-bold text-gray-900">£5.00</div>
-            <div className="text-lg text-gray-600">per month</div>
-            <div className="text-sm text-gray-500 mb-2">One-time payment: £29.99</div>
-            <div className="text-sm text-blue-600 font-medium">Exam Season Pass: Jan–July 2026</div>
+          {/* Plan Name and Pricing Header */}
+          <div className="flex items-start justify-between mb-4">
+            {/* Plan Name and Duration - Left Side */}
+            <div className="text-left">
+              <div className="text-3xl font-bold text-[#001433]">Exam Season Pass</div>
+              <div className="text-lg text-[#003D99] mt-1">Jan–July 2026</div>
+            </div>
+            
+            {/* Pricing Information - Right Side, Centered */}
+            <div className="text-center pt-2">
+              <div className="text-sm text-[#0066FF]/50 line-through mb-0.5">£12.99 1-Month Plan</div>
+              <div className="text-6xl font-semibold text-[#001433]">£29.99</div>
+            </div>
           </div>
+
+          {/* CTA Button */}
+          <button
+            onClick={handleStartTrial}
+            disabled={isLoading}
+            className="w-full bg-[#0066FF] text-white py-3 px-8 rounded-lg font-medium text-lg hover:bg-[#0052CC] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isLoading ? "Processing..." : "Get Your Plan"}
+          </button>
           
           {/* Features */}
-          <div className="space-y-3 text-left">
+          <div className="space-y-3 text-left pt-2">
+            <div className="text-sm font-medium text-[#001433] mb-2">Included features:</div>
             <div className="flex items-center space-x-3">
-              <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
+              <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
                 <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
               </div>
-              <span className="text-gray-700">Personalized study schedule</span>
+              <span className="text-[#001433]">Smart scheduling</span>
             </div>
             <div className="flex items-center space-x-3">
-              <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
+              <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
                 <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
               </div>
-              <span className="text-gray-700">AI-powered topic explanations</span>
+              <span className="text-[#001433]">Unlimited Weekly Revision Plans</span>
             </div>
             <div className="flex items-center space-x-3">
-              <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
+              <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
                 <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
               </div>
-              <span className="text-gray-700">Progress tracking & analytics</span>
+              <span className="text-[#001433]">Spaced Repetition Logic</span>
             </div>
             <div className="flex items-center space-x-3">
-              <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
+              <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
                 <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
               </div>
-              <span className="text-gray-700">7-day refund guarantee</span>
+              <span className="text-[#001433]">Built-in Pomodoro Timer</span>
+            </div>
+            <div className="flex items-center space-x-3">
+              <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
+                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <span className="text-[#001433]">Exam Practice Blocks</span>
+            </div>
+            <div className="flex items-center space-x-3">
+              <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
+                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <span className="text-[#001433]">8+ A-Level subjects</span>
+            </div>
+            <div className="flex items-center space-x-3">
+              <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
+                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <span className="text-[#001433]">Progress tracking & insights</span>
+            </div>
+            <div className="flex items-center space-x-3">
+              <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
+                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <span className="text-[#001433]">7-day money-back guarantee</span>
             </div>
           </div>
 
           {/* Payment Methods */}
-          <div className="text-center pt-4 border-t border-gray-200">
-            <div className="text-sm text-gray-600 mb-2">Secure payment with</div>
+          <div className="text-center pt-4 border-t border-[#0066FF]/20">
+            <div className="text-sm text-[#003D99] mb-2">Secure payment with</div>
             <div className="flex justify-center space-x-4">
               <div className="text-sm font-medium text-gray-700">💳 Card</div>
               <div className="text-sm font-medium text-gray-700">🍎 Apple Pay</div>
@@ -145,35 +193,23 @@ export default function Slide17Page() {
         </div>
       </div>
 
-      <div className="space-y-4">
-        <button
-          onClick={handleStartTrial}
-          disabled={isLoading}
-          className="w-full bg-blue-500 text-white py-4 px-8 rounded-lg font-medium text-lg hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isLoading ? "Processing..." : "Get Exam Season Pass - £29.99"}
-        </button>
-        
-        {/* Dev-only skip button */}
-        {isDev && (
+      {/* Dev-only skip button */}
+      {isDev && (
+        <div className="flex justify-center">
           <button
             onClick={handleSkip}
-            className="btn btn-xs btn-ghost text-xs opacity-50 hover:opacity-100 mt-2"
+            className="btn btn-xs btn-ghost text-xs opacity-50 hover:opacity-100"
             style={{ fontSize: '0.65rem', padding: '0.25rem 0.5rem' }}
           >
             [DEV] Skip
           </button>
-        )}
-        
-        <p className="text-sm text-gray-500">
-          7-day refund guarantee • One-time payment
-        </p>
-      </div>
+        </div>
+      )}
 
       <div className="flex justify-start">
         <button
           onClick={() => router.push("/onboarding/slide-16-5")}
-          className="text-gray-500 hover:text-gray-700 text-sm underline"
+          className="bg-[#E5F0FF] border border-[#0066FF]/20 text-[#003D99] px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg text-xs font-medium hover:bg-[#0066FF]/10 hover:border-[#0066FF]/40 transition-colors"
         >
           ← Back
         </button>

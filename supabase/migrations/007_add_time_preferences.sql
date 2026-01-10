@@ -2,7 +2,7 @@
 -- Run this in Supabase SQL Editor: https://supabase.com > SQL Editor
 
 -- Add time preference columns to users table
-ALTER TABLE users ADD COLUMN IF NOT EXISTS weekday_earliest_time TIME DEFAULT '6:00';
+ALTER TABLE users ADD COLUMN IF NOT EXISTS weekday_earliest_time TIME DEFAULT '04:30';
 ALTER TABLE users ADD COLUMN IF NOT EXISTS weekday_latest_time TIME DEFAULT '23:30';
 ALTER TABLE users ADD COLUMN IF NOT EXISTS weekend_earliest_time TIME;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS weekend_latest_time TIME;

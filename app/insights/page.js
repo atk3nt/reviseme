@@ -13,7 +13,6 @@ function InsightsPageContent() {
   const { data: session } = useSession();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [insights, setInsights] = useState([]);
   const [stats, setStats] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -22,8 +21,6 @@ function InsightsPageContent() {
   
   // Stats data - will be populated from API when available
   const [hoursRevised, setHoursRevised] = useState({ hours: 0, minutes: 0 });
-  const [estimatedGrade, setEstimatedGrade] = useState(null);
-  const [gradeProgress, setGradeProgress] = useState({ current: 'C', next: 'B', percentage: 45 });
   const [completionPercentage, setCompletionPercentage] = useState(0);
   const [blocksDone, setBlocksDone] = useState(0);
   const [blocksMissed, setBlocksMissed] = useState(0); // Total missed events
@@ -35,14 +32,11 @@ function InsightsPageContent() {
   const [firstAttemptCompletionRate, setFirstAttemptCompletionRate] = useState(0);
   const [avgConfidence, setAvgConfidence] = useState(0);
   const [examCountdown, setExamCountdown] = useState(null);
-  const [gradeModalOpen, setGradeModalOpen] = useState(false);
   const [subjectGrades, setSubjectGrades] = useState([]);
   const [loadingSubjectGrades, setLoadingSubjectGrades] = useState(false);
-  const [selectedSubjectDetails, setSelectedSubjectDetails] = useState(null);
   const [completionModalOpen, setCompletionModalOpen] = useState(false);
 
   useEffect(() => {
-    loadInsights();
     loadStats();
     loadSubjectGrades(); // Load subject grades on page load
   }, []);
@@ -259,26 +253,6 @@ function InsightsPageContent() {
     };
   };
 
-  const loadInsights = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { data: insightsData } = await supabase
-        .from('user_insights')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(10);
-
-      if (insightsData) {
-        setInsights(insightsData);
-      }
-    } catch (error) {
-      console.error('Error loading insights:', error);
-    }
-  };
-
   const loadStats = async () => {
     try {
       console.log('📊 Loading stats...');
@@ -318,18 +292,6 @@ function InsightsPageContent() {
         setHoursRevised(stats.hours_revised || { hours: 0, minutes: 0 });
         setCompletionPercentage(stats.completion_percentage || 0);
         setAvgConfidence(stats.avg_confidence || 0);
-        
-        // Calculate estimated grade and progress
-        if (stats.avg_confidence > 0) {
-          const gradeInfo = confidenceToGrade(stats.avg_confidence);
-          setEstimatedGrade(gradeInfo.grade);
-          
-          const progress = calculateGradeProgress(stats.avg_confidence);
-          setGradeProgress(progress);
-        } else {
-          setEstimatedGrade(null);
-          setGradeProgress({ current: 'N/A', next: 'E', percentage: 0 });
-        }
         
         setStats({
           blocks_done: stats.blocks_done,
@@ -665,24 +627,6 @@ function InsightsPageContent() {
     };
   }, []);
 
-  const getInsightTypeLabel = (type) => {
-    switch (type) {
-      case 'setup_summary': return 'Initial Assessment';
-      case 'weekly_feedback': return 'Weekly Summary';
-      case 'block_rationale': return 'Study Tip';
-      default: return type;
-    }
-  };
-
-  const getInsightTypeIcon = (type) => {
-    switch (type) {
-      case 'setup_summary': return '🎯';
-      case 'weekly_feedback': return '📊';
-      case 'block_rationale': return '💡';
-      default: return '📝';
-    }
-  };
-
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -700,7 +644,7 @@ function InsightsPageContent() {
         {/* Fixed Menu Button - Top Left */}
         <button
           type="button"
-          className="fixed top-4 left-4 z-50 inline-flex items-center justify-center rounded-md p-2 bg-base-200 hover:bg-base-300 transition shadow-lg"
+          className="fixed top-6 left-6 z-50 inline-flex items-center justify-center rounded-md p-4 bg-base-200 hover:bg-base-300 transition shadow-lg"
           onClick={() => setSidebarOpen(true)}
           aria-label="Open menu"
         >
@@ -709,7 +653,7 @@ function InsightsPageContent() {
             width="24"
             height="24"
             viewBox="0 0 24 24"
-            className="w-6 h-6 text-base-content"
+            className="w-8 h-8 text-base-content"
           >
             <rect x="1" y="11" width="22" height="2" fill="currentColor" strokeWidth="0"></rect>
             <rect x="1" y="4" width="22" height="2" strokeWidth="0" fill="currentColor"></rect>
@@ -718,65 +662,62 @@ function InsightsPageContent() {
         </button>
 
         {/* Header */}
-        <div className="bg-base-200">
-          <div className="max-w-7xl mx-auto px-4 py-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-3xl font-bold">Study Stats</h1>
-                <p className="text-base-content/70">
-                  Track your revision progress and performance
-                </p>
-              </div>
-              <button
-                onClick={() => {
-                  loadStats();
-                  toast.success('Stats refreshed');
-                }}
-                className="btn btn-sm btn-outline gap-2"
-                title="Refresh stats"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-                Refresh
-              </button>
+        <div className="max-w-6xl mx-auto px-4 pt-6 pb-4 pl-28">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-brand-dark">Study Stats</h1>
+              <p className="text-brand-medium">
+                Track your revision progress and performance
+              </p>
             </div>
-          </div>
+            <button
+              onClick={() => {
+                loadStats();
+                toast.success('Stats refreshed');
+              }}
+              className="btn btn-sm btn-outline gap-2"
+              title="Refresh stats"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              Refresh
+            </button>
           </div>
         </div>
 
-        <div className="max-w-6xl mx-auto px-4 -mt-[100px] pb-8">
+        <div className="max-w-6xl mx-auto px-4 pb-8">
         {/* Exam Countdown */}
         {examCountdown && (
           <div className="mb-6">
-            <div className={`card ${examCountdown.expired ? 'bg-error/10 border-error' : 'bg-primary/10 border-primary'} border-2 shadow-lg`}>
-              <div className="card-body !py-1 !px-4">
+            <div className={`card ${examCountdown.expired ? 'bg-error/10 border-error' : 'border-2 shadow-lg'} border-2 shadow-lg`} style={{ backgroundColor: examCountdown.expired ? undefined : '#0066FF15', borderColor: examCountdown.expired ? undefined : '#0066FF' }}>
+              <div className="card-body !py-4 !px-6">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                   <div className="text-center md:text-left">
-                    <h2 className="text-2xl font-bold mb-2">
+                    <h2 className="text-2xl font-bold mb-2" style={{ color: examCountdown.expired ? undefined : '#0066FF' }}>
                       {examCountdown.expired ? 'Exams Started!' : 'Countdown to A-Level Exams'}
                     </h2>
-                    <p className="text-base-content/70">
+                    <p className="text-brand-medium">
                       First exams begin: Monday, 11 May 2026
                     </p>
                   </div>
                   {!examCountdown.expired && (
                     <div className="flex gap-3 md:gap-4">
-                      <div className="stat bg-base-100 rounded-lg shadow min-w-[70px] md:min-w-[80px]">
-                        <div className="stat-value text-2xl md:text-3xl lg:text-4xl">{examCountdown.days}</div>
-                        <div className="stat-desc text-xs">Days</div>
+                      <div className="bg-base-100 rounded-lg shadow p-4 text-center w-20 md:w-24 lg:w-28">
+                        <div className="text-3xl md:text-4xl lg:text-5xl font-bold mb-1" style={{ color: '#0066FF', lineHeight: '1.2' }}>{examCountdown.days}</div>
+                        <div className="text-xs md:text-sm font-medium text-brand-medium">Days</div>
                       </div>
-                      <div className="stat bg-base-100 rounded-lg shadow min-w-[70px] md:min-w-[80px]">
-                        <div className="stat-value text-2xl md:text-3xl lg:text-4xl">{examCountdown.hours}</div>
-                        <div className="stat-desc text-xs">Hours</div>
+                      <div className="bg-base-100 rounded-lg shadow p-4 text-center w-20 md:w-24 lg:w-28">
+                        <div className="text-3xl md:text-4xl lg:text-5xl font-bold mb-1" style={{ color: '#0066FF', lineHeight: '1.2' }}>{examCountdown.hours}</div>
+                        <div className="text-xs md:text-sm font-medium text-brand-medium">Hours</div>
                       </div>
-                      <div className="stat bg-base-100 rounded-lg shadow min-w-[70px] md:min-w-[80px]">
-                        <div className="stat-value text-2xl md:text-3xl lg:text-4xl">{examCountdown.minutes}</div>
-                        <div className="stat-desc text-xs">Minutes</div>
+                      <div className="bg-base-100 rounded-lg shadow p-4 text-center w-20 md:w-24 lg:w-28">
+                        <div className="text-3xl md:text-4xl lg:text-5xl font-bold mb-1" style={{ color: '#0066FF', lineHeight: '1.2' }}>{examCountdown.minutes}</div>
+                        <div className="text-xs md:text-sm font-medium text-brand-medium">Minutes</div>
                       </div>
-                      <div className="stat bg-base-100 rounded-lg shadow min-w-[70px] md:min-w-[80px]">
-                        <div className="stat-value text-2xl md:text-3xl lg:text-4xl text-primary animate-pulse">{examCountdown.seconds}</div>
-                        <div className="stat-desc text-xs">Seconds</div>
+                      <div className="bg-base-100 rounded-lg shadow p-4 text-center w-20 md:w-24 lg:w-28">
+                        <div className="text-3xl md:text-4xl lg:text-5xl font-bold mb-1 animate-pulse" style={{ color: '#0066FF', lineHeight: '1.2' }}>{examCountdown.seconds}</div>
+                        <div className="text-xs md:text-sm font-medium text-brand-medium">Seconds</div>
                       </div>
                     </div>
                   )}
@@ -786,160 +727,241 @@ function InsightsPageContent() {
           </div>
         )}
 
-        {/* Stats Overview - 6 cards in 2 rows */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          {/* Row 1 */}
-          <div className="stat bg-base-100 shadow-sm rounded-lg">
-            <div className="stat-figure text-primary">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
+        {/* Estimated Grade Progress Loops */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold mb-4 text-brand-dark">Estimated Grade Progress</h2>
+          {loadingSubjectGrades ? (
+            <div className="text-center py-8">
+              <span className="loading loading-spinner loading-lg"></span>
+              <p className="mt-4 text-brand-medium">Loading subject grades...</p>
             </div>
-            <div className="stat-title">Hours Revised</div>
-            <div className="stat-value text-primary">
-              {hoursRevised.hours > 0 || hoursRevised.minutes > 0 ? (
-                <>
-                  {hoursRevised.hours > 0 && <span>{hoursRevised.hours}h</span>}
-                  {hoursRevised.minutes > 0 && <span className="ml-1">{hoursRevised.minutes}m</span>}
-                </>
-              ) : (
-                '0h'
-              )}
-            </div>
-            <div className="stat-desc">Total study time</div>
-          </div>
-
-          <div 
-            className="stat bg-base-100 shadow-sm rounded-lg cursor-pointer hover:bg-base-200 transition"
-            onClick={() => {
-              loadSubjectGrades();
-              setGradeModalOpen(true);
-            }}
-            title="Click to view grades by subject"
-          >
-            <div className="stat-figure text-secondary">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
-              </svg>
-            </div>
-            <div className="stat-title">Estimated Grade</div>
-            {subjectGrades.length > 0 ? (
-              <div className="stat-value text-secondary text-3xl font-bold">
-                {subjectGrades
-                  .map(sg => sg.grade !== 'N/A' ? sg.grade : '?')
-                  .join(' ')}
+          ) : subjectGrades.length === 0 ? (
+            <div className="card bg-base-100 shadow-sm">
+              <div className="card-body text-center py-8">
+                <p className="text-brand-medium">No subjects found. Please complete onboarding first.</p>
               </div>
-            ) : (
-              <div className="stat-value text-secondary text-4xl">{estimatedGrade || 'N/A'}</div>
-            )}
-            <div className="stat-desc">Click to view by subject</div>
-          </div>
-
-          <div 
-            className="stat bg-base-100 shadow-sm rounded-lg cursor-pointer hover:bg-base-200 transition"
-            onClick={() => setCompletionModalOpen(true)}
-            title="Click to view completion overview"
-          >
-            <div className="stat-figure text-accent">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-              </svg>
             </div>
-            <div className="stat-title">Completion %</div>
-            <div className="stat-value text-accent">{completionPercentage.toFixed(0)}%</div>
-            <div className="stat-desc">Click to view details</div>
-          </div>
-
-          {/* Row 2 */}
-          <div className="stat bg-base-100 shadow-sm rounded-lg">
-            <div className="stat-figure text-info">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-            </div>
-            <div className="stat-title">Blocks Completed</div>
-            <div className="stat-value text-info">{blocksDone}</div>
-            <div className="stat-desc">Total revision sessions</div>
-          </div>
-
-          <div className="stat bg-base-100 shadow-sm rounded-lg">
-            <div className="stat-figure text-success">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"></path>
-              </svg>
-            </div>
-            <div className="stat-title">Active Days</div>
-            <div className="stat-value text-success">{activeDays}</div>
-            <div className="stat-desc">Days with completed blocks</div>
-          </div>
-
-          <div className="stat bg-base-100 shadow-sm rounded-lg">
-            <div className="stat-figure text-warning">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-            </div>
-            <div className="stat-title">Blocks Left This Week</div>
-            <div className="stat-value text-warning">{blocksScheduled}</div>
-            <div className="stat-desc">Scheduled blocks remaining</div>
-          </div>
-        </div>
-
-
-
-        {/* AI Insights */}
-        <div className="card bg-base-100 shadow-sm">
-          <div className="card-body">
-            <h2 className="card-title text-2xl mb-6">AI Insights & Feedback</h2>
-            
-            {insights.length === 0 ? (
-              <div className="text-center py-12">
-                <div className="text-6xl mb-4">🤖</div>
-                <h3 className="text-xl font-bold mb-2">No insights yet</h3>
-                <p className="text-base-content/70">
-                  Complete some revision blocks to start receiving AI-powered feedback and insights.
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-6">
-                {insights.map(insight => (
-                  <div key={insight.id} className="card bg-base-200 shadow-sm">
-                    <div className="card-body">
-                      <div className="flex items-start space-x-4">
-                        <div className="text-2xl">
-                          {getInsightTypeIcon(insight.insight_type)}
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between mb-2">
-                            <h3 className="font-semibold">
-                              {getInsightTypeLabel(insight.insight_type)}
-                            </h3>
-                            <span className="text-sm text-base-content/50">
-                              {new Date(insight.created_at).toLocaleDateString()}
-                            </span>
-                          </div>
-                          <div className="prose prose-sm max-w-none">
-                            <p className="whitespace-pre-wrap">{insight.content}</p>
-                          </div>
-                        </div>
+          ) : (
+            <div className={`grid gap-6 ${
+              subjectGrades.length === 1 ? 'grid-cols-1 max-w-md mx-auto' :
+              subjectGrades.length === 2 ? 'grid-cols-2' :
+              subjectGrades.length === 3 ? 'grid-cols-3' :
+              subjectGrades.length === 4 ? 'grid-cols-4' :
+              'grid-cols-5'
+            }`}>
+              {subjectGrades.map((subjectGrade, index) => {
+                const subjectColor = getSubjectColor(subjectGrade.subject);
+                const percentage = subjectGrade.grade !== 'N/A' ? subjectGrade.progress.percentage : 0;
+                const radius = 50;
+                const circumference = 2 * Math.PI * radius;
+                const offset = circumference - (percentage / 100) * circumference;
+                
+                return (
+                  <div 
+                    key={index} 
+                    className="card bg-base-100 shadow-sm hover:shadow-md transition-shadow"
+                  >
+                    <div className="card-body p-6 flex flex-col items-center justify-between">
+                      {/* Subject name and board */}
+                      <div className="w-full text-center mb-4">
+                        <h3 className="text-lg font-semibold">
+                          {subjectGrade.subject}
+                        </h3>
+                        {subjectGrade.board && (
+                          <p className="text-sm text-brand-medium">
+                            {subjectGrade.board.toUpperCase()}
+                          </p>
+                        )}
                       </div>
+
+                      {/* Circular progress with grade */}
+                      {subjectGrade.grade !== 'N/A' ? (
+                        <div className="flex flex-col items-center gap-4 w-full">
+                          {/* Circular Progress Indicator */}
+                          <div className="relative w-full aspect-square max-w-[200px] mx-auto">
+                            <svg className="transform -rotate-90 w-full h-full" viewBox="0 0 120 120">
+                              {/* Background circle */}
+                              <circle
+                                cx="60"
+                                cy="60"
+                                r={radius}
+                                stroke="currentColor"
+                                strokeWidth="8"
+                                fill="none"
+                                className="text-base-300"
+                              />
+                              {/* Progress circle */}
+                              <circle
+                                cx="60"
+                                cy="60"
+                                r={radius}
+                                stroke={subjectColor}
+                                strokeWidth="8"
+                                fill="none"
+                                strokeDasharray={circumference}
+                                strokeDashoffset={offset}
+                                strokeLinecap="round"
+                                className="transition-all duration-500 ease-out"
+                              />
+                            </svg>
+                            {/* Percentage in center */}
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <div className="text-center">
+                                <div className="text-4xl font-bold" style={{ color: subjectColor }}>
+                                  {percentage.toFixed(0)}%
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Grade display with arrow */}
+                          <div className="text-center w-full">
+                            <div className="flex items-center gap-3 justify-center">
+                              <span className="text-4xl font-bold" style={{ color: subjectColor }}>
+                                {subjectGrade.progress.current}
+                              </span>
+                              <svg 
+                                width="24" 
+                                height="24" 
+                                viewBox="0 0 24 24" 
+                                fill="none" 
+                                stroke={subjectColor} 
+                                strokeWidth="2" 
+                                strokeLinecap="round" 
+                                strokeLinejoin="round"
+                                className="flex-shrink-0"
+                              >
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                              </svg>
+                              <span className="text-4xl font-bold text-brand-medium">
+                                {subjectGrade.progress.next}
+                              </span>
+                            </div>
+                            {subjectGrade.topicsRated > 0 && (
+                              <p className="text-sm text-brand-medium mt-3">
+                                {subjectGrade.topicsRated} topics rated
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center py-8 w-full">
+                          <div className="text-5xl font-bold text-base-content/30 mb-3">
+                            N/A
+                          </div>
+                          <p className="text-sm text-brand-medium text-center">
+                            Rate topics to see your estimated grade
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </div>
-                ))}
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Other Stats Categories */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold mb-4 text-brand-dark">Study Statistics</h2>
+          
+          {/* Stats Overview - 6 cards in 2 rows */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Row 1 */}
+            <div className="stat bg-base-100 shadow-sm rounded-lg">
+              <div className="stat-figure text-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
               </div>
-            )}
+              <div className="stat-title">Hours Revised</div>
+              <div className="stat-value text-primary">
+                {hoursRevised.hours > 0 || hoursRevised.minutes > 0 ? (
+                  <>
+                    {hoursRevised.hours > 0 && <span>{hoursRevised.hours}h</span>}
+                    {hoursRevised.minutes > 0 && <span className="ml-1">{hoursRevised.minutes}m</span>}
+                  </>
+                ) : (
+                  '0h'
+                )}
+              </div>
+              <div className="stat-desc">Total study time</div>
+            </div>
+
+            <div 
+              className="stat bg-base-100 shadow-sm rounded-lg cursor-pointer hover:bg-base-200 transition"
+              onClick={() => setCompletionModalOpen(true)}
+              title="Click to view completion overview"
+            >
+              <div className="stat-figure text-accent">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                </svg>
+              </div>
+              <div className="stat-title">Completion %</div>
+              <div className="stat-value text-accent">{completionPercentage.toFixed(0)}%</div>
+              <div className="stat-desc">Click to view details</div>
+            </div>
+
+            <div className="stat bg-base-100 shadow-sm rounded-lg">
+              <div className="stat-figure text-info">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </div>
+              <div className="stat-title">Blocks Completed</div>
+              <div className="stat-value text-info">{blocksDone}</div>
+              <div className="stat-desc">Total revision sessions</div>
+            </div>
+
+            {/* Row 2 */}
+            <div className="stat bg-base-100 shadow-sm rounded-lg">
+              <div className="stat-figure text-success">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"></path>
+                </svg>
+              </div>
+              <div className="stat-title">Active Days</div>
+              <div className="stat-value text-success">{activeDays}</div>
+              <div className="stat-desc">Days with completed blocks</div>
+            </div>
+
+            <div className="stat bg-base-100 shadow-sm rounded-lg">
+              <div className="stat-figure text-warning">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </div>
+              <div className="stat-title">Blocks Left This Week</div>
+              <div className="stat-value text-warning">{blocksScheduled}</div>
+              <div className="stat-desc">Scheduled blocks remaining</div>
+            </div>
+
+            <div className="stat bg-base-100 shadow-sm rounded-lg">
+              <div className="stat-figure text-secondary">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                </svg>
+              </div>
+              <div className="stat-title">First Attempt Rate</div>
+              <div className="stat-value text-secondary">{firstAttemptCompletionRate.toFixed(0)}%</div>
+              <div className="stat-desc">Completed without reschedule</div>
+            </div>
           </div>
+        </div>
         </div>
       </div>
 
       {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-base-200 shadow-xl transform transition-transform duration-300 ease-in-out ${
+      <div className={`fixed inset-y-0 left-0 z-50 w-72 bg-base-200 shadow-xl transform transition-transform duration-300 ease-in-out ${
         sidebarOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
         <div className="flex flex-col h-full">
           {/* Sidebar Header */}
-          <div className="flex items-center justify-between p-4 border-b border-base-300">
-            <h2 className="text-xl font-bold">Menu</h2>
+          <div className="flex items-center justify-between p-5 border-b border-base-300">
+            <h2 className="text-xl font-bold text-brand-dark">Menu</h2>
             <button
               type="button"
               className="btn btn-sm btn-circle btn-ghost"
@@ -951,7 +973,7 @@ function InsightsPageContent() {
           </div>
 
           {/* Sidebar Navigation */}
-          <nav className="flex-1 p-4">
+          <nav className="flex-1 p-5">
             <ul className="space-y-2">
               <li>
                 <Link
@@ -1021,11 +1043,7 @@ function InsightsPageContent() {
                 <div>
                   <button
                     onClick={() => setSettingsDropdownOpen(!settingsDropdownOpen)}
-                    className={`w-full block px-4 py-3 rounded-lg transition ${
-                      pathname?.startsWith('/settings') 
-                        ? 'bg-primary text-primary-content' 
-                        : 'hover:bg-base-300'
-                    }`}
+                    className="w-full block px-4 py-3 rounded-lg transition hover:bg-base-300"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
@@ -1046,26 +1064,15 @@ function InsightsPageContent() {
                   {settingsDropdownOpen && (
                     <ul className="ml-4 mt-2 space-y-1">
                       <li>
-                        <Link
-                          href="/settings?section=preferences"
-                          className={`block px-4 py-2 rounded-lg transition text-sm hover:bg-base-300 ${
-                            pathname === '/settings' && searchParams?.get('section') === 'preferences' ? 'bg-primary/20' : ''
-                          }`}
-                          onClick={() => setSidebarOpen(false)}
+                        <button
+                          onClick={() => {
+                            setFeedbackModalOpen(true);
+                            setSidebarOpen(false);
+                          }}
+                          className="block w-full text-left px-4 py-2 rounded-lg transition text-sm hover:bg-base-300"
                         >
-                          Study Preferences
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="/settings?section=account"
-                          className={`block px-4 py-2 rounded-lg transition text-sm hover:bg-base-300 ${
-                            pathname === '/settings' && searchParams?.get('section') === 'account' ? 'bg-primary/20' : ''
-                          }`}
-                          onClick={() => setSidebarOpen(false)}
-                        >
-                          Account Information
-                        </Link>
+                          Feedback
+                        </button>
                       </li>
                       <li>
                         <button
@@ -1108,144 +1115,6 @@ function InsightsPageContent() {
       
       <SupportModal isOpen={supportModalOpen} onClose={() => setSupportModalOpen(false)} />
 
-      {/* Subject Grades Modal */}
-      {gradeModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setGradeModalOpen(false)}>
-          <div className="bg-base-100 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold">Estimated Grades by Subject</h2>
-                <button
-                  onClick={() => setGradeModalOpen(false)}
-                  className="btn btn-sm btn-circle btn-ghost"
-                  aria-label="Close modal"
-                >
-                  ✕
-                </button>
-              </div>
-
-              {loadingSubjectGrades ? (
-                <div className="text-center py-8">
-                  <span className="loading loading-spinner loading-lg"></span>
-                  <p className="mt-4 text-base-content/70">Loading subject grades...</p>
-                </div>
-              ) : subjectGrades.length === 0 ? (
-                <div className="text-center py-8">
-                  <p className="text-base-content/70">No subjects found. Please complete onboarding first.</p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {subjectGrades.map((subjectGrade, index) => {
-                    const subjectColor = getSubjectColor(subjectGrade.subject);
-                    const percentage = subjectGrade.grade !== 'N/A' ? subjectGrade.progress.percentage : 0;
-                    const circumference = 2 * Math.PI * 45; // radius = 45
-                    const offset = circumference - (percentage / 100) * circumference;
-                    
-                    return (
-                      <div 
-                        key={index} 
-                        className="card bg-base-200 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
-                        onClick={() => subjectGrade.grade !== 'N/A' && setSelectedSubjectDetails(subjectGrade)}
-                      >
-                        <div className="card-body p-4">
-                          <div className="flex items-center gap-6">
-                            {/* Left side: Subject name and board */}
-                            <div className="flex-1">
-                              <h3 className="text-lg font-semibold mb-1">
-                                {subjectGrade.subject} {subjectGrade.board && `(${subjectGrade.board.toUpperCase()})`}
-                              </h3>
-                              {subjectGrade.grade === 'N/A' && (
-                                <p className="text-sm text-base-content/70 mt-2">
-                                  Rate topics to see your estimated grade
-                                </p>
-                              )}
-                            </div>
-
-                            {/* Right side: Circular progress with grade */}
-                            {subjectGrade.grade !== 'N/A' ? (
-                              <div className="flex items-center gap-4">
-                                {/* Circular Progress Indicator */}
-                                <div className="relative flex-shrink-0">
-                                  <svg className="transform -rotate-90" width="120" height="120">
-                                    {/* Background circle */}
-                                    <circle
-                                      cx="60"
-                                      cy="60"
-                                      r="45"
-                                      stroke="currentColor"
-                                      strokeWidth="8"
-                                      fill="none"
-                                      className="text-base-300"
-                                    />
-                                    {/* Progress circle */}
-                                    <circle
-                                      cx="60"
-                                      cy="60"
-                                      r="45"
-                                      stroke={subjectColor}
-                                      strokeWidth="8"
-                                      fill="none"
-                                      strokeDasharray={circumference}
-                                      strokeDashoffset={offset}
-                                      strokeLinecap="round"
-                                      className="transition-all duration-500 ease-out"
-                                    />
-                                  </svg>
-                                  {/* Percentage in center */}
-                                  <div className="absolute inset-0 flex items-center justify-center">
-                                    <div className="text-center">
-                                      <div className="text-2xl font-bold" style={{ color: subjectColor }}>
-                                        {percentage.toFixed(0)}%
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-
-                                {/* Grade display with arrow */}
-                                <div className="text-right">
-                                  <div className="flex items-center gap-2 justify-end">
-                                    <span className="text-3xl font-bold" style={{ color: subjectColor }}>
-                                      {subjectGrade.progress.current}
-                                    </span>
-                                    <svg 
-                                      width="24" 
-                                      height="24" 
-                                      viewBox="0 0 24 24" 
-                                      fill="none" 
-                                      stroke={subjectColor} 
-                                      strokeWidth="2" 
-                                      strokeLinecap="round" 
-                                      strokeLinejoin="round"
-                                      className="flex-shrink-0"
-                                    >
-                                      <line x1="5" y1="12" x2="19" y2="12"></line>
-                                      <polyline points="12 5 19 12 12 19"></polyline>
-                                    </svg>
-                                    <span className="text-3xl font-bold text-base-content/70">
-                                      {subjectGrade.progress.next}
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                            ) : (
-                              <div className="flex-shrink-0">
-                                <div className="text-2xl font-bold text-base-content/30">
-                                  N/A
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Completion Overview Modal */}
       {completionModalOpen && (
         <div 
@@ -1257,7 +1126,7 @@ function InsightsPageContent() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold">Completion Overview</h2>
+              <h2 className="text-2xl font-bold text-brand-dark">Completion Overview</h2>
               <button
                 onClick={() => setCompletionModalOpen(false)}
                 className="btn btn-sm btn-circle btn-ghost"
@@ -1271,7 +1140,7 @@ function InsightsPageContent() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-lg font-semibold">First Attempt Completion</p>
-                  <p className="text-sm text-base-content/70">
+                  <p className="text-sm text-brand-medium">
                     {completedOnFirstAttempt} of {totalBlocksOffered} blocks
                   </p>
                 </div>
@@ -1296,15 +1165,15 @@ function InsightsPageContent() {
               <div className="grid grid-cols-3 gap-4 mt-4">
                 <div className="text-center">
                   <p className="text-2xl font-bold text-success">{completedOnFirstAttempt}</p>
-                  <p className="text-sm text-base-content/70">First Attempt</p>
+                  <p className="text-sm text-brand-medium">First Attempt</p>
                 </div>
                 <div className="text-center">
                   <p className="text-2xl font-bold text-warning">{blocksDone - completedOnFirstAttempt}</p>
-                  <p className="text-sm text-base-content/70">After Reschedule</p>
+                  <p className="text-sm text-brand-medium">After Reschedule</p>
                 </div>
                 <div className="text-center">
                   <p className="text-2xl font-bold text-info">{blocksScheduled}</p>
-                  <p className="text-sm text-base-content/70">Scheduled</p>
+                  <p className="text-sm text-brand-medium">Scheduled</p>
                 </div>
               </div>
             </div>
@@ -1312,51 +1181,6 @@ function InsightsPageContent() {
         </div>
       )}
 
-      {/* Subject Details Popup */}
-      {selectedSubjectDetails && (
-        <div 
-          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50"
-          onClick={() => setSelectedSubjectDetails(null)}
-        >
-          <div 
-            className="bg-base-100 rounded-lg shadow-xl max-w-md w-full mx-4 p-6"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-bold">
-                {selectedSubjectDetails.subject} {selectedSubjectDetails.board && `(${selectedSubjectDetails.board.toUpperCase()})`}
-              </h3>
-              <button
-                onClick={() => setSelectedSubjectDetails(null)}
-                className="btn btn-sm btn-circle btn-ghost"
-                aria-label="Close"
-              >
-                ✕
-              </button>
-            </div>
-            
-            <div className="space-y-4">
-              {selectedSubjectDetails.topicsRated > 0 && (
-                <div>
-                  <div className="text-sm text-base-content/70 mb-1">Topics Rated</div>
-                  <div className="text-lg font-semibold">{selectedSubjectDetails.topicsRated}</div>
-                </div>
-              )}
-              
-              {selectedSubjectDetails.grade !== 'N/A' && (
-                <div>
-                  <div className="text-sm text-base-content/70 mb-1">Grade Progress</div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg font-semibold">Current: {selectedSubjectDetails.progress.current}</span>
-                    <span className="text-base-content/50">→</span>
-                    <span className="text-lg font-semibold">Target: {selectedSubjectDetails.progress.next}</span>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 }

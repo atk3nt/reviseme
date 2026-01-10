@@ -185,7 +185,7 @@ export async function POST(req) {
         onboarding_data: updatedOnboardingData, // Only keep referral source
         has_completed_onboarding: false, // Reset onboarding status
         // Reset time preferences to defaults
-        weekday_earliest_time: '6:00',
+        weekday_earliest_time: '04:30',
         weekday_latest_time: '23:30',
         weekend_earliest_time: null,
         weekend_latest_time: null,

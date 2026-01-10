@@ -6,6 +6,7 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import SupportModal from "@/components/SupportModal";
+import FeedbackModal from "@/components/FeedbackModal";
 
 function SettingsPageContent() {
   const router = useRouter();
@@ -17,6 +18,7 @@ function SettingsPageContent() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [settingsDropdownOpen, setSettingsDropdownOpen] = useState(false);
   const [supportModalOpen, setSupportModalOpen] = useState(false);
+  const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
 
   useEffect(() => {
     loadUserData();
@@ -109,7 +111,7 @@ function SettingsPageContent() {
         {/* Fixed Menu Button - Top Left */}
         <button
           type="button"
-          className="fixed top-4 left-4 z-50 inline-flex items-center justify-center rounded-md p-2 bg-base-200 hover:bg-base-300 transition shadow-lg"
+          className="fixed top-6 left-6 z-50 inline-flex items-center justify-center rounded-md p-4 bg-base-200 hover:bg-base-300 transition shadow-lg"
           onClick={() => setSidebarOpen(true)}
           aria-label="Open menu"
         >
@@ -118,7 +120,7 @@ function SettingsPageContent() {
             width="24"
             height="24"
             viewBox="0 0 24 24"
-            className="w-6 h-6 text-base-content"
+            className="w-8 h-8 text-base-content"
           >
             <rect x="1" y="11" width="22" height="2" fill="currentColor" strokeWidth="0"></rect>
             <rect x="1" y="4" width="22" height="2" strokeWidth="0" fill="currentColor"></rect>
@@ -127,11 +129,11 @@ function SettingsPageContent() {
         </button>
 
         {/* Header */}
-        <div className="bg-base-200">
-          <div className="max-w-7xl mx-auto px-4 py-6">
+        <div className="bg-brand-light">
+          <div className="max-w-7xl mx-auto px-4 py-6 pl-28">
             <div>
-              <h1 className="text-3xl font-bold">Settings</h1>
-              <p className="text-base-content/70">
+              <h1 className="text-3xl font-bold text-brand-dark">Settings</h1>
+              <p className="text-brand-medium">
                   Manage your account and preferences
                 </p>
               </div>
@@ -144,7 +146,7 @@ function SettingsPageContent() {
           {/* Account Information */}
           <div className="card bg-base-100 shadow-sm">
             <div className="card-body">
-              <h2 className="card-title text-xl mb-4">Account Information</h2>
+              <h2 className="card-title text-xl mb-4 text-brand-dark">Account Information</h2>
               
               <div className="space-y-4">
                 <div>
@@ -183,10 +185,10 @@ function SettingsPageContent() {
           {/* Payment Information */}
           <div className="card bg-base-100 shadow-sm">
             <div className="card-body">
-              <h2 className="card-title text-xl mb-4">Payment Information</h2>
+              <h2 className="card-title text-xl mb-4 text-brand-dark">Payment Information</h2>
               
               {payments.length === 0 ? (
-                <p className="text-base-content/70">No payment history found.</p>
+                <p className="text-brand-medium">No payment history found.</p>
               ) : (
                 <div className="space-y-4">
                   {payments.map(payment => (
@@ -194,7 +196,7 @@ function SettingsPageContent() {
                       <div className="flex justify-between items-start mb-2">
                         <div>
                           <p className="font-medium">Exam Season Pass</p>
-                          <p className="text-sm text-base-content/70">
+                          <p className="text-sm text-brand-medium">
                             {new Date(payment.created_at).toLocaleDateString()}
                           </p>
                         </div>
@@ -218,7 +220,7 @@ function SettingsPageContent() {
                           >
                             Request Refund
                           </button>
-                          <p className="text-xs text-base-content/50 mt-1">
+                          <p className="text-xs text-brand-medium mt-1">
                             7-day refund guarantee
                           </p>
                         </div>
@@ -233,7 +235,7 @@ function SettingsPageContent() {
           {/* Preferences */}
           <div className="card bg-base-100 shadow-sm">
             <div className="card-body">
-              <h2 className="card-title text-xl mb-4">Preferences</h2>
+              <h2 className="card-title text-xl mb-4 text-brand-dark">Preferences</h2>
               
               <div className="space-y-4">
                 <div className="form-control">
@@ -241,7 +243,7 @@ function SettingsPageContent() {
                     <span className="label-text">Anonymous Analytics</span>
                     <input type="checkbox" className="toggle toggle-primary" />
                   </label>
-                  <p className="text-xs text-base-content/50">
+                  <p className="text-xs text-brand-medium">
                     Help improve Markr Planner with anonymous usage data
                   </p>
                 </div>
@@ -251,7 +253,7 @@ function SettingsPageContent() {
                     <span className="label-text">Email Notifications</span>
                     <input type="checkbox" className="toggle toggle-primary" defaultChecked />
                   </label>
-                  <p className="text-xs text-base-content/50">
+                  <p className="text-xs text-brand-medium">
                     Receive weekly summaries and important updates
                   </p>
                 </div>
@@ -262,7 +264,7 @@ function SettingsPageContent() {
           {/* Actions */}
           <div className="card bg-base-100 shadow-sm">
             <div className="card-body">
-              <h2 className="card-title text-xl mb-4">Actions</h2>
+              <h2 className="card-title text-xl mb-4 text-brand-dark">Actions</h2>
               
               <div className="space-y-4">
                 <button
@@ -292,13 +294,13 @@ function SettingsPageContent() {
       </div>
 
       {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-base-200 shadow-xl transform transition-transform duration-300 ease-in-out ${
+      <div className={`fixed inset-y-0 left-0 z-50 w-72 bg-base-200 shadow-xl transform transition-transform duration-300 ease-in-out ${
         sidebarOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
         <div className="flex flex-col h-full">
           {/* Sidebar Header */}
-          <div className="flex items-center justify-between p-4 border-b border-base-300">
-            <h2 className="text-xl font-bold">Menu</h2>
+          <div className="flex items-center justify-between p-5 border-b border-base-300">
+            <h2 className="text-xl font-bold text-brand-dark">Menu</h2>
             <button
               type="button"
               className="btn btn-sm btn-circle btn-ghost"
@@ -310,7 +312,7 @@ function SettingsPageContent() {
           </div>
 
           {/* Sidebar Navigation */}
-          <nav className="flex-1 p-4">
+          <nav className="flex-1 p-5">
             <ul className="space-y-2">
               <li>
                 <Link
@@ -380,11 +382,7 @@ function SettingsPageContent() {
                 <div>
                   <button
                     onClick={() => setSettingsDropdownOpen(!settingsDropdownOpen)}
-                    className={`w-full block px-4 py-3 rounded-lg transition ${
-                      pathname?.startsWith('/settings') 
-                        ? 'bg-primary text-primary-content' 
-                        : 'hover:bg-base-300'
-                    }`}
+                    className="w-full block px-4 py-3 rounded-lg transition hover:bg-base-300"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
@@ -405,38 +403,16 @@ function SettingsPageContent() {
                   {settingsDropdownOpen && (
                     <ul className="ml-4 mt-2 space-y-1">
                       <li>
-                        <Link
-                          href="/settings?section=preferences"
-                          className={`block px-4 py-2 rounded-lg transition text-sm hover:bg-base-300 ${
-                            pathname === '/settings' && searchParams?.get('section') === 'preferences' ? 'bg-primary/20' : ''
-                          }`}
-                          onClick={() => setSidebarOpen(false)}
+                        <button
+                          onClick={() => {
+                            setFeedbackModalOpen(true);
+                            setSidebarOpen(false);
+                          }}
+                          className="block w-full text-left px-4 py-2 rounded-lg transition text-sm hover:bg-base-300"
                         >
-                          Study Preferences
-                        </Link>
+                          Feedback
+                        </button>
                       </li>
-                        <li>
-                          <Link
-                            href="/settings/rerate-topics"
-                            className={`block px-4 py-2 rounded-lg transition text-sm hover:bg-base-300 ${
-                              pathname === '/settings/rerate-topics' ? 'bg-primary/20' : ''
-                            }`}
-                            onClick={() => setSidebarOpen(false)}
-                          >
-                            Rerate Topics
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
-                            href="/settings?section=account"
-                            className={`block px-4 py-2 rounded-lg transition text-sm hover:bg-base-300 ${
-                              pathname === '/settings' && searchParams?.get('section') === 'account' ? 'bg-primary/20' : ''
-                            }`}
-                            onClick={() => setSidebarOpen(false)}
-                          >
-                            Account Information
-                          </Link>
-                        </li>
                       <li>
                         <button
                           onClick={() => {
@@ -477,6 +453,7 @@ function SettingsPageContent() {
       )}
       
       <SupportModal isOpen={supportModalOpen} onClose={() => setSupportModalOpen(false)} />
+      <FeedbackModal isOpen={feedbackModalOpen} onClose={() => setFeedbackModalOpen(false)} />
     </>
   );
 }

@@ -85,31 +85,31 @@ export default function Slide1Page() {
   // Show success message if email was sent
   if (emailSent) {
     return (
-      <div className="text-center space-y-8">
+      <div className="text-center space-y-4 sm:space-y-6 md:space-y-8 w-full">
         <OnboardingProgress 
           currentSlide={1} 
           totalSlides={23} 
           showProgressBar={true}
         />
 
-        <div className="max-w-lg mx-auto space-y-6 bg-white border-2 border-blue-200 rounded-xl p-8">
-          <div className="text-center space-y-4">
-            <div className="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center">
-              <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="max-w-lg mx-auto space-y-4 sm:space-y-6 bg-white border-2 border-[#0066FF]/20 rounded-xl p-6 sm:p-8">
+          <div className="text-center space-y-3 sm:space-y-4">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
+              <svg className="w-6 h-6 sm:w-8 sm:h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900">Check your email</h2>
-            <p className="text-gray-600">
-              We've sent a sign-in link to <span className="font-semibold text-gray-900">{emailAddress}</span>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#001433]">Check your email</h2>
+            <p className="text-sm sm:text-base text-[#003D99]">
+              We've sent a sign-in link to <span className="font-semibold text-[#001433]">{emailAddress}</span>
             </p>
-            <p className="text-sm text-gray-500">
+            <p className="text-xs sm:text-sm text-[#003D99]">
               Click the link in your email to continue.
             </p>
-            <div className="pt-4">
+            <div className="pt-2 sm:pt-4">
               <button
                 onClick={() => router.push("/onboarding/slide-2")}
-                className="text-gray-500 hover:text-gray-700 text-sm underline"
+                className="text-gray-500 hover:text-gray-700 text-xs sm:text-sm underline"
               >
                 Skip for now →
               </button>
@@ -121,7 +121,7 @@ export default function Slide1Page() {
   }
 
   return (
-    <div className="text-center space-y-8">
+    <div className="text-center space-y-4 sm:space-y-6 md:space-y-8 w-full">
       {/* Progress */}
       <OnboardingProgress 
         currentSlide={1} 
@@ -130,24 +130,24 @@ export default function Slide1Page() {
       />
 
       {/* Title */}
-      <div className="space-y-4">
-        <h1 className="text-4xl font-bold text-gray-900">
+      <div className="space-y-2 sm:space-y-3 md:space-y-4">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#001433]">
           Let's get your revision sorted
         </h1>
-        <p className="text-xl text-gray-600">
+        <p className="text-base sm:text-lg md:text-xl text-[#003D99] px-4 sm:px-0">
           Sign in or create an account to start building your personalized study plan
         </p>
       </div>
 
       {/* Sign-in Options */}
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6 w-full max-w-md mx-auto px-4 sm:px-0">
         {/* Google Sign-in Button (only shown if Google OAuth is configured) */}
         {googleAvailable && (
           <>
             <button
               onClick={handleGoogleSignIn}
               disabled={isGoogleLoading}
-              className="w-full flex items-center justify-center gap-3 bg-white border-2 border-gray-300 text-gray-700 py-3 px-6 rounded-lg font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center gap-2 sm:gap-3 bg-white border-2 border-[#0066FF]/20 text-[#003D99] py-2.5 sm:py-3 px-4 sm:px-6 rounded-lg text-sm sm:text-base font-medium hover:border-[#0066FF]/40 hover:bg-[#E5F0FF] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isGoogleLoading ? (
                 <>
@@ -156,7 +156,7 @@ export default function Slide1Page() {
                 </>
               ) : (
                 <>
-                  <svg className="w-5 h-5" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" viewBox="0 0 24 24">
                     <path
                       fill="#4285F4"
                       d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -180,11 +180,11 @@ export default function Slide1Page() {
             </button>
 
             {/* Divider */}
-            <div className="relative">
+            <div className="relative py-2">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
+                <div className="w-full border-t border-[#0066FF]/20"></div>
               </div>
-              <div className="relative flex justify-center text-sm">
+              <div className="relative flex justify-center text-xs sm:text-sm">
                 <span className="px-2 bg-white text-gray-500">Or</span>
               </div>
             </div>
@@ -192,19 +192,19 @@ export default function Slide1Page() {
         )}
 
         {/* Email Sign-in Form */}
-        <form onSubmit={handleEmailSignIn} className="space-y-4">
+        <form onSubmit={handleEmailSignIn} className="space-y-3 sm:space-y-4">
           <input
             type="email"
             name="email"
             placeholder="Enter your email"
             required
-            className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors"
+            className="w-full px-4 py-2.5 sm:py-3 text-sm sm:text-base border-2 border-[#0066FF]/20 rounded-lg focus:border-[#0066FF] focus:outline-none transition-colors"
           />
           
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-blue-500 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-[#0066FF] hover:bg-[#0052CC] text-white w-full py-2.5 sm:py-3 px-4 sm:px-6 rounded-lg text-sm sm:text-base font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? "Sending link..." : "Continue with Email"}
           </button>
@@ -213,16 +213,16 @@ export default function Slide1Page() {
 
       {/* Error Message */}
       {error && (
-        <div className="text-red-600 text-sm bg-red-50 p-3 rounded-lg">
+        <div className="text-error text-xs sm:text-sm bg-error/10 p-2 sm:p-3 rounded-lg max-w-md mx-auto">
           {error}
         </div>
       )}
 
       {/* Skip for now */}
-      <div className="text-center">
+      <div className="text-center pt-2 sm:pt-4">
         <button
           onClick={() => router.push("/onboarding/slide-2")}
-          className="text-gray-500 hover:text-gray-700 text-sm underline"
+          className="text-gray-500 hover:text-gray-700 text-xs sm:text-sm underline"
         >
           Skip for now →
         </button>
