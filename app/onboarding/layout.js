@@ -9,6 +9,18 @@ export default function OnboardingLayout({ children }) {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [isResetting, setIsResetting] = useState(false);
+  const [isDev, setIsDev] = useState(false);
+
+  useEffect(() => {
+    // Check if dev mode
+    setIsDev(
+      typeof window !== 'undefined' && (
+        window.location.hostname === 'localhost' ||
+        window.location.hostname === '127.0.0.1' ||
+        window.location.hostname.includes('.local')
+      )
+    );
+  }, []);
 
   useEffect(() => {
     // Only redirect if user has paid AND completed onboarding
@@ -56,23 +68,25 @@ export default function OnboardingLayout({ children }) {
   return (
     <div className="h-screen bg-white overflow-y-auto">
       <div className="min-h-full flex flex-col">
-        {/* Reset button in top right */}
-        <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-50">
-          <button
-            onClick={handleReset}
-            className="btn btn-xs sm:btn-sm btn-error"
-            disabled={isResetting}
-          >
-            {isResetting ? (
-              <>
-                <span className="loading loading-spinner loading-xs"></span>
-                <span className="hidden sm:inline">Resetting...</span>
-              </>
-            ) : (
-              <span className="text-xs sm:text-sm">🔄 Reset</span>
-            )}
-          </button>
-        </div>
+        {/* Reset button in top right - Dev only */}
+        {isDev && (
+          <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-50">
+            <button
+              onClick={handleReset}
+              className="btn btn-xs sm:btn-sm btn-error"
+              disabled={isResetting}
+            >
+              {isResetting ? (
+                <>
+                  <span className="loading loading-spinner loading-xs"></span>
+                  <span className="hidden sm:inline">Resetting...</span>
+                </>
+              ) : (
+                <span className="text-xs sm:text-sm">🔄 Reset</span>
+              )}
+            </button>
+          </div>
+        )}
         
         {/* Main content area - fills viewport with responsive padding */}
         <main className="flex-1 flex items-center justify-center px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-12">

@@ -449,7 +449,7 @@ function PlanPageContent() {
               
               // Load time preferences from database
               try {
-                const timePrefResponse = await fetch('/api/debug/time-preferences');
+                const timePrefResponse = await fetch('/api/user/time-preferences');
                 if (timePrefResponse.ok) {
                   const timePrefData = await timePrefResponse.json();
                   if (timePrefData.success && timePrefData.timePreferences) {
@@ -730,7 +730,7 @@ function PlanPageContent() {
   useEffect(() => {
     const loadTimePreferences = async () => {
       try {
-        const timePrefResponse = await fetch('/api/debug/time-preferences');
+        const timePrefResponse = await fetch('/api/user/time-preferences');
         if (timePrefResponse.ok) {
           const timePrefData = await timePrefResponse.json();
           if (timePrefData.success && timePrefData.timePreferences) {

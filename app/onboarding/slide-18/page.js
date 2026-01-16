@@ -6,11 +6,25 @@ import OnboardingProgress from "@/components/OnboardingProgress";
 
 function Slide18Content() {
   const [isLoading, setIsLoading] = useState(false);
+  const [isDev, setIsDev] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    // Handle dev skip - manually set has_access for testing
+    // Check if dev mode
+    setIsDev(
+      typeof window !== 'undefined' && (
+        window.location.hostname === 'localhost' ||
+        window.location.hostname === '127.0.0.1' ||
+        window.location.hostname.includes('.local')
+      )
+    );
+  }, []);
+
+  useEffect(() => {
+    // Handle dev skip - manually set has_access for testing (dev only)
+    if (!isDev) return;
+    
     const devSkip = searchParams.get('dev_skip');
     if (devSkip === 'true') {
       // Set has_access in the database for dev testing
@@ -23,7 +37,7 @@ function Slide18Content() {
         console.error('Failed to set dev access:', err);
       });
     }
-  }, [searchParams]);
+  }, [searchParams, isDev]);
 
   const handleNext = () => {
     setIsLoading(true);

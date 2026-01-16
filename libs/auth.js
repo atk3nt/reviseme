@@ -4,16 +4,8 @@ import EmailProvider from "next-auth/providers/email"
 import config from "@/config"
 import { supabaseAdmin } from "./supabase"
 
-// Debug: Check if Google credentials are loaded
-console.log('[AUTH] Google OAuth configured:', {
-  hasGoogleId: !!process.env.GOOGLE_ID,
-  hasGoogleSecret: !!process.env.GOOGLE_SECRET,
-  googleIdPreview: process.env.GOOGLE_ID ? `${process.env.GOOGLE_ID.substring(0, 20)}...` : 'NOT SET'
-});
-
 // Helper function to get user by ID (used by adapter methods)
 const getUserById = async (id) => {
-  console.log('[AUTH] getUserById called with id:', id)
   try {
     const { data, error } = await supabaseAdmin
       .from('users')
