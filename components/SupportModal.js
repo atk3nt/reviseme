@@ -4,6 +4,39 @@ import { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
+// Add keyframe animations
+if (typeof window !== 'undefined') {
+  const styleSheet = document.createElement("style");
+  styleSheet.textContent = `
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+    
+    @keyframes modalPopIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.85) translateY(20px);
+      }
+      60% {
+        transform: scale(1.02) translateY(-5px);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+  `;
+  if (!document.head.querySelector('[data-modal-animations]')) {
+    styleSheet.setAttribute('data-modal-animations', 'true');
+    document.head.appendChild(styleSheet);
+  }
+}
+
 export default function SupportModal({ isOpen, onClose }) {
   const router = useRouter();
   const [selectedType, setSelectedType] = useState(null);
@@ -35,27 +68,49 @@ export default function SupportModal({ isOpen, onClose }) {
       const response = await fetch("/api/plan/payments");
       if (response.ok) {
         const data = await response.json();
-        setPayments(data.payments || []);
-        checkRefundEligibility(data.payments || []);
+        const payments = data.payments || [];
+        console.log("Payments loaded:", payments);
+        console.log("Payment statuses:", payments.map(p => ({ id: p.id, status: p.status, paid_at: p.paid_at })));
+        setPayments(payments);
+        checkRefundEligibility(payments);
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        console.error("Payments API error:", response.status, errorData);
+        setRefundEligibility({
+          eligible: false,
+          reason: `Failed to load payments: ${errorData.error || "Unknown error"}`
+        });
       }
     } catch (error) {
       console.error("Error loading payments:", error);
+      setRefundEligibility({
+        eligible: false,
+        reason: "Failed to load payments. Please try again."
+      });
     }
   };
 
   const checkRefundEligibility = (paymentList) => {
+    console.log("Checking refund eligibility for payments:", paymentList);
     const latestPayment = paymentList.find(p => p.status === 'paid');
     
     if (!latestPayment) {
+      const statuses = paymentList.map(p => p.status);
+      console.log("No paid payment found. Payment statuses:", statuses);
       setRefundEligibility({
         eligible: false,
-        reason: "No eligible payments found for refund"
+        reason: paymentList.length > 0 
+          ? `No eligible payments found. Found ${paymentList.length} payment(s) with status: ${statuses.join(', ')}`
+          : "No eligible payments found for refund"
       });
       return;
     }
 
+    console.log("Found paid payment:", latestPayment);
     const paymentDate = new Date(latestPayment.paid_at);
     const daysSincePayment = Math.floor((Date.now() - paymentDate.getTime()) / (1000 * 60 * 60 * 24));
+
+    console.log("Days since payment:", daysSincePayment);
 
     if (daysSincePayment > 7) {
       setRefundEligibility({
@@ -72,7 +127,13 @@ export default function SupportModal({ isOpen, onClose }) {
     });
   };
 
-  const handleRefundRequest = async () => {
+  const handleRefundRequest = async (e) => {
+    // Prevent any form submission if button is inside a form
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
     if (!refundEligibility?.eligible || !refundEligibility.payment) {
       return;
     }
@@ -157,8 +218,21 @@ export default function SupportModal({ isOpen, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={onClose}>
-      <div className="bg-base-200 rounded-lg p-8 w-full max-w-3xl mx-4 relative" onClick={(e) => e.stopPropagation()}>
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 transition-opacity duration-300 ease-out" 
+      style={{
+        animation: 'fadeIn 0.3s ease-out'
+      }}
+      onClick={onClose}
+    >
+      <div 
+        className="bg-base-200 rounded-lg p-8 w-full max-w-3xl mx-4 relative" 
+        style={{
+          animation: 'modalPopIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
+          transformOrigin: 'center'
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header with back button, title, and close button */}
         <div className="flex items-center justify-between mb-8">
           {selectedType ? (
@@ -190,7 +264,7 @@ export default function SupportModal({ isOpen, onClose }) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-8">
+        <div className="space-y-8">
           {!selectedType ? (
             <div className="grid grid-cols-3 gap-4">
               <button
@@ -317,7 +391,7 @@ export default function SupportModal({ isOpen, onClose }) {
               )}
             </>
           ) : (
-            <>
+            <form onSubmit={handleSubmit} className="space-y-8">
               <div>
                 <textarea
                   value={message}
@@ -349,9 +423,9 @@ export default function SupportModal({ isOpen, onClose }) {
                   )}
                 </button>
               </div>
-            </>
+            </form>
           )}
-        </form>
+        </div>
       </div>
     </div>
   );

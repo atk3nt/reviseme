@@ -158,6 +158,12 @@ export async function POST(req) {
       topics: level3Topics,
       level1Topics: level1Topics,
       level2Topics: level2Topics
+    }, {
+      headers: {
+        // Cache for 1 hour (3600s) on CDN/edge, revalidate in background for 24 hours
+        // This significantly improves performance for frequently requested topic combinations
+        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400'
+      }
     });
   } catch (error) {
     console.error('API error:', error);

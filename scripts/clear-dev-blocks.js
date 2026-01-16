@@ -15,7 +15,7 @@ if (!supabaseUrl || !supabaseKey) {
 }
 
 const supabase = createClient(supabaseUrl, supabaseKey);
-const DEV_USER_EMAIL = 'dev-test@markr.local';
+const DEV_USER_EMAIL = 'appmarkrai@gmail.com';
 
 async function clearDevBlocks() {
   try {

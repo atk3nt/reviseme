@@ -29,12 +29,12 @@ const Modal = ({ isModalOpen, setIsModalOpen }) => {
           <div className="flex min-h-full overflow-hidden items-start md:items-center justify-center p-2">
             <Transition.Child
               as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 scale-95"
-              enterTo="opacity-100 scale-100"
+              enter="ease-out duration-400"
+              enterFrom="opacity-0 scale-85 translate-y-5"
+              enterTo="opacity-100 scale-100 translate-y-0"
               leave="ease-in duration-200"
-              leaveFrom="opacity-100 scale-100"
-              leaveTo="opacity-0 scale-95"
+              leaveFrom="opacity-100 scale-100 translate-y-0"
+              leaveTo="opacity-0 scale-95 translate-y-2"
             >
               <Dialog.Panel className="relative w-full max-w-3xl h-full overflow-visible transform text-left align-middle shadow-xl transition-all rounded-xl bg-white p-6 md:p-8">
                 <div className="flex justify-between items-center mb-4">

@@ -77,7 +77,8 @@ export async function generateStudyPlan({
   studyBlockDuration = 0.5,
   targetWeekStart,
   actualStartDate, // For partial weeks - skip days before this date
-  missedTopicIds = [], // Topic IDs that were missed/incomplete from previous weeks
+  missedTopicIds = [], // Topic IDs that were missed/incomplete from previous weeks (same-week catch-up)
+  reratedTopicIds = [], // Topic IDs that were rerated (prioritized within rating buckets)
   ongoingTopics = {} // { topicId: { sessionsScheduled: number, sessionsRequired: number, lastSessionDate: Date } }
 } = {}) {
   if (!Array.isArray(subjects) || subjects.length === 0) {
@@ -90,7 +91,7 @@ export async function generateStudyPlan({
     return [];
   }
 
-  const prioritizedTopics = prioritizeTopics(filteredTopics, ratings, missedTopicIds);
+  const prioritizedTopics = prioritizeTopics(filteredTopics, ratings, missedTopicIds, reratedTopicIds);
   const weekStart = resolveTargetWeekStart(targetWeekStart);
   const alignedBlockedTimes = alignBlockedTimes(blockedTimes, weekStart);
   console.log('Scheduler debug', JSON.stringify({

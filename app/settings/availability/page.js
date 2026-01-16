@@ -7,6 +7,7 @@ import Link from "next/link";
 import TimeBlockCalendar from "@/components/TimeBlockCalendar";
 import SupportModal from "@/components/SupportModal";
 import FeedbackModal from "@/components/FeedbackModal";
+import config from "@/config";
 
 function AvailabilitySettingsPageContent() {
   const { data: session, status } = useSession();
@@ -1685,9 +1686,12 @@ function AvailabilitySettingsPageContent() {
                   href="/plan"
                   className={`block px-4 py-3 rounded-lg transition ${
                     pathname === '/plan' 
-                      ? 'bg-primary text-primary-content' 
+                      ? 'text-white' 
                       : 'hover:bg-base-300'
                   }`}
+                  style={pathname === '/plan' ? {
+                    backgroundColor: config.colors.brand.primary
+                  } : {}}
                   onClick={() => setSidebarOpen(false)}
                 >
                   <div className="flex items-center gap-3">
@@ -1701,9 +1705,12 @@ function AvailabilitySettingsPageContent() {
                   href="/settings/rerate-topics"
                   className={`block px-4 py-3 rounded-lg transition ${
                     pathname === '/settings/rerate-topics' 
-                      ? 'bg-primary text-primary-content' 
+                      ? 'text-white' 
                       : 'hover:bg-base-300'
                   }`}
+                  style={pathname === '/settings/rerate-topics' ? {
+                    backgroundColor: config.colors.brand.primary
+                  } : {}}
                   onClick={() => setSidebarOpen(false)}
                 >
                   <div className="flex items-center gap-3">
@@ -1717,9 +1724,12 @@ function AvailabilitySettingsPageContent() {
                   href="/insights"
                   className={`block px-4 py-3 rounded-lg transition ${
                     pathname === '/insights' 
-                      ? 'bg-primary text-primary-content' 
+                      ? 'text-white' 
                       : 'hover:bg-base-300'
                   }`}
+                  style={pathname === '/insights' ? {
+                    backgroundColor: config.colors.brand.primary
+                  } : {}}
                   onClick={() => setSidebarOpen(false)}
                 >
                   <div className="flex items-center gap-3">
@@ -1733,9 +1743,12 @@ function AvailabilitySettingsPageContent() {
                   href="/settings/availability"
                   className={`block px-4 py-3 rounded-lg transition ${
                     pathname === '/settings/availability' 
-                      ? 'bg-primary text-primary-content' 
+                      ? 'text-white' 
                       : 'hover:bg-base-300'
                   }`}
+                  style={pathname === '/settings/availability' ? {
+                    backgroundColor: config.colors.brand.primary
+                  } : {}}
                   onClick={() => setSidebarOpen(false)}
                 >
                   <div className="flex items-center gap-3">

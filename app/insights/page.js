@@ -7,6 +7,7 @@ import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
 import SupportModal from "@/components/SupportModal";
+import FeedbackModal from "@/components/FeedbackModal";
 import config from "@/config";
 
 function InsightsPageContent() {
@@ -18,6 +19,7 @@ function InsightsPageContent() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [settingsDropdownOpen, setSettingsDropdownOpen] = useState(false);
   const [supportModalOpen, setSupportModalOpen] = useState(false);
+  const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
   
   // Stats data - will be populated from API when available
   const [hoursRevised, setHoursRevised] = useState({ hours: 0, minutes: 0 });
@@ -980,9 +982,12 @@ function InsightsPageContent() {
                   href="/plan"
                   className={`block px-4 py-3 rounded-lg transition ${
                     pathname === '/plan' 
-                      ? 'bg-primary text-primary-content' 
+                      ? 'text-white' 
                       : 'hover:bg-base-300'
                   }`}
+                  style={pathname === '/plan' ? {
+                    backgroundColor: config.colors.brand.primary
+                  } : {}}
                   onClick={() => setSidebarOpen(false)}
                 >
                   <div className="flex items-center gap-3">
@@ -996,9 +1001,12 @@ function InsightsPageContent() {
                   href="/settings/rerate-topics"
                   className={`block px-4 py-3 rounded-lg transition ${
                     pathname === '/settings/rerate-topics' 
-                      ? 'bg-primary text-primary-content' 
+                      ? 'text-white' 
                       : 'hover:bg-base-300'
                   }`}
+                  style={pathname === '/settings/rerate-topics' ? {
+                    backgroundColor: config.colors.brand.primary
+                  } : {}}
                   onClick={() => setSidebarOpen(false)}
                 >
                   <div className="flex items-center gap-3">
@@ -1012,9 +1020,12 @@ function InsightsPageContent() {
                   href="/insights"
                   className={`block px-4 py-3 rounded-lg transition ${
                     pathname === '/insights' 
-                      ? 'bg-primary text-primary-content' 
+                      ? 'text-white' 
                       : 'hover:bg-base-300'
                   }`}
+                  style={pathname === '/insights' ? {
+                    backgroundColor: config.colors.brand.primary
+                  } : {}}
                   onClick={() => setSidebarOpen(false)}
                 >
                   <div className="flex items-center gap-3">
@@ -1028,9 +1039,12 @@ function InsightsPageContent() {
                   href="/settings/availability"
                   className={`block px-4 py-3 rounded-lg transition ${
                     pathname === '/settings/availability' 
-                      ? 'bg-primary text-primary-content' 
+                      ? 'text-white' 
                       : 'hover:bg-base-300'
                   }`}
+                  style={pathname === '/settings/availability' ? {
+                    backgroundColor: config.colors.brand.primary
+                  } : {}}
                   onClick={() => setSidebarOpen(false)}
                 >
                   <div className="flex items-center gap-3">
@@ -1114,6 +1128,7 @@ function InsightsPageContent() {
       )}
       
       <SupportModal isOpen={supportModalOpen} onClose={() => setSupportModalOpen(false)} />
+      <FeedbackModal isOpen={feedbackModalOpen} onClose={() => setFeedbackModalOpen(false)} />
 
       {/* Completion Overview Modal */}
       {completionModalOpen && (

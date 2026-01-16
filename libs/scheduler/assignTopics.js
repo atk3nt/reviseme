@@ -296,7 +296,52 @@ export function assignTopicsToSlots(slots = [], topics = [], ongoingTopics = {})
     return fits;
   };
 
-  const topicStates = topics.map((topic, index) => {
+  // FIX: Deduplicate topics by ID to prevent same topic with different ratings
+  // Track seen topic IDs and their ratings to detect inconsistencies
+  const seenTopicIds = new Map(); // topicId -> { topic, rating, firstIndex }
+  const deduplicatedTopics = [];
+  const duplicateWarnings = [];
+  
+  topics.forEach((topic, index) => {
+    if (!topic || !topic.id) {
+      console.warn(`⚠️ Skipping invalid topic at index ${index}:`, topic);
+      return;
+    }
+    
+    if (seenTopicIds.has(topic.id)) {
+      const existing = seenTopicIds.get(topic.id);
+      if (existing.rating !== topic.rating) {
+        duplicateWarnings.push({
+          topicId: topic.id,
+          topicTitle: topic.title || 'Unknown',
+          firstRating: existing.rating,
+          duplicateRating: topic.rating,
+          firstIndex: existing.firstIndex,
+          duplicateIndex: index
+        });
+        console.error(`❌ DUPLICATE TOPIC WITH DIFFERENT RATING: "${topic.title || topic.id}" - First occurrence (index ${existing.firstIndex}) has rating ${existing.rating}, duplicate (index ${index}) has rating ${topic.rating}. Using first occurrence.`);
+      } else {
+        if (process.env.NODE_ENV === 'development') {
+          console.warn(`⚠️ Duplicate topic "${topic.title || topic.id}" (same rating ${topic.rating}) at index ${index}. Using first occurrence.`);
+        }
+      }
+      // Skip duplicate - use first occurrence
+      return;
+    }
+    
+    seenTopicIds.set(topic.id, { topic, rating: topic.rating, firstIndex: index });
+    deduplicatedTopics.push(topic);
+  });
+  
+  if (duplicateWarnings.length > 0) {
+    console.error(`❌ Found ${duplicateWarnings.length} topic(s) with duplicate IDs and inconsistent ratings:`, duplicateWarnings);
+  }
+  
+  if (deduplicatedTopics.length !== topics.length) {
+    console.warn(`⚠️ Deduplicated topics: ${topics.length} -> ${deduplicatedTopics.length} (removed ${topics.length - deduplicatedTopics.length} duplicates)`);
+  }
+
+  const topicStates = deduplicatedTopics.map((topic, index) => {
     const config = getSessionConfig(topic.rating);
     
     // Check if this topic is ongoing (continuing from previous week)
@@ -332,7 +377,9 @@ export function assignTopicsToSlots(slots = [], topics = [], ongoingTopics = {})
       sessionsScheduled,
       nextAvailableDate,
       // Store last session date for cross-week gap enforcement
-      lastSessionDate: ongoing?.lastSessionDate ? new Date(ongoing.lastSessionDate) : null
+      lastSessionDate: ongoing?.lastSessionDate ? new Date(ongoing.lastSessionDate) : null,
+      // FIX: Track last scheduled date within this week (for within-week gap enforcement)
+      lastScheduledDateThisWeek: null
     };
   });
 
@@ -430,6 +477,9 @@ export function assignTopicsToSlots(slots = [], topics = [], ongoingTopics = {})
   // No need to redistribute single blocks - they'll be handled during cluster assignment
 
   const weeklyPlan = [];
+  // FIX: Track topic ratings to ensure consistency across all sessions
+  const topicRatingsMap = new Map(); // topicId -> rating (to detect rating inconsistencies)
+  
   // Process each day separately to create clusters
   const sortedDays = Object.keys(slotsByDay).sort();
   
@@ -538,17 +588,57 @@ export function assignTopicsToSlots(slots = [], topics = [], ongoingTopics = {})
           .filter((topic) => {
             // Basic checks
             if (topic.sessionsScheduled >= topic.sessionsRequired) return false;
-            if (topic.nextAvailableDate && slot.startDate < topic.nextAvailableDate) return false;
-            if (topicsScheduledToday.has(topic.id)) return false;
+            if (topicsScheduledToday.has(topic.id)) return false; // Prevent same topic on same day
             
-            // Cross-week gap enforcement: For ongoing topics, verify the actual gap is respected
-            // This catches cases where nextAvailableDate may have been in a previous week
-            if (topic.lastSessionDate && topic.sessionsScheduled > 0) {
-              const lastSession = new Date(topic.lastSessionDate);
+            // FIX: Check rating consistency
+            if (topicRatingsMap.has(topic.id)) {
+              const existingRating = topicRatingsMap.get(topic.id);
+              if (existingRating !== topic.rating) {
+                console.error(`❌ Rating inconsistency detected for topic "${topic.title || topic.id}": previous sessions had rating ${existingRating}, current has ${topic.rating}. Skipping.`);
+                return false;
+              }
+            }
+            
+            // FIX: Enforce gap days for within-week sessions
+            // Check if this topic was already scheduled this week
+            if (topic.lastScheduledDateThisWeek) {
+              const lastScheduledDay = new Date(Date.UTC(
+                topic.lastScheduledDateThisWeek.getUTCFullYear(),
+                topic.lastScheduledDateThisWeek.getUTCMonth(),
+                topic.lastScheduledDateThisWeek.getUTCDate()
+              ));
+              const slotDay = new Date(Date.UTC(
+                slot.startDate.getUTCFullYear(),
+                slot.startDate.getUTCMonth(),
+                slot.startDate.getUTCDate()
+              ));
+              const daysDiff = Math.round((slotDay - lastScheduledDay) / (1000 * 60 * 60 * 24));
+              
+              // Get the gap required after the last scheduled session
               const gapIndex = topic.sessionsScheduled - 1;
               const requiredGap = (gapIndex >= 0 && gapIndex < topic.gapDays.length) 
                 ? topic.gapDays[gapIndex] 
                 : 1;
+              
+              if (daysDiff < requiredGap) {
+                if (process.env.NODE_ENV === 'development') {
+                  console.log(`⏳ Within-week gap enforcement: "${topic.title?.substring(0, 30)}..." blocked for ${slot.startDate.toISOString().split('T')[0]} - only ${daysDiff} days since last session this week (need ${requiredGap})`);
+                }
+                return false;
+              }
+            }
+            
+            // Cross-week gap enforcement: For ongoing topics from previous weeks, verify the actual gap is respected
+            // FIX: Check for ongoing topics that haven't scheduled in current week yet
+            // This allows ongoing topics to schedule their remaining sessions even if they overflow into next week
+            if (topic.lastSessionDate && !topic.lastScheduledDateThisWeek) {
+              const lastSession = new Date(topic.lastSessionDate);
+              // For ongoing topics, sessionsScheduled is the number of completed sessions
+              // gapIndex should be the gap after the last completed session
+              const gapIndex = topic.sessionsScheduled - 1;
+              const requiredGap = (gapIndex >= 0 && gapIndex < topic.gapDays.length) 
+                ? topic.gapDays[gapIndex] 
+                : (topic.gapDays.length > 0 ? topic.gapDays[0] : 1);
               
               // Calculate actual calendar days between last session and this slot
               // Use UTC dates at midnight to compare calendar days, not hours
@@ -567,20 +657,40 @@ export function assignTopicsToSlots(slots = [], topics = [], ongoingTopics = {})
               if (daysDiff < requiredGap) {
                 // Not enough days have passed since last session
                 if (process.env.NODE_ENV === 'development') {
-                  console.log(`⏳ Gap enforcement: "${topic.title?.substring(0, 30)}..." blocked for ${slot.startDate.toISOString().split('T')[0]} - only ${daysDiff} days since last session (need ${requiredGap})`);
+                  console.log(`⏳ Cross-week gap enforcement: "${topic.title?.substring(0, 30)}..." blocked for ${slot.startDate.toISOString().split('T')[0]} - only ${daysDiff} days since last session (need ${requiredGap})`);
                 }
                 return false;
               }
             }
             
-            // For topics that haven't started yet (session 0), check if ALL sessions can fit in the week
-            if (topic.sessionsScheduled === 0) {
-              const config = getSessionConfig(topic.rating);
-              if (!canFitAllSessionsInWeek(config, slot.startDate, topic.title)) {
-                // This topic's sessions would overflow into next week - skip it
+            // MVP Simplification: Rating 1 topics can ONLY start on Monday
+            // This ensures all 3 sessions (with 2-day and 3-day gaps) complete within the same week
+            // Mon start: Mon → Wed → Sat (all in week)
+            // This allows plan generation on Sunday/late Saturday and avoids week delays for rerated topics
+            if (topic.rating === 1 && topic.sessionsScheduled === 0 && !topic.lastSessionDate) {
+              const dayOfWeek = slot.startDate.getDay(); // 0=Sun, 1=Mon, 2=Tue, ..., 6=Sat
+              if (dayOfWeek !== 1) { // Only Monday allowed
+                if (process.env.NODE_ENV === 'development') {
+                  console.log(`📅 Rating 1 restriction: "${topic.title?.substring(0, 30)}..." can only start Monday (day ${dayOfWeek} not allowed)`);
+                }
                 return false;
               }
             }
+            
+            // MVP Simplification: Rating 2 topics cannot start on Saturday or Sunday
+            // This ensures both sessions (with 2-day gap) complete within the same week
+            // Mon start: Mon → Wed ✓, Tue → Thu ✓, Wed → Fri ✓, Thu → Sat ✓, Fri → Sun ✓
+            // Sat start: Sat → Mon (next week) ✗, Sun start: Sun → Tue (next week) ✗
+            if (topic.rating === 2 && topic.sessionsScheduled === 0 && !topic.lastSessionDate) {
+              const dayOfWeek = slot.startDate.getDay(); // 0=Sun, 1=Mon, 2=Tue, ..., 6=Sat
+              if (dayOfWeek === 0 || dayOfWeek === 6) { // No Saturday or Sunday
+                if (process.env.NODE_ENV === 'development') {
+                  console.log(`📅 Rating 2 restriction: "${topic.title?.substring(0, 30)}..." cannot start on Sat/Sun (day ${dayOfWeek} not allowed)`);
+                }
+                return false;
+              }
+            }
+            // NOTE: Ongoing topics are always allowed to schedule remaining sessions
             
             return true;
           });
@@ -636,8 +746,10 @@ export function assignTopicsToSlots(slots = [], topics = [], ongoingTopics = {})
         
         weeklyPlan.push(block);
         topicsScheduledToday.add(topic.id);
+        topicRatingsMap.set(topic.id, topic.rating); // FIX: Track rating for consistency
         usedSlotIndices.add(slotIndex);
         topic.sessionsScheduled += 1;
+        topic.lastScheduledDateThisWeek = slot.startDate; // FIX: Track last scheduled date within week
         dayData.scheduledBlocks += 1;
         blocksPlacedInCluster += 1; // Track blocks actually placed in this cluster
 
@@ -808,16 +920,53 @@ export function assignTopicsToSlots(slots = [], topics = [], ongoingTopics = {})
         const availableTopics = topicStates
           .filter((topic) => {
             if (topic.sessionsScheduled >= topic.sessionsRequired) return false;
-            if (topic.nextAvailableDate && slot.startDate < topic.nextAvailableDate) return false;
-            if (topicsScheduledToday.has(topic.id)) return false;
+            if (topicsScheduledToday.has(topic.id)) return false; // Prevent same topic on same day
             
-            // Cross-week gap enforcement: For ongoing topics, verify the actual gap is respected
-            if (topic.lastSessionDate && topic.sessionsScheduled > 0) {
-              const lastSession = new Date(topic.lastSessionDate);
+            // FIX: Check rating consistency
+            if (topicRatingsMap.has(topic.id)) {
+              const existingRating = topicRatingsMap.get(topic.id);
+              if (existingRating !== topic.rating) {
+                console.error(`❌ Rating inconsistency detected for topic "${topic.title || topic.id}": previous sessions had rating ${existingRating}, current has ${topic.rating}. Skipping.`);
+                return false;
+              }
+            }
+            
+            // FIX: Enforce gap days for within-week sessions
+            if (topic.lastScheduledDateThisWeek) {
+              const lastScheduledDay = new Date(Date.UTC(
+                topic.lastScheduledDateThisWeek.getUTCFullYear(),
+                topic.lastScheduledDateThisWeek.getUTCMonth(),
+                topic.lastScheduledDateThisWeek.getUTCDate()
+              ));
+              const slotDay = new Date(Date.UTC(
+                slot.startDate.getUTCFullYear(),
+                slot.startDate.getUTCMonth(),
+                slot.startDate.getUTCDate()
+              ));
+              const daysDiff = Math.round((slotDay - lastScheduledDay) / (1000 * 60 * 60 * 24));
+              
               const gapIndex = topic.sessionsScheduled - 1;
               const requiredGap = (gapIndex >= 0 && gapIndex < topic.gapDays.length) 
                 ? topic.gapDays[gapIndex] 
                 : 1;
+              
+              if (daysDiff < requiredGap) {
+                if (process.env.NODE_ENV === 'development') {
+                  console.log(`⏳ Within-week gap enforcement (fallback): "${topic.title?.substring(0, 30)}..." blocked - only ${daysDiff} days since last session this week (need ${requiredGap})`);
+                }
+                return false;
+              }
+            }
+            
+            // Cross-week gap enforcement: For ongoing topics from previous weeks, verify the actual gap is respected
+            // FIX: Check for ongoing topics that haven't scheduled in current week yet
+            if (topic.lastSessionDate && !topic.lastScheduledDateThisWeek) {
+              const lastSession = new Date(topic.lastSessionDate);
+              // For ongoing topics, sessionsScheduled is the number of completed sessions
+              const gapIndex = topic.sessionsScheduled - 1;
+              const requiredGap = (gapIndex >= 0 && gapIndex < topic.gapDays.length) 
+                ? topic.gapDays[gapIndex] 
+                : (topic.gapDays.length > 0 ? topic.gapDays[0] : 1);
               
               // Calculate actual calendar days between last session and this slot
               // Use UTC dates at midnight to compare calendar days, not hours
@@ -840,6 +989,35 @@ export function assignTopicsToSlots(slots = [], topics = [], ongoingTopics = {})
                 return false;
               }
             }
+            
+            // MVP Simplification (fallback path): Rating 1 topics can ONLY start on Monday
+            // This ensures all 3 sessions (with 2-day and 3-day gaps) complete within the same week
+            // Mon start: Mon → Wed → Sat (all in week)
+            // This allows plan generation on Sunday/late Saturday and avoids week delays for rerated topics
+            if (topic.rating === 1 && topic.sessionsScheduled === 0 && !topic.lastSessionDate) {
+              const dayOfWeek = slot.startDate.getDay(); // 0=Sun, 1=Mon, 2=Tue, ..., 6=Sat
+              if (dayOfWeek !== 1) { // Only Monday allowed
+                if (process.env.NODE_ENV === 'development') {
+                  console.log(`📅 Rating 1 restriction (fallback): "${topic.title?.substring(0, 30)}..." can only start Monday (day ${dayOfWeek} not allowed)`);
+                }
+                return false;
+              }
+            }
+            
+            // MVP Simplification (fallback path): Rating 2 topics cannot start on Saturday or Sunday
+            // This ensures both sessions (with 2-day gap) complete within the same week
+            // Mon start: Mon → Wed ✓, Tue → Thu ✓, Wed → Fri ✓, Thu → Sat ✓, Fri → Sun ✓
+            // Sat start: Sat → Mon (next week) ✗, Sun start: Sun → Tue (next week) ✗
+            if (topic.rating === 2 && topic.sessionsScheduled === 0 && !topic.lastSessionDate) {
+              const dayOfWeek = slot.startDate.getDay(); // 0=Sun, 1=Mon, 2=Tue, ..., 6=Sat
+              if (dayOfWeek === 0 || dayOfWeek === 6) { // No Saturday or Sunday
+                if (process.env.NODE_ENV === 'development') {
+                  console.log(`📅 Rating 2 restriction (fallback): "${topic.title?.substring(0, 30)}..." cannot start on Sat/Sun (day ${dayOfWeek} not allowed)`);
+                }
+                return false;
+              }
+            }
+            // NOTE: Ongoing topics are always allowed to schedule remaining sessions
             
             return true;
           });
@@ -897,8 +1075,10 @@ export function assignTopicsToSlots(slots = [], topics = [], ongoingTopics = {})
         
         weeklyPlan.push(block);
         topicsScheduledToday.add(topic.id);
+        topicRatingsMap.set(topic.id, topic.rating); // FIX: Track rating for consistency
         usedSlotIndices.add(i);
         topic.sessionsScheduled += 1;
+        topic.lastScheduledDateThisWeek = slot.startDate; // FIX: Track last scheduled date within week
         dayData.scheduledBlocks += 1;
         consecutiveBlocksPlaced += 1; // Track consecutive blocks
         lastPlacedIndex = i; // Track last placed index

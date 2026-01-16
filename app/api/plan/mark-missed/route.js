@@ -126,7 +126,7 @@ export async function POST(req) {
         }
       });
 
-    // Try rescheduling: same-day first, then next-week
+    // Try rescheduling: same-day first, then rest of current week
     try {
       const blockDate = new Date(block.scheduled_at);
       
@@ -157,23 +157,52 @@ export async function POST(req) {
       );
 
       if (sameDaySlot) {
-        // Reschedule to same-day buffer slot
-        const { error: rescheduleError } = await supabaseAdmin
+        // Create a new rescheduled block and mark the old one as 'rescheduled'
+        console.log(`📝 Rescheduling block ${blockId}: ${block.scheduled_at} → ${sameDaySlot.toISOString()}`);
+        
+        // Step 1: Create new block at the new time
+        const { data: newBlock, error: createError } = await supabaseAdmin
+          .from('blocks')
+          .insert({
+            user_id: userId,
+            topic_id: block.topic_id,
+            scheduled_at: sameDaySlot.toISOString(),
+            duration_minutes: block.duration_minutes || 30,
+            status: 'scheduled',
+            ai_rationale: block.ai_rationale,
+            session_number: block.session_number,
+            session_total: block.session_total,
+            rerating_score: block.rerating_score
+          })
+          .select()
+          .single();
+        
+        if (createError) {
+          console.error('❌ Failed to create rescheduled block:', createError);
+          throw new Error('Failed to create rescheduled block');
+        }
+        
+        // Step 2: Mark old block as 'rescheduled' and store reference to new block
+        const { error: updateError } = await supabaseAdmin
           .from('blocks')
           .update({
-            scheduled_at: sameDaySlot.toISOString(),
-            status: 'scheduled',
-            completed_at: null
+            status: 'rescheduled',
+            ai_rationale: `Rescheduled to ${sameDaySlot.toISOString()} (Block ID: ${newBlock.id})`
           })
           .eq('id', blockId)
           .eq('user_id', userId);
         
-        if (rescheduleError) {
-          console.error('Failed to reschedule block:', rescheduleError);
-          throw new Error('Failed to reschedule block');
+        if (updateError) {
+          console.error('❌ Failed to mark old block as rescheduled:', updateError);
+          // Don't throw - the new block is created, this is just a status update
         }
         
-        console.log(`✅ Block ${blockId} rescheduled to same-day slot: ${sameDaySlot.toISOString()}`);
+        console.log(`✅ Block rescheduled successfully:`, {
+          oldBlockId: blockId,
+          newBlockId: newBlock.id,
+          oldTime: block.scheduled_at,
+          newTime: sameDaySlot.toISOString()
+        });
         
         return NextResponse.json({ 
           success: true,
@@ -181,62 +210,93 @@ export async function POST(req) {
           rescheduledTo: 'same-day',
           newScheduledAt: sameDaySlot.toISOString(),
           newTime: sameDaySlot.toISOString(),
-          blockId,
+          oldBlockId: blockId,
+          newBlockId: newBlock.id,
           message: 'Block rescheduled to later today.'
         });
       }
       
-      // STEP 2: No same-day slot - try next week
-      console.log(`❌ No same-day slot found, trying next week...`);
+      // STEP 2: No same-day slot - try remaining days in current week
+      console.log(`❌ No same-day slot found, trying rest of current week...`);
       
-      const nextWeekResult = await findNextWeekBufferSlot(
+      const currentWeekResult = await findCurrentWeekBufferSlot(
         userId,
         blockDate,
         user,
         block.duration_minutes || 30
       );
 
-      if (nextWeekResult) {
-        // Reschedule to next-week buffer slot
-        const { error: rescheduleError } = await supabaseAdmin
+      if (currentWeekResult) {
+        // Create a new rescheduled block and mark the old one as 'rescheduled'
+        console.log(`📝 Rescheduling block ${blockId}: ${block.scheduled_at} → ${currentWeekResult.slot.toISOString()}`);
+        
+        // Step 1: Create new block at the new time
+        const { data: newBlock, error: createError } = await supabaseAdmin
+          .from('blocks')
+          .insert({
+            user_id: userId,
+            topic_id: block.topic_id,
+            scheduled_at: currentWeekResult.slot.toISOString(),
+            duration_minutes: block.duration_minutes || 30,
+            status: 'scheduled',
+            ai_rationale: block.ai_rationale,
+            session_number: block.session_number,
+            session_total: block.session_total,
+            rerating_score: block.rerating_score
+          })
+          .select()
+          .single();
+        
+        if (createError) {
+          console.error('❌ Failed to create rescheduled block:', createError);
+          throw new Error('Failed to create rescheduled block');
+        }
+        
+        // Step 2: Mark old block as 'rescheduled' and store reference to new block
+        const { error: updateError } = await supabaseAdmin
           .from('blocks')
           .update({
-            scheduled_at: nextWeekResult.slot.toISOString(),
-            status: 'scheduled',
-            completed_at: null
+            status: 'rescheduled',
+            ai_rationale: `Rescheduled to ${currentWeekResult.slot.toISOString()} (Block ID: ${newBlock.id})`
           })
           .eq('id', blockId)
           .eq('user_id', userId);
         
-        if (rescheduleError) {
-          console.error('Failed to reschedule block to next week:', rescheduleError);
-          throw new Error('Failed to reschedule block');
+        if (updateError) {
+          console.error('❌ Failed to mark old block as rescheduled:', updateError);
+          // Don't throw - the new block is created, this is just a status update
         }
         
-        console.log(`✅ Block ${blockId} rescheduled to next week: ${nextWeekResult.slot.toISOString()}`);
+        console.log(`✅ Block rescheduled successfully:`, {
+          oldBlockId: blockId,
+          newBlockId: newBlock.id,
+          oldTime: block.scheduled_at,
+          newTime: currentWeekResult.slot.toISOString()
+        });
         
         // Format day name for message
         const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-        const dayName = dayNames[nextWeekResult.slot.getUTCDay()];
+        const dayName = dayNames[currentWeekResult.slot.getUTCDay()];
         
         return NextResponse.json({ 
           success: true,
           rescheduled: true,
-          rescheduledTo: 'next-week',
-          newScheduledAt: nextWeekResult.slot.toISOString(),
-          newTime: nextWeekResult.slot.toISOString(),
-          blockId,
-          message: `Block rescheduled to ${dayName} next week.`
+          rescheduledTo: 'current-week',
+          newScheduledAt: currentWeekResult.slot.toISOString(),
+          newTime: currentWeekResult.slot.toISOString(),
+          oldBlockId: blockId,
+          newBlockId: newBlock.id,
+          message: `Block rescheduled to ${dayName} this week.`
         });
       }
       
-      // STEP 3: No slot found anywhere - block stays missed
-      console.log(`❌ No buffer slot found for block ${blockId} (same-day or next-week)`);
+      // STEP 3: No slot found in current week - block stays missed
+      console.log(`❌ No buffer slot found for block ${blockId} in current week`);
       
       return NextResponse.json({ 
         success: true,
         rescheduled: false,
-        message: 'No available slot this week or next. This topic will be rescheduled in your next weekly plan.'
+        message: 'No available slot remaining this week. This topic will be prioritized in your next weekly plan.'
       });
       
     } catch (rescheduleError) {
@@ -416,29 +476,6 @@ async function getExistingBlocksForDay(userId, dayDate, excludeBlockId = null) {
   return existingBlocks || [];
 }
 
-/**
- * Check if next week has any scheduled blocks
- */
-async function hasNextWeekBlocks(userId, nextWeekMonday) {
-  const weekEnd = new Date(nextWeekMonday);
-  weekEnd.setUTCDate(weekEnd.getUTCDate() + 7);
-
-  const { data: blocks, error } = await supabaseAdmin
-    .from('blocks')
-    .select('id')
-    .eq('user_id', userId)
-    .gte('scheduled_at', nextWeekMonday.toISOString())
-    .lt('scheduled_at', weekEnd.toISOString())
-    .in('status', ['scheduled', 'done'])
-    .limit(1);
-
-  if (error) {
-    console.error('Error checking next week blocks:', error);
-    return false;
-  }
-
-  return blocks && blocks.length > 0;
-}
 
 /**
  * CORE FUNCTION: Find a buffer slot for a specific day
@@ -502,31 +539,11 @@ function findBufferSlotForDay({
     return intervals.some(({ start, end }) => slotStart < end && slotEnd > start);
   }
 
-  // Check if adding a block at this slot would exceed max cluster size (3)
+  // Check if adding a block at this slot would exceed max cluster size
+  // For rescheduling missed blocks, we're more lenient to help recovery
   function wouldExceedMaxCluster(slotStart, slotEnd) {
-    const MAX_CLUSTER_SIZE = 3;
-    const CLUSTER_GAP_MINUTES = 30;
-    
-    // Get all blocks on this day including the proposed slot
-    const allBlocks = [
-      ...existingBlockTimes,
-      { start: slotStart, end: slotEnd }
-    ].sort((a, b) => a.start.getTime() - b.start.getTime());
-    
-    // Find clusters (consecutive blocks within 30 min gap)
-    let clusterSize = 1;
-    for (let i = 1; i < allBlocks.length; i++) {
-      const gap = (allBlocks[i].start.getTime() - allBlocks[i - 1].end.getTime()) / (1000 * 60);
-      if (gap <= CLUSTER_GAP_MINUTES) {
-        clusterSize++;
-        if (clusterSize > MAX_CLUSTER_SIZE) {
-          return true;
-        }
-      } else {
-        clusterSize = 1;
-      }
-    }
-    
+    // Don't enforce cluster limit for rescheduling - let users recover from missed blocks
+    // The original scheduling already enforced cluster limits
     return false;
   }
 
@@ -535,30 +552,41 @@ function findBufferSlotForDay({
   
   if (afterTime) {
     const afterTimeMinutes = afterTime.getUTCHours() * 60 + afterTime.getUTCMinutes();
-    // Start searching after the missed block ends (add duration to skip past it)
-    searchStartMinutes = Math.max(earliestMinutes, afterTimeMinutes + durationMinutes);
+    // Start searching from the next 30-minute slot after the missed block time
+    // Round up to next 30-min increment
+    const nextSlotMinutes = Math.ceil((afterTimeMinutes + 1) / 30) * 30;
+    searchStartMinutes = Math.max(earliestMinutes, nextSlotMinutes);
   }
 
   // Search for available slots (30-minute increments)
+  let slotsChecked = 0;
+  let slotsBlockedByExisting = 0;
+  let slotsBlockedByBlocked = 0;
+  
   for (let minutes = searchStartMinutes; minutes + durationMinutes <= latestMinutes; minutes += 30) {
     const slotStart = new Date(dayStart);
     slotStart.setUTCHours(Math.floor(minutes / 60), minutes % 60, 0, 0);
     const slotEnd = new Date(slotStart);
     slotEnd.setUTCMinutes(slotStart.getUTCMinutes() + durationMinutes);
+    
+    slotsChecked++;
 
     // Check 1: Overlaps with existing blocks?
     if (overlaps(slotStart, slotEnd, existingBlockTimes)) {
+      slotsBlockedByExisting++;
       continue;
     }
 
     // Check 2: Overlaps with blocked times?
     if (overlaps(slotStart, slotEnd, blockedTimes)) {
+      slotsBlockedByBlocked++;
       continue;
     }
 
     // Check 3: Would exceed max cluster size?
+    // (Disabled for rescheduling to allow recovery from missed blocks)
     if (wouldExceedMaxCluster(slotStart, slotEnd)) {
-      console.log(`   ⚠️ Slot ${slotStart.toISOString()} would exceed max cluster size (3)`);
+      console.log(`   ⚠️ Slot ${slotStart.toISOString()} would exceed max cluster size`);
       continue;
     }
 
@@ -567,9 +595,11 @@ function findBufferSlotForDay({
     return slotStart;
   }
 
-  // No slot found
+  // No slot found - log why
+  console.log(`   📊 Checked ${slotsChecked} slots: ${slotsBlockedByExisting} blocked by existing blocks, ${slotsBlockedByBlocked} blocked by unavailable times`);
   console.log(`   ❌ No valid slot found for ${dayStart.toISOString().split('T')[0]}`);
   return null;
+
 }
 
 /**
@@ -597,33 +627,43 @@ async function findSameDayBufferSlot(userId, blockDate, userPreferences, blockDu
 }
 
 /**
- * Find a buffer slot in next week for rescheduling
+ * Find a buffer slot in the remaining days of the current week
  * 
- * Only tries to reschedule if next week already has scheduled blocks.
- * Searches each day of next week (Mon-Sun) for an available buffer slot.
+ * Searches from the day after the missed block until the end of the current week (Sunday).
+ * Only searches future days, not past days.
  * 
  * @returns {Object|null} - { slot: Date, day: string } or null if no slot found
  */
-async function findNextWeekBufferSlot(userId, blockDate, userPreferences, blockDuration) {
-  // Get next week's Monday
-  const nextWeekMonday = getNextWeekMonday(blockDate);
+async function findCurrentWeekBufferSlot(userId, blockDate, userPreferences, blockDuration) {
+  // Get the current week's Monday (start of week)
+  const currentWeekMonday = getMonday(blockDate);
   
-  console.log(`📅 Checking next week starting ${nextWeekMonday.toISOString().split('T')[0]}...`);
+  // Calculate the end of the current week (Sunday at 23:59:59)
+  const weekEnd = new Date(currentWeekMonday);
+  weekEnd.setUTCDate(weekEnd.getUTCDate() + 6); // Sunday
+  weekEnd.setUTCHours(23, 59, 59, 999);
+  
+  console.log(`📅 Checking remaining days in current week (${currentWeekMonday.toISOString().split('T')[0]} to ${weekEnd.toISOString().split('T')[0]})...`);
 
-  // Check if next week has any scheduled blocks
-  const hasBlocks = await hasNextWeekBlocks(userId, nextWeekMonday);
+  // Start from the day after the missed block
+  const searchStartDate = new Date(blockDate);
+  searchStartDate.setUTCDate(searchStartDate.getUTCDate() + 1);
+  searchStartDate.setUTCHours(0, 0, 0, 0);
   
-  if (!hasBlocks) {
-    console.log(`   ℹ️ Next week has no scheduled blocks - skipping (will be handled by plan generation)`);
+  // If the next day is already past the week end, no days to search
+  if (searchStartDate > weekEnd) {
+    console.log(`   ℹ️ No remaining days in current week to search`);
     return null;
   }
-  
-  console.log(`   ✅ Next week has scheduled blocks - searching for buffer slots...`);
 
-  // Search each day of next week (Monday to Sunday)
-  for (let dayOffset = 0; dayOffset < 7; dayOffset++) {
-    const targetDay = new Date(nextWeekMonday);
-    targetDay.setUTCDate(nextWeekMonday.getUTCDate() + dayOffset);
+  // Calculate how many days to search (from tomorrow to end of week)
+  const daysToSearch = Math.ceil((weekEnd.getTime() - searchStartDate.getTime()) / (1000 * 60 * 60 * 24));
+  console.log(`   🔍 Searching ${daysToSearch} remaining day(s) in current week...`);
+
+  // Search each remaining day of the current week
+  for (let dayOffset = 0; dayOffset < daysToSearch; dayOffset++) {
+    const targetDay = new Date(searchStartDate);
+    targetDay.setUTCDate(searchStartDate.getUTCDate() + dayOffset);
 
     // Get existing blocks for this day
     const existingBlocks = await getExistingBlocksForDay(userId, targetDay);
@@ -638,17 +678,17 @@ async function findNextWeekBufferSlot(userId, blockDate, userPreferences, blockD
       existingBlocks,
       blockedTimes,
       blockDuration,
-      afterTime: null // Search from start of day
+      afterTime: null // Search from start of day for future days
     });
 
     if (slot) {
       const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
       const dayName = dayNames[slot.getUTCDay()];
-      console.log(`✅ Found next-week slot on ${dayName}: ${slot.toISOString()}`);
+      console.log(`✅ Found current-week slot on ${dayName}: ${slot.toISOString()}`);
       return { slot, day: dayName };
     }
   }
 
-  console.log(`❌ No buffer slot found in next week`);
+  console.log(`❌ No buffer slot found in remaining days of current week`);
   return null;
 }

@@ -53,7 +53,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           pass: process.env.RESEND_API_KEY,
         },
       },
-      from: config.resend.fromNoReply,
+      from: config.resend.fromAdmin,
     }),
     // Only add Google provider if credentials are configured
     ...(process.env.GOOGLE_ID && process.env.GOOGLE_SECRET && !process.env.GOOGLE_ID.includes('your_google')

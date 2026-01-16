@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useMemo, useRef, Suspense } from "rea
 import { useSession, signOut } from "next-auth/react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { toast } from "react-hot-toast";
 import config from "@/config";
 import BlockDetailModal from "@/components/BlockDetailModal";
@@ -17,8 +18,105 @@ function PlanPageContent() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState('today'); // Default to today, will be updated after blocks load
-  const [blocks, setBlocks] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  
+  // Initialize blocks and loading state from pre-loaded data if available
+  const [blocks, setBlocks] = useState(() => {
+    if (typeof window === 'undefined') return [];
+    const preloadedDataStr = sessionStorage.getItem('preloadedPlanData');
+    if (preloadedDataStr) {
+      try {
+        const preloadedData = JSON.parse(preloadedDataStr);
+        const today = new Date();
+        const day = today.getDay();
+        const diff = today.getDate() - day + (day === 0 ? -6 : 1);
+        const monday = new Date(today);
+        monday.setDate(diff);
+        monday.setHours(0, 0, 0, 0);
+        const weekStartStr = monday.toISOString().split('T')[0];
+        
+        if (preloadedData.weekStart === weekStartStr && preloadedData.blocks && preloadedData.blocks.length > 0) {
+          // Format blocks immediately in initial state
+          return preloadedData.blocks.map(block => {
+            let scheduled_at;
+            if (block.scheduled_at) {
+              scheduled_at = block.scheduled_at;
+            } else if (block.week_start && block.start_time) {
+              scheduled_at = new Date(`${block.week_start}T${block.start_time}:00`).toISOString();
+            } else {
+              scheduled_at = new Date().toISOString();
+            }
+            
+            return {
+              id: block.id,
+              scheduled_at,
+              duration_minutes: block.duration_minutes || (block.duration ? block.duration * 60 : 30),
+              status: block.status || 'scheduled',
+              ai_rationale: block.ai_rationale || `Priority: ${block.priority_score || 'N/A'} - ${block.topic_description || 'Focus on this topic to improve your understanding.'}`,
+              hierarchy: block.hierarchy || block.topics?.hierarchy || null,
+              topics: {
+                name: (block.topic_name || block.topics?.name || 'Topic').replace(/^['"]+/, '').trim() || 'Topic',
+                parent_topic_name: block.parent_topic_name || block.topics?.parent_topic_name || null,
+                level: block.confidence_rating || block.topics?.level,
+                specs: {
+                  subject: block.subject || block.topics?.specs?.subject || 'Subject',
+                  board: block.exam_board || block.topics?.specs?.board || 'Board'
+                }
+              },
+              topic_id: block.topic_id,
+              day: block.day,
+              priority_score: block.priority_score
+            };
+          }).filter(block => block !== null);
+        }
+      } catch (error) {
+        console.error('Error parsing pre-loaded data in initial state:', error);
+      }
+    }
+    return [];
+  });
+  
+  // Check for pre-loaded data immediately to avoid showing loading screen
+  const [isLoading, setIsLoading] = useState(() => {
+    if (typeof window === 'undefined') return true;
+    const preloadedDataStr = sessionStorage.getItem('preloadedPlanData');
+    if (preloadedDataStr) {
+      try {
+        const preloadedData = JSON.parse(preloadedDataStr);
+        const today = new Date();
+        const day = today.getDay();
+        const diff = today.getDate() - day + (day === 0 ? -6 : 1);
+        const monday = new Date(today);
+        monday.setDate(diff);
+        monday.setHours(0, 0, 0, 0);
+        const weekStartStr = monday.toISOString().split('T')[0];
+        // Only return false (no loading) if we have matching pre-loaded data
+        return !(preloadedData.weekStart === weekStartStr && preloadedData.blocks && preloadedData.blocks.length > 0);
+      } catch (error) {
+        return true;
+      }
+    }
+    return true; // Show loading if no pre-loaded data
+  });
+  
+  // Initialize blocked times from pre-loaded data if available
+  const [blockedTimeRanges, setBlockedTimeRanges] = useState(() => {
+    if (typeof window === 'undefined') return [];
+    const preloadedDataStr = sessionStorage.getItem('preloadedPlanData');
+    if (preloadedDataStr) {
+      try {
+        const preloadedData = JSON.parse(preloadedDataStr);
+        if (preloadedData.blockedTimes && Array.isArray(preloadedData.blockedTimes) && preloadedData.blockedTimes.length > 0) {
+          return preloadedData.blockedTimes.map(bt => ({
+            start_time: bt.start || bt.start_datetime,
+            end_time: bt.end || bt.end_datetime
+          }));
+        }
+      } catch (error) {
+        // Ignore errors
+      }
+    }
+    return [];
+  });
   const [isUpdating, setIsUpdating] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState(null);
   // Timer state storage: { [blockKey]: { running: boolean, phase: 'study'|'rest', endTime: number|null, pausedAt: number|null, remainingMs: number|null } }
@@ -33,7 +131,6 @@ function PlanPageContent() {
     monday.setHours(0, 0, 0, 0);
     return monday;
   });
-  const [blockedTimeRanges, setBlockedTimeRanges] = useState([]);
   const [showRescheduledModal, setShowRescheduledModal] = useState(false);
   const [rescheduledBlockInfo, setRescheduledBlockInfo] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -88,6 +185,23 @@ function PlanPageContent() {
     currentWeekStart.setHours(0, 0, 0, 0);
     return viewingWeekStart.getTime() < currentWeekStart.getTime();
   }, [weekStartDate, getCurrentWeekStart]);
+
+  // Helper function to check if a block is in a future week (compared to current week)
+  const isBlockInFutureWeek = useCallback((block) => {
+    if (!block || !block.scheduled_at) return false;
+    const currentWeekStart = getCurrentWeekStart();
+    const blockDate = new Date(block.scheduled_at);
+    
+    // Calculate the Monday of the week the block is in
+    const blockDay = blockDate.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+    const diff = blockDate.getDate() - blockDay + (blockDay === 0 ? -6 : 1);
+    const blockWeekStart = new Date(blockDate);
+    blockWeekStart.setDate(diff);
+    blockWeekStart.setHours(0, 0, 0, 0);
+    
+    currentWeekStart.setHours(0, 0, 0, 0);
+    return blockWeekStart.getTime() > currentWeekStart.getTime();
+  }, [getCurrentWeekStart]);
 
   // Format week label for display
   const getWeekLabel = useCallback(() => {
@@ -162,7 +276,10 @@ function PlanPageContent() {
   // Load blocks for a specific week
   const loadBlocksForWeek = useCallback(async (targetWeekStart = null) => {
     try {
-      setIsLoading(true);
+      // Only set loading if we don't already have blocks (from pre-loaded data)
+      if (blocks.length === 0) {
+        setIsLoading(true);
+      }
       
       // Use provided weekStart, or fall back to weekStartDate state
       const weekStart = targetWeekStart || weekStartDate;
@@ -177,6 +294,82 @@ function PlanPageContent() {
         today: new Date().toISOString().split('T')[0],
         todayDay: new Date().getDay() // 0=Sunday, 1=Monday, etc.
       });
+      
+      // Check for pre-loaded data from the generating page (only use if it matches the requested week)
+      const preloadedDataStr = sessionStorage.getItem('preloadedPlanData');
+      if (preloadedDataStr) {
+        try {
+          const preloadedData = JSON.parse(preloadedDataStr);
+          const preloadedWeekStart = preloadedData.weekStart;
+          
+          // Only use pre-loaded data if it matches the requested week
+          if (preloadedWeekStart === weekStartStr) {
+            console.log('✅ Using pre-loaded plan data:', {
+              blocksCount: preloadedData.blocks?.length || 0,
+              blockedTimesCount: preloadedData.blockedTimes?.length || 0
+            });
+            
+            // Format blocks to match the expected format
+            if (preloadedData.blocks && preloadedData.blocks.length > 0) {
+              const formattedBlocks = preloadedData.blocks.map(block => {
+                let scheduled_at;
+                if (block.scheduled_at) {
+                  scheduled_at = block.scheduled_at;
+                } else if (block.week_start && block.start_time) {
+                  scheduled_at = new Date(`${block.week_start}T${block.start_time}:00`).toISOString();
+                } else {
+                  console.warn('Block missing scheduled_at or week_start/start_time, using current time:', block.id);
+                  scheduled_at = new Date().toISOString();
+                }
+                
+                return {
+                  id: block.id,
+                  scheduled_at,
+                  duration_minutes: block.duration_minutes || (block.duration ? block.duration * 60 : 30),
+                  status: block.status || 'scheduled',
+                  ai_rationale: block.ai_rationale || `Priority: ${block.priority_score || 'N/A'} - ${block.topic_description || 'Focus on this topic to improve your understanding.'}`,
+                  hierarchy: block.hierarchy || block.topics?.hierarchy || null,
+                  topics: {
+                    name: cleanTopicName(block.topic_name || block.topics?.name || 'Topic'),
+                    parent_topic_name: block.parent_topic_name || block.topics?.parent_topic_name || null,
+                    level: block.confidence_rating || block.topics?.level,
+                    specs: {
+                      subject: block.subject || block.topics?.specs?.subject || 'Subject',
+                      board: block.exam_board || block.topics?.specs?.board || 'Board'
+                    }
+                  },
+                  topic_id: block.topic_id,
+                  day: block.day,
+                  priority_score: block.priority_score
+                };
+              }).filter(block => block !== null);
+
+              setBlocks(formattedBlocks);
+              
+              // Set blocked times if available
+              if (preloadedData.blockedTimes && Array.isArray(preloadedData.blockedTimes) && preloadedData.blockedTimes.length > 0) {
+                const blockedTimes = preloadedData.blockedTimes.map(bt => ({
+                  start_time: bt.start || bt.start_datetime,
+                  end_time: bt.end || bt.end_datetime
+                }));
+                setBlockedTimeRanges(blockedTimes);
+              }
+              
+              // Clear pre-loaded data after using it (only use once)
+              sessionStorage.removeItem('preloadedPlanData');
+              
+              setIsLoading(false);
+              return; // Exit early - we have the data we need
+            }
+          } else {
+            console.log('⚠️ Pre-loaded data is for a different week, fetching fresh data');
+            sessionStorage.removeItem('preloadedPlanData');
+          }
+        } catch (error) {
+          console.error('Error parsing pre-loaded data:', error);
+          sessionStorage.removeItem('preloadedPlanData');
+        }
+      }
       
       // Step 1: First try to GET existing blocks from the database
       try {
@@ -503,6 +696,20 @@ function PlanPageContent() {
     return loadBlocksForWeek();
   }, [loadBlocksForWeek]);
 
+  // Clear pre-loaded data on mount if we already used it (from initial state)
+  useEffect(() => {
+    const preloadedDataStr = sessionStorage.getItem('preloadedPlanData');
+    if (preloadedDataStr && blocks.length > 0) {
+      // We already have blocks from initial state, so clear the pre-loaded data
+      sessionStorage.removeItem('preloadedPlanData');
+      console.log('✅ Cleared pre-loaded data after using it in initial state');
+    } else if (!preloadedDataStr && blocks.length === 0) {
+      // No pre-loaded data and no blocks, so load normally
+      loadBlocks();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run on mount
+
   // Listen for availability updates to refresh blocks
   useEffect(() => {
     const handleAvailabilityUpdate = (event) => {
@@ -592,14 +799,10 @@ function PlanPageContent() {
     if (!devMode && status === 'unauthenticated') {
       console.log('⚠️ Not authenticated, redirecting to sign in');
       router.push('/api/auth/signin');
-    } else {
-      // In dev mode or if authenticated, load blocks
-      if (devMode) {
-        console.log('🔧 Dev mode: Loading blocks without authentication');
-      }
-      loadBlocks();
     }
-  }, [status, router, loadBlocks]);
+    // Note: loadBlocks is now called in the pre-loaded data check useEffect above
+    // Only call it here if we don't have pre-loaded data (which is handled above)
+  }, [status, router]);
 
   // Ensure weekStartDate is synced to current week on mount
   useEffect(() => {
@@ -686,13 +889,15 @@ function PlanPageContent() {
     const currentStatus = block.status || 'scheduled';
     const newStatus = forceStatus ?? (currentStatus === action ? 'scheduled' : action);
     
-    // Optimistic update
+    // Optimistic update (skip for missed blocks as they might be rescheduled)
     const previousBlocks = [...blocks];
-    setBlocks(prev => prev.map(b => 
-      deriveBlockKey(b) === blockKey 
-        ? { ...b, status: newStatus }
-        : b
-    ));
+    if (newStatus !== 'missed') {
+      setBlocks(prev => prev.map(b => 
+        deriveBlockKey(b) === blockKey 
+          ? { ...b, status: newStatus }
+          : b
+      ));
+    }
     
     try {
       // Determine which API endpoint to call
@@ -718,10 +923,67 @@ function PlanPageContent() {
         throw new Error(`Failed to update block status (${response.status})`);
       }
       
-      // If block was missed and rescheduled, show modal
+      // If block was missed, handle rescheduling
       if (newStatus === 'missed') {
         const responseData = await response.json();
+        
+        console.log('🔄 Block marked as missed, response:', responseData);
+        
         if (responseData.rescheduled && responseData.newTime) {
+          // Real-time update: Mark old block as rescheduled and add new block
+          console.log('✅ Block was rescheduled, updating in real-time...');
+          console.log('📦 Reschedule info:', {
+            oldBlockId: responseData.oldBlockId,
+            newBlockId: responseData.newBlockId,
+            newTime: responseData.newTime
+          });
+          
+          // Fetch the new block from the database
+          const newBlockResponse = await fetch(`/api/plan/generate?blockId=${responseData.newBlockId}`);
+          if (newBlockResponse.ok) {
+            const newBlockData = await newBlockResponse.json();
+            if (newBlockData.success && newBlockData.blocks && newBlockData.blocks.length > 0) {
+              const newBlock = newBlockData.blocks[0];
+              
+              console.log('📦 New block fetched:', {
+                id: newBlock.id,
+                scheduledAt: newBlock.scheduled_at,
+                status: newBlock.status
+              });
+              
+              // Update blocks state: mark old block as rescheduled and add new block
+              setBlocks(prev => {
+                console.log('🔄 Updating blocks state:', {
+                  totalBlocks: prev.length,
+                  oldBlockId: block.id,
+                  newBlockId: newBlock.id
+                });
+                
+                // Update old block status to 'rescheduled' and add new block
+                const updated = prev.map(b => 
+                  b.id === block.id 
+                    ? { ...b, status: 'rescheduled', rescheduledTo: responseData.newTime }
+                    : b
+                );
+                
+                // Add the new block
+                const withNewBlock = [...updated, newBlock].sort((a, b) => 
+                  new Date(a.scheduled_at) - new Date(b.scheduled_at)
+                );
+                
+                console.log('✅ After update:', {
+                  totalBlocks: withNewBlock.length,
+                  addedNewBlock: true
+                });
+                
+                return withNewBlock;
+              });
+              
+              console.log('✅ Blocks updated in real-time');
+            }
+          }
+          
+          // Show modal
           setRescheduledBlockInfo({
             topicName: cleanTopicName(
               block.topics?.name || 'Topic',
@@ -731,9 +993,14 @@ function PlanPageContent() {
             newTime: responseData.newTime
           });
           setShowRescheduledModal(true);
-          
-          // Reload blocks to get the updated schedule
-          await loadBlocks();
+        } else {
+          // Block was not rescheduled - just update status to missed
+          console.log('ℹ️ Block was not rescheduled, marking as missed');
+          setBlocks(prev => prev.map(b => 
+            b.id === block.id 
+              ? { ...b, status: 'missed' }
+              : b
+          ));
         }
       }
     } catch (error) {
@@ -1002,7 +1269,12 @@ function PlanPageContent() {
     return () => clearInterval(interval);
   }, []);
 
-  const deriveBlockKey = useCallback((block) => block?.id || block?.scheduled_at, []);
+  // Use only block.id for keys to ensure consistency when blocks are rescheduled
+  // If a block doesn't have an id, use scheduled_at as fallback (should rarely happen)
+  const deriveBlockKey = useCallback((block) => {
+    if (!block) return null;
+    return block.id || `fallback-${block.scheduled_at}`;
+  }, []);
 
   const handleSelectSlot = useCallback((slot) => {
     setSelectedSlot(slot);
@@ -1037,39 +1309,46 @@ function PlanPageContent() {
 
   return (
     <div className="min-h-screen bg-base-100">
-      {/* Fixed Menu Button - Top Left */}
-      <button
-        type="button"
-        className="fixed top-6 left-6 z-50 inline-flex items-center justify-center rounded-md p-4 bg-base-200 hover:bg-base-300 transition shadow-lg"
-        onClick={() => setSidebarOpen(true)}
-        aria-label="Open menu"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          className="w-8 h-8 text-base-content"
+      {/* Fixed Menu Button and Logo - Top Left */}
+      <div className="fixed top-6 left-6 z-50 flex items-center gap-3">
+        <button
+          type="button"
+          className="inline-flex items-center justify-center rounded-md p-4 bg-base-200 hover:bg-base-300 transition shadow-[0_10px_15px_-3px_rgba(0,102,255,0.1),0_4px_6px_-2px_rgba(0,102,255,0.05)]"
+          onClick={() => setSidebarOpen(true)}
+          aria-label="Open menu"
         >
-          <rect x="1" y="11" width="22" height="2" fill="currentColor" strokeWidth="0"></rect>
-          <rect x="1" y="4" width="22" height="2" strokeWidth="0" fill="currentColor"></rect>
-          <rect x="1" y="18" width="22" height="2" strokeWidth="0" fill="currentColor"></rect>
-        </svg>
-      </button>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            className="w-8 h-8 text-base-content"
+          >
+            <rect x="1" y="11" width="22" height="2" fill="currentColor" strokeWidth="0"></rect>
+            <rect x="1" y="4" width="22" height="2" strokeWidth="0" fill="currentColor"></rect>
+            <rect x="1" y="18" width="22" height="2" strokeWidth="0" fill="currentColor"></rect>
+          </svg>
+        </button>
+        
+        {/* Logo */}
+        <div className="bg-base-200 rounded-md px-3 py-2 shadow-[0_10px_15px_-3px_rgba(0,102,255,0.1),0_4px_6px_-2px_rgba(0,102,255,0.05)]">
+          <Image
+            src="/reviseme_logo.png"
+            alt="ReviseMe"
+            width={200}
+            height={46}
+            priority
+            className="h-9 w-auto"
+          />
+        </div>
+      </div>
 
       {/* Header */}
-      <div className="bg-base-200">
+      <div className="bg-white">
         <div className="max-w-7xl mx-auto px-4 py-6 pl-28">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-brand-dark">Your Revision Plan</h1>
-              <div className="flex items-center gap-3 mt-1">
-                <p className="text-brand-medium">
-                  {activeTab === 'today' && !isViewingNextWeek && !isViewingPreviousWeek 
-                    ? 'Today\'s schedule' 
-                    : `${getWeekLabel()} - ${getWeekDateRange()}`}
-                </p>
-              </div>
+              {/* Header text removed */}
             </div>
             
             <div className="flex items-center gap-2">
@@ -1114,7 +1393,7 @@ function PlanPageContent() {
                     onClick={() => setActiveTab('today')}
                     className={`h-8 px-3 rounded-md text-sm font-medium transition-all flex items-center justify-center ${
                       activeTab === 'today' 
-                        ? 'bg-[#0066FF] text-white shadow-sm' 
+                        ? 'bg-[#0066FF] text-white shadow-[0_1px_2px_0_rgba(0,102,255,0.15)]' 
                         : 'text-base-content hover:bg-base-200'
                     }`}
                   >
@@ -1124,10 +1403,10 @@ function PlanPageContent() {
                 <button
                   onClick={() => setActiveTab('week')}
                   className={`h-8 px-3 rounded-md text-sm font-medium transition-all flex items-center justify-center ${
-                    activeTab === 'week' 
-                      ? 'bg-[#0066FF] text-white shadow-sm' 
-                      : 'text-base-content hover:bg-base-200'
-                  }`}
+                      activeTab === 'week' 
+                        ? 'bg-[#0066FF] text-white shadow-[0_1px_2px_0_rgba(0,102,255,0.15)]' 
+                        : 'text-base-content hover:bg-base-200'
+                    }`}
                 >
                   Week
                 </button>
@@ -1163,9 +1442,12 @@ function PlanPageContent() {
                   href="/plan"
                   className={`block px-4 py-3 rounded-lg transition ${
                     pathname === '/plan' 
-                      ? 'bg-primary text-primary-content' 
+                      ? 'text-white' 
                       : 'hover:bg-base-300'
                   }`}
+                  style={pathname === '/plan' ? {
+                    backgroundColor: config.colors.brand.primary
+                  } : {}}
                   onClick={() => setSidebarOpen(false)}
                 >
                   <div className="flex items-center gap-3">
@@ -1179,9 +1461,12 @@ function PlanPageContent() {
                   href="/settings/rerate-topics"
                   className={`block px-4 py-3 rounded-lg transition ${
                     pathname === '/settings/rerate-topics' 
-                      ? 'bg-primary text-primary-content' 
+                      ? 'text-white' 
                       : 'hover:bg-base-300'
                   }`}
+                  style={pathname === '/settings/rerate-topics' ? {
+                    backgroundColor: config.colors.brand.primary
+                  } : {}}
                   onClick={() => setSidebarOpen(false)}
                 >
                   <div className="flex items-center gap-3">
@@ -1195,9 +1480,12 @@ function PlanPageContent() {
                   href="/insights"
                   className={`block px-4 py-3 rounded-lg transition ${
                     pathname === '/insights' 
-                      ? 'bg-primary text-primary-content' 
+                      ? 'text-white' 
                       : 'hover:bg-base-300'
                   }`}
+                  style={pathname === '/insights' ? {
+                    backgroundColor: config.colors.brand.primary
+                  } : {}}
                   onClick={() => setSidebarOpen(false)}
                 >
                   <div className="flex items-center gap-3">
@@ -1211,9 +1499,12 @@ function PlanPageContent() {
                   href="/settings/availability"
                   className={`block px-4 py-3 rounded-lg transition ${
                     pathname === '/settings/availability' 
-                      ? 'bg-primary text-primary-content' 
+                      ? 'text-white' 
                       : 'hover:bg-base-300'
                   }`}
+                  style={pathname === '/settings/availability' ? {
+                    backgroundColor: config.colors.brand.primary
+                  } : {}}
                   onClick={() => setSidebarOpen(false)}
                 >
                   <div className="flex items-center gap-3">
@@ -1331,6 +1622,7 @@ function PlanPageContent() {
               const blockDate = new Date(block.scheduled_at);
               return blockDate < earliest ? blockDate : earliest;
             }, new Date(blocks[0].scheduled_at)) : null}
+            isViewingNextWeek={isViewingNextWeek}
           />
         )}
       </div>
@@ -1347,6 +1639,7 @@ function PlanPageContent() {
         getBlockKey={deriveBlockKey}
         timerState={activeBlock ? getTimerState(deriveBlockKey(activeBlock)) : null}
         onTimerStateChange={activeBlockTimerStateChange}
+        isFutureWeek={activeBlock ? isBlockInFutureWeek(activeBlock) : false}
       />
       
       <SupportModal isOpen={supportModalOpen} onClose={() => setSupportModalOpen(false)} />
@@ -1360,39 +1653,79 @@ function PlanPageContent() {
       />
 
       {showRescheduledModal && rescheduledBlockInfo && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div 
-            className="fixed inset-0 bg-black/50"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm"
             onClick={() => setShowRescheduledModal(false)}
           />
-          <div className="relative bg-base-100 rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
-            <h2 className="text-2xl font-bold mb-4 text-brand-dark">Block Rescheduled</h2>
-            <p className="mb-4">
-              The missed block has been rescheduled to:
-            </p>
-            <div className="bg-base-200 rounded-lg p-4 mb-4">
-              <p className="font-semibold">{rescheduledBlockInfo.topicName}</p>
-              <p className="text-sm text-brand-medium">
-                {new Date(rescheduledBlockInfo.newTime).toLocaleDateString([], {
-                  weekday: 'long',
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}
-              </p>
-              <p className="text-sm text-brand-medium">
-                {new Date(rescheduledBlockInfo.newTime).toLocaleTimeString([], {
-                  hour: '2-digit',
-                  minute: '2-digit'
-                })}
+          <div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 overflow-hidden animate-in fade-in zoom-in duration-200">
+            {/* Header with gradient background */}
+            <div className="bg-gradient-to-br from-[#0066FF] to-[#0052CC] px-6 py-8 text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full mb-4">
+                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <h2 className="text-2xl font-bold text-white mb-2">Block Rescheduled</h2>
+              <p className="text-white/90 text-sm">
+                Don't worry, we've found a new time for you
               </p>
             </div>
-            <button
-              onClick={() => setShowRescheduledModal(false)}
-              className="btn btn-primary w-full"
-            >
-              Got it
-            </button>
+
+            {/* Content */}
+            <div className="px-6 py-6">
+              <p className="text-[#003D99] text-center mb-4">
+                Your missed block has been rescheduled to:
+              </p>
+              
+              {/* Rescheduled block info card */}
+              <div className="bg-gradient-to-br from-[#E5F0FF] to-[#F0F7FF] rounded-xl p-5 mb-6 border-2 border-[#0066FF]/20 shadow-sm">
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 w-10 h-10 bg-[#0066FF] rounded-lg flex items-center justify-center">
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-bold text-[#001433] text-lg mb-2">{rescheduledBlockInfo.topicName}</p>
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2 text-[#003D99]">
+                        <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <p className="text-sm font-medium">
+                          {new Date(rescheduledBlockInfo.newTime).toLocaleDateString([], {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2 text-[#003D99]">
+                        <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <p className="text-sm font-medium">
+                          {new Date(rescheduledBlockInfo.newTime).toLocaleTimeString([], {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action button */}
+              <button
+                onClick={() => setShowRescheduledModal(false)}
+                className="w-full bg-gradient-to-r from-[#0066FF] to-[#0052CC] hover:from-[#0052CC] hover:to-[#0041A3] text-white font-semibold py-3.5 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]"
+              >
+                Got it, thanks!
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -1414,7 +1747,8 @@ function TodayView({ blocks, onSelectBlock, getSubjectColor, getSubjectBgColor, 
   return (
     <div className="space-y-4">
       {blocks.map((block, index) => {
-        const blockKey = getBlockKey(block) || `${block.id || 'block'}-${index}`;
+        // Use block.id as the primary key for consistency
+        const blockKey = block.id || `fallback-${block.scheduled_at || index}`;
         const subject = block.topics?.specs?.subject || block.subject || 'Subject';
         
         // Get hierarchy from block data (preferred) or build from legacy fields
@@ -1441,31 +1775,42 @@ function TodayView({ blocks, onSelectBlock, getSubjectColor, getSubjectBgColor, 
           minute: '2-digit'
         });
         const isCompleted = block.status === 'done';
+        const isRescheduled = block.status === 'rescheduled';
+        
+        // Format rescheduled time if available
+        const rescheduledTime = isRescheduled && block.rescheduledTo 
+          ? new Date(block.rescheduledTo).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          : null;
+        const rescheduledDay = isRescheduled && block.rescheduledTo
+          ? new Date(block.rescheduledTo).toLocaleDateString([], { weekday: 'short' })
+          : null;
         
         return (
           <div
             key={blockKey}
-            role="button"
-            tabIndex={0}
-            onClick={() => onSelectBlock({ kind: 'study', key: blockKey })}
+            role={isRescheduled ? "presentation" : "button"}
+            tabIndex={isRescheduled ? -1 : 0}
+            onClick={() => !isRescheduled && onSelectBlock({ kind: 'study', key: blockKey })}
             onKeyDown={(event) => {
-              if (event.key === 'Enter' || event.key === ' ') {
+              if (!isRescheduled && (event.key === 'Enter' || event.key === ' ')) {
                 event.preventDefault();
                 onSelectBlock({ kind: 'study', key: blockKey });
               }
             }}
-            className={`card shadow-sm border cursor-pointer transition focus:outline-none focus:ring-2 focus:ring-primary ${
-              isCompleted 
-                ? 'opacity-70 border-success/50 bg-success/5' 
-                : 'hover:shadow-md'
+            className={`card shadow-sm border transition focus:outline-none focus:ring-2 focus:ring-primary ${
+              isRescheduled
+                ? 'opacity-50 bg-gray-100 cursor-default'
+                : isCompleted 
+                  ? 'opacity-70 border-success/50 bg-success/5 cursor-pointer' 
+                  : 'hover:shadow-md cursor-pointer'
             }`}
             style={{
-              backgroundColor: isCompleted ? undefined : getSubjectBgColor(subject),
-              borderColor: isCompleted ? undefined : getSubjectBorderColor(subject)
+              backgroundColor: isRescheduled ? '#f3f4f6' : (isCompleted ? undefined : getSubjectBgColor(subject)),
+              borderColor: isRescheduled ? '#d1d5db' : (isCompleted ? undefined : getSubjectBorderColor(subject))
             }}
           >
             <div className="card-body">
-              <div className="flex items-start justify-between gap-4">
+              <div className={`flex items-start justify-between gap-4 ${isRescheduled ? 'line-through' : ''}`}>
                 <div className="flex items-start gap-3">
                   <div
                     className="w-3 h-3 rounded-full mt-2"
@@ -1484,8 +1829,15 @@ function TodayView({ blocks, onSelectBlock, getSubjectColor, getSubjectBgColor, 
                     )}
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-sm font-semibold">{formattedTime}</p>
+                <div className="text-right flex-shrink-0">
+                  <div className="flex items-center justify-end gap-1.5">
+                    <p className="text-sm font-semibold">{formattedTime}</p>
+                    {isRescheduled && (
+                      <span className="badge badge-info badge-sm text-[10px] leading-none py-0.5 px-1.5" title={`Rescheduled to ${rescheduledDay} ${rescheduledTime}`}>
+                        ↪️
+                      </span>
+                    )}
+                  </div>
                   <p className="text-xs text-base-content/70">{block.duration_minutes} minutes</p>
                 </div>
               </div>
@@ -1514,7 +1866,8 @@ function WeekView({
   isLoading,
   cleanTopicName,
   timePreferences,
-  planStartDate // The date when the user's plan started (first scheduled block)
+  planStartDate, // The date when the user's plan started (first scheduled block)
+  isViewingNextWeek // Whether we're viewing a future week (blocks should not be interactive)
 }) {
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   
@@ -1555,7 +1908,7 @@ function WeekView({
   // Build time labels for each day type (weekday vs weekend)
   const getTimeLabelsForDay = useCallback((dayIndex) => {
     if (!effectiveTimePreferences) {
-      return { startTime: null, endTime: null };
+      return []; // Return empty array instead of object
     }
     
     const isWeekend = dayIndex >= 5; // Saturday (5) or Sunday (6)
@@ -1568,6 +1921,11 @@ function WeekView({
     } else {
       startTime = effectiveTimePreferences.weekdayEarliest;
       endTime = effectiveTimePreferences.weekdayLatest;
+    }
+    
+    // If times are not available, return empty array
+    if (!startTime || !endTime) {
+      return [];
     }
     
     const [startHour, startMin] = startTime.split(':').map(Number);
@@ -1588,16 +1946,23 @@ function WeekView({
     }
     
     return labels;
-  }, [timePreferences]);
+  }, [effectiveTimePreferences]);
   
   // Get all unique time labels (union of weekday and weekend times)
   const allTimeLabels = useMemo(() => {
     const weekdayLabels = getTimeLabelsForDay(0); // Monday
     const weekendLabels = getTimeLabelsForDay(5); // Saturday
+    
+    // Ensure both are arrays before spreading
+    const weekdayArray = Array.isArray(weekdayLabels) ? weekdayLabels : [];
+    const weekendArray = Array.isArray(weekendLabels) ? weekendLabels : [];
+    
     const allMinutes = new Set();
     
-    [...weekdayLabels, ...weekendLabels].forEach(label => {
-      allMinutes.add(label.minutes);
+    [...weekdayArray, ...weekendArray].forEach(label => {
+      if (label && typeof label === 'object' && 'minutes' in label) {
+        allMinutes.add(label.minutes);
+      }
     });
     
     return Array.from(allMinutes)
@@ -1799,7 +2164,7 @@ function WeekView({
   return (
     <div className="w-full overflow-hidden">
       <div className="w-full">
-        <table className="table-fixed w-full border-separate" style={{ borderSpacing: '2px', tableLayout: 'fixed' }}>
+        <table className="table-fixed w-full border-separate" style={{ borderSpacing: '2px 2px', tableLayout: 'fixed' }}>
           <colgroup>
             <col className="w-[70px]" />
             {days.map(() => (
@@ -1808,8 +2173,8 @@ function WeekView({
           </colgroup>
           <thead>
             <tr>
-              <th className="sticky left-0 z-10 bg-white border-t border-l border-b border-[#0066FF]/0 px-2 py-3 text-base font-semibold text-center w-[70px] rounded-lg text-[#0047B3]" style={{ fontFamily: '"DM Sans", sans-serif' }}>
-                Time
+              <th className="sticky left-0 z-10 bg-transparent border-t border-l border-b border-transparent px-2 py-1 text-base font-semibold text-center w-[70px] rounded-lg" style={{ fontFamily: '"DM Sans", sans-serif' }}>
+                {/* Time label removed for cleaner look */}
               </th>
               {days.map((day, dayIndex) => {
                 const dayDate = new Date(baseDate);
@@ -1829,21 +2194,32 @@ function WeekView({
                 return (
                   <th 
                     key={day} 
-                    className={`border-b border-[#0066FF]/0 px-2 py-2 text-sm font-semibold text-center rounded-lg ${
-                      dayIndex === 0 && !isToday ? 'border-l border-[#0066FF]/0' : ''
-                    } ${
-                      isToday 
-                        ? 'bg-white border-t-2 border-t-[#0066FF]/80 border-l-2 border-l-[#0066FF]/80 border-r-2 border-r-[#0066FF]/80 border-b-2 border-b-[#0066FF]/80 text-[#0066FF]' 
-                        : 'border-t border-[#0066FF]/0 bg-white text-[#0047B3]'
-                    } ${
-                      isBeforePlanStart 
-                        ? 'bg-white text-[#0047B3]' // Before plan started - use darker blue like other days
-                        : ''
+                    className={`border-b border-transparent px-2 py-1 text-sm font-semibold text-center rounded-lg border-t border-transparent ${
+                      isToday ? '' : 'bg-transparent'
                     }`}
+                    style={isToday ? { 
+                      backgroundColor: `${config.colors.brand.backgroundLight}40`
+                    } : {}}
                   >
-                    <div className={`truncate ${isToday ? 'text-lg font-extrabold' : ''}`}>{day.substring(0, 3)}</div>
-                    <div className={`truncate ${isBeforePlanStart ? 'text-xs font-normal text-[#0047B3]/80' : isToday ? 'text-base font-bold text-[#0066FF]/90' : 'text-xs font-normal text-[#0047B3]/80'}`}>
-                      {dayDate.toLocaleDateString([], { month: 'short', day: 'numeric' })}
+                    <div className={`truncate ${isToday ? 'text-base font-semibold' : ''}`} style={isToday ? { color: config.colors.brand.primary } : { color: config.colors.brand.textMedium }}>
+                      {day.substring(0, 3)}
+                    </div>
+                    <div className="flex items-center justify-center" style={{ marginTop: '2px' }}>
+                      {isToday ? (
+                        <span 
+                          className="inline-flex items-center justify-center w-8 h-8 rounded-full text-white text-base font-semibold"
+                          style={{ 
+                            backgroundColor: config.colors.brand.primary,
+                            boxShadow: '0 2px 4px rgba(0, 102, 255, 0.3)'
+                          }}
+                        >
+                          {dayDate.getDate()}
+                        </span>
+                      ) : (
+                        <span className="text-sm font-normal" style={{ color: config.colors.brand.textMedium }}>
+                          {dayDate.getDate()}
+                        </span>
+                      )}
                     </div>
                   </th>
                 );
@@ -1854,9 +2230,20 @@ function WeekView({
             {allTimeLabels.map((label, timeIndex) => {
               const isLastRow = timeIndex === allTimeLabels.length - 1;
               return (
-                <tr key={label.time} className="h-[70px]">
-                  <td className={`sticky left-0 z-10 bg-white border-l border-r border-[#0066FF]/0 px-2 py-2 text-base text-center h-[70px] rounded-lg text-[#0047B3]`} style={{ fontFamily: '"DM Sans", sans-serif' }}>
-                    {label.time}
+                <tr key={label.time} className="h-[70px] relative">
+                  <td className="sticky left-0 z-10 bg-white border-l border-r border-transparent px-2 py-2 h-[70px] rounded-lg relative" style={{ fontFamily: '"DM Sans", sans-serif', borderRight: '1px solid #e5e7eb' }}>
+                    {/* Time label positioned at the top border (in the gap between blocks) */}
+                    <div 
+                      className="absolute -top-[10px] left-0 right-0 flex items-center justify-center z-20 bg-white px-1"
+                      style={{ 
+                        color: config.colors.brand.textMedium,
+                        fontSize: '0.875rem',
+                        fontWeight: 500,
+                        lineHeight: '1.25rem'
+                      }}
+                    >
+                      {label.time}
+                    </div>
                   </td>
                   {days.map((day, dayIndex) => {
                     const dayDate = new Date(baseDate);
@@ -1884,11 +2271,7 @@ function WeekView({
                     return (
                       <td
                         key={`${day}-${timeIndex}`}
-                        className={`px-1 py-1 h-[70px] w-[calc((100%-70px)/7)] rounded-lg ${
-                          isToday && isLastRow ? 'border-l-2 border-l-[#0066FF]/80 border-r-2 border-r-[#0066FF]/80 border-b-2 border-b-[#0066FF]/80' : ''
-                        } ${
-                          isToday && !isLastRow ? 'border-l-2 border-l-[#0066FF]/80 border-r-2 border-r-[#0066FF]/80' : ''
-                        } ${
+                        className={`px-1 py-1 h-[70px] w-[calc((100%-70px)/7)] rounded-xl ${
                           isBeforePlanStart
                             ? 'bg-base-300/50' // Day before plan started - greyed out
                             : isUserBlocked
@@ -1896,12 +2279,44 @@ function WeekView({
                               : isOutsideWindow && !isToday
                                 ? 'bg-warning/10' // Outside study window - yellow/orange tint (different from red), but not on today
                               : isToday 
-                                ? 'bg-transparent' // Today's column - transparent background (except blocked cells)
+                                ? '' // Today's column - will use inline style for background
                                 : isOutsideWindow
                                   ? 'bg-warning/10'
                                   : 'bg-base-100'
                         }`}
+                        style={{
+                          ...(isToday ? {
+                            borderBottom: isLastRow ? `2px solid ${config.colors.brand.primary}` : 'none',
+                            backgroundColor: `${config.colors.brand.backgroundLight}20`,
+                            position: 'relative'
+                          } : {})
+                        }}
                       >
+                      {/* Smooth rounded border for highlighted day */}
+                      {isToday && (
+                        <div 
+                          style={{
+                            position: 'absolute',
+                            left: '-2px',
+                            right: '-2px',
+                            top: timeIndex === 0 ? '-2px' : 0,
+                            bottom: isLastRow ? '-2px' : 0,
+                            borderLeft: `2px solid ${config.colors.brand.primary}`,
+                            borderRight: `2px solid ${config.colors.brand.primary}`,
+                            borderTop: timeIndex === 0 ? `2px solid ${config.colors.brand.primary}` : 'none',
+                            borderBottom: isLastRow ? `2px solid ${config.colors.brand.primary}` : 'none',
+                            borderRadius: timeIndex === 0 && isLastRow 
+                              ? '0.75rem' 
+                              : timeIndex === 0 
+                                ? '0.75rem 0.75rem 0 0'
+                                : isLastRow 
+                                  ? '0 0 0.75rem 0.75rem'
+                                  : '0',
+                            pointerEvents: 'none',
+                            zIndex: 1
+                          }}
+                        />
+                      )}
                       {isUserBlocked && slotBlocks.length === 0 ? (
                         // Show red rounded rectangle for blocked slots - matching study block size
                         <div 
@@ -1932,7 +2347,8 @@ function WeekView({
                         (() => {
                           // Only show the first block if multiple blocks exist in the same slot
                           const block = slotBlocks[0];
-                          const blockKey = getBlockKey(block) || `${block.id || 'block'}-0`;
+                          // Use block.id as the primary key for consistency
+                          const blockKey = block.id || `fallback-${block.scheduled_at || 'unknown'}`;
                           const subject = block.topics?.specs?.subject || block.subject || 'Subject';
                           
                           // Get hierarchy from block data (preferred) or build from legacy fields
@@ -1950,40 +2366,45 @@ function WeekView({
                           );
                           const isDone = block.status === 'done';
                           const isMissed = block.status === 'missed';
+                          const isRescheduled = block.status === 'rescheduled';
+                          
+                          const isFutureWeek = isViewingNextWeek;
                           
                           return (
                             <div
                               key={blockKey}
-                              role={isBeforePlanStart ? "presentation" : "button"}
-                              tabIndex={isBeforePlanStart ? -1 : 0}
+                              role={isBeforePlanStart || isRescheduled || isFutureWeek ? "presentation" : "button"}
+                              tabIndex={isBeforePlanStart || isRescheduled || isFutureWeek ? -1 : 0}
                               onClick={() => {
-                                if (isBeforePlanStart) return;
+                                if (isBeforePlanStart || isRescheduled || isFutureWeek) return;
                                 onSelectBlock({ kind: 'study', key: blockKey });
                               }}
                               onKeyDown={(event) => {
-                                if (isBeforePlanStart) return;
+                                if (isBeforePlanStart || isRescheduled || isFutureWeek) return;
                                 if (event.key === 'Enter' || event.key === ' ') {
                                   event.preventDefault();
                                   onSelectBlock({ kind: 'study', key: blockKey });
                                 }
                               }}
                               className={`p-1.5 rounded-lg text-xs transition h-full w-full ${
-                                isBeforePlanStart
-                                  ? 'cursor-default opacity-60'
-                                  : isDone 
-                                    ? 'opacity-60 border border-success/50 bg-success/10 cursor-pointer' 
-                                    : isMissed
-                                      ? 'border border-error/50 bg-error/10 cursor-pointer'
-                                      : 'cursor-pointer hover:opacity-80'
+                                isRescheduled
+                                  ? 'cursor-default opacity-50 border border-gray-300 bg-gray-100'
+                                  : isBeforePlanStart
+                                    ? 'cursor-default opacity-60'
+                                    : isDone 
+                                      ? 'opacity-60 border border-success/50 bg-success/10 cursor-pointer' 
+                                      : isMissed
+                                        ? 'border border-error/50 bg-error/10 cursor-pointer'
+                                        : 'cursor-pointer hover:opacity-80'
                               }`}
-                              style={!isDone && !isMissed && !isBeforePlanStart ? {
+                              style={!isDone && !isMissed && !isBeforePlanStart && !isRescheduled ? {
                                 backgroundColor: getSubjectBgColor(subject),
                                 borderColor: getSubjectBorderColor(subject),
                                 borderWidth: '1px',
                                 borderStyle: 'solid'
                               } : undefined}
                             >
-                              <div className="flex items-center gap-1 mb-1">
+                              <div className={`flex items-center gap-1 mb-1 ${isRescheduled ? 'line-through' : ''}`}>
                                 <div
                                   className="w-2 h-2 rounded-full flex-shrink-0"
                                   style={{ backgroundColor: getSubjectColor(subject) }}
@@ -1993,13 +2414,20 @@ function WeekView({
                                   {getStatusIcon(block.status)}
                                 </span>
                               </div>
-                              <p className="font-medium truncate text-xs leading-tight mb-1">{topicName}</p>
-                              <p className="text-xs text-base-content/70">
-                                {new Date(block.scheduled_at).toLocaleTimeString([], { 
-                                  hour: '2-digit', 
-                                  minute: '2-digit' 
-                                })}
-                              </p>
+                              <p className={`font-medium truncate text-xs leading-tight mb-1 ${isRescheduled ? 'line-through' : ''}`}>{topicName}</p>
+                              <div className={`flex items-center gap-1 ${isRescheduled ? 'line-through' : ''}`}>
+                                <p className="text-xs text-base-content/70">
+                                  {new Date(block.scheduled_at).toLocaleTimeString([], { 
+                                    hour: '2-digit', 
+                                    minute: '2-digit' 
+                                  })}
+                                </p>
+                                {isRescheduled && (
+                                  <span className="badge badge-info badge-xs text-[9px] leading-none py-0 px-1" title={`Rescheduled to ${new Date(block.rescheduledTo).toLocaleDateString([], { weekday: 'short' })} ${new Date(block.rescheduledTo).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}>
+                                    ↪️
+                                  </span>
+                                )}
+                              </div>
                             </div>
                           );
                         })()

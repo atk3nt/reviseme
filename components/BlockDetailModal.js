@@ -7,6 +7,39 @@ import toast from "react-hot-toast";
 const STUDY_DURATION_MS = 25 * 60 * 1000; // 25 minutes
 const REST_DURATION_MS = 5 * 60 * 1000; // 5 minutes
 
+// Add keyframe animations
+if (typeof window !== 'undefined') {
+  const styleSheet = document.createElement("style");
+  styleSheet.textContent = `
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+    
+    @keyframes modalPopIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.85) translateY(20px);
+      }
+      60% {
+        transform: scale(1.02) translateY(-5px);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+  `;
+  if (!document.head.querySelector('[data-modal-animations]')) {
+    styleSheet.setAttribute('data-modal-animations', 'true');
+    document.head.appendChild(styleSheet);
+  }
+}
+
 export default function BlockDetailModal({
   selection,
   block,
@@ -18,7 +51,8 @@ export default function BlockDetailModal({
   getSubjectIcon,
   getBlockKey,
   timerState,
-  onTimerStateChange
+  onTimerStateChange,
+  isFutureWeek = false // Whether the block is in a future week (actions should be disabled)
 }) {
   const [displayTime, setDisplayTime] = useState("25:00");
   const [isOpen, setIsOpen] = useState(false);
@@ -233,9 +267,10 @@ export default function BlockDetailModal({
     }
   }, [block, onBlockAction, getBlockKey]);
 
+
   // Handle mark as done - show re-rating ONLY for low confidence topics on final session
   const handleMarkDone = useCallback(() => {
-    if (!block) return;
+    if (!block || isFutureWeek) return;
     
     const blockKey = getBlockKey(block);
     
@@ -251,7 +286,7 @@ export default function BlockDetailModal({
       onBlockAction(blockKey, 'done');
       onClose();
     }
-  }, [block, isLowConfidenceTopic, isFinalSession, onBlockAction, onClose, getBlockKey]);
+  }, [block, isLowConfidenceTopic, isFinalSession, onBlockAction, onClose, getBlockKey, isFutureWeek]);
 
   if (!isOpen || !block) return null;
 
@@ -300,16 +335,22 @@ export default function BlockDetailModal({
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         {/* Backdrop */}
         <div 
-          className="fixed inset-0 bg-black/60 backdrop-blur-md"
+          className="fixed inset-0 bg-black/60 backdrop-blur-md transition-opacity duration-300 ease-out"
+          style={{
+            animation: 'fadeIn 0.3s ease-out'
+          }}
           onClick={onClose}
         />
         
         {/* Modal - Full screen gradient background */}
-        <div className="relative rounded-3xl shadow-2xl max-w-3xl w-full max-h-[95vh] overflow-hidden flex flex-col" 
+        <div 
+          className="relative rounded-3xl shadow-2xl max-w-3xl w-full max-h-[95vh] overflow-hidden flex flex-col" 
           style={{
             background: isStudyPhase 
               ? 'linear-gradient(135deg, #001433 0%, #003D99 40%, #0066FF 70%, #0052CC 100%)'
-              : 'linear-gradient(135deg, #0066FF 0%, #3B9AE1 50%, #5DADE2 100%)'
+              : 'linear-gradient(135deg, #0066FF 0%, #3B9AE1 50%, #5DADE2 100%)',
+            animation: 'modalPopIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
+            transformOrigin: 'center'
           }}>
           
           {/* Header - Minimalist with close button */}
@@ -507,7 +548,11 @@ export default function BlockDetailModal({
                   {/* RE-RATE TOPIC BUTTON */}
                   {isLowConfidenceTopic && isFinalSession && (
                     <button
-                      onClick={() => setShowReRating(true)}
+                      onClick={() => {
+                        if (isFutureWeek) return;
+                        setShowReRating(true);
+                      }}
+                      disabled={isFutureWeek}
                       className="btn flex-1 gap-2 rounded-full px-4 py-2.5 text-white bg-white/20 hover:bg-white/30 backdrop-blur-md border-white/30 text-sm"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -519,6 +564,7 @@ export default function BlockDetailModal({
                   
                   <button
                     onClick={() => {
+                      if (isFutureWeek) return;
                       if (!confirmMissed) {
                         setConfirmMissed(true);
                       } else {
@@ -531,7 +577,7 @@ export default function BlockDetailModal({
                         ? 'bg-red-500/80 hover:bg-red-500 text-white' 
                         : 'bg-white/10 hover:bg-white/20 text-white/90 backdrop-blur-md border-white/20'
                     }`}
-                    disabled={block.status === 'missed' || block.status === 'done'}
+                    disabled={block.status === 'missed' || block.status === 'done' || isFutureWeek}
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -540,6 +586,7 @@ export default function BlockDetailModal({
                   </button>
                   <button
                     onClick={handleMarkDone}
+                    disabled={isFutureWeek}
                     className={`btn flex-1 gap-2 rounded-full px-4 py-2.5 text-sm ${
                       block.status === 'done' 
                         ? 'bg-white/20 hover:bg-white/30 text-white backdrop-blur-md border-white/30' 

@@ -68,7 +68,7 @@ export async function GET(req) {
     while (hasMore) {
       const { data: blocksData, error: blocksError } = await supabaseAdmin
         .from('blocks')
-        .select('status, completed_at')
+        .select('id, status, completed_at')
         .eq('user_id', userId)
         .range(page * pageSize, (page + 1) * pageSize - 1)
         .order('created_at', { ascending: false });
@@ -180,11 +180,15 @@ export async function GET(req) {
       : 0;
     
     // Get average confidence from user_stats view
-    const { data: statsData } = await supabaseAdmin
+    const { data: statsData, error: statsError } = await supabaseAdmin
       .from('user_stats')
       .select('avg_confidence')
       .eq('user_id', userId)
-      .single();
+      .maybeSingle();
+    
+    if (statsError && statsError.code !== 'PGRST116') {
+      console.error('Error fetching user_stats:', statsError);
+    }
     
     const avgConfidence = statsData?.avg_confidence || 0;
     

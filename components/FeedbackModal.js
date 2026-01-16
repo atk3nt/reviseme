@@ -3,6 +3,39 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 
+// Add keyframe animations
+if (typeof window !== 'undefined') {
+  const styleSheet = document.createElement("style");
+  styleSheet.textContent = `
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+    
+    @keyframes modalPopIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.85) translateY(20px);
+      }
+      60% {
+        transform: scale(1.02) translateY(-5px);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+  `;
+  if (!document.head.querySelector('[data-modal-animations]')) {
+    styleSheet.setAttribute('data-modal-animations', 'true');
+    document.head.appendChild(styleSheet);
+  }
+}
+
 export default function FeedbackModal({ isOpen, onClose }) {
   const [selectedType, setSelectedType] = useState(null);
   const [message, setMessage] = useState("");
@@ -64,8 +97,21 @@ export default function FeedbackModal({ isOpen, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={onClose}>
-      <div className="bg-base-200 rounded-lg p-8 w-full max-w-3xl mx-4 relative" onClick={(e) => e.stopPropagation()}>
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 transition-opacity duration-300 ease-out" 
+      style={{
+        animation: 'fadeIn 0.3s ease-out'
+      }}
+      onClick={onClose}
+    >
+      <div 
+        className="bg-base-200 rounded-lg p-8 w-full max-w-3xl mx-4 relative" 
+        style={{
+          animation: 'modalPopIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
+          transformOrigin: 'center'
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header with back button, title, and close button */}
         <div className="flex items-center justify-between mb-8">
           {selectedType ? (

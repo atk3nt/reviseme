@@ -118,6 +118,29 @@ export async function POST(req) {
 
     console.log('✅ Rating saved successfully:', { topicId, rating, userId });
 
+    // Log re-rating event for ratings 1-5 (valid reratings)
+    // This ensures rerated topics are tracked and can be prioritized in next week's plan
+    if (rating >= 1 && rating <= 5) {
+      const { error: logError } = await supabaseAdmin
+        .from('logs')
+        .insert({
+          user_id: userId,
+          event_type: 'topic_rerated',
+          event_data: {
+            topic_id: topicId,
+            rerating_score: rating,
+            source: 'manual_rerate' // Distinguish from modal rerating
+          }
+        });
+
+      if (logError) {
+        console.error('📝 Failed to log re-rating event:', logError);
+        // Don't fail the request - the rating was saved successfully
+      } else {
+        console.log('📝 Successfully logged re-rating event for topic:', topicId, 'with rating:', rating);
+      }
+    }
+
     return NextResponse.json({ 
       success: true, 
       message: "Rating saved",

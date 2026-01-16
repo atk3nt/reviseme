@@ -7,6 +7,7 @@ import { signOut } from "next-auth/react";
 import Link from "next/link";
 import SupportModal from "@/components/SupportModal";
 import FeedbackModal from "@/components/FeedbackModal";
+import config from "@/config";
 
 function SettingsPageContent() {
   const router = useRouter();
@@ -319,9 +320,12 @@ function SettingsPageContent() {
                   href="/plan"
                   className={`block px-4 py-3 rounded-lg transition ${
                     pathname === '/plan' 
-                      ? 'bg-primary text-primary-content' 
+                      ? 'text-white' 
                       : 'hover:bg-base-300'
                   }`}
+                  style={pathname === '/plan' ? {
+                    backgroundColor: config.colors.brand.primary
+                  } : {}}
                   onClick={() => setSidebarOpen(false)}
                 >
                   <div className="flex items-center gap-3">
@@ -335,9 +339,12 @@ function SettingsPageContent() {
                   href="/settings/rerate-topics"
                   className={`block px-4 py-3 rounded-lg transition ${
                     pathname === '/settings/rerate-topics' 
-                      ? 'bg-primary text-primary-content' 
+                      ? 'text-white' 
                       : 'hover:bg-base-300'
                   }`}
+                  style={pathname === '/settings/rerate-topics' ? {
+                    backgroundColor: config.colors.brand.primary
+                  } : {}}
                   onClick={() => setSidebarOpen(false)}
                 >
                   <div className="flex items-center gap-3">
@@ -351,9 +358,12 @@ function SettingsPageContent() {
                   href="/insights"
                   className={`block px-4 py-3 rounded-lg transition ${
                     pathname === '/insights' 
-                      ? 'bg-primary text-primary-content' 
+                      ? 'text-white' 
                       : 'hover:bg-base-300'
                   }`}
+                  style={pathname === '/insights' ? {
+                    backgroundColor: config.colors.brand.primary
+                  } : {}}
                   onClick={() => setSidebarOpen(false)}
                 >
                   <div className="flex items-center gap-3">
@@ -367,9 +377,12 @@ function SettingsPageContent() {
                   href="/settings/availability"
                   className={`block px-4 py-3 rounded-lg transition ${
                     pathname === '/settings/availability' 
-                      ? 'bg-primary text-primary-content' 
+                      ? 'text-white' 
                       : 'hover:bg-base-300'
                   }`}
+                  style={pathname === '/settings/availability' ? {
+                    backgroundColor: config.colors.brand.primary
+                  } : {}}
                   onClick={() => setSidebarOpen(false)}
                 >
                   <div className="flex items-center gap-3">

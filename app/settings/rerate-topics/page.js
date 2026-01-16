@@ -125,34 +125,43 @@ function RerateTopicsPageContent() {
         'computerscience': 'Computer Science'
       };
       
-      const allTopics = [];
-      
-      // Make separate API calls for each subject with its specific exam board
-      for (const subject of selectedSubjects) {
-        const board = subjectBoards[subject];
-        if (!board) continue;
-        
-        const dbSubject = subjectMapping[subject];
-        console.log(`Fetching topics for ${dbSubject} (${board.toUpperCase()})`);
-        
-        const response = await fetch('/api/topics', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            subjects: [dbSubject],
-            boards: [board]
-          })
+      // Create all fetch promises in parallel with individual error handling
+      const fetchPromises = selectedSubjects
+        .filter(subject => subjectBoards[subject])
+        .map(async (subject) => {
+          const board = subjectBoards[subject];
+          const dbSubject = subjectMapping[subject];
+          console.log(`Fetching topics for ${dbSubject} (${board.toUpperCase()})`);
+          
+          try {
+            const response = await fetch('/api/topics', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ 
+                subjects: [dbSubject],
+                boards: [board]
+              })
+            });
+            
+            if (!response.ok) {
+              console.error(`Failed to load topics for ${dbSubject}`);
+              return { topics: [], subject: dbSubject };
+            }
+            
+            const data = await response.json();
+            console.log(`Loaded ${data.topics.length} topics for ${dbSubject}`);
+            return { topics: data.topics || [], subject: dbSubject };
+          } catch (error) {
+            console.error(`Error loading topics for ${dbSubject}:`, error);
+            return { topics: [], subject: dbSubject };
+          }
         });
-        
-        if (!response.ok) {
-          console.error(`Failed to load topics for ${dbSubject}`);
-          continue;
-        }
-        
-        const data = await response.json();
-        console.log(`Loaded ${data.topics.length} topics for ${dbSubject}`);
-        allTopics.push(...data.topics);
-      }
+      
+      // Wait for all requests in parallel
+      const results = await Promise.all(fetchPromises);
+      
+      // Combine all topics
+      const allTopics = results.flatMap(result => result.topics);
       
       console.log(`Total topics loaded: ${allTopics.length}`);
       
@@ -426,9 +435,12 @@ function RerateTopicsPageContent() {
                   href="/plan"
                   className={`block px-4 py-3 rounded-lg transition ${
                     pathname === '/plan' 
-                      ? 'bg-primary text-primary-content' 
+                      ? 'text-white' 
                       : 'hover:bg-base-300'
                   }`}
+                  style={pathname === '/plan' ? {
+                    backgroundColor: config.colors.brand.primary
+                  } : {}}
                   onClick={() => setSidebarOpen(false)}
                 >
                   <div className="flex items-center gap-3">
@@ -442,9 +454,12 @@ function RerateTopicsPageContent() {
                   href="/settings/rerate-topics"
                   className={`block px-4 py-3 rounded-lg transition ${
                     pathname === '/settings/rerate-topics' 
-                      ? 'bg-primary text-primary-content' 
+                      ? 'text-white' 
                       : 'hover:bg-base-300'
                   }`}
+                  style={pathname === '/settings/rerate-topics' ? {
+                    backgroundColor: config.colors.brand.primary
+                  } : {}}
                   onClick={() => setSidebarOpen(false)}
                 >
                   <div className="flex items-center gap-3">
@@ -458,9 +473,12 @@ function RerateTopicsPageContent() {
                   href="/insights"
                   className={`block px-4 py-3 rounded-lg transition ${
                     pathname === '/insights' 
-                      ? 'bg-primary text-primary-content' 
+                      ? 'text-white' 
                       : 'hover:bg-base-300'
                   }`}
+                  style={pathname === '/insights' ? {
+                    backgroundColor: config.colors.brand.primary
+                  } : {}}
                   onClick={() => setSidebarOpen(false)}
                 >
                   <div className="flex items-center gap-3">
@@ -474,9 +492,12 @@ function RerateTopicsPageContent() {
                   href="/settings/availability"
                   className={`block px-4 py-3 rounded-lg transition ${
                     pathname === '/settings/availability' 
-                      ? 'bg-primary text-primary-content' 
+                      ? 'text-white' 
                       : 'hover:bg-base-300'
                   }`}
+                  style={pathname === '/settings/availability' ? {
+                    backgroundColor: config.colors.brand.primary
+                  } : {}}
                   onClick={() => setSidebarOpen(false)}
                 >
                   <div className="flex items-center gap-3">

@@ -6,8 +6,9 @@ export async function POST(req) {
   try {
     const session = await auth();
     
-    // Dev mode: Allow bypassing authentication in development
-    const isDev = process.env.NODE_ENV === 'development';
+    // Dev mode: Allow bypassing authentication in development or prelaunch
+    // Check both NODE_ENV and allow prelaunch environment
+    const isDev = process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'prelaunch';
     let userId = session?.user?.id;
     
     if (!userId && isDev) {
@@ -19,39 +20,77 @@ export async function POST(req) {
         .from('users')
         .select('id, email, name')
         .eq('email', devEmail)
-        .single();
+        .maybeSingle(); // Use maybeSingle instead of single to avoid errors if not found
       
-      if (!devUser && fetchError?.code === 'PGRST116') {
+      if (!devUser && (!fetchError || fetchError.code === 'PGRST116')) {
         // User doesn't exist, create it
-        const { data: newUser, error: createError } = await supabaseAdmin
-          .from('users')
-          .insert({
-            email: devEmail,
-            name: 'Dev Test User',
-            email_verified: new Date().toISOString()
-          })
-          .select('id, email, name')
-          .single();
-        
-        if (createError) {
-          console.error('❌ Error creating dev user:', createError);
-          return NextResponse.json(
-            { 
-              error: "Failed to create dev user. Run 'npm run create-dev-user' to set up test user.",
-              details: createError.message 
-            },
-            { status: 500 }
-          );
+        try {
+          const { data: newUser, error: createError } = await supabaseAdmin
+            .from('users')
+            .insert({
+              email: devEmail,
+              name: 'Dev Test User',
+              email_verified: new Date().toISOString(),
+              has_completed_onboarding: false
+            })
+            .select('id, email, name')
+            .single();
+          
+          if (createError) {
+            console.error('❌ Error creating dev user:', createError);
+            // Try to fetch again in case it was created by another request
+            const { data: retryUser } = await supabaseAdmin
+              .from('users')
+              .select('id, email, name')
+              .eq('email', devEmail)
+              .maybeSingle();
+            
+            if (retryUser) {
+              devUser = retryUser;
+              console.log('✅ Dev mode: Found dev user after retry:', devUser.id);
+            } else {
+              return NextResponse.json(
+                { 
+                  error: "Failed to create dev user",
+                  details: createError.message,
+                  code: createError.code,
+                  hint: createError.hint || "Check database permissions and constraints"
+                },
+                { status: 500 }
+              );
+            }
+          } else {
+            devUser = newUser;
+            console.log('✅ Dev mode: Created test user:', devUser.id);
+          }
+        } catch (createErr) {
+          console.error('❌ Exception creating dev user:', createErr);
+          // Try to fetch existing user as fallback
+          const { data: fallbackUser } = await supabaseAdmin
+            .from('users')
+            .select('id, email, name')
+            .eq('email', devEmail)
+            .maybeSingle();
+          
+          if (fallbackUser) {
+            devUser = fallbackUser;
+            console.log('✅ Dev mode: Found dev user on fallback:', devUser.id);
+          } else {
+            return NextResponse.json(
+              { 
+                error: "Failed to create or find dev user",
+                details: createErr.message || createErr.toString()
+              },
+              { status: 500 }
+            );
+          }
         }
-        
-        devUser = newUser;
-        console.log('✅ Dev mode: Created test user:', devUser.id);
       } else if (devUser) {
         console.log('🔧 Dev mode: Using existing test user:', devUser.id);
-      } else if (fetchError) {
+      } else if (fetchError && fetchError.code !== 'PGRST116') {
         console.error('❌ Error fetching dev user:', fetchError);
         return NextResponse.json(
-          { error: "Failed to get dev user", details: fetchError.message },
+          { error: "Failed to get dev user", details: fetchError.message, code: fetchError.code },
           { status: 500 }
         );
       }

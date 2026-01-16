@@ -20,7 +20,7 @@ const config = {
         priceId:
           process.env.NODE_ENV === "development"
             ? "price_1Si3ZCAgE33YyUIxdlINuIXq"
-            : "price_live_exam_season_pass",
+            : "price_1Si3ZCAgE33YyUIxdlINuIXq",
         // REQUIRED - Name of the plan, displayed on the pricing page
         name: "Exam Season Pass",
         // A friendly description of the plan, displayed on the pricing page
@@ -52,10 +52,12 @@ const config = {
     // For production: verify your domain at https://resend.com/domains
     // Using friendly address (not "noreply") for better deliverability
     // TODO: Once mail.reviseme.co subdomain is verified in Resend, change to: hello@mail.reviseme.co
-    fromNoReply: `ReviseMe <hello@reviseme.co>`,
+    fromNoReply: `ReviseMe <noreply@reviseme.co>`,
     // REQUIRED — Email 'From' field to be used when sending other emails, like abandoned carts, updates etc..
     // TODO: Once mail.reviseme.co subdomain is verified in Resend, change to: hello@mail.reviseme.co
     fromAdmin: `ReviseMe <hello@reviseme.co>`,
+    // Personal welcome emails from Alex
+    fromAlex: `Alex from ReviseMe <alex@reviseme.co>`,
     // Email shown to customer if need support. Leave empty if not needed => if empty, set up Crisp above, otherwise you won't be able to offer customer support."
     supportEmail: "support@reviseme.co",
   },

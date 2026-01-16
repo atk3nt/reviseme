@@ -5,22 +5,25 @@
 /**
  * @param {Array<{id: string, title: string, subject: string, examBoard: string, orderIndex: number}>} topics
  * @param {{ [topicId: string]: number }} ratings
- * @param {Array<string>} missedTopicIds - Topic IDs that were missed/incomplete from previous weeks
- * @returns {Array<{id: string, title: string, subject: string, examBoard: string, orderIndex: number, rating: number, priorityIndex: number, isMissed: boolean}>}
+ * @param {Array<string>} missedTopicIds - Topic IDs that were missed/incomplete from previous weeks (same-week catch-up)
+ * @param {Array<string>} reratedTopicIds - Topic IDs that were rerated (prioritized within rating buckets)
+ * @returns {Array<{id: string, title: string, subject: string, examBoard: string, orderIndex: number, rating: number, priorityIndex: number, isMissed: boolean, isRerated: boolean}>}
  */
-export function prioritizeTopics(topics = [], ratings = {}, missedTopicIds = []) {
+export function prioritizeTopics(topics = [], ratings = {}, missedTopicIds = [], reratedTopicIds = []) {
   if (!Array.isArray(topics) || topics.length === 0) {
     return [];
   }
 
   const missedSet = new Set(missedTopicIds || []);
+  const reratedSet = new Set(reratedTopicIds || []);
 
   const withRatings = topics.map((topic, idx) => {
     const rating = ratings[topic.id] ?? 3;
     const orderIndex = topic.orderIndex ?? idx;
     const isMissed = missedSet.has(topic.id);
+    const isRerated = reratedSet.has(topic.id);
     const bucket =
-      isMissed ? 'missed' // New bucket for missed topics (highest priority)
+      isMissed ? 'missed' // Missed topics (highest priority - same-week catch-up)
         : rating <= 1 ? 'r1'
           : rating === 2 ? 'r2'
             : rating === 3 ? 'r3'
@@ -31,12 +34,13 @@ export function prioritizeTopics(topics = [], ratings = {}, missedTopicIds = [])
       rating,
       orderIndex,
       bucket,
-      isMissed
+      isMissed,
+      isRerated
     };
   });
 
   const buckets = {
-    missed: [], // Add missed bucket (highest priority)
+    missed: [], // Missed topics (highest priority - same-week catch-up)
     r1: [],
     r2: [],
     r3: [],
@@ -47,25 +51,33 @@ export function prioritizeTopics(topics = [], ratings = {}, missedTopicIds = [])
     buckets[topic.bucket].push(topic);
   });
 
+  // Sort each bucket: rerated topics first, then by orderIndex
   Object.values(buckets).forEach((list) => {
-    list.sort((a, b) => (a.orderIndex ?? 0) - (b.orderIndex ?? 0));
+    list.sort((a, b) => {
+      // Rerated topics come first within their bucket
+      if (a.isRerated && !b.isRerated) return -1;
+      if (!a.isRerated && b.isRerated) return 1;
+      // Then sort by curriculum order
+      return (a.orderIndex ?? 0) - (b.orderIndex ?? 0);
+    });
   });
 
   const totalTopics = withRatings.length;
 
   // Ratios are for TOPICS, but we think in terms of BLOCKS (study time)
   // Rating 1 = 3 sessions, Rating 2 = 2 sessions, Rating 3-5 = 1 session
-  // So 30% r1 topics × 3 sessions ≈ 50% of blocks
-  //    30% r2 topics × 2 sessions ≈ 33% of blocks
-  //    25% r3 topics × 1 session  ≈ 14% of blocks
-  //    15% exam topics × 1 session ≈ 5% of blocks
-  // Result: ~83% of study time on weak topics (Rating 1-2)
+  // Optimized to prioritize Rating 2-3 (closer to mastery) for faster path to exam practice
+  // So 25% r1 topics × 3 sessions ≈ 40% of blocks
+  //    35% r2 topics × 2 sessions ≈ 38% of blocks
+  //    30% r3 topics × 1 session  ≈ 16% of blocks
+  //    10% exam topics × 1 session ≈ 6% of blocks
+  // Result: ~78% of study time on weak topics (Rating 1-2), with more focus on Rating 2-3
   const ratioDefs = [
     { key: 'missed', percent: 1.0 }, // Missed topics get 100% priority (all of them first)
-    { key: 'r1', percent: 0.30 },    // 30% of topics → ~50% of blocks
-    { key: 'r2', percent: 0.30 },    // 30% of topics → ~33% of blocks
-    { key: 'r3', percent: 0.25 },    // 25% of topics → ~14% of blocks
-    { key: 'exam', percent: 0.15 }   // 15% of topics → ~5% of blocks
+    { key: 'r1', percent: 0.25 },    // 25% of topics → ~40% of blocks
+    { key: 'r2', percent: 0.35 },    // 35% of topics → ~38% of blocks
+    { key: 'r3', percent: 0.30 },    // 30% of topics → ~16% of blocks
+    { key: 'exam', percent: 0.10 }   // 10% of topics → ~6% of blocks
   ];
 
   const targets = {};

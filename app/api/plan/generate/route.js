@@ -43,7 +43,10 @@ async function resolveUserId() {
   const session = await auth();
   const userId = session?.user?.id;
 
-  if (userId || process.env.NODE_ENV !== 'development') {
+  // Allow dev user in development or prelaunch environments
+  const isDev = process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'prelaunch';
+  
+  if (userId || !isDev) {
     return userId;
   }
 
@@ -328,8 +331,9 @@ export async function POST(req) {
     weekEndDate.setDate(weekStartDate.getDate() + 7);
     
     // Check if target week is in the future - only allow from Saturday onwards
-    // DEV BYPASS: Skip this check in development mode
-    if (process.env.NODE_ENV !== 'development') {
+    // DEV BYPASS: Skip this check in development or prelaunch mode
+    const isDev = process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'prelaunch';
+    if (!isDev) {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const targetDate = new Date(targetWeekStart);
@@ -818,8 +822,10 @@ export async function POST(req) {
       console.log(`📋 Total missed blocks: ${missedBlocks.length}`);
     }
 
-    // Combine with re-rated topics (re-rated topics still get priority)
-    const allMissedTopicIds = [...new Set([...reratedTopicIds, ...missedTopicIdsFromDB])];
+    // IMPORTANT: Keep rerated topics separate from missed topics
+    // - Missed topics = same-week catch-up (rescheduled within current week)
+    // - Rerated topics = next week priorities (prioritized within their rating buckets)
+    // Do NOT combine them - they serve different purposes
 
     let plan;
     try {
@@ -833,7 +839,6 @@ export async function POST(req) {
         ongoingTopicsCount: Object.keys(ongoingTopics).length,
         reratedTopicsCount: reratedTopicIds.length,
         missedTopicsFromDBCount: missedTopicIdsFromDB.length,
-        totalMissedTopicsCount: allMissedTopicIds.length,
         targetWeekStart
       });
       
@@ -847,7 +852,8 @@ export async function POST(req) {
         studyBlockDuration,
         targetWeekStart,
         actualStartDate, // For partial weeks - skip days before this date
-        missedTopicIds: allMissedTopicIds, // Combined: re-rated topics + missed blocks from previous weeks
+        missedTopicIds: missedTopicIdsFromDB, // Only actual missed blocks (same-week catch-up)
+        reratedTopicIds, // Rerated topics (prioritized within rating buckets)
         ongoingTopics // Pass ongoing topics for gap day enforcement and session tracking
       });
       

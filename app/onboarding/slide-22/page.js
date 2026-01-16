@@ -9,13 +9,11 @@ import config from "@/config";
 export default function Slide22Page() {
   const router = useRouter();
   const { data: session, status } = useSession();
-  const [isLoading, setIsLoading] = useState(false);
   const [summary, setSummary] = useState({
     subjects: [],
     totalTopics: 0,
     totalHours: 0
   });
-  const [loadingStep, setLoadingStep] = useState("");
   const [isDev, setIsDev] = useState(false);
 
   // Set isDev only on client side to avoid hydration mismatch
@@ -219,10 +217,10 @@ export default function Slide22Page() {
     // Check if user is authenticated (skip in dev mode)
     if (!isDev && (status === 'unauthenticated' || !session?.user?.id)) {
       console.log('⚠️ Not authenticated and not in dev mode, redirecting to sign in');
-      // Redirect to sign-in, then come back to this page
+      // Redirect to sign-in, then come back to generating page
       const quizAnswers = JSON.stringify(sanitizeQuizAnswers(JSON.parse(localStorage.getItem('quizAnswers') || '{}')));
       sessionStorage.setItem('pendingOnboarding', quizAnswers);
-      router.push(`/api/auth/signin?callbackUrl=${encodeURIComponent('/onboarding/slide-22')}`);
+      router.push(`/api/auth/signin?callbackUrl=${encodeURIComponent('/plan/generating')}`);
       return;
     }
     
@@ -230,113 +228,8 @@ export default function Slide22Page() {
       console.log('🔧 Dev mode: Skipping authentication check, proceeding with plan generation');
     }
 
-    setIsLoading(true);
-    
-    try {
-      // Step 1: Save onboarding data to Supabase
-      setLoadingStep("Saving your preferences...");
-      
-      let quizAnswers = sanitizeQuizAnswers(JSON.parse(localStorage.getItem('quizAnswers') || '{}'));
-      
-      const saveResponse = await fetch('/api/onboarding/save', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          quizAnswers
-        }),
-      });
-
-      if (!saveResponse.ok) {
-        const errorData = await saveResponse.json().catch(() => ({ error: 'Unknown error' }));
-        console.error('Save response error:', {
-          status: saveResponse.status,
-          statusText: saveResponse.statusText,
-          errorData
-        });
-        throw new Error(errorData.error || `Failed to save data (${saveResponse.status})`);
-      }
-
-      // Step 2: Get quiz data from localStorage
-      quizAnswers = sanitizeQuizAnswers(JSON.parse(localStorage.getItem('quizAnswers') || '{}'));
-      const selectedSubjects = quizAnswers.selectedSubjects || [];
-      const subjectBoards = quizAnswers.subjectBoards || {};
-      const topicRatings = quizAnswers.topicRatings || {};
-      const timePreferences = quizAnswers.timePreferences || {
-        weekdayEarliest: '4:30',
-        weekdayLatest: '23:30',
-        useSameWeekendTimes: true
-      };
-      const blockedTimes = quizAnswers.blockedTimes || [];
-      
-      // Step 3: Calculate availability from time preferences
-      const availability = calculateAvailabilityFromPreferences(timePreferences, blockedTimes);
-      quizAnswers.weeklyAvailability = availability;
-      localStorage.setItem('quizAnswers', JSON.stringify(quizAnswers));
-      
-      // Step 4: Generate study plan
-      setLoadingStep("Analyzing your strengths...");
-      
-      const planResponse = await fetch('/api/plan/generate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          subjects: selectedSubjects,
-          ratings: quizAnswers.topicRatings || {},
-          topicStatus: quizAnswers.topicStatus || {},
-          availability: availability,
-          examDates: quizAnswers.examDates || {},
-          studyBlockDuration: 0.5 // 30 minutes per block
-        }),
-      });
-
-      if (!planResponse.ok) {
-        const errorData = await planResponse.json().catch(() => ({ error: 'Unknown error' }));
-        console.error('Plan generation response error:', {
-          status: planResponse.status,
-          statusText: planResponse.statusText,
-          errorData
-        });
-        const errorMsg = errorData.error || `Failed to generate plan (${planResponse.status})`;
-        throw new Error(errorMsg);
-      }
-
-      const planData = await planResponse.json();
-      console.log('✅ Generated plan:', planData);
-      
-      // Save data in the format the plan page expects (separate localStorage keys)
-      const finalQuizAnswers = sanitizeQuizAnswers(JSON.parse(localStorage.getItem('quizAnswers') || '{}'));
-      localStorage.setItem('selectedSubjects', JSON.stringify(
-        Object.fromEntries((finalQuizAnswers.selectedSubjects || []).map(sub => [sub, true]))
-      ));
-      localStorage.setItem('topicRatings', JSON.stringify(finalQuizAnswers.topicRatings || {}));
-      localStorage.setItem('topicStatus', JSON.stringify(finalQuizAnswers.topicStatus || {}));
-      localStorage.setItem('availability', JSON.stringify(finalQuizAnswers.weeklyAvailability || {}));
-      localStorage.setItem('examDates', JSON.stringify(finalQuizAnswers.examDates || {}));
-      
-      console.log('✅ Saved data to localStorage in plan page format');
-      
-      setLoadingStep("Plan generated successfully!");
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Navigate directly to plan page with week view
-      console.log('🚀 Navigating to /plan?view=week');
-      router.push("/plan?view=week");
-    } catch (error) {
-      console.error('Plan generation error:', error);
-      const errorMessage = error.message || 'Failed to generate plan. Please try again.';
-      console.error('Full error details:', {
-        message: error.message,
-        stack: error.stack,
-        name: error.name
-      });
-      alert(`Error: ${errorMessage}\n\nCheck the browser console for more details.`);
-      setIsLoading(false);
-      setLoadingStep("");
-    }
+    // Navigate to loading page which will handle the plan generation
+    router.push("/plan/generating");
   };
 
   // isDev is now a state variable set in useEffect above
@@ -417,15 +310,10 @@ export default function Slide22Page() {
         ) : null}
         <button
           onClick={handleGeneratePlan}
-          disabled={isLoading || (!isDev && status === 'loading')}
+          disabled={!isDev && status === 'loading'}
           className="bg-[#0066FF] text-white px-12 py-4 rounded-lg font-medium hover:bg-[#0052CC] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-lg"
         >
-          {isLoading ? (
-            <div className="flex items-center space-x-2">
-              <span className="loading loading-spinner loading-sm"></span>
-              <span>{loadingStep || "Generating..."}</span>
-            </div>
-          ) : (!isDev && status === 'loading') ? (
+          {(!isDev && status === 'loading') ? (
             "Checking authentication..."
           ) : (
             "Generate My Study Plan"

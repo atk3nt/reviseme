@@ -10,6 +10,39 @@ const RATING_OPTIONS = [
   { value: 5, label: "Mastered", description: "Review in ~2 weeks", color: "bg-green-600", nextSessions: 0 }
 ];
 
+// Add keyframe animations
+if (typeof window !== 'undefined') {
+  const styleSheet = document.createElement("style");
+  styleSheet.textContent = `
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+    
+    @keyframes modalPopIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.85) translateY(20px);
+      }
+      60% {
+        transform: scale(1.02) translateY(-5px);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+  `;
+  if (!document.head.querySelector('[data-modal-animations]')) {
+    styleSheet.setAttribute('data-modal-animations', 'true');
+    document.head.appendChild(styleSheet);
+  }
+}
+
 /**
  * ReRatingModal - Mandatory re-rating modal for topics with original rating 1-3
  * 
@@ -68,7 +101,10 @@ export default function ReRatingModal({ isOpen, block, onClose, onSubmit }) {
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
       {/* Backdrop */}
       <div 
-        className="fixed inset-0 bg-black/40 backdrop-blur-md"
+        className="fixed inset-0 bg-black/40 backdrop-blur-md transition-opacity duration-300 ease-out"
+        style={{
+          animation: 'fadeIn 0.3s ease-out'
+        }}
         onClick={onClose}
       />
       
@@ -76,7 +112,9 @@ export default function ReRatingModal({ isOpen, block, onClose, onSubmit }) {
       <div 
         className="relative rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col"
         style={{
-          background: 'linear-gradient(135deg, #001433 0%, #003D99 40%, #0066FF 70%, #0052CC 100%)'
+          background: 'linear-gradient(135deg, #001433 0%, #003D99 40%, #0066FF 70%, #0052CC 100%)',
+          animation: 'modalPopIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
+          transformOrigin: 'center'
         }}
         onClick={(e) => e.stopPropagation()}
       >
