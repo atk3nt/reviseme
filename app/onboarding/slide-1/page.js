@@ -43,6 +43,9 @@ export default function Slide1Page() {
     setEmailAddress(email);
     
     try {
+      // Unlock slide 2 so the magic link callback can access it
+      unlockSlide(2);
+      
       // Use EmailProvider which sends magic link
       const result = await signIn("email", {
         email,
@@ -69,6 +72,9 @@ export default function Slide1Page() {
     setError("");
     
     try {
+      // Unlock slide 2 so the OAuth callback can access it
+      unlockSlide(2);
+      
       const result = await signIn("google", {
         redirect: true,
         callbackUrl: "/onboarding/slide-2"
