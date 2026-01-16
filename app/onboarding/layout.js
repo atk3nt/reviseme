@@ -35,18 +35,64 @@ export default function OnboardingLayout({ children }) {
 
     const slideNumber = getSlideNumberFromPath(pathname);
     
-    // Only check access for actual slide pages
-    if (slideNumber !== null && !canAccessSlide(slideNumber)) {
+    // Debug logging
+    console.log('[ONBOARDING LAYOUT] Access check:', {
+      pathname,
+      slideNumber,
+      status,
+      canAccess: slideNumber ? canAccessSlide(slideNumber) : 'N/A'
+    });
+    
+    // Special case: Allow slide-2 if user is authenticated OR still loading session
+    // This handles the case where user clicks magic link in email and arrives at slide-2
+    // We allow access while loading to prevent premature redirects during auth callback
+    if (slideNumber === 2 && (status === 'authenticated' || status === 'loading')) {
+      console.log('[ONBOARDING LAYOUT] Allowing slide-2 access (auth callback)');
+      setIsCheckingAccess(false);
+      return;
+    }
+    
+    // Special case: Allow slide-18 if user has paid (hasAccess) OR if payment success URL
+    // This handles the case where user completes Stripe payment and returns to slide-18
+    // Allow access while session is loading to prevent premature redirects during webhook processing
+    if (slideNumber === 18) {
+      const hasAccess = session?.user?.hasAccess;
+      const isPaymentSuccess = typeof window !== 'undefined' && 
+        window.location.search.includes('payment=success');
+      
+      if (hasAccess || isPaymentSuccess || status === 'loading') {
+        console.log('[ONBOARDING LAYOUT] Allowing slide-18 access (payment callback)', {
+          hasAccess,
+          isPaymentSuccess,
+          status
+        });
+        setIsCheckingAccess(false);
+        return;
+      }
+    }
+    
+    // Special case: Allow slide-19 if user has paid (hasAccess) but hasn't completed onboarding
+    // This handles the case where plan page redirects users back to resume onboarding
+    // Users who have paid should be able to resume from topic rating even in new sessions
+    if (slideNumber === 19 && status === 'authenticated' && session?.user?.hasAccess) {
+      console.log('[ONBOARDING LAYOUT] Allowing slide-19 access (resume onboarding for paid user)');
+      setIsCheckingAccess(false);
+      return;
+    }
+    
+    // Only check access for actual slide pages after session is loaded
+    if (slideNumber !== null && status !== 'loading' && !canAccessSlide(slideNumber)) {
       // Redirect to the highest allowed slide
       const allowedPath = getHighestAllowedSlidePath();
       if (pathname !== allowedPath) {
+        console.log('[ONBOARDING LAYOUT] Redirecting to:', allowedPath);
         router.replace(allowedPath);
         return;
       }
     }
     
     setIsCheckingAccess(false);
-  }, [pathname, router, isDev]);
+  }, [pathname, router, isDev, status]);
 
   useEffect(() => {
     // Only redirect if user has paid AND completed onboarding

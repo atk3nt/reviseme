@@ -20,6 +20,10 @@ function Slide18Content() {
         window.location.hostname.includes('.local')
       )
     );
+    
+    // Unlock this slide when user arrives (important for payment callback)
+    // Also unlock if they have access (paid users should have access to all onboarding slides)
+    unlockSlide(18);
   }, []);
 
   useEffect(() => {

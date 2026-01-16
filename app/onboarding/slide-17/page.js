@@ -24,6 +24,9 @@ export default function Slide17Page() {
     setIsLoading(true);
     
     try {
+      // Unlock slide-18 before redirecting to payment (so return URL works)
+      unlockSlide(18);
+      
       // Use price ID from config (matches webhook expectations)
       const priceId = config.stripe.plans[0]?.priceId;
       

@@ -18,6 +18,9 @@ export default function Slide2Page() {
   ];
 
   useEffect(() => {
+    // Unlock this slide when user arrives (important for magic link/OAuth callbacks)
+    unlockSlide(2);
+    
     // Load existing answer if user goes back
     const savedAnswers = JSON.parse(localStorage.getItem('quizAnswers') || '{}');
     if (savedAnswers.q1) {

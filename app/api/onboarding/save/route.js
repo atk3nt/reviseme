@@ -141,6 +141,93 @@ export async function POST(req) {
       quizAnswers.weeklyAvailability
     );
 
+    // NEW: Validate minimum number of rated topics per subject (50%, minimum 5)
+    let hasMinimumRatings = false;
+    let validationError = null;
+    
+    if (hasRequiredData) {
+      const subjectMapping = {
+        'maths': 'Mathematics',
+        'psychology': 'Psychology',
+        'biology': 'Biology',
+        'chemistry': 'Chemistry',
+        'business': 'Business',
+        'sociology': 'Sociology',
+        'physics': 'Physics',
+        'economics': 'Economics',
+        'history': 'History',
+        'geography': 'Geography',
+        'computerscience': 'Computer Science'
+      };
+      
+      const MIN_TOPICS_ABSOLUTE = 5; // Minimum 5 topics per subject
+      const MIN_PERCENTAGE = 0.4; // 40% of topics per subject
+      const validationErrors = [];
+      
+      // Check each subject
+      for (const subjectId of quizAnswers.selectedSubjects || []) {
+        const board = quizAnswers.subjectBoards?.[subjectId];
+        if (!board) continue;
+        
+        const dbSubject = subjectMapping[subjectId];
+        
+        try {
+          // Fetch topics for this subject/board combination
+          const { data: allTopics, error: topicsError } = await supabaseAdmin
+            .from('topics')
+            .select(`
+              id,
+              level,
+              specs!inner(subject, exam_board)
+            `)
+            .eq('specs.subject', dbSubject)
+            .eq('specs.exam_board', board.toLowerCase())
+            .eq('level', 3); // Only level 3 topics are rated
+          
+          if (topicsError) {
+            console.error(`Failed to fetch topics for ${dbSubject}:`, topicsError);
+            continue;
+          }
+          
+          const totalTopics = (allTopics || []).length;
+          
+          // Count rated topics for this subject (0-5 are valid ratings, -2 and undefined are not)
+          const ratedTopics = (allTopics || []).filter(topic => {
+            const rating = quizAnswers.topicRatings?.[topic.id];
+            return rating !== undefined && rating !== null && rating !== -2;
+          }).length;
+          
+          // Calculate required: 40% of total, but minimum 5 topics
+          const minRequired = Math.max(MIN_TOPICS_ABSOLUTE, Math.ceil(totalTopics * MIN_PERCENTAGE));
+          
+          if (ratedTopics < minRequired) {
+            validationErrors.push({
+              subject: dbSubject,
+              board: board.toUpperCase(),
+              rated: ratedTopics,
+              total: totalTopics,
+              required: minRequired,
+              percentage: Math.round((ratedTopics / totalTopics) * 100)
+            });
+          }
+        } catch (error) {
+          console.error(`Error validating ${dbSubject}:`, error);
+        }
+      }
+      
+      if (validationErrors.length > 0) {
+        hasMinimumRatings = false;
+        const errorMessages = validationErrors.map(err => 
+          `${err.subject} (${err.board}): ${err.rated}/${err.total} topics rated (need ${err.required}, currently ${err.percentage}%)`
+        ).join('; ');
+        validationError = `Please rate more topics: ${errorMessages}. You need at least 40% of topics (minimum 5) per subject.`;
+      } else {
+        hasMinimumRatings = true;
+      }
+    }
+    
+    const canCompleteOnboarding = hasRequiredData && hasMinimumRatings;
+
     // Check if user was already completed before (to avoid sending duplicate welcome emails)
     let wasAlreadyCompleted = false;
     let userEmail = null;
@@ -160,10 +247,21 @@ export async function POST(req) {
       }
     }
 
+    // Return validation error if minimum ratings not met
+    if (hasRequiredData && !hasMinimumRatings && validationError) {
+      return NextResponse.json(
+        { 
+          error: validationError,
+          validationFailed: true
+        },
+        { status: 400 }
+      );
+    }
+
     // Update user record with onboarding data
     // Try to update, but if onboarding_data column doesn't exist, just update other fields
     const updateData = {
-      has_completed_onboarding: hasRequiredData
+      has_completed_onboarding: canCompleteOnboarding
     };
     
     // Only add onboarding_data if the column exists (will fail gracefully if it doesn't)

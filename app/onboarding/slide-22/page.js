@@ -204,6 +204,84 @@ export default function Slide22Page() {
     }
   }, [status]);
 
+  // Validate that user has rated at least 50% of topics per subject
+  const validateTopicRatings = async () => {
+    const savedAnswers = sanitizeQuizAnswers(JSON.parse(localStorage.getItem('quizAnswers') || '{}'));
+    const selectedSubjects = savedAnswers.selectedSubjects || [];
+    const subjectBoards = savedAnswers.subjectBoards || {};
+    const topicRatings = savedAnswers.topicRatings || {};
+    
+    const subjectMapping = {
+      'maths': 'Mathematics',
+      'psychology': 'Psychology',
+      'biology': 'Biology',
+      'chemistry': 'Chemistry',
+      'business': 'Business',
+      'sociology': 'Sociology',
+      'physics': 'Physics',
+      'economics': 'Economics',
+      'history': 'History',
+      'geography': 'Geography',
+      'computerscience': 'Computer Science'
+    };
+    
+    const validationErrors = [];
+    const MIN_TOPICS_ABSOLUTE = 5; // Minimum 5 topics per subject
+    const MIN_PERCENTAGE = 0.4; // 40% of topics per subject
+    
+    // Check each subject
+    for (const subjectId of selectedSubjects) {
+      const board = subjectBoards[subjectId];
+      if (!board) continue;
+      
+      const dbSubject = subjectMapping[subjectId];
+      
+      try {
+        const response = await fetch('/api/topics', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            subjects: [dbSubject],
+            boards: [board]
+          })
+        });
+        
+        if (!response.ok) {
+          console.error(`Failed to fetch topics for ${dbSubject}`);
+          continue;
+        }
+        
+        const data = await response.json();
+        const topics = data.topics || [];
+        const totalTopics = topics.length;
+        
+        // Count rated topics for this subject (0-5 are valid ratings, -2 and undefined are not)
+        const ratedTopics = topics.filter(topic => {
+          const rating = topicRatings[topic.id];
+          return rating !== undefined && rating !== null && rating !== -2;
+        }).length;
+        
+        // Calculate required: 40% of total, but minimum 5 topics
+        const minRequired = Math.max(MIN_TOPICS_ABSOLUTE, Math.ceil(totalTopics * MIN_PERCENTAGE));
+        
+        if (ratedTopics < minRequired) {
+          validationErrors.push({
+            subject: dbSubject,
+            board: board.toUpperCase(),
+            rated: ratedTopics,
+            total: totalTopics,
+            required: minRequired,
+            percentage: Math.round((ratedTopics / totalTopics) * 100)
+          });
+        }
+      } catch (error) {
+        console.error(`Error validating ${dbSubject}:`, error);
+      }
+    }
+    
+    return validationErrors;
+  };
+
   const handleGeneratePlan = async () => {
     // isDev is now a state variable set in useEffect
     
@@ -227,6 +305,26 @@ export default function Slide22Page() {
     
     if (isDev) {
       console.log('🔧 Dev mode: Skipping authentication check, proceeding with plan generation');
+    }
+
+    // Validate topic ratings (50% per subject, minimum 5 topics)
+    console.log('📊 Validating topic ratings...');
+    const validationErrors = await validateTopicRatings();
+    
+    if (validationErrors.length > 0) {
+      const errorMessages = validationErrors.map(err => 
+        `• ${err.subject} (${err.board}): ${err.rated}/${err.total} topics rated (need ${err.required}, currently ${err.percentage}%)`
+      ).join('\n');
+      
+      alert(
+        `Please rate more topics before generating your plan:\n\n${errorMessages}\n\n` +
+        `You need to rate at least 40% of topics (minimum 5) in each subject.\n\n` +
+        `Unrated topics are fine - they'll be marked as "not doing". ` +
+        `But you need to rate enough topics to show you've engaged with each subject.`
+      );
+      
+      router.push("/onboarding/slide-19");
+      return;
     }
 
     // Unlock the plan generation page (not a numbered slide, but allows access to /plan/generating)
@@ -292,6 +390,7 @@ export default function Slide22Page() {
             <div>
               <h3 className="text-sm font-medium text-gray-500 mb-2">Topics Rated</h3>
               <p className="text-2xl font-bold text-[#001433]">{summary.totalTopics}</p>
+              <p className="text-xs text-gray-500 mt-1">Need 40% per subject (min 5)</p>
             </div>
             <div>
               <h3 className="text-sm font-medium text-gray-500 mb-2">Weekly Availability</h3>

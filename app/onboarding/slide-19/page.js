@@ -26,6 +26,9 @@ export default function Slide19Page() {
         window.location.hostname.includes('.local')
       )
     );
+    
+    // Unlock this slide when user arrives (important for resume onboarding flow)
+    unlockSlide(19);
   }, []);
 
   useEffect(() => {
@@ -414,17 +417,15 @@ export default function Slide19Page() {
         </div>
       </div>
 
-      {/* Bulk actions - Dev only */}
-      {isDev && (
-        <div className="flex flex-wrap gap-2 justify-center">
-          <button
-            onClick={fillRandomRatings}
-            className="btn btn-sm bg-yellow-500 text-white hover:bg-yellow-600 border-0"
-          >
-            [DEV] Fill Random Ratings
-          </button>
-        </div>
-      )}
+      {/* Bulk actions - Temporarily enabled in prod */}
+      <div className="flex flex-wrap gap-2 justify-center">
+        <button
+          onClick={fillRandomRatings}
+          className="btn btn-sm bg-yellow-500 text-white hover:bg-yellow-600 border-0"
+        >
+          [DEV] Fill Random Ratings
+        </button>
+      </div>
 
       {/* Topics by subject */}
       <div className="max-w-7xl mx-auto">
