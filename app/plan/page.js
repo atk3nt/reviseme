@@ -799,10 +799,20 @@ function PlanPageContent() {
     if (!devMode && status === 'unauthenticated') {
       console.log('⚠️ Not authenticated, redirecting to sign in');
       router.push('/api/auth/signin');
+      return;
     }
+
+    // Check if user has completed onboarding
+    // Only redirect if they're authenticated and haven't completed onboarding
+    if (status === 'authenticated' && session?.user && !session?.user?.hasCompletedOnboarding) {
+      console.log('⚠️ Onboarding not completed, redirecting to onboarding');
+      router.push('/onboarding/slide-19');
+      return;
+    }
+    
     // Note: loadBlocks is now called in the pre-loaded data check useEffect above
     // Only call it here if we don't have pre-loaded data (which is handled above)
-  }, [status, router]);
+  }, [status, session, router]);
 
   // Ensure weekStartDate is synced to current week on mount
   useEffect(() => {

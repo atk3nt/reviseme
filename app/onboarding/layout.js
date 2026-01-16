@@ -11,8 +11,9 @@ export default function OnboardingLayout({ children }) {
   const [isResetting, setIsResetting] = useState(false);
 
   useEffect(() => {
-    // If user is already authenticated and has access, redirect to plan
-    if (status === 'authenticated' && session?.user?.hasAccess) {
+    // Only redirect if user has paid AND completed onboarding
+    // This allows users to complete onboarding after payment
+    if (status === 'authenticated' && session?.user?.hasAccess && session?.user?.hasCompletedOnboarding) {
       router.push('/plan');
     }
   }, [status, session, router]);

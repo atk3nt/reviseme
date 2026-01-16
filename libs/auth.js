@@ -528,20 +528,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (session?.user && token.sub) {
         session.user.id = token.sub
         
-        // Fetch has_access from database
+        // Fetch has_access and has_completed_onboarding from database
         try {
           const { data: userData, error } = await supabaseAdmin
             .from('users')
-            .select('has_access')
+            .select('has_access, has_completed_onboarding')
             .eq('id', token.sub)
             .single()
           
           if (!error && userData) {
             session.user.hasAccess = userData.has_access || false
+            session.user.hasCompletedOnboarding = userData.has_completed_onboarding || false
           }
         } catch (error) {
-          console.error('[AUTH] Error fetching has_access:', error)
+          console.error('[AUTH] Error fetching user data:', error)
           session.user.hasAccess = false
+          session.user.hasCompletedOnboarding = false
         }
       }
       return session
