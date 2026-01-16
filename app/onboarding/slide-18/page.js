@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import OnboardingProgress from "@/components/OnboardingProgress";
+import { unlockSlide } from "@/libs/onboarding-progress";
 
 function Slide18Content() {
   const [isLoading, setIsLoading] = useState(false);
@@ -41,6 +42,7 @@ function Slide18Content() {
 
   const handleNext = () => {
     setIsLoading(true);
+    unlockSlide(19);
     setTimeout(() => {
       router.push("/onboarding/slide-19");
     }, 300);

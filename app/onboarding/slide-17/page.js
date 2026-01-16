@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import OnboardingProgress from "@/components/OnboardingProgress";
 import config from "@/config";
+import { unlockSlide } from "@/libs/onboarding-progress";
 
 export default function Slide17Page() {
   const [isLoading, setIsLoading] = useState(false);
@@ -64,6 +65,7 @@ export default function Slide17Page() {
   const handleSkip = () => {
     // Skip payment in development mode
     // Manually set has_access to true for testing
+    unlockSlide(18);
     router.push("/onboarding/slide-18?payment=success&dev_skip=true");
   };
 

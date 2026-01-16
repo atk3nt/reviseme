@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import OnboardingProgress from "@/components/OnboardingProgress";
+import { unlockSlide } from "@/libs/onboarding-progress";
 
 export default function Slide9Page() {
   const [name, setName] = useState("");
@@ -26,12 +27,15 @@ export default function Slide9Page() {
     savedAnswers.age = age;
     localStorage.setItem('quizAnswers', JSON.stringify(savedAnswers));
     
+    unlockSlide(10);
+    
     setTimeout(() => {
       router.push("/onboarding/slide-10");
     }, 300);
   };
 
   const handleSkip = () => {
+    unlockSlide(10);
     router.push("/onboarding/slide-10");
   };
 

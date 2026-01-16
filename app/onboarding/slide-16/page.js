@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import OnboardingProgress from "@/components/OnboardingProgress";
 import QuizCard from "@/components/QuizCard";
 import config from "@/config";
+import { unlockSlide } from "@/libs/onboarding-progress";
 
 export default function Slide16Page() {
   const [selectedSubjects, setSelectedSubjects] = useState([]);
@@ -87,12 +88,15 @@ export default function Slide16Page() {
     savedAnswers.subjectBoards = subjectBoards;
     localStorage.setItem('quizAnswers', JSON.stringify(savedAnswers));
     
+    unlockSlide(16.5);
+    
     setTimeout(() => {
       router.push("/onboarding/slide-16-5");
     }, 300);
   };
 
   const handleSkip = () => {
+    unlockSlide(16.5);
     router.push("/onboarding/slide-16-5");
   };
 

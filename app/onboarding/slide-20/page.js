@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import OnboardingProgress from "@/components/OnboardingProgress";
+import { unlockSlide } from "@/libs/onboarding-progress";
 
 export default function Slide20Page() {
   const router = useRouter();
@@ -51,6 +52,8 @@ export default function Slide20Page() {
       savedAnswers.timePreferences = timePreferences;
       localStorage.setItem('quizAnswers', JSON.stringify(savedAnswers));
       console.log('Slide 20: Saved time preferences:', timePreferences);
+      
+      unlockSlide(21);
       
       setTimeout(() => {
         console.log('Slide 20: Navigating to slide 21');

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { signIn, getProviders } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import OnboardingProgress from "@/components/OnboardingProgress";
+import { unlockSlide } from "@/libs/onboarding-progress";
 
 export default function Slide1Page() {
   const [isLoading, setIsLoading] = useState(false);
@@ -14,8 +15,11 @@ export default function Slide1Page() {
   const [googleAvailable, setGoogleAvailable] = useState(false);
   const router = useRouter();
 
-  // Check if Google OAuth is available
+  // Initialize onboarding progress and check providers
   useEffect(() => {
+    // Unlock slide 1 when user visits it
+    unlockSlide(1);
+    
     const checkProviders = async () => {
       try {
         const providers = await getProviders();
@@ -108,7 +112,10 @@ export default function Slide1Page() {
             </p>
             <div className="pt-2 sm:pt-4">
               <button
-                onClick={() => router.push("/onboarding/slide-2")}
+                onClick={() => {
+                  unlockSlide(2);
+                  router.push("/onboarding/slide-2");
+                }}
                 className="text-gray-500 hover:text-gray-700 text-xs sm:text-sm underline"
               >
                 Skip for now →
@@ -221,7 +228,10 @@ export default function Slide1Page() {
       {/* Skip for now */}
       <div className="text-center pt-2 sm:pt-4">
         <button
-          onClick={() => router.push("/onboarding/slide-2")}
+          onClick={() => {
+            unlockSlide(2);
+            router.push("/onboarding/slide-2");
+          }}
           className="text-gray-500 hover:text-gray-700 text-xs sm:text-sm underline"
         >
           Skip for now →

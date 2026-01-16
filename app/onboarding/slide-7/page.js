@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import OnboardingProgress from "@/components/OnboardingProgress";
 import QuizCard from "@/components/QuizCard";
+import { unlockSlide } from "@/libs/onboarding-progress";
 
 export default function Slide7Page() {
   const [selectedOption, setSelectedOption] = useState(null);
@@ -32,12 +33,15 @@ export default function Slide7Page() {
     savedAnswers.q6 = selectedOption;
     localStorage.setItem('quizAnswers', JSON.stringify(savedAnswers));
     
+    unlockSlide(8);
+    
     setTimeout(() => {
       router.push("/onboarding/slide-8");
     }, 300);
   };
 
   const handleSkip = () => {
+    unlockSlide(8);
     router.push("/onboarding/slide-8");
   };
 

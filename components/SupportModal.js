@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 
 // Add keyframe animations
 if (typeof window !== 'undefined') {
@@ -153,9 +154,9 @@ export default function SupportModal({ isOpen, onClose }) {
         setSelectedType(null);
         setRefundEligibility(null);
         onClose();
-        // Redirect to home after a short delay
-        setTimeout(() => {
-          router.push("/");
+        // Sign out the user and redirect to home after a short delay
+        setTimeout(async () => {
+          await signOut({ callbackUrl: "/" });
         }, 1500);
       } else {
         toast.error(data.error || "Failed to process refund request");

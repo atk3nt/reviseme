@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import OnboardingProgress from "@/components/OnboardingProgress";
 import config from "@/config";
+import { unlockSlide } from "@/libs/onboarding-progress";
 
 export default function Slide22Page() {
   const router = useRouter();
@@ -227,6 +228,9 @@ export default function Slide22Page() {
     if (isDev) {
       console.log('🔧 Dev mode: Skipping authentication check, proceeding with plan generation');
     }
+
+    // Unlock the plan generation page (not a numbered slide, but allows access to /plan/generating)
+    unlockSlide(23);
 
     // Navigate to loading page which will handle the plan generation
     router.push("/plan/generating");

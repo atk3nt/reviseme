@@ -78,7 +78,8 @@ function SettingsPageContent() {
 
         if (response.ok) {
           alert('Refund request submitted successfully. You will receive a confirmation email shortly.');
-          router.push('/');
+          // Sign out the user and redirect to home
+          await signOut({ callbackUrl: '/' });
         } else {
           const error = await response.json();
           alert(`Refund request failed: ${error.error}`);

@@ -6,7 +6,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 export async function sendWelcomeEmail(userEmail, userName) {
   try {
     const { data, error } = await resend.emails.send({
-      from: config.resend.fromAlex,
+      from: config.resend.fromAdmin,
       to: [userEmail],
       subject: 'Welcome to ReviseMe! 🎯',
       html: `
@@ -49,7 +49,7 @@ export async function sendWelcomeEmail(userEmail, userName) {
             </p>
             <p style="color: #003D99; font-size: 14px; margin: 5px 0 0 0;">
               Good luck with your A-Levels! 🚀<br>
-              <span style="font-weight: 600; color: #001433;">— Alex</span>
+              <span style="font-weight: 600; color: #001433;">— The ReviseMe Team</span>
             </p>
           </div>
         </div>

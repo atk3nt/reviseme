@@ -3,13 +3,17 @@
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import DevPanel from "@/components/DevPanel";
+import { getSlideNumberFromPath, canAccessSlide, getHighestAllowedSlidePath } from "@/libs/onboarding-progress";
 
 export default function OnboardingLayout({ children }) {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const pathname = usePathname();
   const [isResetting, setIsResetting] = useState(false);
   const [isDev, setIsDev] = useState(false);
+  const [isCheckingAccess, setIsCheckingAccess] = useState(true);
 
   useEffect(() => {
     // Check if dev mode
@@ -21,6 +25,28 @@ export default function OnboardingLayout({ children }) {
       )
     );
   }, []);
+
+  useEffect(() => {
+    // Check slide access (skip in dev mode for easier development)
+    if (isDev) {
+      setIsCheckingAccess(false);
+      return;
+    }
+
+    const slideNumber = getSlideNumberFromPath(pathname);
+    
+    // Only check access for actual slide pages
+    if (slideNumber !== null && !canAccessSlide(slideNumber)) {
+      // Redirect to the highest allowed slide
+      const allowedPath = getHighestAllowedSlidePath();
+      if (pathname !== allowedPath) {
+        router.replace(allowedPath);
+        return;
+      }
+    }
+    
+    setIsCheckingAccess(false);
+  }, [pathname, router, isDev]);
 
   useEffect(() => {
     // Only redirect if user has paid AND completed onboarding
@@ -50,8 +76,9 @@ export default function OnboardingLayout({ children }) {
         throw new Error('Failed to reset database');
       }
       
-      // Clear localStorage
+      // Clear localStorage (including onboarding progress)
       localStorage.removeItem('quizAnswers');
+      localStorage.removeItem('onboardingProgress');
       
       // Wait a moment for database update to propagate, then redirect
       setTimeout(() => {
@@ -64,6 +91,15 @@ export default function OnboardingLayout({ children }) {
       setIsResetting(false);
     }
   };
+
+  // Show loading while checking access
+  if (isCheckingAccess) {
+    return (
+      <div className="h-screen bg-white flex items-center justify-center">
+        <span className="loading loading-spinner loading-lg text-primary"></span>
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen bg-white overflow-y-auto">

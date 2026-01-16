@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import OnboardingProgress from "@/components/OnboardingProgress";
+import { unlockSlide } from "@/libs/onboarding-progress";
 
 export default function Slide12Page() {
   const [isLoading, setIsLoading] = useState(false);
@@ -10,6 +11,7 @@ export default function Slide12Page() {
 
   const handleNext = () => {
     setIsLoading(true);
+    unlockSlide(13);
     setTimeout(() => {
       router.push("/onboarding/slide-13");
     }, 300);

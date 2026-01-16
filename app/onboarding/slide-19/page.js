@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import OnboardingProgress from "@/components/OnboardingProgress";
 import config from "@/config";
+import { unlockSlide } from "@/libs/onboarding-progress";
 
 export default function Slide19Page() {
   const router = useRouter();
@@ -121,12 +122,21 @@ export default function Slide19Page() {
       
       setTopics(topics);
       
-      // Initialize ratings
+      // Initialize ratings - load from localStorage if available
+      const savedRatings = savedAnswers.topicRatings || {};
       const initialRatings = {};
       topics.forEach(item => {
-        initialRatings[item.topics.id] = undefined;
+        // Use saved rating if exists, otherwise undefined
+        initialRatings[item.topics.id] = savedRatings[item.topics.id] ?? undefined;
       });
       setRatings(initialRatings);
+      
+      // Log restoration info for debugging
+      const restoredCount = Object.values(initialRatings).filter(r => r !== undefined).length;
+      if (restoredCount > 0) {
+        console.log(`✅ Restored ${restoredCount} ratings from localStorage`);
+      }
+      
       setIsLoading(false);
     } catch (error) {
       console.error('Error loading topics:', error);
@@ -323,6 +333,7 @@ export default function Slide19Page() {
   const handleContinue = async () => {
     setIsLoading(true);
     await saveRatings();
+    unlockSlide(20);
     router.push('/onboarding/slide-20');
   };
 

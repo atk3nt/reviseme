@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/libs/auth";
 import { supabaseAdmin } from "@/libs/supabase";
+import { sendWelcomeEmail } from "@/libs/emails/welcome";
 
 export async function POST(req) {
   try {
@@ -139,6 +140,25 @@ export async function POST(req) {
       quizAnswers.topicRatings &&
       quizAnswers.weeklyAvailability
     );
+
+    // Check if user was already completed before (to avoid sending duplicate welcome emails)
+    let wasAlreadyCompleted = false;
+    let userEmail = null;
+    let userName = null;
+    
+    if (hasRequiredData) {
+      const { data: existingUser } = await supabaseAdmin
+        .from('users')
+        .select('email, name, has_completed_onboarding')
+        .eq('id', userId)
+        .single();
+      
+      if (existingUser) {
+        wasAlreadyCompleted = existingUser.has_completed_onboarding || false;
+        userEmail = existingUser.email;
+        userName = existingUser.name;
+      }
+    }
 
     // Update user record with onboarding data
     // Try to update, but if onboarding_data column doesn't exist, just update other fields
@@ -290,6 +310,30 @@ export async function POST(req) {
         console.error('Error saving unavailable times:', unavailableError);
         }
         // Don't fail the whole request if unavailable times fail
+      }
+    }
+
+    // Send welcome email if onboarding was just completed for the first time
+    if (hasRequiredData && !wasAlreadyCompleted && userEmail) {
+      try {
+        const emailResult = await sendWelcomeEmail(
+          userEmail,
+          userName || 'there'
+        );
+
+        if (emailResult?.success) {
+          console.log('✅ Welcome email sent successfully to:', userEmail);
+        } else {
+          console.error('❌ Failed to send welcome email:', emailResult?.error);
+          console.error('   Email was attempted to:', userEmail);
+          console.error('   Check Resend dashboard and domain verification');
+          // Don't fail the request if email fails - onboarding was successful
+        }
+      } catch (emailError) {
+        // Log but don't fail the onboarding if email fails
+        console.error('❌ Error sending welcome email:', emailError);
+        console.error('   Email was attempted to:', userEmail);
+        console.error('   Make sure RESEND_API_KEY is set and reviseme.co domain is verified in Resend');
       }
     }
 

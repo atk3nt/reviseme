@@ -84,15 +84,15 @@ export default function PricingPage() {
             </div>
 
             {/* Guarantee */}
-            <div className="mt-8 p-4 bg-brand-light rounded-lg">
+            <div className="mt-8 p-4 bg-brand-light rounded-lg border border-primary/20" style={{ fontFamily: '"DM Sans", sans-serif' }}>
               <div className="flex items-center justify-center space-x-2">
-                <svg className="w-5 h-5 text-success" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" style={{ color: '#0066FF' }}>
                   <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
-                <span className="font-medium">7-Day Money-Back Guarantee</span>
+                <span className="font-semibold text-brand-dark" style={{ fontFamily: '"DM Sans", sans-serif', color: '#001433' }}>7-Day Money-Back Guarantee</span>
               </div>
-              <p className="text-sm text-brand-medium mt-1">
-                Not satisfied? Get a full refund within 7 days, no questions asked.
+              <p className="text-sm mt-2 text-center" style={{ fontFamily: '"DM Sans", sans-serif', color: '#003D99' }}>
+                Not satisfied with ReviseMe? Get a full refund within 7 days, no questions asked.
               </p>
             </div>
           </div>

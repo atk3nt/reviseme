@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import OnboardingProgress from "@/components/OnboardingProgress";
 import TimeBlockCalendar from "@/components/TimeBlockCalendar";
+import { unlockSlide } from "@/libs/onboarding-progress";
 
 export default function Slide21Page() {
   const router = useRouter();
@@ -185,6 +186,8 @@ export default function Slide21Page() {
       savedAnswers.blockedTimes = blockedTimes;
       localStorage.setItem('quizAnswers', JSON.stringify(savedAnswers));
       console.log('Slide 21: Saved blocked times:', blockedTimes.length);
+      
+      unlockSlide(22);
       
       setTimeout(() => {
         console.log('Slide 21: Navigating to slide 22');
