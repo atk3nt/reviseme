@@ -78,6 +78,30 @@ export default function GeneratingPlanPage() {
           throw new Error(errorData.error || `Failed to save data (${saveResponse.status})`);
         }
 
+        // Refresh the session to get updated hasCompletedOnboarding flag
+        // This ensures the plan page won't redirect back to onboarding
+        if (!devMode) {
+          try {
+            console.log('🔄 Refreshing session to update onboarding status...');
+            
+            // Force NextAuth to refresh the session from the database
+            const sessionRefresh = await fetch('/api/auth/session', { 
+              method: 'GET',
+              credentials: 'include'
+            });
+            
+            if (sessionRefresh.ok) {
+              console.log('✅ Session refreshed successfully');
+            }
+            
+            // Small delay to ensure session cookie is updated
+            await new Promise(resolve => setTimeout(resolve, 300));
+          } catch (error) {
+            console.warn('⚠️ Failed to refresh session:', error);
+            // Don't fail the whole process if session refresh fails
+          }
+        }
+
         // Step 2: Calculate availability (25-50%)
         setProgress(31);
         setStatusText("Loading user data");

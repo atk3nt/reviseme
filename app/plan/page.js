@@ -802,9 +802,9 @@ function PlanPageContent() {
       return;
     }
 
-    // Check if user has completed onboarding
+    // Check if user has completed onboarding (skip in dev mode)
     // Only redirect if they're authenticated and haven't completed onboarding
-    if (status === 'authenticated' && session?.user && !session?.user?.hasCompletedOnboarding) {
+    if (!devMode && status === 'authenticated' && session?.user && !session?.user?.hasCompletedOnboarding) {
       console.log('⚠️ Onboarding not completed, redirecting to onboarding');
       router.push('/onboarding/slide-19');
       return;
