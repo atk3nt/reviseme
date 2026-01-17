@@ -9,9 +9,20 @@ export default function GeneratingPlanPage() {
   const { data: session, status, update: updateSession } = useSession();
   const [progress, setProgress] = useState(0);
   const [statusText, setStatusText] = useState("Initializing resources");
+  const [hasStartedGeneration, setHasStartedGeneration] = useState(false);
 
   useEffect(() => {
+    // Guard against duplicate calls - prevent useEffect from running multiple times
+    // This is critical because updateSession() inside the effect would trigger a re-run
+    if (hasStartedGeneration) {
+      console.log('⚠️ Plan generation already started, preventing duplicate API call');
+      return;
+    }
+    
     const generatePlan = async () => {
+      // Set flag immediately to prevent any duplicate calls
+      setHasStartedGeneration(true);
+      
       try {
         // Check if we're in dev mode (inline check to ensure it's accurate)
         const devMode = typeof window !== 'undefined' && (
@@ -320,6 +331,10 @@ export default function GeneratingPlanPage() {
         router.push("/plan?view=week");
       } catch (error) {
         console.error('Plan generation error:', error);
+        
+        // Reset the flag on error so user can retry
+        setHasStartedGeneration(false);
+        
         const errorMessage = error.message || 'Failed to generate plan. Please try again.';
         alert(`Error: ${errorMessage}\n\nCheck the browser console for more details.`);
         router.push("/onboarding/slide-22");
@@ -341,7 +356,7 @@ export default function GeneratingPlanPage() {
       // In production, wait for auth check to complete
       generatePlan();
     }
-  }, [status, session, router]);
+  }, [status, session, router, hasStartedGeneration]);
 
   // Calculate the stroke-dashoffset for the circular progress
   const radius = 60;
