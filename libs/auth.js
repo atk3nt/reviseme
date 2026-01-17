@@ -67,8 +67,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   // Custom adapter that uses Supabase directly
   adapter: {
     async createUser(user) {
-      console.log('[AUTH] createUser called with:', user.email)
+      console.log('[AUTH] ⭐ createUser called:', { 
+        email: user.email, 
+        name: user.name, 
+        hasEmail: !!user.email,
+        hasName: !!user.name 
+      })
+      
       try {
+        // Validate that we have an email (required)
+        if (!user.email) {
+          console.error('[AUTH] ❌ createUser called without email!')
+          throw new Error('Email is required to create a user')
+        }
+        
         // First, check if user with this email already exists (ghost user case)
         const { data: existingUser } = await supabaseAdmin
           .from('users')
@@ -77,7 +89,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           .single()
         
         if (existingUser) {
-          console.log('[AUTH] User with email already exists, returning existing user:', existingUser.id)
+          console.log('[AUTH] ✅ User with email already exists, returning existing user:', existingUser.id)
           // Update the existing user with new info if provided
           const updateData = {}
           if (user.name && !existingUser.name) updateData.name = user.name
@@ -87,6 +99,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           }
           
           if (Object.keys(updateData).length > 0) {
+            console.log('[AUTH] 🔄 Updating existing user with new data:', Object.keys(updateData))
             const { data: updatedUser } = await supabaseAdmin
               .from('users')
               .update(updateData)
@@ -116,6 +129,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }
         
         // User doesn't exist, create new one
+        console.log('[AUTH] 🆕 Creating new user in database...')
         const { data, error } = await supabaseAdmin
           .from('users')
           .insert({
@@ -128,10 +142,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           .single()
         
         if (error) {
-          console.error('[AUTH] createUser error:', error)
+          console.error('[AUTH] ❌ createUser error:', error)
           // If it's a duplicate key error, try to get the existing user
           if (error.code === '23505') {
-            console.log('[AUTH] Duplicate key error, fetching existing user')
+            console.log('[AUTH] 🔄 Duplicate key error, fetching existing user')
             const { data: existing } = await supabaseAdmin
               .from('users')
               .select()
@@ -139,6 +153,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
               .single()
             
             if (existing) {
+              console.log('[AUTH] ✅ Found existing user after duplicate key error:', existing.id)
               return {
                 id: existing.id,
                 email: existing.email,
@@ -150,7 +165,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           }
           throw error
         }
-        console.log('[AUTH] createUser success:', data?.id)
+        console.log('[AUTH] ✅ createUser success! New user ID:', data?.id)
         // Map snake_case to camelCase for NextAuth
         return {
           id: data.id,
@@ -160,7 +175,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           emailVerified: data.email_verified,
         }
       } catch (e) {
-        console.error('[AUTH] createUser exception:', e)
+        console.error('[AUTH] ❌ createUser exception:', e)
         throw e
       }
     },
@@ -259,8 +274,37 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
     },
     async linkAccount(account) {
-      console.log('[AUTH] linkAccount called for:', account.provider, account.providerAccountId)
+      console.log('[AUTH] 🔗 linkAccount called:', { 
+        provider: account.provider, 
+        providerAccountId: account.providerAccountId,
+        userId: account.userId 
+      })
+      
       try {
+        // CRITICAL: Verify that userId exists and is valid
+        if (!account.userId) {
+          console.error('[AUTH] ❌ linkAccount called without userId!')
+          throw new Error('Cannot link account: userId is missing')
+        }
+        
+        // CRITICAL: Verify that the user exists in the users table before linking
+        console.log('[AUTH] 🔍 Verifying user exists before linking account...')
+        const { data: userExists, error: userCheckError } = await supabaseAdmin
+          .from('users')
+          .select('id')
+          .eq('id', account.userId)
+          .single()
+        
+        if (userCheckError || !userExists) {
+          console.error('[AUTH] ❌ User does not exist in users table:', {
+            userId: account.userId,
+            error: userCheckError
+          })
+          throw new Error(`Cannot link account: User ${account.userId} does not exist in users table. This is a critical error - createUser should have been called first.`)
+        }
+        
+        console.log('[AUTH] ✅ User verified, proceeding with account linking...')
+        
         const accountData = {
           user_id: account.userId,
           type: account.type,
@@ -274,6 +318,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           id_token: account.id_token,
           session_state: account.session_state,
         }
+        
         const { data, error } = await supabaseAdmin
           .from('accounts')
           .insert(accountData)
@@ -281,21 +326,29 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           .single()
         
         if (error) {
-          console.error('[AUTH] linkAccount error:', error)
+          console.error('[AUTH] ❌ linkAccount error:', error)
+          
           // Check for duplicate key errors (account already exists)
           if (error.code === '23505') {
-            console.warn('[AUTH] Account already linked (duplicate key)')
+            console.warn('[AUTH] ⚠️ Account already linked (duplicate key)')
             // Return the account anyway - it's already linked
             return account
           }
+          
+          // Check for foreign key constraint violations (user doesn't exist)
+          if (error.code === '23503') {
+            console.error('[AUTH] ❌ Foreign key constraint violation! User does not exist:', account.userId)
+            throw new Error(`Cannot link account: User ${account.userId} does not exist. This should have been caught earlier.`)
+          }
+          
           // For other errors, throw to prevent silent failures
           throw error
         }
         
-        console.log('[AUTH] linkAccount success:', data?.id)
+        console.log('[AUTH] ✅ linkAccount success! Account ID:', data?.id)
         return account
       } catch (e) {
-        console.error('[AUTH] linkAccount exception:', e)
+        console.error('[AUTH] ❌ linkAccount exception:', e)
         throw e
       }
     },
