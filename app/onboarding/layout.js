@@ -40,8 +40,15 @@ export default function OnboardingLayout({ children }) {
       pathname,
       slideNumber,
       status,
+      hasAccess: session?.user?.hasAccess,
       canAccess: slideNumber ? canAccessSlide(slideNumber) : 'N/A'
     });
+    
+    // If not a slide page, allow access immediately
+    if (slideNumber === null) {
+      setIsCheckingAccess(false);
+      return;
+    }
     
     // Special case: Allow slide-2 if user is authenticated OR still loading session
     // This handles the case where user clicks magic link in email and arrives at slide-2
@@ -80,19 +87,25 @@ export default function OnboardingLayout({ children }) {
       return;
     }
     
-    // Only check access for actual slide pages after session is loaded
-    if (slideNumber !== null && status !== 'loading' && !canAccessSlide(slideNumber)) {
-      // Redirect to the highest allowed slide
-      const allowedPath = getHighestAllowedSlidePath();
-      if (pathname !== allowedPath) {
-        console.log('[ONBOARDING LAYOUT] Redirecting to:', allowedPath);
-        router.replace(allowedPath);
-        return;
-      }
+    // SECURITY FIX: Wait for session to load before checking access for regular slides
+    // This prevents pages from mounting and unlocking themselves before we can verify access
+    if (status === 'loading') {
+      console.log('[ONBOARDING LAYOUT] Waiting for session to load...');
+      // Keep showing loading spinner, don't allow page to mount yet
+      return;
     }
     
+    // Now check access (session is loaded, no longer 'loading')
+    if (!canAccessSlide(slideNumber)) {
+      const allowedPath = getHighestAllowedSlidePath();
+      console.log('[ONBOARDING LAYOUT] Access denied, redirecting to:', allowedPath);
+      router.replace(allowedPath);
+      return;
+    }
+    
+    // Access granted - allow page to mount
     setIsCheckingAccess(false);
-  }, [pathname, router, isDev, status]);
+  }, [pathname, router, isDev, status, session]);
 
   useEffect(() => {
     // Only redirect if user has paid AND completed onboarding

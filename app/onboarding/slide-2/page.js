@@ -18,8 +18,10 @@ export default function Slide2Page() {
   ];
 
   useEffect(() => {
-    // Unlock this slide when user arrives (important for magic link/OAuth callbacks)
-    unlockSlide(2);
+    // SECURITY: Don't auto-unlock slide-2 on mount
+    // The layout allows temporary access for auth callbacks, but we shouldn't
+    // permanently unlock this slide until user progresses naturally from slide-1
+    // This prevents bypassing by manually typing the URL
     
     // Load existing answer if user goes back
     const savedAnswers = JSON.parse(localStorage.getItem('quizAnswers') || '{}');

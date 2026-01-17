@@ -21,9 +21,11 @@ function Slide18Content() {
       )
     );
     
-    // Unlock this slide when user arrives (important for payment callback)
-    // Also unlock if they have access (paid users should have access to all onboarding slides)
-    unlockSlide(18);
+    // SECURITY: Don't auto-unlock slide-18 on mount
+    // The layout allows temporary access for payment callbacks, but we shouldn't
+    // permanently unlock this slide until user arrives via payment flow from slide-17
+    // Slide-17 unlocks slide-18 before redirecting to Stripe, so legitimate users will have access
+    // This prevents bypassing by manually typing the URL
   }, []);
 
   useEffect(() => {
