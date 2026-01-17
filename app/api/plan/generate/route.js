@@ -1134,19 +1134,33 @@ export async function POST(req) {
         }
       }
       
-      // Insert new blocks
+      // Insert new blocks (using upsert to handle conflicts gracefully)
+      // This makes the API idempotent - if blocks already exist (e.g., from network retry),
+      // they will be updated instead of causing a unique constraint violation
       if (recordsToInsert.length > 0) {
-        const { data: inserted, error: insertError } = await supabaseAdmin
+        console.log(`📝 Upserting ${recordsToInsert.length} blocks (will update if they already exist)...`);
+        
+        const { data: upserted, error: upsertError } = await supabaseAdmin
           .from('blocks')
-          .insert(recordsToInsert)
+          .upsert(recordsToInsert, {
+            onConflict: 'user_id,topic_id,scheduled_at',
+            ignoreDuplicates: false // Update existing rows instead of ignoring
+          })
           .select('id, topic_id, scheduled_at, duration_minutes, status, ai_rationale, session_number, session_total');
         
-        if (insertError) {
-          console.error('Failed to insert blocks:', insertError);
+        if (upsertError) {
+          console.error('Failed to upsert blocks:', upsertError);
+          console.error('Upsert error details:', {
+            code: upsertError.code,
+            message: upsertError.message,
+            details: upsertError.details,
+            hint: upsertError.hint
+          });
           throw new Error('Failed to save blocks to database');
         }
         
-        insertedBlocks.push(...(inserted || []));
+        console.log(`✅ Successfully upserted ${upserted?.length || 0} blocks`);
+        insertedBlocks.push(...(upserted || []));
       }
       
       // Clean up any remaining missed blocks that weren't updated
