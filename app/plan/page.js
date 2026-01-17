@@ -36,7 +36,7 @@ function PlanPageContent() {
         
         if (preloadedData.weekStart === weekStartStr && preloadedData.blocks && preloadedData.blocks.length > 0) {
           // Format blocks immediately in initial state
-          return preloadedData.blocks.map(block => {
+          const formattedBlocks = preloadedData.blocks.map(block => {
             let scheduled_at;
             if (block.scheduled_at) {
               scheduled_at = block.scheduled_at;
@@ -67,6 +67,23 @@ function PlanPageContent() {
               priority_score: block.priority_score
             };
           }).filter(block => block !== null);
+          
+          // Deduplicate blocks in initial state
+          const seen = new Map();
+          const deduplicatedBlocks = [];
+          formattedBlocks.forEach(block => {
+            const key = `${block.topic_id}-${new Date(block.scheduled_at).getTime()}`;
+            if (!seen.has(key)) {
+              seen.set(key, true);
+              deduplicatedBlocks.push(block);
+            }
+          });
+          
+          if (deduplicatedBlocks.length < formattedBlocks.length) {
+            console.log(`🔧 Initial state: Removed ${formattedBlocks.length - deduplicatedBlocks.length} duplicate(s) from preloaded data`);
+          }
+          
+          return deduplicatedBlocks;
         }
       } catch (error) {
         console.error('Error parsing pre-loaded data in initial state:', error);
@@ -141,6 +158,37 @@ function PlanPageContent() {
   const [showAvailabilityModal, setShowAvailabilityModal] = useState(false);
   const [nextWeekStart, setNextWeekStart] = useState(null);
   const hasSetInitialView = useRef(false); // Track if we've set the initial view based on blocks
+
+  // Deduplicate blocks by topic_id + scheduled_at to prevent duplicate display
+  // This handles cases where the database has duplicate blocks from multiple plan generations
+  const deduplicateBlocks = useCallback((blocks) => {
+    const seen = new Map();
+    const deduplicated = [];
+    let duplicateCount = 0;
+    
+    blocks.forEach(block => {
+      // Create unique key from topic_id and scheduled time (to millisecond precision)
+      const key = `${block.topic_id}-${new Date(block.scheduled_at).getTime()}`;
+      
+      if (!seen.has(key)) {
+        seen.set(key, true);
+        deduplicated.push(block);
+      } else {
+        duplicateCount++;
+        console.warn('⚠️ Duplicate block removed:', {
+          topic: block.topics?.name || 'Unknown',
+          time: new Date(block.scheduled_at).toLocaleTimeString(),
+          id: block.id
+        });
+      }
+    });
+    
+    if (duplicateCount > 0) {
+      console.log(`🔧 Removed ${duplicateCount} duplicate block(s), ${deduplicated.length} unique blocks remain`);
+    }
+    
+    return deduplicated;
+  }, []);
 
   // Clean topic names by removing leading apostrophes/quotes
   // Optionally include parent topic name (for TodayView and BlockDetailModal)
@@ -344,7 +392,10 @@ function PlanPageContent() {
                 };
               }).filter(block => block !== null);
 
-              setBlocks(formattedBlocks);
+              // Deduplicate blocks before setting state
+              const deduplicatedBlocks = deduplicateBlocks(formattedBlocks);
+              
+              setBlocks(deduplicatedBlocks);
               
               // Set blocked times if available
               if (preloadedData.blockedTimes && Array.isArray(preloadedData.blockedTimes) && preloadedData.blockedTimes.length > 0) {
@@ -443,9 +494,12 @@ function PlanPageContent() {
               };
             }).filter(block => block !== null);
 
-            console.log('✅ Formatted existing blocks:', formattedBlocks.length);
-            if (formattedBlocks.length > 0) {
-              setBlocks(formattedBlocks);
+            // Deduplicate blocks before setting state
+            const deduplicatedBlocks = deduplicateBlocks(formattedBlocks);
+            
+            console.log('✅ Formatted existing blocks:', deduplicatedBlocks.length);
+            if (deduplicatedBlocks.length > 0) {
+              setBlocks(deduplicatedBlocks);
               
               // Load time preferences from database
               try {
@@ -642,8 +696,11 @@ function PlanPageContent() {
         };
       }).filter(block => block !== null);
 
-      console.log('✅ Formatted generated blocks:', formattedBlocks.length);
-      setBlocks(formattedBlocks);
+      // Deduplicate blocks before setting state
+      const deduplicatedBlocks = deduplicateBlocks(formattedBlocks);
+      
+      console.log('✅ Formatted generated blocks:', deduplicatedBlocks.length);
+      setBlocks(deduplicatedBlocks);
       
       // Load blocked times - use from POST response if available (already aligned to target week)
       // Otherwise fall back to loading from availability API
@@ -1027,6 +1084,15 @@ function PlanPageContent() {
     const today = new Date().toDateString();
     return blocks.filter(block => 
       new Date(block.scheduled_at).toDateString() === today
+    );
+  };
+
+  const getTomorrowBlocks = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowDateString = tomorrow.toDateString();
+    return blocks.filter(block => 
+      new Date(block.scheduled_at).toDateString() === tomorrowDateString
     );
   };
 
@@ -1602,6 +1668,7 @@ function PlanPageContent() {
         {activeTab === 'today' ? (
           <TodayView 
             blocks={getTodayBlocks()} 
+            nextDayBlocks={getTomorrowBlocks()}
             onSelectBlock={handleSelectSlot}
             getSubjectColor={getSubjectColor}
             getSubjectBgColor={getSubjectBgColor}
@@ -1743,13 +1810,131 @@ function PlanPageContent() {
   );
 }
 
-function TodayView({ blocks, onSelectBlock, getSubjectColor, getSubjectBgColor, getSubjectBorderColor, getSubjectIcon, getBlockKey, cleanTopicName }) {
+function TodayView({ blocks, nextDayBlocks = [], onSelectBlock, getSubjectColor, getSubjectBgColor, getSubjectBorderColor, getSubjectIcon, getBlockKey, cleanTopicName }) {
+  const hasTodayBlocks = blocks.length > 0;
+  const hasNextDayBlocks = nextDayBlocks.length > 0;
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const tomorrowDateString = tomorrow.toLocaleDateString([], { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  
+  // Use nextDayBlocks if no blocks today, otherwise use today's blocks
+  const blocksToShow = hasTodayBlocks ? blocks : (hasNextDayBlocks ? nextDayBlocks : []);
+  
   if (blocks.length === 0) {
     return (
-      <div className="text-center py-12">
-        <div className="text-6xl mb-4">🎉</div>
-        <h3 className="text-2xl font-bold mb-2">No blocks scheduled for today</h3>
-        <p className="text-base-content/70">Enjoy your free time or check the week view for upcoming sessions.</p>
+      <div className="space-y-6">
+        <div className="text-center py-6">
+          <div className="text-6xl mb-4">🎉</div>
+          <h3 className="text-2xl font-bold mb-2">No blocks scheduled for today</h3>
+          <p className="text-base-content/70">
+            {hasNextDayBlocks 
+              ? `Here's what's scheduled for ${tomorrowDateString}:`
+              : 'Enjoy your free time or check the week view for upcoming sessions.'}
+          </p>
+        </div>
+        {hasNextDayBlocks && (
+          <div className="space-y-4">
+            {blocksToShow.map((block, index) => {
+              // Use block.id as the primary key for consistency
+              const blockKey = block.id || `fallback-${block.scheduled_at || index}`;
+              const subject = block.topics?.specs?.subject || block.subject || 'Subject';
+              
+              // Get hierarchy from block data (preferred) or build from legacy fields
+              const hierarchy = block.hierarchy || 
+                (block.topics?.hierarchy) ||
+                (block.level_1_parent && block.level_2_parent && block.level_3_topic
+                  ? [block.level_1_parent, block.level_2_parent, block.level_3_topic]
+                  : [block.topics?.name || block.topic_name || 'Topic']);
+
+              // Main topic: Level 3 (subtopic) - the specific learning
+              const mainTopicName = cleanTopicName(
+                hierarchy[hierarchy.length - 1] || block.topics?.name || block.topic_name || 'Topic',
+                null,
+                false
+              );
+
+              // Context: Unit → Section (where to find it in textbook)
+              const hierarchyContext = hierarchy.length > 1
+                ? hierarchy.slice(0, -1).map(name => cleanTopicName(name, null, false)).join(' → ')
+                : null;
+              
+              const formattedTime = new Date(block.scheduled_at).toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit'
+              });
+              const isCompleted = block.status === 'done';
+              const isRescheduled = block.status === 'rescheduled';
+              
+              // Format rescheduled time if available
+              const rescheduledTime = isRescheduled && block.rescheduledTo 
+                ? new Date(block.rescheduledTo).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                : null;
+              const rescheduledDay = isRescheduled && block.rescheduledTo
+                ? new Date(block.rescheduledTo).toLocaleDateString([], { weekday: 'short' })
+                : null;
+              
+              return (
+                <div
+                  key={blockKey}
+                  role={isRescheduled ? "presentation" : "button"}
+                  tabIndex={isRescheduled ? -1 : 0}
+                  onClick={() => !isRescheduled && onSelectBlock({ kind: 'study', key: blockKey })}
+                  onKeyDown={(event) => {
+                    if (!isRescheduled && (event.key === 'Enter' || event.key === ' ')) {
+                      event.preventDefault();
+                      onSelectBlock({ kind: 'study', key: blockKey });
+                    }
+                  }}
+                  className={`card shadow-sm border transition focus:outline-none focus:ring-2 focus:ring-primary ${
+                    isRescheduled
+                      ? 'opacity-50 bg-gray-100 cursor-default'
+                      : isCompleted 
+                        ? 'opacity-70 border-success/50 bg-success/5 cursor-pointer' 
+                        : 'hover:shadow-md cursor-pointer'
+                  }`}
+                  style={{
+                    backgroundColor: isRescheduled ? '#f3f4f6' : (isCompleted ? undefined : getSubjectBgColor(subject)),
+                    borderColor: isRescheduled ? '#d1d5db' : (isCompleted ? undefined : getSubjectBorderColor(subject))
+                  }}
+                >
+                  <div className="card-body">
+                    <div className={`flex items-start justify-between gap-4 ${isRescheduled ? 'line-through' : ''}`}>
+                      <div className="flex items-start gap-3">
+                        <div
+                          className="w-3 h-3 rounded-full mt-2"
+                          style={{ backgroundColor: getSubjectColor(subject) }}
+                        />
+                        <div className="space-y-1">
+                          <p className="text-sm font-medium text-base-content/70 flex items-center gap-2">
+                            <span>{getSubjectIcon(subject)}</span>
+                            <span>{subject}</span>
+                          </p>
+                          <h3 className="text-lg font-semibold leading-snug">{mainTopicName}</h3>
+                          {hierarchyContext && (
+                            <p className="text-xs text-base-content/60 mt-1">
+                              📚 {hierarchyContext}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="text-right flex-shrink-0">
+                        <div className="flex items-center justify-end gap-1.5">
+                          <p className="text-sm font-semibold">{formattedTime}</p>
+                          {isRescheduled && (
+                            <span className="badge badge-info badge-sm text-[10px] leading-none py-0.5 px-1.5" title={`Rescheduled to ${rescheduledDay} ${rescheduledTime}`}>
+                              ↪️
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-base-content/70">{block.duration_minutes} minutes</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     );
   }

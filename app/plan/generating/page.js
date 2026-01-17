@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 
 export default function GeneratingPlanPage() {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { data: session, status, update: updateSession } = useSession();
   const [progress, setProgress] = useState(0);
   const [statusText, setStatusText] = useState("Initializing resources");
 
@@ -80,26 +80,27 @@ export default function GeneratingPlanPage() {
 
         // Refresh the session to get updated hasCompletedOnboarding flag
         // This ensures the plan page won't redirect back to onboarding
-        if (!devMode) {
+        if (!devMode && updateSession) {
           try {
             console.log('🔄 Refreshing session to update onboarding status...');
             
-            // Force NextAuth to refresh the session from the database
-            const sessionRefresh = await fetch('/api/auth/session', { 
-              method: 'GET',
-              credentials: 'include'
-            });
+            // Trigger NextAuth to refresh the session from the database
+            // The session callback will fetch the updated has_completed_onboarding value
+            await updateSession();
             
-            if (sessionRefresh.ok) {
-              console.log('✅ Session refreshed successfully');
-            }
+            console.log('✅ Session refreshed successfully');
             
-            // Small delay to ensure session cookie is updated
-            await new Promise(resolve => setTimeout(resolve, 300));
+            // Small delay to ensure session is fully updated
+            await new Promise(resolve => setTimeout(resolve, 500));
           } catch (error) {
-            console.warn('⚠️ Failed to refresh session:', error);
-            // Don't fail the whole process if session refresh fails
+            console.error('⚠️ Failed to refresh session:', error);
+            // Session refresh failed - this might cause redirect to onboarding
+            // But we'll continue anyway since the data is saved
+            // User can refresh the page to get the updated session
+            console.warn('⚠️ Session refresh failed. If you get redirected to onboarding, please refresh the page.');
           }
+        } else if (!devMode && !updateSession) {
+          console.warn('⚠️ Session update function not available. This may cause redirect issues.');
         }
 
         // Step 2: Calculate availability (25-50%)
@@ -185,6 +186,22 @@ export default function GeneratingPlanPage() {
         setStatusText("Fetching user info");
         await new Promise(resolve => setTimeout(resolve, 300));
 
+        // Validate that we have ratings before generating plan
+        // topicRatings was already defined above on line 172
+        const ratedTopicsCount = Object.keys(topicRatings).filter(
+          topicId => topicRatings[topicId] !== undefined && topicRatings[topicId] !== -2
+        ).length;
+        
+        if (ratedTopicsCount === 0) {
+          throw new Error('No topic ratings found. Please go back and rate your topics on slide 19.');
+        }
+        
+        if (selectedSubjects.length === 0) {
+          throw new Error('No subjects selected. Please go back and select your subjects.');
+        }
+        
+        console.log(`✅ Validation passed: ${selectedSubjects.length} subjects, ${ratedTopicsCount} rated topics`);
+
         setProgress(75);
         setStatusText("Generating your study plan...");
 
@@ -198,18 +215,42 @@ export default function GeneratingPlanPage() {
             ratings: quizAnswers.topicRatings || {},
             topicStatus: quizAnswers.topicStatus || {},
             availability: availability,
-            examDates: quizAnswers.examDates || {},
             studyBlockDuration: 0.5
           }),
         });
 
         if (!planResponse.ok) {
           const errorData = await planResponse.json().catch(() => ({ error: 'Unknown error' }));
-          throw new Error(errorData.error || `Failed to generate plan (${planResponse.status})`);
+          const errorMessage = errorData.error || `Failed to generate plan (${planResponse.status})`;
+          
+          // Provide more context for common errors
+          if (errorMessage.includes('Saturday')) {
+            throw new Error(
+              'Next week\'s plan can only be generated from Saturday onwards.\n\n' +
+              'You can generate your current week\'s plan anytime, but planning for next week ' +
+              'is only available on weekends (Saturday-Sunday) to ensure your current week is complete.'
+            );
+          }
+          
+          throw new Error(errorMessage);
         }
 
         const planData = await planResponse.json();
         console.log('✅ Generated plan:', planData);
+        
+        // Check if plan generation returned any blocks
+        if (!planData.blocks || planData.blocks.length === 0) {
+          console.error('⚠️ Generated plan is empty:', planData);
+          throw new Error(
+            'Unable to generate study blocks. This could be due to:\n\n' +
+            '• Not enough available study time in your schedule\n' +
+            '• Too many blocked times conflicting with your availability\n' +
+            '• All topics marked as "Not Doing"\n\n' +
+            'Please review your availability settings and topic ratings, then try again.'
+          );
+        }
+        
+        console.log(`✅ Plan generated successfully with ${planData.blocks.length} study blocks`);
 
         // Step 4: Pre-load the plan data so the plan page doesn't need to load again (90-100%)
         setProgress(90);

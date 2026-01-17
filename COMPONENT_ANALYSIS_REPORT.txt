@@ -1,0 +1,183 @@
+🔍 Checking for unused marketing components...
+
+================================================================================
+📁 Scanning 216 files...
+
+
+📊 ANALYSIS RESULTS
+
+================================================================================
+
+🟡 Hero
+   File exists: ✅ Yes
+   Safety Rating: CAUTION
+   Can Remove: ✅ Yes
+   Reason: Component is only referenced in strings/comments. May be used dynamically or in configs.
+   Found 1 reference(s):
+      - scripts/check-unused-components.js (string reference)
+   ⚠️  Note: Review string references before removing.
+
+🟡 FeaturesGrid
+   File exists: ✅ Yes
+   Safety Rating: CAUTION
+   Can Remove: ✅ Yes
+   Reason: Component is only referenced in strings/comments. May be used dynamically or in configs.
+   Found 1 reference(s):
+      - scripts/check-unused-components.js (string reference)
+   ⚠️  Note: Review string references before removing.
+
+🟡 FeaturesAccordion
+   File exists: ✅ Yes
+   Safety Rating: CAUTION
+   Can Remove: ✅ Yes
+   Reason: Component is only referenced in strings/comments. May be used dynamically or in configs.
+   Found 1 reference(s):
+      - scripts/check-unused-components.js (string reference)
+   ⚠️  Note: Review string references before removing.
+
+🟡 FeaturesListicle
+   File exists: ✅ Yes
+   Safety Rating: CAUTION
+   Can Remove: ✅ Yes
+   Reason: Component is only referenced in strings/comments. May be used dynamically or in configs.
+   Found 1 reference(s):
+      - scripts/check-unused-components.js (string reference)
+   ⚠️  Note: Review string references before removing.
+
+🟡 Testimonials1
+   File exists: ✅ Yes
+   Safety Rating: CAUTION
+   Can Remove: ✅ Yes
+   Reason: Component is only referenced in strings/comments. May be used dynamically or in configs.
+   Found 1 reference(s):
+      - scripts/check-unused-components.js (string reference)
+   ⚠️  Note: Review string references before removing.
+
+🟡 Testimonials11
+   File exists: ✅ Yes
+   Safety Rating: CAUTION
+   Can Remove: ✅ Yes
+   Reason: Component is only referenced in strings/comments. May be used dynamically or in configs.
+   Found 1 reference(s):
+      - scripts/check-unused-components.js (string reference)
+   ⚠️  Note: Review string references before removing.
+
+🟡 Testimonials3
+   File exists: ✅ Yes
+   Safety Rating: CAUTION
+   Can Remove: ✅ Yes
+   Reason: Component is only referenced in strings/comments. May be used dynamically or in configs.
+   Found 1 reference(s):
+      - scripts/check-unused-components.js (string reference)
+   ⚠️  Note: Review string references before removing.
+
+🔴 TestimonialsAvatars
+   File exists: ✅ Yes
+   Safety Rating: DANGEROUS
+   Can Remove: ❌ No
+   Reason: Component is actively used in 1 file(s). Removing it will break the build.
+   Found 2 reference(s):
+      - components/Hero.js (direct import)
+      - scripts/check-unused-components.js (string reference)
+
+🟡 CTA
+   File exists: ✅ Yes
+   Safety Rating: CAUTION
+   Can Remove: ✅ Yes
+   Reason: Component is only referenced in strings/comments. May be used dynamically or in configs.
+   Found 1 reference(s):
+      - scripts/check-unused-components.js (string reference)
+   ⚠️  Note: Review string references before removing.
+
+🟡 Problem
+   File exists: ✅ Yes
+   Safety Rating: CAUTION
+   Can Remove: ✅ Yes
+   Reason: Component is only referenced in strings/comments. May be used dynamically or in configs.
+   Found 1 reference(s):
+      - scripts/check-unused-components.js (string reference)
+   ⚠️  Note: Review string references before removing.
+
+🟡 WithWithout
+   File exists: ✅ Yes
+   Safety Rating: CAUTION
+   Can Remove: ✅ Yes
+   Reason: Component is only referenced in strings/comments. May be used dynamically or in configs.
+   Found 1 reference(s):
+      - scripts/check-unused-components.js (string reference)
+   ⚠️  Note: Review string references before removing.
+
+🟡 Pricing
+   File exists: ✅ Yes
+   Safety Rating: CAUTION
+   Can Remove: ✅ Yes
+   Reason: Component is only referenced in strings/comments. May be used dynamically or in configs.
+   Found 3 reference(s):
+      - app/pricing/page.js (string reference)
+      - components/Header.js (string reference)
+      - scripts/check-unused-components.js (string reference)
+   ⚠️  Note: Review string references before removing.
+
+🟡 FAQ
+   File exists: ✅ Yes
+   Safety Rating: CAUTION
+   Can Remove: ✅ Yes
+   Reason: Component is only referenced in strings/comments. May be used dynamically or in configs.
+   Found 2 reference(s):
+      - components/Header.js (string reference)
+      - scripts/check-unused-components.js (string reference)
+   ⚠️  Note: Review string references before removing.
+
+🟡 ButtonGradient
+   File exists: ✅ Yes
+   Safety Rating: CAUTION
+   Can Remove: ✅ Yes
+   Reason: Component is only referenced in strings/comments. May be used dynamically or in configs.
+   Found 1 reference(s):
+      - scripts/check-unused-components.js (string reference)
+   ⚠️  Note: Review string references before removing.
+
+🟡 ButtonPopover
+   File exists: ✅ Yes
+   Safety Rating: CAUTION
+   Can Remove: ✅ Yes
+   Reason: Component is only referenced in strings/comments. May be used dynamically or in configs.
+   Found 1 reference(s):
+      - scripts/check-unused-components.js (string reference)
+   ⚠️  Note: Review string references before removing.
+
+================================================================================
+
+📈 SUMMARY
+
+✅ Safe to remove: 14 component(s)
+❌ Dangerous to remove: 1 component(s)
+
+🟢 Safe Components:
+   - Hero
+   - FeaturesGrid
+   - FeaturesAccordion
+   - FeaturesListicle
+   - Testimonials1
+   - Testimonials11
+   - Testimonials3
+   - CTA
+   - Problem
+   - WithWithout
+   - Pricing
+   - FAQ
+   - ButtonGradient
+   - ButtonPopover
+
+🔴 Dangerous Components (DO NOT REMOVE):
+   - TestimonialsAvatars (used in 2 file(s))
+
+================================================================================
+
+🔗 COMPONENT DEPENDENCIES
+
+
+================================================================================
+
+✅ Analysis complete!
+

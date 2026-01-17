@@ -92,11 +92,24 @@ export async function POST(req) {
       console.log('✅ Dev mode: Completely deleted dev user');
     }
 
-    return NextResponse.json({ 
-      success: true,
-      message: 'Dev user completely deleted. You can now sign up fresh with Google or email.',
-      deleted: true
-    });
+    // Create a new dev user automatically
+    const newUserId = await ensureDevUser();
+    
+    if (newUserId) {
+      console.log('✅ Dev mode: Created new dev user:', newUserId);
+      return NextResponse.json({ 
+        success: true,
+        message: 'Dev user reset complete. New dev user created.',
+        deleted: true,
+        userId: newUserId
+      });
+    } else {
+      return NextResponse.json({ 
+        success: true,
+        message: 'Dev user deleted. A new one will be created on next access.',
+        deleted: true
+      });
+    }
   } catch (error) {
     console.error('Reset error:', error);
     return NextResponse.json({ error: 'Failed to reset data' }, { status: 500 });
