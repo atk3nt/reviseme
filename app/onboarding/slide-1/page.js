@@ -98,7 +98,7 @@ export default function Slide1Page() {
       <div className="text-center space-y-4 sm:space-y-6 md:space-y-8 w-full">
         <OnboardingProgress 
           currentSlide={1} 
-          totalSlides={23} 
+          totalSlides={12} 
           showProgressBar={true}
         />
 
@@ -134,26 +134,28 @@ export default function Slide1Page() {
   }
 
   return (
-    <div className="text-center space-y-4 sm:space-y-6 md:space-y-8 w-full">
+    <div className="text-center w-full h-full flex flex-col justify-between py-8 sm:py-10 md:py-12">
       {/* Progress */}
-      <OnboardingProgress 
-        currentSlide={1} 
-        totalSlides={23} 
-        showProgressBar={true}
-      />
+      <div className="w-full flex-shrink-0 pb-6 sm:pb-8 md:pb-10">
+        <OnboardingProgress 
+          currentSlide={1} 
+          totalSlides={12} 
+          showProgressBar={true}
+        />
+      </div>
 
       {/* Title */}
-      <div className="space-y-2 sm:space-y-3 md:space-y-4">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#001433]">
-          Let's get your revision sorted
+      <div className="space-y-4 sm:space-y-5 flex-shrink-0 pb-6 sm:pb-8 md:pb-10">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#001433] leading-tight">
+          Let's get your revision sorted.
         </h1>
-        <p className="text-base sm:text-lg md:text-xl text-[#003D99] px-4 sm:px-0">
+        <p className="text-base sm:text-lg md:text-xl text-[#003D99] leading-relaxed">
           Sign in or create an account to start building your personalized study plan
         </p>
       </div>
 
       {/* Sign-in Options */}
-      <div className="space-y-4 sm:space-y-6 w-full max-w-md mx-auto px-4 sm:px-0">
+      <div className="space-y-4 w-full max-w-md mx-auto flex-shrink-0">
         {/* Google Sign-in Button (only shown if Google OAuth is configured) */}
         {googleAvailable && (
           <>
@@ -232,7 +234,7 @@ export default function Slide1Page() {
       )}
 
       {/* Skip for now */}
-      <div className="text-center pt-2 sm:pt-4">
+      <div className="text-center w-full flex-shrink-0">
         <button
           onClick={() => {
             unlockSlide(2);

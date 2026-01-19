@@ -59,16 +59,17 @@ export default function OnboardingLayout({ children }) {
       return;
     }
     
-    // Special case: Allow slide-18 if user has paid (hasAccess) OR if payment success URL
-    // This handles the case where user completes Stripe payment and returns to slide-18
+    // Special case: Allow slide-19 if user has paid (hasAccess) OR if payment success URL
+    // This handles the case where user completes Stripe payment and returns to slide-19
     // Allow access while session is loading to prevent premature redirects during webhook processing
-    if (slideNumber === 18) {
+    // Also handles the case where plan page redirects users back to resume onboarding
+    if (slideNumber === 19) {
       const hasAccess = session?.user?.hasAccess;
       const isPaymentSuccess = typeof window !== 'undefined' && 
         window.location.search.includes('payment=success');
       
       if (hasAccess || isPaymentSuccess || status === 'loading') {
-        console.log('[ONBOARDING LAYOUT] Allowing slide-18 access (payment callback)', {
+        console.log('[ONBOARDING LAYOUT] Allowing slide-19 access (payment callback)', {
           hasAccess,
           isPaymentSuccess,
           status
@@ -76,15 +77,13 @@ export default function OnboardingLayout({ children }) {
         setIsCheckingAccess(false);
         return;
       }
-    }
-    
-    // Special case: Allow slide-19 if user has paid (hasAccess) but hasn't completed onboarding
-    // This handles the case where plan page redirects users back to resume onboarding
-    // Users who have paid should be able to resume from topic rating even in new sessions
-    if (slideNumber === 19 && status === 'authenticated' && session?.user?.hasAccess) {
-      console.log('[ONBOARDING LAYOUT] Allowing slide-19 access (resume onboarding for paid user)');
-      setIsCheckingAccess(false);
-      return;
+      
+      // Also allow authenticated users with hasAccess to resume onboarding
+      if (status === 'authenticated' && hasAccess) {
+        console.log('[ONBOARDING LAYOUT] Allowing slide-19 access (resume onboarding for paid user)');
+        setIsCheckingAccess(false);
+        return;
+      }
     }
     
     // SECURITY FIX: Wait for session to load before checking access for regular slides
@@ -184,8 +183,8 @@ export default function OnboardingLayout({ children }) {
         )}
         
         {/* Main content area - fills viewport with responsive padding */}
-        <main className="flex-1 flex items-center justify-center px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-12">
-          <div className="w-full max-w-2xl mx-auto h-full flex flex-col justify-center">
+        <main className="flex-1 flex items-center justify-center px-6 sm:px-8 md:px-12">
+          <div className="w-full max-w-2xl mx-auto flex flex-col h-full max-h-[80vh]">
             {children}
           </div>
         </main>

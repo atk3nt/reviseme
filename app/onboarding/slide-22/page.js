@@ -340,16 +340,16 @@ export default function Slide22Page() {
     <div className="text-center space-y-8">
       <OnboardingProgress 
         currentSlide={22} 
-        totalSlides={24} 
+        totalSlides={12} 
         showProgressBar={true}
       />
 
       <div className="space-y-6">
         <h1 className="text-4xl font-bold text-[#001433]">
-          Ready to build your personalized study plan?
+          Time to create your plan.<br />We've got everything we need.
         </h1>
         <p className="text-xl text-[#003D99]">
-          Let's create a schedule tailored to your strengths and availability
+          Let's create your personalised revision schedule.
         </p>
       </div>
 
@@ -425,7 +425,7 @@ export default function Slide22Page() {
       </div>
 
       {/* Navigation */}
-      <div className="flex justify-start">
+      <div className="flex justify-start pt-6 sm:pt-8">
         <button
           onClick={() => router.push("/onboarding/slide-21")}
           className="bg-[#E5F0FF] border border-[#0066FF]/20 text-[#003D99] px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg text-xs font-medium hover:bg-[#0066FF]/10 hover:border-[#0066FF]/40 transition-colors"

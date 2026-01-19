@@ -258,9 +258,28 @@ function PlanPageContent() {
     viewingWeekStart.setHours(0, 0, 0, 0);
     currentWeekStart.setHours(0, 0, 0, 0);
     
+    // Check if viewing week is the same as current week
     if (viewingWeekStart.getTime() === currentWeekStart.getTime()) {
       return "This Week";
-    } else if (viewingWeekStart.getTime() > currentWeekStart.getTime()) {
+    }
+    
+    // Special case: If today is Sunday and viewing next Monday (tomorrow), it's "This Week"
+    const today = new Date();
+    const todayDay = today.getDay(); // 0 = Sunday
+    const isSunday = todayDay === 0;
+    
+    if (isSunday && viewingWeekStart.getTime() > currentWeekStart.getTime()) {
+      // Check if viewing week is the Monday immediately after Sunday (next day)
+      const nextMonday = new Date(currentWeekStart);
+      nextMonday.setDate(currentWeekStart.getDate() + 7); // Next Monday
+      nextMonday.setHours(0, 0, 0, 0);
+      
+      if (viewingWeekStart.getTime() === nextMonday.getTime()) {
+        return "This Week";
+      }
+    }
+    
+    if (viewingWeekStart.getTime() > currentWeekStart.getTime()) {
       return "Next Week";
     } else {
       return "Previous Week";
@@ -349,6 +368,17 @@ function PlanPageContent() {
         try {
           const preloadedData = JSON.parse(preloadedDataStr);
           const preloadedWeekStart = preloadedData.weekStart;
+          
+          // If preloaded data is for a different week (e.g., next week when signed up on Sunday), switch to that week
+          if (preloadedWeekStart && preloadedWeekStart !== weekStartStr) {
+            const preloadedWeekDate = new Date(`${preloadedWeekStart}T00:00:00Z`);
+            if (!isNaN(preloadedWeekDate.getTime())) {
+              console.log('📅 Pre-loaded data is for different week, switching to:', preloadedWeekStart, '(was:', weekStartStr, ')');
+              setWeekStartDate(preloadedWeekDate);
+              // Will reload blocks for the correct week via the useEffect dependency
+              return;
+            }
+          }
           
           // Only use pre-loaded data if it matches the requested week
           if (preloadedWeekStart === weekStartStr) {
@@ -565,6 +595,49 @@ function PlanPageContent() {
             }
           } else {
             console.log('📭 No existing blocks found in database response');
+            
+            // Special case: If today is Sunday and viewing current week with no blocks,
+            // check if blocks exist in next week and auto-switch
+            const today = new Date();
+            const todayDay = today.getDay(); // 0 = Sunday
+            const isSunday = todayDay === 0;
+            
+            const currentWeekStartDate = getCurrentWeekStart();
+            const viewingWeekStart = new Date(weekStart);
+            viewingWeekStart.setHours(0, 0, 0, 0);
+            currentWeekStartDate.setHours(0, 0, 0, 0);
+            const isViewingCurrentWeek = viewingWeekStart.getTime() === currentWeekStartDate.getTime();
+            
+            if (isSunday && isViewingCurrentWeek) {
+              // Calculate next week's Monday
+              const nextWeekStart = new Date(currentWeekStartDate);
+              nextWeekStart.setDate(currentWeekStartDate.getDate() + 7);
+              const nextWeekStartStr = nextWeekStart.toISOString().split('T')[0];
+              
+              console.log('📅 Sunday detected with no blocks in current week, checking next week:', nextWeekStartStr);
+              
+              // Fetch blocks for next week
+              try {
+                const nextWeekResponse = await fetch(`/api/plan/generate?weekStart=${nextWeekStartStr}`, {
+                  method: 'GET',
+                  headers: { 'Content-Type': 'application/json' }
+                });
+                
+                if (nextWeekResponse.ok) {
+                  const nextWeekData = await nextWeekResponse.json();
+                  if (nextWeekData.blocks && nextWeekData.blocks.length > 0) {
+                    console.log('✅ Found blocks in next week on Sunday, auto-switching...');
+                    // Switch to next week - this will trigger loadBlocksForWeek again via useEffect
+                    setWeekStartDate(nextWeekStart);
+                    setIsLoading(false);
+                    return; // Exit early - blocks will load when weekStartDate changes
+                  }
+                }
+              } catch (error) {
+                console.error('Error checking next week blocks:', error);
+                // Continue to normal flow below
+              }
+            }
           }
         } else {
           const errorData = await getResponse.json().catch(() => ({ error: 'Unknown error' }));
@@ -859,9 +932,13 @@ function PlanPageContent() {
       return;
     }
 
+    // Check if user just came from plan generation (freshGeneration flag in URL)
+    // This bypasses the onboarding check to prevent redirect while session is updating
+    const freshGeneration = searchParams.get('freshGeneration') === 'true';
+
     // Check if user has completed onboarding (skip in dev mode)
-    // Only redirect if they're authenticated and haven't completed onboarding
-    if (!devMode && status === 'authenticated' && session?.user && !session?.user?.hasCompletedOnboarding) {
+    // Only redirect if they're authenticated, haven't completed onboarding, AND didn't just generate a plan
+    if (!devMode && status === 'authenticated' && session?.user && !session?.user?.hasCompletedOnboarding && !freshGeneration) {
       console.log('⚠️ Onboarding not completed, redirecting to onboarding');
       router.push('/onboarding/slide-19');
       return;
@@ -869,7 +946,7 @@ function PlanPageContent() {
     
     // Note: loadBlocks is now called in the pre-loaded data check useEffect above
     // Only call it here if we don't have pre-loaded data (which is handled above)
-  }, [status, session, router]);
+  }, [status, session, router, searchParams]);
 
   // Ensure weekStartDate is synced to current week on mount
   useEffect(() => {
@@ -878,11 +955,71 @@ function PlanPageContent() {
     const stateWeekStr = weekStartDate.toISOString().split('T')[0];
     
     // If weekStartDate doesn't match current week, reset it
+    // BUT: Skip this if we have preloaded data that might be for a different week
+    const preloadedDataStr = sessionStorage.getItem('preloadedPlanData');
+    if (preloadedDataStr) {
+      try {
+        const preloadedData = JSON.parse(preloadedDataStr);
+        if (preloadedData.weekStart && preloadedData.weekStart !== currentWeekStr) {
+          // Preloaded data is for a different week, don't sync yet - let the loadBlocksForWeek handle it
+          console.log('📅 Preloaded data detected for different week, skipping sync:', preloadedData.weekStart);
+          return;
+        }
+      } catch (error) {
+        // Ignore parse errors
+      }
+    }
+    
     if (currentWeekStr !== stateWeekStr) {
       console.log('🔄 Syncing weekStartDate to current week:', currentWeekStr, 'was:', stateWeekStr);
       setWeekStartDate(currentWeekStart);
     }
   }, []); // Only run on mount
+
+  // Auto-switch to the week of generated blocks (for Sunday signups)
+  // This runs after blocks are loaded and checks if they're in a future week
+  useEffect(() => {
+    // Only run once after blocks are loaded, and only if we have blocks
+    if (isLoading || blocks.length === 0) return;
+    
+    // Don't auto-switch if we're already viewing a future week (user might have navigated manually)
+    const currentWeekStart = getCurrentWeekStart();
+    const viewingWeekStart = new Date(weekStartDate);
+    viewingWeekStart.setHours(0, 0, 0, 0);
+    currentWeekStart.setHours(0, 0, 0, 0);
+    
+    // Only auto-switch if we're viewing current week but blocks are in future week
+    const isViewingCurrentWeek = viewingWeekStart.getTime() === currentWeekStart.getTime();
+    if (!isViewingCurrentWeek) return; // User is already viewing a different week, don't interfere
+    
+    // Find the earliest block date
+    let earliestBlockDate = null;
+    for (const block of blocks) {
+      if (block.scheduled_at) {
+        const blockDate = new Date(block.scheduled_at);
+        if (!isNaN(blockDate.getTime())) {
+          if (!earliestBlockDate || blockDate < earliestBlockDate) {
+            earliestBlockDate = blockDate;
+          }
+        }
+      }
+    }
+    
+    if (earliestBlockDate) {
+      // Calculate the Monday of the week this block is in
+      const blockDay = earliestBlockDate.getDay();
+      const diff = earliestBlockDate.getDate() - blockDay + (blockDay === 0 ? -6 : 1);
+      const blockWeekStart = new Date(earliestBlockDate);
+      blockWeekStart.setDate(diff);
+      blockWeekStart.setHours(0, 0, 0, 0);
+      
+      // If blocks are in a future week and we're viewing current week, switch to that week
+      if (blockWeekStart.getTime() > currentWeekStart.getTime()) {
+        console.log('📅 Auto-switching to week with generated blocks:', blockWeekStart.toISOString().split('T')[0]);
+        setWeekStartDate(blockWeekStart);
+      }
+    }
+  }, [blocks, isLoading, weekStartDate, getCurrentWeekStart]);
 
   // Reload blocks when weekStartDate changes
   useEffect(() => {
@@ -1345,6 +1482,32 @@ function PlanPageContent() {
     return () => clearInterval(interval);
   }, []);
 
+  // Prevent body scrolling when sidebar is open on mobile
+  useEffect(() => {
+    if (sidebarOpen) {
+      // Save current scroll position
+      const scrollY = window.scrollY;
+      // Lock body scroll
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+      document.body.style.overflow = 'hidden';
+      
+      return () => {
+        // Restore body scroll
+        const bodyTop = document.body.style.top;
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        document.body.style.overflow = '';
+        // Restore scroll position
+        if (bodyTop) {
+          window.scrollTo(0, parseInt(bodyTop || '0') * -1);
+        }
+      };
+    }
+  }, [sidebarOpen]);
+
   // Use only block.id for keys to ensure consistency when blocks are rescheduled
   // If a block doesn't have an id, use scheduled_at as fallback (should rarely happen)
   const deriveBlockKey = useCallback((block) => {
@@ -1414,60 +1577,77 @@ function PlanPageContent() {
             width={200}
             height={46}
             priority
-            className="h-9 w-auto"
+            className="h-7 sm:h-9 w-auto"
           />
         </div>
       </div>
 
       {/* Header */}
       <div className="bg-white">
-        <div className="max-w-7xl mx-auto px-4 py-6 pl-28">
+        <div className="max-w-7xl mx-auto px-2 sm:px-4 py-4 sm:py-6 pl-16 sm:pl-28">
           <div className="flex items-center justify-between">
             <div>
               {/* Header text removed */}
             </div>
             
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-0 sm:gap-2">
               {/* Navigation Arrows - Always show */}
-              <div className="flex items-center gap-1 bg-base-100 rounded-lg p-1">
+              <div className="flex items-center gap-0 sm:gap-1 bg-base-100 rounded-lg p-0 sm:p-1">
                 {/* Previous Week Arrow */}
                 <button
                   onClick={navigateToPreviousWeek}
                   disabled={!canGoToPreviousWeek}
-                  className={`btn btn-ghost btn-circle btn-sm ${!canGoToPreviousWeek ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className={`btn btn-ghost btn-circle btn-xs sm:btn-sm ${!canGoToPreviousWeek ? 'opacity-50 cursor-not-allowed' : ''}`}
                   aria-label="Previous week"
                   title={canGoToPreviousWeek ? "Go to previous week" : "Already at current week"}
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20px" height="20px" viewBox="0 0 24 24">
+                  <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20px" height="20px" viewBox="0 0 24 24" className="w-5 h-5 sm:w-5 sm:h-5">
                     <path fillRule="evenodd" clipRule="evenodd" d="M16.0001 1.58576L5.58588 12L16.0001 22.4142L17.4143 21L8.41431 12L17.4143 2.99997L16.0001 1.58576Z" fill="currentColor"></path>
                   </svg>
                 </button>
                 
                 {/* Week Label */}
-                <div className="px-3 py-1 text-sm font-medium min-w-[120px] text-center">
-                  {getWeekLabel()}
+                <div className="px-0 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm font-medium min-w-[50px] sm:min-w-[120px] text-center">
+                  {(() => {
+                    const label = getWeekLabel();
+                    const words = label.split(' ');
+                    if (words.length === 2) {
+                      return (
+                        <div className="flex flex-col sm:block">
+                          <span>{words[0]}</span>
+                          <span>{words[1]}</span>
+                        </div>
+                      );
+                    }
+                    return label;
+                  })()}
                 </div>
                 
                 {/* Next Week Arrow */}
                 <button
                   onClick={navigateToNextWeek}
                   disabled={!canGoToNextWeek}
-                  className={`btn btn-ghost btn-circle btn-sm ${!canGoToNextWeek ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className={`btn btn-ghost btn-circle btn-xs sm:btn-sm ${!canGoToNextWeek ? 'opacity-50 cursor-not-allowed' : ''}`}
                   aria-label="Next week"
                   title={canGoToNextWeek ? "Go to next week" : isViewingNextWeek ? "Already viewing next week" : "Next week's plan is available from Saturday"}
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20px" height="20px" viewBox="0 0 24 24">
+                  <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20px" height="20px" viewBox="0 0 24 24" className="w-5 h-5 sm:w-5 sm:h-5">
                     <path fillRule="evenodd" clipRule="evenodd" d="M7.99991 1.58576L18.4141 12L7.99991 22.4142L6.58569 21L15.5857 12L6.58569 2.99997L7.99991 1.58576Z" fill="currentColor"></path>
                   </svg>
                 </button>
+                {!canGoToNextWeek && !isViewingNextWeek && (
+                  <span className="text-xs text-base-content/60 ml-1 hidden sm:inline whitespace-nowrap">
+                    Available Saturday
+                  </span>
+                )}
               </div>
               
               {/* Today/Week Tabs - Hide Today tab when viewing next week */}
-              <div className="flex items-center gap-1 bg-base-100 rounded-lg p-1">
+              <div className="flex flex-col sm:flex-row items-center gap-0.5 sm:gap-1 bg-base-100 rounded-lg p-0 sm:p-1">
                 {!isViewingNextWeek && !isViewingPreviousWeek && (
                   <button
                     onClick={() => setActiveTab('today')}
-                    className={`h-8 px-3 rounded-md text-sm font-medium transition-all flex items-center justify-center ${
+                    className={`h-7 sm:h-8 px-2 sm:px-3 rounded-md text-xs sm:text-sm font-medium transition-all flex items-center justify-center ${
                       activeTab === 'today' 
                         ? 'bg-[#0066FF] text-white shadow-[0_1px_2px_0_rgba(0,102,255,0.15)]' 
                         : 'text-base-content hover:bg-base-200'
@@ -1478,7 +1658,7 @@ function PlanPageContent() {
                 )}
                 <button
                   onClick={() => setActiveTab('week')}
-                  className={`h-8 px-3 rounded-md text-sm font-medium transition-all flex items-center justify-center ${
+                  className={`h-7 sm:h-8 px-2 sm:px-3 rounded-md text-xs sm:text-sm font-medium transition-all flex items-center justify-center ${
                       activeTab === 'week' 
                         ? 'bg-[#0066FF] text-white shadow-[0_1px_2px_0_rgba(0,102,255,0.15)]' 
                         : 'text-base-content hover:bg-base-200'
@@ -1511,7 +1691,7 @@ function PlanPageContent() {
           </div>
 
           {/* Sidebar Navigation */}
-          <nav className="flex-1 p-5">
+          <nav className="flex-1 p-5 overflow-y-auto overflow-x-hidden">
             <ul className="space-y-2">
               <li>
                 <Link
@@ -1664,7 +1844,7 @@ function PlanPageContent() {
       )}
 
       {/* Content */}
-      <div className="max-w-[95vw] mx-auto px-4 py-8">
+      <div className="max-w-[95vw] mx-auto pl-0 pr-1 sm:px-4 py-8">
         {activeTab === 'today' ? (
           <TodayView 
             blocks={getTodayBlocks()} 
@@ -1904,7 +2084,7 @@ function TodayView({ blocks, nextDayBlocks = [], onSelectBlock, getSubjectColor,
                           className="w-3 h-3 rounded-full mt-2"
                           style={{ backgroundColor: getSubjectColor(subject) }}
                         />
-                        <div className="space-y-1">
+                        <div className="space-y-1 hidden sm:block">
                           <p className="text-sm font-medium text-base-content/70 flex items-center gap-2">
                             <span>{getSubjectIcon(subject)}</span>
                             <span>{subject}</span>
@@ -1917,7 +2097,7 @@ function TodayView({ blocks, nextDayBlocks = [], onSelectBlock, getSubjectColor,
                           )}
                         </div>
                       </div>
-                      <div className="text-right flex-shrink-0">
+                      <div className="text-right flex-shrink-0 hidden sm:block">
                         <div className="flex items-center justify-end gap-1.5">
                           <p className="text-sm font-semibold">{formattedTime}</p>
                           {isRescheduled && (
@@ -2359,16 +2539,16 @@ function WeekView({
   return (
     <div className="w-full overflow-hidden">
       <div className="w-full">
-        <table className="table-fixed w-full border-separate" style={{ borderSpacing: '2px 2px', tableLayout: 'fixed' }}>
+        <table className="table-fixed w-full border-separate" style={{ borderSpacing: '0.5px 2px', tableLayout: 'fixed' }}>
           <colgroup>
-            <col className="w-[70px]" />
+            <col className="w-[60px]" />
             {days.map(() => (
-              <col key={Math.random()} className="w-[calc((100%-70px)/7)]" />
+              <col key={Math.random()} className="w-[calc((100%-60px)/7)]" />
             ))}
           </colgroup>
           <thead>
             <tr>
-              <th className="sticky left-0 z-10 bg-transparent border-t border-l border-b border-transparent px-2 py-1 text-base font-semibold text-center w-[70px] rounded-lg" style={{ fontFamily: '"DM Sans", sans-serif' }}>
+              <th className="sticky left-0 z-10 bg-transparent border-t border-l border-b border-transparent px-1 py-1 text-base font-semibold text-center w-[60px] rounded-lg" style={{ fontFamily: '"DM Sans", sans-serif' }}>
                 {/* Time label removed for cleaner look */}
               </th>
               {days.map((day, dayIndex) => {
@@ -2426,15 +2606,15 @@ function WeekView({
               const isLastRow = timeIndex === allTimeLabels.length - 1;
               return (
                 <tr key={label.time} className="h-[70px] relative">
-                  <td className="sticky left-0 z-10 bg-white border-l border-r border-transparent px-2 py-2 h-[70px] rounded-lg relative" style={{ fontFamily: '"DM Sans", sans-serif', borderRight: '1px solid #e5e7eb' }}>
+                  <td className="sticky left-0 z-10 bg-white border-l border-r border-transparent px-0.5 py-2 h-[70px] rounded-lg relative" style={{ fontFamily: '"DM Sans", sans-serif', borderRight: '1px solid #e5e7eb', width: '60px', minWidth: '60px', maxWidth: '60px' }}>
                     {/* Time label positioned at the top border (in the gap between blocks) */}
                     <div 
-                      className="absolute -top-[10px] left-0 right-0 flex items-center justify-center z-20 bg-white px-1"
+                      className="absolute -top-[10px] left-0 right-0 flex items-center justify-center z-20 bg-white px-0.5"
                       style={{ 
                         color: config.colors.brand.textMedium,
-                        fontSize: '0.875rem',
+                        fontSize: '0.7rem',
                         fontWeight: 500,
-                        lineHeight: '1.25rem'
+                        lineHeight: '1rem'
                       }}
                     >
                       {label.time}
@@ -2563,19 +2743,17 @@ function WeekView({
                           const isMissed = block.status === 'missed';
                           const isRescheduled = block.status === 'rescheduled';
                           
-                          const isFutureWeek = isViewingNextWeek;
-                          
                           return (
                             <div
                               key={blockKey}
-                              role={isBeforePlanStart || isRescheduled || isFutureWeek ? "presentation" : "button"}
-                              tabIndex={isBeforePlanStart || isRescheduled || isFutureWeek ? -1 : 0}
+                              role={isBeforePlanStart || isRescheduled ? "presentation" : "button"}
+                              tabIndex={isBeforePlanStart || isRescheduled ? -1 : 0}
                               onClick={() => {
-                                if (isBeforePlanStart || isRescheduled || isFutureWeek) return;
+                                if (isBeforePlanStart || isRescheduled) return;
                                 onSelectBlock({ kind: 'study', key: blockKey });
                               }}
                               onKeyDown={(event) => {
-                                if (isBeforePlanStart || isRescheduled || isFutureWeek) return;
+                                if (isBeforePlanStart || isRescheduled) return;
                                 if (event.key === 'Enter' || event.key === ' ') {
                                   event.preventDefault();
                                   onSelectBlock({ kind: 'study', key: blockKey });
@@ -2592,25 +2770,32 @@ function WeekView({
                                         ? 'border border-error/50 bg-error/10 cursor-pointer'
                                         : 'cursor-pointer hover:opacity-80'
                               }`}
-                              style={!isDone && !isMissed && !isBeforePlanStart && !isRescheduled ? {
-                                backgroundColor: getSubjectBgColor(subject),
-                                borderColor: getSubjectBorderColor(subject),
-                                borderWidth: '1px',
-                                borderStyle: 'solid'
-                              } : undefined}
+                              style={!isDone && !isMissed && !isBeforePlanStart && !isRescheduled ? (() => {
+                                const color = getSubjectColor(subject);
+                                const hex = color.replace('#', '');
+                                const r = parseInt(hex.substring(0, 2), 16);
+                                const g = parseInt(hex.substring(2, 4), 16);
+                                const b = parseInt(hex.substring(4, 6), 16);
+                                return {
+                                  backgroundColor: `rgba(${r}, ${g}, ${b}, 0.20)`,
+                                  borderColor: getSubjectBorderColor(subject),
+                                  borderWidth: '1px',
+                                  borderStyle: 'solid'
+                                };
+                              })() : undefined}
                             >
                               <div className={`flex items-center gap-1 mb-1 ${isRescheduled ? 'line-through' : ''}`}>
                                 <div
                                   className="w-2 h-2 rounded-full flex-shrink-0"
                                   style={{ backgroundColor: getSubjectColor(subject) }}
                                 />
-                                <span className="text-xs">{getSubjectIcon(subject)}</span>
-                                <span className={`text-xs ${getStatusColor(block.status)}`}>
+                                <span className="text-xs hidden sm:inline">{getSubjectIcon(subject)}</span>
+                                <span className={`text-xs hidden sm:inline ${getStatusColor(block.status)}`}>
                                   {getStatusIcon(block.status)}
                                 </span>
                               </div>
-                              <p className={`font-medium truncate text-xs leading-tight mb-1 ${isRescheduled ? 'line-through' : ''}`}>{topicName}</p>
-                              <div className={`flex items-center gap-1 ${isRescheduled ? 'line-through' : ''}`}>
+                              <p className={`hidden sm:block font-medium truncate text-xs leading-tight mb-1 ${isRescheduled ? 'line-through' : ''}`}>{topicName}</p>
+                              <div className={`hidden sm:flex items-center gap-1 ${isRescheduled ? 'line-through' : ''}`}>
                                 <p className="text-xs text-base-content/70">
                                   {new Date(block.scheduled_at).toLocaleTimeString([], { 
                                     hour: '2-digit', 

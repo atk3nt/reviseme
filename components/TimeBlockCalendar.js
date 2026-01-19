@@ -37,6 +37,9 @@ export default function TimeBlockCalendar({
   const [dragEnd, setDragEnd] = useState(null);
   const dragEndRef = useRef(null); // Use ref to track latest drag end position
   const calendarRef = useRef(null);
+  const cleanupRef = useRef(null); // Track cleanup function
+  const isDraggingRef = useRef(false); // Track dragging state with ref for event handlers
+  const savedScrollYRef = useRef(0); // Store scroll position
 
   // Generate time slots based on time preferences
   // If timePreferences is provided, only show times within the study window
@@ -214,10 +217,13 @@ export default function TimeBlockCalendar({
   const handleMouseDown = (e, dayIndex, timeSlot) => {
     if (readOnly || isWeekScheduled) return;
     
-    // Prevent text selection
+    // Prevent text selection and scrolling
     e.preventDefault();
+    e.stopPropagation();
     
     const startPos = { dayIndex, timeSlot };
+    isDraggingRef.current = true; // Set ref immediately for event handlers
+    savedScrollYRef.current = window.scrollY; // Save current scroll position
     setIsDragging(true);
     setDragStart(startPos);
     setDragEnd(startPos);
@@ -226,20 +232,15 @@ export default function TimeBlockCalendar({
 
   // Handle mouse move (during drag) - using elementFromPoint for better accuracy
   const handleMouseMove = (e) => {
-    // Check both state and ref to ensure we're actually dragging
-    if (!isDragging || !dragStart || readOnly || !calendarRef.current) {
-      // If we think we're dragging but state says we're not, clean up
-      if (dragEndRef.current) {
-        setIsDragging(false);
-        setDragStart(null);
-        setDragEnd(null);
-        dragEndRef.current = null;
-      }
+    // Check ref instead of state for immediate updates
+    if (!isDraggingRef.current || !dragStart || readOnly || !calendarRef.current) {
       return;
     }
 
     // Prevent text selection during drag
-    e.preventDefault();
+    if (e.cancelable) {
+      e.preventDefault();
+    }
 
     // Use elementFromPoint to find which cell we're over
     const element = document.elementFromPoint(e.clientX, e.clientY);
@@ -268,6 +269,16 @@ export default function TimeBlockCalendar({
 
   // Handle mouse up (end drag or click)
   const handleMouseUp = () => {
+    // Always clean up first, regardless of state
+    if (cleanupRef.current) {
+      const cleanupFn = cleanupRef.current;
+      cleanupRef.current = null;
+      cleanupFn(); // Call cleanup immediately
+    }
+    
+    // Set ref to false immediately
+    isDraggingRef.current = false;
+    
     if (!isDragging || readOnly) {
       // Make sure we're not dragging even if state is inconsistent
       setIsDragging(false);
@@ -379,11 +390,12 @@ export default function TimeBlockCalendar({
     );
   };
 
-  // Format time for display
+  // Format time for display - original full format for desktop
   const formatTime = (timeSlot) => {
     const [hour, minute] = timeSlot.split(':').map(Number);
     const period = hour >= 12 ? 'pm' : 'am';
     const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
+    // Original format: always show full format "1:00pm"
     return `${displayHour}:${minute.toString().padStart(2, '0')}${period}`;
   };
 
@@ -403,39 +415,199 @@ export default function TimeBlockCalendar({
   const brandBlueRingOffset = hexToRgba(brandBlue, 0.2);
 
   useEffect(() => {
+    // Clean up any previous drag state first
+    if (cleanupRef.current) {
+      cleanupRef.current();
+      cleanupRef.current = null;
+    }
+    
     if (isDragging) {
       const handleMouseMoveWrapper = (e) => {
+        // Check ref instead of state for immediate updates
+        if (!isDraggingRef.current) {
+          return;
+        }
+        if (e.cancelable) {
+          e.preventDefault();
+        }
         handleMouseMove(e);
       };
       const handleMouseUpWrapper = (e) => {
+        if (e.cancelable) {
+          e.preventDefault();
+        }
         handleMouseUp();
       };
       
-      document.addEventListener('mousemove', handleMouseMoveWrapper);
-      document.addEventListener('mouseup', handleMouseUpWrapper);
-      
-      return () => {
-        document.removeEventListener('mousemove', handleMouseMoveWrapper);
-        document.removeEventListener('mouseup', handleMouseUpWrapper);
+      const handleTouchMove = (e) => {
+        // Check ref instead of state for immediate updates
+        if (!isDraggingRef.current) {
+          return;
+        }
+        // Only prevent default if we can
+        if (e.cancelable) {
+          e.preventDefault();
+        }
+        e.stopPropagation();
+        const touch = e.touches[0];
+        if (touch && calendarRef.current) {
+          const element = document.elementFromPoint(touch.clientX, touch.clientY);
+          if (element) {
+            let cellElement = element;
+            let maxDepth = 10;
+            while (cellElement && cellElement !== calendarRef.current && maxDepth > 0) {
+              const dayIndex = cellElement.getAttribute('data-day-index');
+              const timeSlot = cellElement.getAttribute('data-time-slot');
+              if (dayIndex !== null && timeSlot !== null) {
+                const newDragEnd = { 
+                  dayIndex: parseInt(dayIndex), 
+                  timeSlot: timeSlot 
+                };
+                setDragEnd(newDragEnd);
+                dragEndRef.current = newDragEnd;
+                return;
+              }
+              cellElement = cellElement.parentElement;
+              maxDepth--;
+            }
+          }
+        }
       };
+      
+      const handleTouchEnd = (e) => {
+        // Check ref instead of state for immediate updates
+        if (!isDraggingRef.current) {
+          return;
+        }
+        // Only prevent default if we can
+        if (e.cancelable) {
+          e.preventDefault();
+        }
+        handleMouseUp();
+      };
+      
+      // Prevent scrolling during drag - use capture phase and check cancelable
+      const preventScroll = (e) => {
+        // Check ref instead of state for immediate updates
+        if (isDraggingRef.current && e.cancelable) {
+          e.preventDefault();
+        }
+      };
+      
+      // Prevent wheel scrolling during drag
+      const preventWheel = (e) => {
+        // Check ref instead of state for immediate updates
+        if (isDraggingRef.current && e.cancelable) {
+          e.preventDefault();
+        }
+      };
+      
+      // Use capture phase for better control
+      const options = { passive: false, capture: true };
+      
+      document.addEventListener('mousemove', handleMouseMoveWrapper, options);
+      document.addEventListener('mouseup', handleMouseUpWrapper, options);
+      document.addEventListener('touchmove', handleTouchMove, options);
+      document.addEventListener('touchend', handleTouchEnd, options);
+      document.addEventListener('scroll', preventScroll, options);
+      document.addEventListener('wheel', preventWheel, options);
+      
+      // Use CSS to prevent scrolling instead of just JS
+      // Save scroll position before fixing body
+      const scrollY = savedScrollYRef.current || window.scrollY;
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+      document.body.style.touchAction = 'none';
+      
+      // Also prevent scrolling on the calendar container
+      if (calendarRef.current) {
+        calendarRef.current.style.touchAction = 'none';
+      }
+      
+      const cleanup = () => {
+        document.removeEventListener('mousemove', handleMouseMoveWrapper, options);
+        document.removeEventListener('mouseup', handleMouseUpWrapper, options);
+        document.removeEventListener('touchmove', handleTouchMove, options);
+        document.removeEventListener('touchend', handleTouchEnd, options);
+        document.removeEventListener('scroll', preventScroll, options);
+        document.removeEventListener('wheel', preventWheel, options);
+        
+        // Restore body styles first
+        const savedScroll = savedScrollYRef.current || 0;
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        document.body.style.touchAction = '';
+        
+        // Restore scroll position after styles are cleared (works for both mobile and desktop)
+        if (savedScroll > 0) {
+          // Use setTimeout to ensure styles are cleared first
+          setTimeout(() => {
+            window.scrollTo(0, savedScroll);
+          }, 0);
+        }
+        
+        if (calendarRef.current) {
+          calendarRef.current.style.touchAction = '';
+        }
+        
+        // Reset refs
+        savedScrollYRef.current = 0;
+      };
+      
+      cleanupRef.current = cleanup;
+      
+      return cleanup;
     } else {
       // Clean up if not dragging
+      isDraggingRef.current = false;
       setDragStart(null);
       setDragEnd(null);
       dragEndRef.current = null;
+      savedScrollYRef.current = 0;
     }
+    
+    // Safety cleanup on unmount or when dragging state changes
+    return () => {
+      if (cleanupRef.current) {
+        cleanupRef.current();
+        cleanupRef.current = null;
+      }
+      // Force restore body styles as safety net (works for both mobile and desktop)
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      document.body.style.touchAction = '';
+      if (calendarRef.current) {
+        calendarRef.current.style.touchAction = '';
+      }
+    };
   }, [isDragging]);
 
   return (
-    <div className="w-full overflow-x-auto select-none">
+    <div 
+      className="w-full overflow-x-auto select-none"
+      style={{ 
+        WebkitOverflowScrolling: 'touch',
+        scrollbarWidth: 'thin',
+        msOverflowStyle: '-ms-autohiding-scrollbar'
+      }}
+    >
       <div
         ref={calendarRef}
         className="inline-block min-w-full bg-white border-2 border-gray-200 rounded-xl overflow-hidden select-none"
-        style={{ userSelect: 'none', WebkitUserSelect: 'none' }}
+        style={{ 
+          userSelect: 'none', 
+          WebkitUserSelect: 'none'
+        }}
       >
         {/* Header */}
-        <div className="grid grid-cols-8 border-b-2 border-gray-300 bg-brand-light select-none gap-2 px-2 py-3">
-          <div className="font-semibold text-brand-medium select-none text-center flex items-center justify-center">
+        <div className="grid grid-cols-8 border-b-2 border-gray-300 bg-brand-light select-none gap-0.5 sm:gap-2 px-1 sm:px-2 py-2 sm:py-3">
+          <div className="font-semibold text-brand-medium select-none text-center flex items-center justify-center text-xs sm:text-sm">
             Time
           </div>
           {days.map((day, index) => {
@@ -445,8 +617,8 @@ export default function TimeBlockCalendar({
                 key={day}
                 className="text-center select-none"
               >
-                <p className="font-semibold text-brand-dark select-none">{dayLabels[index]}</p>
-                <p className="text-xs text-brand-medium select-none">
+                <p className="font-semibold text-brand-dark select-none text-xs sm:text-sm">{dayLabels[index]}</p>
+                <p className="text-[10px] sm:text-xs text-brand-medium select-none">
                   {date.getDate()}/{date.getMonth() + 1}
                 </p>
               </div>
@@ -455,15 +627,27 @@ export default function TimeBlockCalendar({
         </div>
 
         {/* Time Blocks */}
-        <div className="p-2 space-y-2">
+        <div className="p-0.5 sm:p-2 space-y-0.5 sm:space-y-2">
           {timeSlots.map((timeSlot, timeIndex) => (
             <div
               key={timeSlot}
-              className="grid grid-cols-8 gap-2"
+              className="grid grid-cols-8 gap-0.5 sm:gap-2"
             >
               {/* Time Label */}
-              <div className="text-sm text-brand-medium bg-brand-light select-none text-center flex items-center justify-center rounded-md py-2">
-                {formatTime(timeSlot)}
+              <div className="text-xs sm:text-sm text-brand-medium bg-brand-light select-none text-center flex items-center justify-center rounded-md py-1.5 sm:py-2 px-0.5 sm:px-1 w-full min-w-0">
+                {/* Mobile: compact format, Desktop: full format */}
+                <span className="sm:hidden">
+                  {(() => {
+                    const [hour, minute] = timeSlot.split(':').map(Number);
+                    const period = hour >= 12 ? 'pm' : 'am';
+                    const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
+                    if (minute === 0) {
+                      return `${displayHour}${period}`;
+                    }
+                    return `${displayHour}:${minute.toString().padStart(2, '0')}${period}`;
+                  })()}
+                </span>
+                <span className="hidden sm:inline">{formatTime(timeSlot)}</span>
               </div>
 
               {/* Day Blocks */}
@@ -539,6 +723,14 @@ export default function TimeBlockCalendar({
                       }
                       handleMouseDown(e, dayIndex, timeSlot);
                     }}
+                    onTouchStart={(e) => {
+                      if (!withinWindow || readOnly || isWeekScheduled) {
+                        return;
+                      }
+                      // For touch devices - start drag immediately like mouse
+                      // The drag prevention logic will handle scrolling during drag
+                      handleMouseDown(e, dayIndex, timeSlot);
+                    }}
                     onMouseEnter={() => {
                       if (isDragging && dragStart && !isWeekScheduled) {
                         const newDragEnd = { dayIndex, timeSlot };
@@ -550,7 +742,8 @@ export default function TimeBlockCalendar({
                       rounded-md ${inDragRange && !isWeekScheduled ? '' : `border ${borderColor}`} ${inDragRange && !isWeekScheduled ? '' : bgColor} ${inDragRange && !isWeekScheduled ? '' : textColor} ${opacity} select-none
                       transition-all duration-200 flex items-center justify-center
                       ${cursor}
-                      min-h-[32px]
+                      min-h-[40px] sm:min-h-[32px]
+                      touch-manipulation
                     `}
                     style={inlineStyle}
                     title={!withinWindow ? '' : `${day} ${formatTime(timeSlot)} - ${
@@ -560,7 +753,7 @@ export default function TimeBlockCalendar({
                     }`}
                   >
                     {state === 'scheduled' && !inDragRange && (
-                      <span className="text-xs select-none">●</span>
+                      <span className="text-[10px] sm:text-xs select-none">●</span>
                     )}
                   </div>
                 );
@@ -571,28 +764,28 @@ export default function TimeBlockCalendar({
       </div>
 
       {/* Legend */}
-      <div className="mt-4 flex flex-wrap justify-center items-center gap-4 text-sm">
+      <div className="mt-3 sm:mt-4 flex flex-wrap justify-center items-center gap-2 sm:gap-4 text-xs sm:text-sm">
         <div className="flex items-center space-x-2">
-          <div className="w-4 h-4 bg-white border border-gray-300 rounded"></div>
-          <span className="text-brand-medium">Available</span>
+          <div className="w-3 h-3 sm:w-4 sm:h-4 bg-white border border-gray-300 rounded"></div>
+          <span className="text-brand-medium text-xs sm:text-sm">Available</span>
         </div>
         <div className="flex items-center space-x-2">
-          <div className="w-4 h-4 bg-red-100 border border-red-300 rounded"></div>
-          <span className="text-brand-medium">Blocked</span>
+          <div className="w-3 h-3 sm:w-4 sm:h-4 bg-red-100 border border-red-300 rounded"></div>
+          <span className="text-brand-medium text-xs sm:text-sm">Blocked</span>
         </div>
         {onReset && blockedTimes.length > 0 ? (
           <button
             onClick={onReset}
-            className={`px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg text-xs font-medium transition-colors w-[160px] ${
+            className={`px-2 sm:px-3 py-1 sm:py-0.5 rounded-lg text-[10px] sm:text-xs font-medium transition-colors ${
               confirmReset 
-                ? 'bg-[#0066FF] border border-[#0066FF] text-white hover:bg-[#0052CC] hover:border-[#0052CC]' // Solid blue on confirmation
-                : 'bg-[#E5F0FF] border border-[#0066FF]/20 text-[#003D99] hover:bg-[#0066FF]/10 hover:border-[#0066FF]/40' // Outlined blue initially
+                ? 'bg-[#0066FF] border border-[#0066FF] text-white hover:bg-[#0052CC] hover:border-[#0052CC]'
+                : 'bg-[#E5F0FF] border border-[#0066FF]/20 text-[#003D99] hover:bg-[#0066FF]/10 hover:border-[#0066FF]/40'
             }`}
           >
             {confirmReset ? 'Confirm Reset?' : 'Reset all blocked times'}
           </button>
         ) : (
-          <div className="text-brand-medium text-xs">
+          <div className="text-brand-medium text-[10px] sm:text-xs">
             Click or drag to block/unblock times
           </div>
         )}

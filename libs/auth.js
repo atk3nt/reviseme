@@ -46,6 +46,77 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         },
       },
       from: config.resend.fromAdmin,
+      sendVerificationRequest: async ({ identifier, url, provider }) => {
+        const { Resend } = await import('resend');
+        const resend = new Resend(process.env.RESEND_API_KEY);
+        
+        const { data, error } = await resend.emails.send({
+          from: provider.from,
+          to: identifier,
+          subject: 'Sign in to ReviseMe',
+          text: `Sign in to ReviseMe\n\nClick this link to sign in:\n${url}\n\nIf you didn't request this, you can safely ignore this email.`,
+          html: `
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+              <style>
+                @media only screen and (max-width: 600px) {
+                  .container { padding: 15px !important; }
+                  h1 { font-size: 24px !important; }
+                }
+              </style>
+              <!--[if mso]>
+              <style type="text/css">
+                body, table, td {font-family: Arial, sans-serif !important;}
+              </style>
+              <![endif]-->
+            </head>
+            <body style="margin: 0; padding: 0; background-color: #f5f5f5;">
+              <div style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #FFFFFF;">
+                <div style="text-align: center; margin-bottom: 30px;">
+                  <img 
+                    src="https://reviseme.co/reviseme_email_logo.png" 
+                    alt="ReviseMe Logo" 
+                    style="max-width: 200px; height: auto; margin-bottom: 20px; display: block; margin-left: auto; margin-right: auto;"
+                  />
+                  <h1 style="color: #001433; font-size: 28px; margin-bottom: 10px; font-weight: 700;">Sign in to ReviseMe</h1>
+                  <p style="color: #003D99; font-size: 16px; margin: 0;">Click the button below to sign in to your account</p>
+                </div>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                  <a href="${url}" 
+                     style="background: #0066FF; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: 600; display: inline-block;">
+                    Sign In
+                  </a>
+                </div>
+                
+                <div style="border-top: 1px solid #E5F0FF; padding-top: 20px; margin-top: 30px;">
+                  <p style="color: #003D99; font-size: 14px; line-height: 1.6; margin: 0;">
+                    Or copy and paste this link into your browser:
+                  </p>
+                  <p style="color: #003D99; font-size: 12px; word-break: break-all; margin: 10px 0 0 0; font-family: monospace;">
+                    ${url}
+                  </p>
+                </div>
+                
+                <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #E5F0FF;">
+                  <p style="color: #003D99; font-size: 14px; margin: 0;">
+                    If you didn't request this link, you can safely ignore this email.
+                  </p>
+                </div>
+              </div>
+            </body>
+            </html>
+          `,
+        });
+
+        if (error) {
+          throw new Error(`Failed to send email: ${error.message}`);
+        }
+      },
     }),
     // Only add Google provider if credentials are configured
     ...(process.env.GOOGLE_ID && process.env.GOOGLE_SECRET && !process.env.GOOGLE_ID.includes('your_google')

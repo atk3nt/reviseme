@@ -24,8 +24,8 @@ export default function Slide17Page() {
     setIsLoading(true);
     
     try {
-      // Unlock slide-18 before redirecting to payment (so return URL works)
-      unlockSlide(18);
+      // Unlock slide-19 before redirecting to payment (so return URL works)
+      unlockSlide(19);
       
       // Use price ID from config (matches webhook expectations)
       const priceId = config.stripe.plans[0]?.priceId;
@@ -42,7 +42,7 @@ export default function Slide17Page() {
         },
         body: JSON.stringify({
           priceId,
-          successUrl: `${window.location.origin}/onboarding/slide-18?payment=success`,
+          successUrl: `${window.location.origin}/onboarding/slide-19?payment=success`,
           cancelUrl: `${window.location.origin}/onboarding/slide-17?payment=cancelled`,
         }),
       });
@@ -68,43 +68,48 @@ export default function Slide17Page() {
   const handleSkip = () => {
     // Skip payment in development mode
     // Manually set has_access to true for testing
-    unlockSlide(18);
-    router.push("/onboarding/slide-18?payment=success&dev_skip=true");
+    unlockSlide(19);
+    router.push("/onboarding/slide-19?payment=success&dev_skip=true");
   };
 
 
   return (
-    <div className="text-center space-y-8">
-      <OnboardingProgress 
-        currentSlide={17} 
-        totalSlides={23} 
-        showProgressBar={true}
-      />
+    <div className="text-center w-full h-full flex flex-col justify-between py-8 sm:py-10 md:py-12">
+      {/* Progress */}
+      <div className="w-full flex-shrink-0 pb-6 sm:pb-8 md:pb-10">
+        <OnboardingProgress 
+          currentSlide={17} 
+          totalSlides={12} 
+          showProgressBar={true}
+        />
+      </div>
 
-      <div className="space-y-6">
-        <h1 className="text-4xl font-bold text-[#001433]">
-          One payment. Your revision plan, done.
+      {/* Title */}
+      <div className="space-y-3 sm:space-y-4 flex-shrink-0 pb-6 sm:pb-8">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#001433] leading-tight">
+          One payment.<br />Your entire exam season sorted.
         </h1>
-        <p className="text-xl text-[#003D99]">
-          Full access. No subscriptions. No hidden fees.
+        <p className="text-sm sm:text-base md:text-lg text-[#003D99] leading-relaxed">
+          Full access until July. No subscriptions. 7-day money-back guarantee.
         </p>
       </div>
 
       {/* Pricing Card */}
-      <div className="max-w-lg mx-auto bg-white border-2 border-[#0066FF]/20 rounded-xl p-8 shadow-lg">
-        <div className="space-y-6">
+      <div className="max-w-lg mx-auto bg-white border-2 border-[#0066FF]/20 rounded-xl p-5 sm:p-6 md:p-8 shadow-lg flex-shrink-0">
+        <div className="space-y-3 sm:space-y-4">
           {/* Plan Name and Pricing Header */}
-          <div className="flex items-start justify-between mb-4">
+          <div className="flex items-center justify-between gap-4 mb-2 sm:mb-3">
             {/* Plan Name and Duration - Left Side */}
             <div className="text-left">
-              <div className="text-3xl font-bold text-[#001433]">Exam Season Pass</div>
-              <div className="text-lg text-[#003D99] mt-1">Jan–July 2026</div>
+              <div className="text-lg sm:text-xl md:text-2xl font-bold text-[#001433] leading-tight">Exam Season</div>
+              <div className="text-lg sm:text-xl md:text-2xl font-bold text-[#001433] leading-tight">Pass</div>
+              <div className="text-xs sm:text-sm text-[#003D99] mt-1">Jan–July 2026</div>
             </div>
             
             {/* Pricing Information - Right Side, Centered */}
-            <div className="text-center pt-2">
-              <div className="text-sm text-[#0066FF]/50 line-through mb-0.5">£12.99 1-Month Plan</div>
-              <div className="text-6xl font-semibold text-[#001433]">£29.99</div>
+            <div className="text-center flex-shrink-0 min-w-[160px] sm:min-w-[180px] md:min-w-[200px]">
+              <div className="text-xs md:text-sm text-[#0066FF]/50 line-through whitespace-nowrap">£12.99 1-Month Plan</div>
+              <div className="text-4xl md:text-5xl font-semibold text-[#001433] leading-none">£29.99</div>
             </div>
           </div>
 
@@ -112,112 +117,110 @@ export default function Slide17Page() {
           <button
             onClick={handleStartTrial}
             disabled={isLoading}
-            className="w-full bg-[#0066FF] text-white py-3 px-8 rounded-lg font-medium text-lg hover:bg-[#0052CC] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-[#0066FF] text-white py-2 sm:py-2.5 px-6 rounded-lg font-medium text-base hover:bg-[#0052CC] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? "Processing..." : "Get Your Plan"}
           </button>
           
           {/* Features */}
-          <div className="space-y-3 text-left pt-2">
-            <div className="text-sm font-medium text-[#001433] mb-2">Included features:</div>
-            <div className="flex items-center space-x-3">
-              <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
-                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+          <div className="space-y-2 text-left">
+            <div className="text-xs sm:text-sm font-medium text-[#001433]">Included:</div>
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
+                <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
               </div>
-              <span className="text-[#001433]">Smart scheduling</span>
+              <span className="text-xs sm:text-sm text-[#001433]">Smart scheduling</span>
             </div>
-            <div className="flex items-center space-x-3">
-              <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
-                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
+                <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
               </div>
-              <span className="text-[#001433]">Unlimited Weekly Revision Plans</span>
+              <span className="text-xs sm:text-sm text-[#001433]">Unlimited Weekly Revision Plans</span>
             </div>
-            <div className="flex items-center space-x-3">
-              <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
-                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
+                <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
               </div>
-              <span className="text-[#001433]">Spaced Repetition Logic</span>
+              <span className="text-xs sm:text-sm text-[#001433]">Spaced Repetition Logic</span>
             </div>
-            <div className="flex items-center space-x-3">
-              <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
-                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
+                <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
               </div>
-              <span className="text-[#001433]">Built-in Pomodoro Timer</span>
+              <span className="text-xs sm:text-sm text-[#001433]">Built-in Pomodoro Timer</span>
             </div>
-            <div className="flex items-center space-x-3">
-              <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
-                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
+                <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
               </div>
-              <span className="text-[#001433]">Exam Practice Blocks</span>
+              <span className="text-xs sm:text-sm text-[#001433]">Exam Practice Blocks</span>
             </div>
-            <div className="flex items-center space-x-3">
-              <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
-                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
+                <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
               </div>
-              <span className="text-[#001433]">8+ A-Level subjects</span>
+              <span className="text-xs sm:text-sm text-[#001433]">8+ A-Level subjects</span>
             </div>
-            <div className="flex items-center space-x-3">
-              <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
-                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
+                <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
               </div>
-              <span className="text-[#001433]">Progress tracking & insights</span>
+              <span className="text-xs sm:text-sm text-[#001433]">Progress tracking & insights</span>
             </div>
-            <div className="flex items-center space-x-3">
-              <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
-                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
+                <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
               </div>
-              <span className="text-[#001433]">7-day money-back guarantee</span>
+              <span className="text-xs sm:text-sm text-[#001433]">7-day money-back guarantee</span>
             </div>
           </div>
 
           {/* Payment Methods */}
-          <div className="text-center pt-4 border-t border-[#0066FF]/20">
-            <div className="text-sm text-[#003D99] mb-2">Secure payment with</div>
-            <div className="flex justify-center space-x-4">
-              <div className="text-sm font-medium text-gray-700">💳 Card</div>
-              <div className="text-sm font-medium text-gray-700">🍎 Apple Pay</div>
-              <div className="text-sm font-medium text-gray-700">📱 Google Pay</div>
+          <div className="text-center pt-2 sm:pt-3 border-t border-[#0066FF]/20">
+            <div className="text-xs sm:text-sm text-[#003D99] mb-1">Secure payment with</div>
+            <div className="flex justify-center space-x-3">
+              <div className="text-xs sm:text-sm font-medium text-gray-700">💳 Card</div>
+              <div className="text-xs sm:text-sm font-medium text-gray-700">🍎 Apple Pay</div>
+              <div className="text-xs sm:text-sm font-medium text-gray-700">📱 Google Pay</div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Dev-only skip button */}
-      {isDev && (
-        <div className="flex justify-center">
-          <button
-            onClick={handleSkip}
-            className="btn btn-xs btn-ghost text-xs opacity-50 hover:opacity-100"
-            style={{ fontSize: '0.65rem', padding: '0.25rem 0.5rem' }}
-          >
-            [DEV] Skip
-          </button>
-        </div>
-      )}
-
-      <div className="flex justify-start">
+      {/* Navigation */}
+      <div className="flex justify-between items-center w-full flex-shrink-0 pt-6 sm:pt-8">
         <button
           onClick={() => router.push("/onboarding/slide-16-5")}
           className="bg-[#E5F0FF] border border-[#0066FF]/20 text-[#003D99] px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg text-xs font-medium hover:bg-[#0066FF]/10 hover:border-[#0066FF]/40 transition-colors"
         >
           ← Back
         </button>
+        
+        {/* Dev-only skip button */}
+        {isDev && (
+          <button
+            onClick={handleSkip}
+            className="text-gray-500 hover:text-gray-700 text-xs underline opacity-50 hover:opacity-100"
+          >
+            [DEV] Skip
+          </button>
+        )}
       </div>
     </div>
   );

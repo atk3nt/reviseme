@@ -761,16 +761,16 @@ function InsightsPageContent() {
                 return (
                   <div 
                     key={index} 
-                    className="card bg-base-100 shadow-sm hover:shadow-md transition-shadow"
+                    className="card bg-base-100 shadow-sm hover:shadow-md transition-shadow h-full flex flex-col"
                   >
-                    <div className="card-body p-6 flex flex-col items-center justify-between">
+                    <div className="card-body p-6 flex flex-col items-center gap-6 h-full">
                       {/* Subject name and board */}
-                      <div className="w-full text-center mb-4">
+                      <div className="w-full text-center flex-shrink-0">
                         <h3 className="text-lg font-semibold">
                           {subjectGrade.subject}
                         </h3>
                         {subjectGrade.board && (
-                          <p className="text-sm text-brand-medium">
+                          <p className="text-sm text-brand-medium mt-1">
                             {subjectGrade.board.toUpperCase()}
                           </p>
                         )}
@@ -778,9 +778,9 @@ function InsightsPageContent() {
 
                       {/* Circular progress with grade */}
                       {subjectGrade.grade !== 'N/A' ? (
-                        <div className="flex flex-col items-center gap-4 w-full">
+                        <div className="flex flex-col items-center gap-6 w-full flex-grow justify-between">
                           {/* Circular Progress Indicator */}
-                          <div className="relative w-full aspect-square max-w-[200px] mx-auto">
+                          <div className="relative w-full aspect-square max-w-[280px] sm:max-w-[400px] mx-auto flex-shrink-0">
                             <svg className="transform -rotate-90 w-full h-full" viewBox="0 0 120 120">
                               {/* Background circle */}
                               <circle
@@ -809,17 +809,17 @@ function InsightsPageContent() {
                             {/* Percentage in center */}
                             <div className="absolute inset-0 flex items-center justify-center">
                               <div className="text-center">
-                                <div className="text-4xl font-bold" style={{ color: subjectColor }}>
+                                <div className="text-3xl sm:text-6xl font-bold" style={{ color: subjectColor }}>
                                   {percentage.toFixed(0)}%
                                 </div>
                               </div>
                             </div>
                           </div>
 
-                          {/* Grade display with arrow */}
-                          <div className="text-center w-full">
-                            <div className="flex items-center gap-3 justify-center">
-                              <span className="text-4xl font-bold" style={{ color: subjectColor }}>
+                          {/* Grade display with arrow - fixed at bottom */}
+                          <div className="text-center w-full mt-auto">
+                            <div className="flex items-baseline gap-3 justify-center">
+                              <span className="text-4xl font-bold leading-none" style={{ color: subjectColor }}>
                                 {subjectGrade.progress.current}
                               </span>
                               <svg 
@@ -836,7 +836,7 @@ function InsightsPageContent() {
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
                                 <polyline points="12 5 19 12 12 19"></polyline>
                               </svg>
-                              <span className="text-4xl font-bold text-brand-medium">
+                              <span className="text-4xl font-bold text-brand-medium leading-none">
                                 {subjectGrade.progress.next}
                               </span>
                             </div>

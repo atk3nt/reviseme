@@ -573,8 +573,8 @@ function RerateTopicsPageContent() {
       </div>
 
       {/* Main Content */}
-      <div className="text-center space-y-8 pt-10 pb-20 px-6 pl-28">
-        <div className="space-y-3">
+      <div className="text-center space-y-8 pt-10 pb-20 px-2 sm:px-6 pl-0 sm:pl-28">
+        <div className="space-y-3 px-2 sm:px-0 pt-12 sm:pt-0 w-[92.5%] sm:w-auto mx-auto">
           <h1 className="text-5xl font-bold text-brand-dark">
             Re-Rate Your Confidence
           </h1>
@@ -604,7 +604,7 @@ function RerateTopicsPageContent() {
         </div>
 
         {/* Topics by subject */}
-        <div className="max-w-7xl mx-auto">
+        <div className="w-[92.5%] sm:max-w-7xl mx-auto px-0 sm:px-0">
           <div className="space-y-6">
             {Object.entries(groupedTopics)
               .sort(([a], [b]) => a.localeCompare(b))
@@ -702,12 +702,12 @@ function RerateTopicsPageContent() {
                                 }}
                               >
                                 <div className="flex items-center justify-between">
-                                  <h3 className={`font-semibold text-brand-dark ${
+                                  <h3 className={`font-semibold text-brand-dark text-sm sm:text-base truncate ${
                                     mainTopicItems.every(item => ratings[item.topics.id] === -2) 
                                       ? 'line-through text-base-content/50' 
                                       : ''
                                   }`}>
-                                    {mainTopic} - <span className="text-sm font-normal text-brand-medium">{mainTopicItems.length} {mainTopicItems.length === 1 ? 'topic' : 'topics'}</span>
+                                    {mainTopic} - <span className="text-xs sm:text-sm font-normal text-brand-medium">{mainTopicItems.length} {mainTopicItems.length === 1 ? 'topic' : 'topics'}</span>
                                   </h3>
                                   <div className="flex items-center gap-2">
                                     {mainTopic.toLowerCase().includes('optional:') && (
@@ -761,14 +761,9 @@ function RerateTopicsPageContent() {
                                           <div className="card-body px-6 pt-6 pb-6 flex flex-col">
                                             {/* Topic Header - Fixed height container */}
                                             <div className="flex items-start justify-between mb-3 min-h-[60px]">
-                                              <h4 className={`font-semibold text-brand-dark flex-1 leading-tight ${
+                                              <h4 className={`font-semibold text-brand-dark flex-1 leading-tight text-xs sm:text-base truncate ${
                                                 ratings[topic.id] === -2 ? 'line-through text-base-content/50' : ''
-                                              }`}
-                                              style={{ 
-                                                fontSize: 'clamp(0.875rem, 1.2vw + 0.5rem, 1.125rem)',
-                                                wordBreak: 'break-word',
-                                                overflowWrap: 'break-word'
-                                              }}>
+                                              }`}>
                                                 {topic.name}
                                               </h4>
                                               {(topic.name.toLowerCase().includes('optional') || 

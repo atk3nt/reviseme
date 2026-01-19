@@ -1579,7 +1579,55 @@ export async function GET(request) {
       actualWeekStart = earliestWeekStart.toISOString().split('T')[0];
     }
 
-    const unavailableTimes = await loadBlockedTimes(userId, weekStartDate, weekEndDate);
+    let unavailableTimes = await loadBlockedTimes(userId, weekStartDate, weekEndDate);
+    
+    // If no unavailable times found for target week, and we're fetching for a future week,
+    // fall back to current week's unavailable times (aligned to target week)
+    if (unavailableTimes.length === 0) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const currentWeekStart = getMonday(today);
+      const currentWeekEnd = new Date(currentWeekStart);
+      currentWeekEnd.setDate(currentWeekStart.getDate() + 7);
+      
+      // Check if target week is in the future
+      const isFutureWeek = weekStartDate > currentWeekStart;
+      
+      if (isFutureWeek) {
+        console.log('📅 No unavailable times for target week, using current week\'s times (aligned to target week)');
+        const currentWeekUnavailable = await loadBlockedTimes(userId, currentWeekStart, currentWeekEnd);
+        
+        // Align current week blocked times to target week (by day of week)
+        unavailableTimes = currentWeekUnavailable.map((range) => {
+          const originalStart = new Date(range.start);
+          const originalEnd = new Date(range.end);
+          
+          // Get day of week (0=Sunday, 1=Monday, etc.) and convert to Monday=0
+          const dayIndex = (originalStart.getUTCDay() + 6) % 7; // Monday = 0
+          
+          // Align to target week's same day
+          const alignedStart = new Date(weekStartDate);
+          alignedStart.setUTCDate(weekStartDate.getUTCDate() + dayIndex);
+          alignedStart.setUTCHours(originalStart.getUTCHours(), originalStart.getUTCMinutes(), 0, 0);
+          
+          const alignedEnd = new Date(weekStartDate);
+          alignedEnd.setUTCDate(weekStartDate.getUTCDate() + dayIndex);
+          alignedEnd.setUTCHours(originalEnd.getUTCHours(), originalEnd.getUTCMinutes(), 0, 0);
+          
+          if (alignedEnd <= alignedStart) {
+            alignedEnd.setUTCDate(alignedEnd.getUTCDate() + 1);
+          }
+          
+          return {
+            start: alignedStart.toISOString(),
+            end: alignedEnd.toISOString()
+          };
+        });
+        
+        console.log(`✅ Aligned ${unavailableTimes.length} unavailable times from current week to target week`);
+      }
+    }
+    
     const repeatableEvents = await loadRepeatableEvents(userId, weekStartDate, weekEndDate);
     const blockedTimes = dedupeBlockedTimes(
       sanitizeBlockedTimes([

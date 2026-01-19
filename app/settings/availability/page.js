@@ -390,10 +390,27 @@ function AvailabilitySettingsPageContent() {
 
   // Handle weekend toggle
   const handleWeekendToggle = () => {
-    setTimePreferences(prev => ({
-      ...prev,
-      useSameWeekendTimes: !prev.useSameWeekendTimes
-    }));
+    setTimePreferences(prev => {
+      const newUseSameWeekendTimes = !prev.useSameWeekendTimes;
+      
+      // If toggling back to "use same times", revert weekend times to weekday times
+      if (newUseSameWeekendTimes) {
+        return {
+          ...prev,
+          useSameWeekendTimes: newUseSameWeekendTimes,
+          weekendEarliest: prev.weekdayEarliest,
+          weekendLatest: prev.weekdayLatest,
+        };
+      }
+      
+      // If unticking, keep current weekend times (or initialize to weekday times if not set)
+      return {
+        ...prev,
+        useSameWeekendTimes: newUseSameWeekendTimes,
+        weekendEarliest: prev.weekendEarliest || prev.weekdayEarliest,
+        weekendLatest: prev.weekendLatest || prev.weekdayLatest,
+      };
+    });
   };
 
   // Handle block toggle in calendar

@@ -41,42 +41,42 @@ export default function Slide2Page() {
     localStorage.setItem('quizAnswers', JSON.stringify(savedAnswers));
     
     // Unlock the next slide
-    unlockSlide(3);
+    unlockSlide(4);
     
     // Small delay for better UX
     setTimeout(() => {
-      router.push("/onboarding/slide-3");
+      router.push("/onboarding/slide-4");
     }, 300);
   };
 
   const handleSkip = () => {
-    unlockSlide(3);
-    router.push("/onboarding/slide-3");
+    unlockSlide(4);
+    router.push("/onboarding/slide-4");
   };
 
   return (
-    <div className="text-center space-y-4 sm:space-y-6 md:space-y-8 w-full flex flex-col justify-between min-h-full">
+    <div className="text-center w-full h-full flex flex-col justify-between py-8 sm:py-10 md:py-12">
       {/* Progress */}
-      <div className="w-full">
+      <div className="w-full flex-shrink-0 pb-6 sm:pb-8 md:pb-10">
         <OnboardingProgress 
           currentSlide={2} 
-          totalSlides={23} 
+          totalSlides={12} 
           showProgressBar={true}
         />
       </div>
 
       {/* Question */}
-      <div className="space-y-2 sm:space-y-3 md:space-y-4 flex-grow flex flex-col justify-center">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#001433] px-4 sm:px-0">
-          Question 1
+      <div className="space-y-4 sm:space-y-5 flex-grow flex flex-col justify-center pb-6 sm:pb-8 md:pb-10">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#001433] leading-tight">
+          How are you feeling?
         </h1>
-        <p className="text-base sm:text-lg md:text-xl text-[#003D99] px-4 sm:px-0">
-          How confident do you feel about revision right now?
+        <p className="text-base sm:text-lg md:text-xl text-[#003D99] leading-relaxed">
+          Let's start with where you're at right now. How confident do you feel about your revision?
         </p>
       </div>
 
       {/* Options */}
-      <div className="max-w-md mx-auto w-full px-4 sm:px-0">
+      <div className="max-w-md mx-auto w-full flex-shrink-0">
         <QuizCard
           options={options}
           selected={selectedOption}
@@ -85,7 +85,7 @@ export default function Slide2Page() {
       </div>
 
       {/* Navigation */}
-      <div className="flex justify-between items-center pt-4 sm:pt-6 w-full">
+      <div className="flex justify-between items-center w-full flex-shrink-0 pt-6 sm:pt-8">
         <button
           onClick={() => router.push("/onboarding/slide-1")}
           className="bg-[#E5F0FF] border border-[#0066FF]/20 text-[#003D99] px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg text-xs font-medium hover:bg-[#0066FF]/10 hover:border-[#0066FF]/40 transition-colors"
@@ -93,7 +93,7 @@ export default function Slide2Page() {
           ← Back
         </button>
         
-        <div className="flex space-x-2 sm:space-x-3">
+        <div className="flex space-x-3 sm:space-x-4">
           <button
             onClick={handleSkip}
             className="text-gray-500 hover:text-gray-700 text-xs sm:text-sm underline"

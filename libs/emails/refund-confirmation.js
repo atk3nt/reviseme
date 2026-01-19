@@ -12,6 +12,11 @@ export async function sendRefundConfirmationEmail(userEmail, userName, refundAmo
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #FFFFFF;">
           <div style="text-align: center; margin-bottom: 30px;">
+            <img 
+              src="https://reviseme.co/reviseme_email_logo.png" 
+              alt="ReviseMe Logo" 
+              style="max-width: 200px; height: auto; margin-bottom: 20px; display: block; margin-left: auto; margin-right: auto;"
+            />
             <h1 style="color: #001433; font-size: 24px; margin-bottom: 10px;">Refund Processed ✅</h1>
             <p style="color: #003D99; font-size: 16px;">Your refund has been successfully processed</p>
           </div>

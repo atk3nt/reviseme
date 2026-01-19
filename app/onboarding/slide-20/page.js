@@ -34,12 +34,37 @@ export default function Slide20Page() {
     }));
   };
 
+  // Prevent scrolling when interacting with slider
+  const handleSliderInteraction = (e) => {
+    e.stopPropagation();
+    if (e.type === 'wheel') {
+      e.preventDefault();
+    }
+  };
+
   // Handle weekend toggle
   const handleWeekendToggle = () => {
-    setTimePreferences(prev => ({
-      ...prev,
-      useSameWeekendTimes: !prev.useSameWeekendTimes
-    }));
+    setTimePreferences(prev => {
+      const newUseSameWeekendTimes = !prev.useSameWeekendTimes;
+      
+      // If toggling back to "use same times", revert weekend times to weekday times
+      if (newUseSameWeekendTimes) {
+        return {
+          ...prev,
+          useSameWeekendTimes: newUseSameWeekendTimes,
+          weekendEarliest: prev.weekdayEarliest,
+          weekendLatest: prev.weekdayLatest,
+        };
+      }
+      
+      // If unticking, keep current weekend times (or initialize to weekday times if not set)
+      return {
+        ...prev,
+        useSameWeekendTimes: newUseSameWeekendTimes,
+        weekendEarliest: prev.weekendEarliest || prev.weekdayEarliest,
+        weekendLatest: prev.weekendLatest || prev.weekdayLatest,
+      };
+    });
   };
 
   const handleContinue = async () => {
@@ -81,26 +106,26 @@ export default function Slide20Page() {
   const timeOptions = generateTimeOptions();
 
   return (
-    <div className="text-center space-y-8 max-w-4xl mx-auto px-4">
+    <div className="text-center space-y-8 max-w-4xl mx-auto px-4 pb-8 sm:pb-12">
       <OnboardingProgress 
         currentSlide={20} 
-        totalSlides={24} 
+        totalSlides={12} 
         showProgressBar={true}
       />
 
       <div className="space-y-4">
         <h1 className="text-4xl font-bold text-[#001433]">
-          When are you available to study?
+          When can you study?
         </h1>
         <p className="text-xl text-[#003D99]">
-          Set your preferred study times
+          Set your study window. We'll schedule revision blocks within these hours, around your commitments.
         </p>
       </div>
 
       {/* Time Preferences */}
       <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
         <h2 className="text-2xl font-semibold text-gray-900 mb-6">
-          Study Window Times
+          Study Window
         </h2>
         
         <div className="space-y-6">
@@ -130,7 +155,17 @@ export default function Slide20Page() {
                           handleTimePreferenceChange('weekdayEarliest', selectedTime);
                         }
                       }}
+                      onMouseDown={handleSliderInteraction}
+                      onTouchStart={handleSliderInteraction}
+                      onTouchMove={handleSliderInteraction}
+                      onMouseMove={(e) => {
+                        if (e.buttons === 1) {
+                          e.stopPropagation();
+                        }
+                      }}
+                      onWheel={handleSliderInteraction}
                       className="w-full h-2 bg-gray-200 rounded-lg appearance-none accent-blue-500 cursor-pointer"
+                      style={{ touchAction: 'none' }}
                     />
                   </div>
                   <div>
@@ -147,7 +182,17 @@ export default function Slide20Page() {
                           handleTimePreferenceChange('weekdayLatest', selectedTime);
                         }
                       }}
+                      onMouseDown={handleSliderInteraction}
+                      onTouchStart={handleSliderInteraction}
+                      onTouchMove={handleSliderInteraction}
+                      onMouseMove={(e) => {
+                        if (e.buttons === 1) {
+                          e.stopPropagation();
+                        }
+                      }}
+                      onWheel={handleSliderInteraction}
                       className="w-full h-2 bg-gray-200 rounded-lg appearance-none accent-blue-500 cursor-pointer"
+                      style={{ touchAction: 'none' }}
                     />
                   </div>
                 </div>
@@ -196,7 +241,17 @@ export default function Slide20Page() {
                               handleTimePreferenceChange('weekendEarliest', selectedTime);
                             }
                           }}
+                          onMouseDown={handleSliderInteraction}
+                          onTouchStart={handleSliderInteraction}
+                          onTouchMove={handleSliderInteraction}
+                          onMouseMove={(e) => {
+                            if (e.buttons === 1) {
+                              e.stopPropagation();
+                            }
+                          }}
+                          onWheel={handleSliderInteraction}
                           className="w-full h-2 bg-gray-200 rounded-lg appearance-none accent-blue-500 cursor-pointer"
+                          style={{ touchAction: 'none' }}
                         />
                       </div>
                       <div>
@@ -213,7 +268,17 @@ export default function Slide20Page() {
                               handleTimePreferenceChange('weekendLatest', selectedTime);
                             }
                           }}
+                          onMouseDown={handleSliderInteraction}
+                          onTouchStart={handleSliderInteraction}
+                          onTouchMove={handleSliderInteraction}
+                          onMouseMove={(e) => {
+                            if (e.buttons === 1) {
+                              e.stopPropagation();
+                            }
+                          }}
+                          onWheel={handleSliderInteraction}
                           className="w-full h-2 bg-gray-200 rounded-lg appearance-none accent-blue-500 cursor-pointer"
+                          style={{ touchAction: 'none' }}
                         />
                       </div>
                     </div>
@@ -226,7 +291,7 @@ export default function Slide20Page() {
       </div>
 
       {/* Navigation */}
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center pt-6 sm:pt-8 pb-4">
         <button
           onClick={() => router.push("/onboarding/slide-19")}
           className="bg-[#E5F0FF] border border-[#0066FF]/20 text-[#003D99] px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg text-xs font-medium hover:bg-[#0066FF]/10 hover:border-[#0066FF]/40 transition-colors"

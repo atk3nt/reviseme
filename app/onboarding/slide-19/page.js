@@ -349,7 +349,7 @@ export default function Slide19Page() {
         <div className="text-center space-y-4">
           <OnboardingProgress 
             currentSlide={19} 
-            totalSlides={23} 
+            totalSlides={12} 
             showProgressBar={true}
           />
           <span className="loading loading-spinner loading-lg text-primary"></span>
@@ -364,13 +364,13 @@ export default function Slide19Page() {
       <div className="text-center space-y-8">
         <OnboardingProgress 
           currentSlide={19} 
-          totalSlides={23} 
+          totalSlides={12} 
           showProgressBar={true}
         />
         <div className="text-center">
           <p className="text-lg text-brand-medium mb-4">No topics found. Please complete previous steps first.</p>
           <button
-            onClick={() => router.push("/onboarding/slide-18")}
+            onClick={() => router.push("/onboarding/slide-17")}
             className="bg-[#E5F0FF] border border-[#0066FF]/20 text-[#003D99] px-4 py-2 rounded-lg font-medium hover:bg-[#0066FF]/10 hover:border-[#0066FF]/40 transition-colors"
           >
             Go Back
@@ -381,23 +381,23 @@ export default function Slide19Page() {
   }
 
   return (
-    <div className="text-center space-y-8 pt-10 pb-20 px-6">
+    <div className="text-center space-y-8 pt-10 pb-20 px-2 sm:px-6">
       <OnboardingProgress 
         currentSlide={19} 
-        totalSlides={23} 
+        totalSlides={13} 
         showProgressBar={true}
       />
 
-      <div className="space-y-3">
+      <div className="space-y-3 px-2 sm:px-0 pt-12 sm:pt-0 w-[92.5%] sm:w-auto mx-auto">
         <h1 className="text-5xl font-bold text-brand-dark">
-          Rate Your Confidence
+          Rate your topics.
         </h1>
         <p className="text-lg text-brand-medium max-w-2xl mx-auto">
-          Rate your confidence in each topic from 1 (very weak) to 5 (very strong). This helps us prioritize your revision.
+          Rate each topic so we can focus your time where it matters most.
         </p>
         
         <p className="text-sm text-brand-medium max-w-2xl mx-auto">
-          Rate your confidence: <span className="font-semibold">1 (Very Weak)</span> to <span className="font-semibold">5 (Very Strong)</span>
+          <span className="font-semibold">1</span> = Weak | <span className="font-semibold">3</span> = OK | <span className="font-semibold">5</span> = Strong
         </p>
         
         {/* Progress Bar */}
@@ -428,7 +428,7 @@ export default function Slide19Page() {
       </div>
 
       {/* Topics by subject */}
-      <div className="max-w-7xl mx-auto">
+      <div className="w-[92.5%] sm:max-w-7xl mx-auto px-0 sm:px-0">
         <div className="space-y-6">
           {Object.entries(groupedTopics)
             .sort(([a], [b]) => a.localeCompare(b))
@@ -477,7 +477,7 @@ export default function Slide19Page() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <span className="text-2xl">{subjectConfig?.icon || '📚'}</span>
-                        <h2 className="text-xl font-bold text-brand-dark">
+                        <h2 className="text-base font-bold text-brand-dark">
                           {subject}{examBoardDisplay ? ` - ${examBoardDisplay}` : ''} - {topicCount} {topicCount === 1 ? 'topic' : 'topics'}
                         </h2>
                       </div>
@@ -526,12 +526,12 @@ export default function Slide19Page() {
                               }}
                             >
                               <div className="flex items-center justify-between">
-                                <h3 className={`font-semibold text-brand-dark ${
+                                <h3 className={`font-semibold text-brand-dark text-sm sm:text-base truncate ${
                                   mainTopicItems.every(item => ratings[item.topics.id] === -2) 
                                     ? 'line-through text-base-content/50' 
                                     : ''
                                 }`}>
-                                  {mainTopic} - <span className="text-sm font-normal text-brand-medium">{mainTopicItems.length} {mainTopicItems.length === 1 ? 'topic' : 'topics'}</span>
+                                  {mainTopic} - <span className="text-xs sm:text-sm font-normal text-brand-medium">{mainTopicItems.length} {mainTopicItems.length === 1 ? 'topic' : 'topics'}</span>
                                 </h3>
                                 <div className="flex items-center gap-2">
                                   {mainTopic.toLowerCase().includes('optional:') && (
@@ -586,14 +586,9 @@ export default function Slide19Page() {
                                           {/* Topic Header - Fixed height container */}
                                           <div className="flex items-start justify-between mb-3 min-h-[60px]">
                                             <h4 
-                                              className={`font-semibold text-brand-dark flex-1 leading-tight ${
+                                              className={`font-semibold text-brand-dark flex-1 leading-tight text-xs sm:text-base truncate ${
                                                 ratings[topic.id] === -2 ? 'line-through text-base-content/50' : ''
                                               }`}
-                                              style={{ 
-                                                fontSize: 'clamp(0.875rem, 1.2vw + 0.5rem, 1.125rem)',
-                                                wordBreak: 'break-word',
-                                                overflowWrap: 'break-word'
-                                              }}
                                             >
                                               {topic.name}
                                             </h4>
@@ -711,7 +706,7 @@ export default function Slide19Page() {
 
       <div className="flex justify-between items-center pt-8">
         <button
-          onClick={() => router.push("/onboarding/slide-18")}
+          onClick={() => router.push("/onboarding/slide-17")}
           className="bg-[#E5F0FF] border border-[#0066FF]/20 text-[#003D99] px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg text-xs font-medium hover:bg-[#0066FF]/10 hover:border-[#0066FF]/40 transition-colors"
         >
           ← Back
@@ -728,7 +723,7 @@ export default function Slide19Page() {
           <button
             onClick={handleContinue}
             disabled={isLoading}
-            className="bg-[#0066FF] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#0052CC] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-lg"
+            className="bg-[#0066FF] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#0052CC] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
           >
             {isLoading ? (
               <>

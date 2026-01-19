@@ -11,7 +11,10 @@ export default function DevPanel() {
   const [autoReload, setAutoReload] = useState(true);
   const [isDev, setIsDev] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
-  const TOTAL_SLIDES = 23;
+  const TOTAL_SLIDES = 12;
+  
+  // Valid slide numbers after removal (gaps in numbering)
+  const VALID_SLIDES = [1, 2, 4, 5, 9, 16, 16.5, 17, 19, 20, 21, 22];
 
   // Check if we're in dev mode only after component mounts (prevents hydration mismatch)
   useEffect(() => {
@@ -25,9 +28,14 @@ export default function DevPanel() {
 
   // Extract current slide number from pathname
   useEffect(() => {
-    const match = pathname?.match(/slide-(\d+)/);
+    const match = pathname?.match(/slide-(\d+(?:-\d+)?)/);
     if (match) {
-      setCurrentSlide(parseInt(match[1]));
+      // Handle slide-16-5 case
+      if (match[1] === '16-5') {
+        setCurrentSlide(16.5);
+      } else {
+        setCurrentSlide(parseInt(match[1]));
+      }
     }
   }, [pathname]);
 
@@ -45,18 +53,28 @@ export default function DevPanel() {
         setIsOpen(prev => !prev);
       }
       
-      // Arrow keys to navigate
-      if (e.key === 'ArrowLeft' && currentSlide > 1) {
-        router.push(`/onboarding/slide-${currentSlide - 1}`);
+      // Arrow keys to navigate (skip to next/prev valid slide)
+      if (e.key === 'ArrowLeft') {
+        const currentIndex = VALID_SLIDES.indexOf(currentSlide);
+        if (currentIndex > 0) {
+          const prevSlide = VALID_SLIDES[currentIndex - 1];
+          const slideUrl = prevSlide === 16.5 ? '/onboarding/slide-16-5' : `/onboarding/slide-${prevSlide}`;
+          router.push(slideUrl);
+        }
       }
-      if (e.key === 'ArrowRight' && currentSlide < TOTAL_SLIDES) {
-        router.push(`/onboarding/slide-${currentSlide + 1}`);
+      if (e.key === 'ArrowRight') {
+        const currentIndex = VALID_SLIDES.indexOf(currentSlide);
+        if (currentIndex < VALID_SLIDES.length - 1) {
+          const nextSlide = VALID_SLIDES[currentIndex + 1];
+          const slideUrl = nextSlide === 16.5 ? '/onboarding/slide-16-5' : `/onboarding/slide-${nextSlide}`;
+          router.push(slideUrl);
+        }
       }
       
-      // Number keys 1-9 to jump to slides
+      // Number keys 1-9 to jump to slides (if valid)
       if (e.key >= '1' && e.key <= '9') {
         const slideNum = parseInt(e.key);
-        if (slideNum <= TOTAL_SLIDES) {
+        if (VALID_SLIDES.includes(slideNum)) {
           router.push(`/onboarding/slide-${slideNum}`);
         }
       }
@@ -95,7 +113,8 @@ export default function DevPanel() {
   }, [autoReload, isMounted, isDev]);
 
   const goToSlide = (num) => {
-    router.push(`/onboarding/slide-${num}`);
+    const slideUrl = num === 16.5 ? '/onboarding/slide-16-5' : `/onboarding/slide-${num}`;
+    router.push(slideUrl);
     setIsOpen(false);
   };
 
@@ -140,8 +159,8 @@ export default function DevPanel() {
           {/* Quick navigation */}
           <div className="mb-3">
             <div className="text-xs font-semibold mb-2">Quick Nav:</div>
-            <div className="grid grid-cols-6 gap-1">
-              {Array.from({ length: TOTAL_SLIDES }, (_, i) => i + 1).map((num) => (
+            <div className="grid grid-cols-5 gap-1">
+              {VALID_SLIDES.map((num) => (
                 <button
                   key={num}
                   onClick={() => goToSlide(num)}
@@ -150,8 +169,9 @@ export default function DevPanel() {
                       ? 'bg-blue-500 text-white'
                       : 'bg-gray-100 hover:bg-gray-200'
                   }`}
+                  title={`Slide ${num}`}
                 >
-                  {num}
+                  {num === 16.5 ? '16.5' : num}
                 </button>
               ))}
             </div>

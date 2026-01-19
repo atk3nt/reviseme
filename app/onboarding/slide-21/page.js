@@ -201,26 +201,26 @@ export default function Slide21Page() {
   };
 
   return (
-    <div className="text-center space-y-8 max-w-6xl mx-auto px-4">
+    <div className="text-center space-y-4 sm:space-y-8 max-w-none sm:max-w-6xl mx-auto px-1 sm:px-4 pb-12 sm:pb-16">
       <OnboardingProgress 
         currentSlide={21} 
-        totalSlides={24} 
+        totalSlides={12} 
         showProgressBar={true}
       />
 
-      <div className="space-y-4">
-        <h1 className="text-4xl font-bold text-[#001433]">
-          Block Unavailable Times
+      <div className="space-y-2 sm:space-y-4 px-2 sm:px-0">
+        <h1 className="text-2xl sm:text-4xl font-bold text-[#001433]">
+          Mark your commitments.
         </h1>
-        <p className="text-xl text-[#003D99]">
-          Click or drag to block times when you can't study
+        <p className="text-sm sm:text-xl text-[#003D99]">
+          Block times you're busy. We'll schedule study blocks in the remaining free time.
         </p>
       </div>
 
       {/* Calendar Section */}
-      <div className="bg-white border-2 border-[#0066FF]/20 rounded-xl p-6">
-        <p className="text-sm text-[#003D99] mb-6 text-left">
-          Hours outside your preferred times (from the previous step) are greyed out and cannot be blocked. Only mark times within your available window as unavailable.
+      <div className="bg-white border-2 border-[#0066FF]/20 rounded-xl p-2 sm:p-6 overflow-hidden">
+        <p className="text-xs sm:text-sm text-[#003D99] mb-3 sm:mb-6 text-left px-1 sm:px-0 leading-relaxed">
+          Grey times are outside your study window. Mark busy times in white areas – we'll schedule around them.
         </p>
         
         <TimeBlockCalendar
@@ -236,17 +236,17 @@ export default function Slide21Page() {
       </div>
 
       {/* Summary */}
-      <div className="text-center">
-        <p className="text-sm text-[#003D99]">
+      <div className="text-center px-2 sm:px-0">
+        <p className="text-xs sm:text-sm text-[#003D99]">
           <span className="font-medium text-[#001433]">{blockedTimes.length}</span> time blocks marked as unavailable
         </p>
       </div>
 
       {/* Navigation */}
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center pt-4 sm:pt-6 gap-2 sm:gap-0 px-2 sm:px-0">
         <button
           onClick={() => router.push("/onboarding/slide-20")}
-          className="bg-[#E5F0FF] border border-[#0066FF]/20 text-[#003D99] px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg text-xs font-medium hover:bg-[#0066FF]/10 hover:border-[#0066FF]/40 transition-colors"
+          className="bg-[#E5F0FF] border border-[#0066FF]/20 text-[#003D99] px-3 sm:px-2 py-2 sm:py-0.5 rounded-lg text-xs font-medium hover:bg-[#0066FF]/10 hover:border-[#0066FF]/40 transition-colors"
         >
           ← Back
         </button>
@@ -254,7 +254,7 @@ export default function Slide21Page() {
         <button
           onClick={handleContinue}
           disabled={isLoading}
-          className="bg-[#0066FF] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#0052CC] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-lg"
+          className="bg-[#0066FF] text-white px-4 sm:px-8 py-2.5 sm:py-3 rounded-lg font-medium hover:bg-[#0052CC] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-lg"
         >
           {isLoading ? "Next..." : "Continue to Summary"}
         </button>

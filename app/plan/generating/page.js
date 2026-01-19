@@ -280,14 +280,42 @@ export default function GeneratingPlanPage() {
         setProgress(95);
         setStatusText("Loading your schedule...");
 
-        // Calculate current week start for fetching blocks
-        const today = new Date();
-        const day = today.getDay();
-        const diff = today.getDate() - day + (day === 0 ? -6 : 1);
-        const monday = new Date(today);
-        monday.setDate(diff);
-        monday.setHours(0, 0, 0, 0);
-        const weekStartStr = monday.toISOString().split('T')[0];
+        // Get the week that blocks were actually generated for
+        // This ensures we fetch blocks for the correct week (next week if signed up on Sunday)
+        let weekStartStr;
+        if (planData.blocks && planData.blocks.length > 0) {
+          // Use the first block's scheduled_at date to determine the week
+          const firstBlockDate = new Date(planData.blocks[0].scheduled_at || planData.blocks[0].startDate);
+          if (!isNaN(firstBlockDate.getTime())) {
+            const day = firstBlockDate.getDay();
+            const diff = firstBlockDate.getDate() - day + (day === 0 ? -6 : 1);
+            const monday = new Date(firstBlockDate);
+            monday.setDate(diff);
+            monday.setHours(0, 0, 0, 0);
+            weekStartStr = monday.toISOString().split('T')[0];
+            console.log('📅 Determined week from generated blocks:', weekStartStr);
+          } else {
+            // Fallback: calculate current week start
+            const today = new Date();
+            const day = today.getDay();
+            const diff = today.getDate() - day + (day === 0 ? -6 : 1);
+            const monday = new Date(today);
+            monday.setDate(diff);
+            monday.setHours(0, 0, 0, 0);
+            weekStartStr = monday.toISOString().split('T')[0];
+            console.log('⚠️ Could not determine week from blocks, using current week:', weekStartStr);
+          }
+        } else {
+          // Fallback: calculate current week start (shouldn't happen since we check above)
+          const today = new Date();
+          const day = today.getDay();
+          const diff = today.getDate() - day + (day === 0 ? -6 : 1);
+          const monday = new Date(today);
+          monday.setDate(diff);
+          monday.setHours(0, 0, 0, 0);
+          weekStartStr = monday.toISOString().split('T')[0];
+          console.log('⚠️ No blocks found, using current week:', weekStartStr);
+        }
 
         const blocksResponse = await fetch(`/api/plan/generate?weekStart=${weekStartStr}`, {
           method: 'GET',
@@ -327,8 +355,9 @@ export default function GeneratingPlanPage() {
         // This ensures the plan page can immediately use pre-loaded data without showing loading
         await new Promise(resolve => setTimeout(resolve, 1000));
 
-        // Navigate to plan page - it will use the pre-loaded data immediately from initial state
-        router.push("/plan?view=week");
+        // Navigate to plan page with freshGeneration flag to bypass onboarding check
+        // This prevents redirect back to onboarding while session is updating
+        router.push("/plan?view=week&freshGeneration=true");
       } catch (error) {
         console.error('Plan generation error:', error);
         
