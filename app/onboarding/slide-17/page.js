@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import OnboardingProgress from "@/components/OnboardingProgress";
 import config from "@/config";
 import { unlockSlide } from "@/libs/onboarding-progress";
@@ -9,6 +10,7 @@ import { unlockSlide } from "@/libs/onboarding-progress";
 export default function Slide17Page() {
   const [isLoading, setIsLoading] = useState(false);
   const [isDev, setIsDev] = useState(false);
+  const { data: session, status } = useSession();
   const router = useRouter();
 
   useEffect(() => {
@@ -19,6 +21,15 @@ export default function Slide17Page() {
       window.location.hostname.includes('.local')
     );
   }, []);
+
+  useEffect(() => {
+    // Auto-skip to Slide 19 if user already has access (family/paid users)
+    if (status === 'authenticated' && session?.user?.hasAccess) {
+      console.log('[Slide 17] User has access, skipping to Slide 19');
+      unlockSlide(19);
+      router.push("/onboarding/slide-19");
+    }
+  }, [session, status, router]);
 
   const handleStartTrial = async () => {
     setIsLoading(true);
