@@ -76,50 +76,41 @@ export async function POST(req) {
       );
     }
 
-    // Check if this is a test payment (starts with cs_test_)
-    const isTestPayment = payment.stripe_session_id.startsWith('cs_test_');
-    
+    // Always attempt to process refund through Stripe
+    // This works for both test mode (cs_test_*) and live mode (cs_live_*) payments
     let refund;
     
-    if (isTestPayment) {
-      // For test payments created manually, skip actual Stripe refund
-      // Just create a mock refund object for logging
-      refund = {
-        id: `re_test_${Date.now()}`,
-        amount: payment.amount,
-        status: 'succeeded'
-      };
-      console.log('⚠️ Test payment refund - skipping actual Stripe refund');
-    } else {
-      // For real payments, retrieve the checkout session and create Stripe refund
-      try {
-        const checkoutSession = await stripe.checkout.sessions.retrieve(payment.stripe_session_id);
-        
-        if (!checkoutSession.payment_intent) {
-          return NextResponse.json(
-            { error: "Payment intent not found for this payment" },
-            { status: 400 }
-          );
-        }
+    try {
+      const checkoutSession = await stripe.checkout.sessions.retrieve(payment.stripe_session_id);
+      
+      if (!checkoutSession.payment_intent) {
+        return NextResponse.json(
+          { error: "Payment intent not found for this payment" },
+          { status: 400 }
+        );
+      }
 
-        // Create Stripe refund using the payment intent ID
-        refund = await stripe.refunds.create({
-          payment_intent: checkoutSession.payment_intent,
+      // Create Stripe refund using the payment intent ID
+      refund = await stripe.refunds.create({
+        payment_intent: checkoutSession.payment_intent,
+        amount: payment.amount,
+        reason: 'requested_by_customer'
+      });
+      
+      console.log('✅ Stripe refund created:', refund.id);
+    } catch (stripeError) {
+      // Only skip Stripe refund if session doesn't exist (manually created test payment in DB)
+      if (stripeError.code === 'resource_missing') {
+        console.log('⚠️ Checkout session not found in Stripe - treating as manual test payment');
+        refund = {
+          id: `re_test_${Date.now()}`,
           amount: payment.amount,
-          reason: 'requested_by_customer'
-        });
-      } catch (stripeError) {
-        // If checkout session doesn't exist in Stripe, treat as test payment
-        if (stripeError.code === 'resource_missing') {
-          console.log('⚠️ Checkout session not found in Stripe - treating as test payment');
-          refund = {
-            id: `re_test_${Date.now()}`,
-            amount: payment.amount,
-            status: 'succeeded'
-          };
-        } else {
-          throw stripeError;
-        }
+          status: 'succeeded'
+        };
+      } else {
+        // Re-throw any other Stripe errors
+        console.error('❌ Stripe refund error:', stripeError);
+        throw stripeError;
       }
     }
 
