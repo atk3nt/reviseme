@@ -11,6 +11,11 @@ export async function sendWeeklySummaryEmail(userEmail, userName, summary, stats
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="text-align: center; margin-bottom: 30px;">
+            <img 
+              src="https://app.reviseme.co/reviseme_email_logo.png" 
+              alt="ReviseMe Logo" 
+              style="max-width: 200px; height: auto; margin-bottom: 20px; display: block; margin-left: auto; margin-right: auto;"
+            />
             <h1 style="color: #1f2937; font-size: 24px; margin-bottom: 10px;">Weekly Summary 📊</h1>
             <p style="color: #6b7280; font-size: 16px;">Here's how you did this week</p>
           </div>

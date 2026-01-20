@@ -13,7 +13,7 @@ export async function sendRefundConfirmationEmail(userEmail, userName, refundAmo
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #FFFFFF;">
           <div style="text-align: center; margin-bottom: 30px;">
             <img 
-              src="https://reviseme.co/reviseme_email_logo.png" 
+              src="https://app.reviseme.co/reviseme_email_logo.png" 
               alt="ReviseMe Logo" 
               style="max-width: 200px; height: auto; margin-bottom: 20px; display: block; margin-left: auto; margin-right: auto;"
             />

@@ -67,7 +67,7 @@ Good luck with your A-Levels!
           <div class="container" style="font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #FFFFFF;">
             <div style="text-align: center; margin-bottom: 30px;">
               <img 
-                src="https://reviseme.co/reviseme_email_logo.png" 
+                src="https://app.reviseme.co/reviseme_email_logo.png" 
                 alt="ReviseMe Logo" 
                 style="max-width: 200px; height: auto; margin-bottom: 20px; display: block; margin-left: auto; margin-right: auto;"
               />

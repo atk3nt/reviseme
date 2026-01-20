@@ -17,10 +17,12 @@ const config = {
     plans: [
       {
         // REQUIRED — we use this to find the plan in the webhook
+        // TEST MODE: Use test price ID for local development
+        // LIVE MODE: Live price ID from Stripe Dashboard
         priceId:
           process.env.NODE_ENV === "development"
-            ? "price_1Si3ZCAgE33YyUIxdlINuIXq"
-            : "price_1Si3ZCAgE33YyUIxdlINuIXq",
+            ? "price_1Si3ZCAgE33YyUIxdlINuIXq" // Test mode price ID (keep this)
+            : "price_1SrT1gPHrM0X7ke2POxbzq1P", // Live mode price ID
         // REQUIRED - Name of the plan, displayed on the pricing page
         name: "Exam Season Pass",
         // A friendly description of the plan, displayed on the pricing page
