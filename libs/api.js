@@ -1,3 +1,5 @@
+"use client";
+
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { signIn } from "next-auth/react";
