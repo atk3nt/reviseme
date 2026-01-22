@@ -52,7 +52,8 @@ export async function POST(req) {
     // Use session data if available, otherwise use dev fallbacks
     const userEmail = session?.user?.email || "dev-test@reviseme.local";
     const userName = session?.user?.name || "Dev Tester";
-    const userId = session?.user?.id || "dev-user-id";
+    // Reuse userId from above, but use "dev-user-id" for email if it was 'anonymous'
+    const userIdForEmail = userId === 'anonymous' ? "dev-user-id" : userId;
 
     // Send email to support inbox
     const supportEmail = config.resend.supportEmail || "support@reviseme.co";
@@ -70,7 +71,7 @@ export async function POST(req) {
       text: `
 Type: ${typeLabels[type] || type}
 From: ${userName} (${userEmail})
-User ID: ${userId}
+User ID: ${userIdForEmail}
 ${isDev && !hasAuth ? '\n[DEV MODE - No authentication required]' : ''}
 
 Message:
@@ -82,7 +83,7 @@ ${message}
           <div style="background: #f3f4f6; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
             <p><strong>Type:</strong> ${typeLabels[type] || type}</p>
             <p><strong>From:</strong> ${userName} (${userEmail})</p>
-            <p><strong>User ID:</strong> ${userId}</p>
+            <p><strong>User ID:</strong> ${userIdForEmail}</p>
             ${isDev && !hasAuth ? '<p style="color: #f59e0b;"><strong>[DEV MODE - No authentication required]</strong></p>' : ''}
           </div>
           <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #3b82f6;">
