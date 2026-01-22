@@ -95,15 +95,11 @@ export default function Slide16Page() {
     }, 300);
   };
 
-  const handleSkip = () => {
-    unlockSlide(16.5);
-    router.push("/onboarding/slide-16-5");
-  };
 
   return (
-    <div className="text-center w-full h-full flex flex-col py-8 sm:py-10 md:py-12">
+    <div className="text-center w-full h-full flex flex-col pt-12 sm:pt-20 md:pt-24 pb-12 sm:pb-20 md:pb-24 min-h-0">
       {/* Progress */}
-      <div className="w-full flex-shrink-0 pb-6 sm:pb-8 md:pb-10">
+      <div className="w-full flex-shrink-0 pb-3 sm:pb-6 md:pb-10">
         <OnboardingProgress 
           currentSlide={16} 
           totalSlides={12} 
@@ -112,7 +108,7 @@ export default function Slide16Page() {
       </div>
 
       {/* Title */}
-      <div className="space-y-3 sm:space-y-4 flex-shrink-0 pb-4 sm:pb-6">
+      <div className="space-y-2 sm:space-y-4 flex-shrink-0 pb-3 sm:pb-6">
         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#001433] leading-tight">
           What are you studying?
         </h1>
@@ -122,7 +118,7 @@ export default function Slide16Page() {
       </div>
 
       {/* Subject Selection - Grid layout with 3 columns, centered last row - Scrollable */}
-      <div className="flex-1 overflow-y-auto w-full min-h-0 pt-6 pb-6 sm:pt-4 sm:pb-4">
+      <div className="flex-1 overflow-y-auto w-full min-h-0 pt-2 pb-2 sm:pt-4 sm:pb-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 w-full">
           {subjects.slice(0, -2).map((subject) => {
             const subjectConfig = config.subjects[subject.id];
@@ -258,25 +254,19 @@ export default function Slide16Page() {
       </div>
 
       {/* Navigation - Fixed at bottom */}
-      <div className="flex justify-between items-center w-full flex-shrink-0 pt-6 sm:pt-8 md:pt-10 pb-6 sm:pb-4 md:pb-0">
+      <div className="flex justify-between items-center w-full flex-shrink-0 pt-3 sm:pt-6 md:pt-10">
         <button
           onClick={() => router.push("/onboarding/slide-9")}
-          className="bg-[#E5F0FF] border border-[#0066FF]/20 text-[#003D99] px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg text-xs font-medium hover:bg-[#0066FF]/10 hover:border-[#0066FF]/40 transition-colors"
+          className="bg-white border-2 border-[#0066FF] text-[#0066FF] px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium hover:bg-[#0066FF] hover:text-white transition-colors"
         >
-          ← Back
+          Back
         </button>
         
         <div className="flex space-x-3 sm:space-x-4">
           <button
-            onClick={handleSkip}
-            className="text-gray-500 hover:text-gray-700 text-xs sm:text-sm underline"
-          >
-            Skip
-          </button>
-          <button
             onClick={handleNext}
             disabled={selectedSubjects.length === 0 || isLoading}
-            className="bg-[#0066FF] text-white px-4 sm:px-6 py-1.5 sm:py-2 rounded-lg text-sm sm:text-base font-medium hover:bg-[#0052CC] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-[#0066FF] text-white px-5 sm:px-8 py-2 sm:py-2.5 rounded-lg text-sm sm:text-base font-medium hover:bg-[#0052CC] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? "Next..." : "Continue"}
           </button>

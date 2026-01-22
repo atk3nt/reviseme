@@ -1,4 +1,5 @@
 import { DM_Sans } from "next/font/google";
+import Script from "next/script";
 import { getSEOTags } from "@/libs/seo";
 import ClientLayout from "@/components/LayoutClient";
 import config from "@/config";
@@ -31,6 +32,14 @@ export default function RootLayout({ children }) {
 			data-theme={config.colors.theme}
 			className={`${font.variable} ${font.className}`}
 		>
+			<head>
+				<Script
+					data-website-id="dfid_DRHI6wXBWUpscKNQ0a63Q"
+					data-domain="reviseme.co"
+					src="https://datafa.st/js/script.js"
+					strategy="afterInteractive"
+				/>
+			</head>
 			<body>
 				{/* ClientLayout contains all the client wrappers (Crisp chat support, toast messages, tooltips, etc.) */}
 				<ClientLayout>{children}</ClientLayout>

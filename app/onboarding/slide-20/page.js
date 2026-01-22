@@ -106,25 +106,25 @@ export default function Slide20Page() {
   const timeOptions = generateTimeOptions();
 
   return (
-    <div className="text-center space-y-8 max-w-4xl mx-auto px-4 pb-8 sm:pb-12">
+    <div className="text-center space-y-4 sm:space-y-8 max-w-4xl mx-auto pt-adaptive pb-8 sm:pb-12">
       <OnboardingProgress 
         currentSlide={20} 
         totalSlides={12} 
         showProgressBar={true}
       />
 
-      <div className="space-y-4">
-        <h1 className="text-4xl font-bold text-[#001433]">
+      <div className="space-y-2 sm:space-y-4">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#001433]">
           When can you study?
         </h1>
-        <p className="text-xl text-[#003D99]">
+        <p className="text-sm sm:text-base md:text-xl text-[#003D99]">
           Set your study window. We'll schedule revision blocks within these hours, around your commitments.
         </p>
       </div>
 
       {/* Time Preferences */}
-      <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
-        <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+      <div className="bg-white border-2 border-gray-200 rounded-xl p-4 sm:p-6">
+        <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-900 mb-4 sm:mb-6">
           Study Window
         </h2>
         
@@ -294,9 +294,9 @@ export default function Slide20Page() {
       <div className="flex justify-between items-center pt-6 sm:pt-8 pb-4">
         <button
           onClick={() => router.push("/onboarding/slide-19")}
-          className="bg-[#E5F0FF] border border-[#0066FF]/20 text-[#003D99] px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg text-xs font-medium hover:bg-[#0066FF]/10 hover:border-[#0066FF]/40 transition-colors"
+          className="bg-white border-2 border-[#0066FF] text-[#0066FF] px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg text-sm sm:text-base font-medium hover:bg-[#0066FF] hover:text-white transition-colors"
         >
-          ← Back
+          Back
         </button>
         
         <button

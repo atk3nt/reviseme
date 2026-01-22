@@ -95,48 +95,42 @@ export default function Slide1Page() {
   // Show success message if email was sent
   if (emailSent) {
     return (
-      <div className="text-center space-y-4 sm:space-y-6 md:space-y-8 w-full">
-        <OnboardingProgress 
-          currentSlide={1} 
-          totalSlides={12} 
-          showProgressBar={true}
-        />
-
-        <div className="max-w-lg mx-auto space-y-4 sm:space-y-6 bg-white border-2 border-[#0066FF]/20 rounded-xl p-6 sm:p-8">
-          <div className="text-center space-y-3 sm:space-y-4">
-            <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
-              <svg className="w-6 h-6 sm:w-8 sm:h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-            </div>
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#001433]">Check your email</h2>
-            <p className="text-sm sm:text-base text-[#003D99]">
-              We've sent a sign-in link to <span className="font-semibold text-[#001433]">{emailAddress}</span>
-            </p>
-            <p className="text-xs sm:text-sm text-[#003D99]">
-              Click the link in your email to continue.
-            </p>
-            <div className="pt-2 sm:pt-4">
-              <button
-                onClick={() => {
-                  unlockSlide(2);
-                  router.push("/onboarding/slide-2");
-                }}
-                className="text-gray-500 hover:text-gray-700 text-xs sm:text-sm underline"
-              >
-                Skip for now →
-              </button>
-            </div>
-          </div>
+      <div className="text-center w-full h-full flex flex-col justify-between py-adaptive-sm min-h-0">
+        {/* Progress */}
+        <div className="w-full flex-shrink-0 pb-4 sm:pb-6 md:pb-10">
+          <OnboardingProgress 
+            currentSlide={1} 
+            totalSlides={12} 
+            showProgressBar={true}
+          />
         </div>
+
+        {/* Content */}
+        <div className="space-y-3 sm:space-y-5 flex-grow flex flex-col justify-center pb-4 sm:pb-6 md:pb-10 min-h-0">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto bg-[#E5F0FF] rounded-full flex items-center justify-center">
+            <svg className="w-8 h-8 sm:w-10 sm:h-10 text-[#0066FF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#001433] leading-tight">
+            Check your email!
+          </h1>
+          <p className="text-base sm:text-lg md:text-xl text-[#003D99] leading-relaxed">
+            We've sent a sign-in link to <span className="font-semibold text-[#001433]">{emailAddress}</span>
+          </p>
+          <p className="text-sm sm:text-base text-[#003D99] leading-relaxed">
+            It may take a minute or two to arrive. Check your spam folder if you don't see it.
+          </p>
+        </div>
+
       </div>
     );
   }
 
   return (
-    <div className="text-center w-full h-full flex flex-col justify-between py-8 sm:py-10 md:py-12">
+    <div className="text-center w-full h-full flex flex-col justify-between py-adaptive-sm min-h-0">
       {/* Progress */}
-      <div className="w-full flex-shrink-0 pb-6 sm:pb-8 md:pb-10">
+      <div className="w-full flex-shrink-0 pb-4 sm:pb-6 md:pb-10">
         <OnboardingProgress 
           currentSlide={1} 
           totalSlides={12} 
@@ -145,17 +139,17 @@ export default function Slide1Page() {
       </div>
 
       {/* Title */}
-      <div className="space-y-4 sm:space-y-5 flex-shrink-0 pb-6 sm:pb-8 md:pb-10">
+      <div className="space-y-3 sm:space-y-5 flex-shrink-0 pb-4 sm:pb-6 md:pb-10">
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#001433] leading-tight">
           Let's get your revision sorted.
         </h1>
         <p className="text-base sm:text-lg md:text-xl text-[#003D99] leading-relaxed">
-          Sign in or create an account to start building your personalized study plan
+          Sign in to start building your personalised study plan
         </p>
       </div>
 
-      {/* Sign-in Options */}
-      <div className="space-y-4 w-full max-w-md mx-auto flex-shrink-0">
+      {/* Sign-in Options - flex-grow allows this section to shrink when keyboard appears */}
+      <div className="space-y-3 sm:space-y-4 w-full max-w-md mx-auto flex-shrink overflow-y-auto min-h-0">
         {/* Google Sign-in Button (only shown if Google OAuth is configured) */}
         {googleAvailable && (
           <>
@@ -211,7 +205,7 @@ export default function Slide1Page() {
           <input
             type="email"
             name="email"
-            placeholder="Enter your email"
+            placeholder="Your email address"
             required
             className="w-full px-4 py-2.5 sm:py-3 text-sm sm:text-base border-2 border-[#0066FF]/20 rounded-lg focus:border-[#0066FF] focus:outline-none transition-colors"
           />
@@ -228,23 +222,11 @@ export default function Slide1Page() {
 
       {/* Error Message */}
       {error && (
-        <div className="text-error text-xs sm:text-sm bg-error/10 p-2 sm:p-3 rounded-lg max-w-md mx-auto">
+        <div className="text-error text-xs sm:text-sm bg-error/10 p-2 sm:p-3 rounded-lg max-w-md mx-auto mt-2">
           {error}
         </div>
       )}
 
-      {/* Skip for now */}
-      <div className="text-center w-full flex-shrink-0">
-        <button
-          onClick={() => {
-            unlockSlide(2);
-            router.push("/onboarding/slide-2");
-          }}
-          className="text-gray-500 hover:text-gray-700 text-xs sm:text-sm underline"
-        >
-          Skip for now →
-        </button>
-      </div>
     </div>
   );
 }

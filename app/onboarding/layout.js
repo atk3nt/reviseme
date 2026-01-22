@@ -153,18 +153,18 @@ export default function OnboardingLayout({ children }) {
   // Show loading while checking access
   if (isCheckingAccess) {
     return (
-      <div className="h-screen bg-white flex items-center justify-center">
+      <div className="h-screen-safe bg-white flex items-center justify-center pb-adaptive">
         <span className="loading loading-spinner loading-lg text-primary"></span>
       </div>
     );
   }
 
   return (
-    <div className="h-screen bg-white overflow-y-auto">
+    <div className="h-screen-safe bg-white overflow-y-auto pb-adaptive">
       <div className="min-h-full flex flex-col">
         {/* Reset button in top right - Dev only */}
         {isDev && (
-          <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-50">
+          <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-50 pt-adaptive px-adaptive">
             <button
               onClick={handleReset}
               className="btn btn-xs sm:btn-sm btn-error"
@@ -182,9 +182,10 @@ export default function OnboardingLayout({ children }) {
           </div>
         )}
         
-        {/* Main content area - fills viewport with responsive padding */}
-        <main className="flex-1 flex items-center justify-center px-6 sm:px-8 md:px-12">
-          <div className="w-full max-w-2xl mx-auto flex flex-col h-full max-h-[80vh]">
+        {/* Main content area - fills viewport with adaptive responsive padding */}
+        {/* Using min-h-0 to allow flex children to shrink properly for scrolling */}
+        <main className="flex-1 flex items-center justify-center px-adaptive min-h-0">
+          <div className="w-full max-w-2xl mx-auto flex flex-col min-h-0 h-full page-fade" key={pathname}>
             {children}
           </div>
         </main>

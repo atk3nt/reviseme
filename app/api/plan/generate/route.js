@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/libs/auth";
 import { supabaseAdmin } from "@/libs/supabase";
 import { generateStudyPlan } from "@/libs/scheduler";
+import { planGenerationLimit, checkRateLimit } from "@/libs/ratelimit";
 
 // Spaced repetition fix: Track ongoing topics across weeks - v2
 const DEV_USER_EMAIL = 'appmarkrai@gmail.com';
@@ -299,6 +300,19 @@ export async function POST(req) {
     
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Check rate limit (5 requests per hour)
+    const rateLimitCheck = await checkRateLimit(planGenerationLimit, userId);
+    if (!rateLimitCheck.success) {
+      console.log(`[RATE LIMIT] Plan generation blocked for user ${userId}`);
+      return NextResponse.json(
+        rateLimitCheck.response,
+        { 
+          status: 429,
+          headers: rateLimitCheck.headers
+        }
+      );
     }
 
     const body = await req.json();

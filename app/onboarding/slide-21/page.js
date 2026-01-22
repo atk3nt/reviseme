@@ -201,7 +201,7 @@ export default function Slide21Page() {
   };
 
   return (
-    <div className="text-center space-y-4 sm:space-y-8 max-w-none sm:max-w-6xl mx-auto px-1 sm:px-4 pb-12 sm:pb-16">
+    <div className="text-center space-y-4 sm:space-y-8 max-w-none sm:max-w-6xl mx-auto pt-12 sm:pt-20 md:pt-24 pb-12 sm:pb-20 md:pb-24">
       <OnboardingProgress 
         currentSlide={21} 
         totalSlides={12} 
@@ -209,18 +209,18 @@ export default function Slide21Page() {
       />
 
       <div className="space-y-2 sm:space-y-4 px-2 sm:px-0">
-        <h1 className="text-2xl sm:text-4xl font-bold text-[#001433]">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#001433]">
           Mark your commitments.
         </h1>
-        <p className="text-sm sm:text-xl text-[#003D99]">
-          Block times you're busy. We'll schedule study blocks in the remaining free time.
+        <p className="text-sm sm:text-base md:text-xl text-[#003D99]">
+          Block times you're busy. We'll schedule study blocks in the remaining free time, leaving buffer slots for rescheduling and other school assignments or breaks.
         </p>
       </div>
 
       {/* Calendar Section */}
       <div className="bg-white border-2 border-[#0066FF]/20 rounded-xl p-2 sm:p-6 overflow-hidden">
         <p className="text-xs sm:text-sm text-[#003D99] mb-3 sm:mb-6 text-left px-1 sm:px-0 leading-relaxed">
-          Grey times are outside your study window. Mark busy times in white areas – we'll schedule around them.
+          Grey times are outside your study window. Mark busy times in white areas – we'll schedule around them and leave buffer slots for rescheduling and other school assignments or breaks.
         </p>
         
         <TimeBlockCalendar
@@ -243,12 +243,12 @@ export default function Slide21Page() {
       </div>
 
       {/* Navigation */}
-      <div className="flex justify-between items-center pt-4 sm:pt-6 gap-2 sm:gap-0 px-2 sm:px-0">
+      <div className="flex justify-between items-center pt-3 sm:pt-6 md:pt-10 gap-2 sm:gap-0 px-2 sm:px-0">
         <button
           onClick={() => router.push("/onboarding/slide-20")}
-          className="bg-[#E5F0FF] border border-[#0066FF]/20 text-[#003D99] px-3 sm:px-2 py-2 sm:py-0.5 rounded-lg text-xs font-medium hover:bg-[#0066FF]/10 hover:border-[#0066FF]/40 transition-colors"
+          className="bg-white border-2 border-[#0066FF] text-[#0066FF] px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg text-sm sm:text-base font-medium hover:bg-[#0066FF] hover:text-white transition-colors"
         >
-          ← Back
+          Back
         </button>
         
         <button

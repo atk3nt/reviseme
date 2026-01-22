@@ -2576,7 +2576,7 @@ function WeekView({
                       backgroundColor: `${config.colors.brand.backgroundLight}40`
                     } : {}}
                   >
-                    <div className={`truncate ${isToday ? 'text-base font-semibold' : ''}`} style={isToday ? { color: config.colors.brand.primary } : { color: config.colors.brand.textMedium }}>
+                    <div className={`whitespace-nowrap text-xs sm:text-sm ${isToday ? 'font-semibold' : ''}`} style={isToday ? { color: config.colors.brand.primary } : { color: config.colors.brand.textMedium }}>
                       {day.substring(0, 3)}
                     </div>
                     <div className="flex items-center justify-center" style={{ marginTop: '2px' }}>

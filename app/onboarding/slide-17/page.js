@@ -85,9 +85,9 @@ export default function Slide17Page() {
 
 
   return (
-    <div className="text-center w-full h-full flex flex-col justify-between py-8 sm:py-10 md:py-12">
+    <div className="text-center w-full h-full flex flex-col justify-between py-adaptive-sm min-h-0">
       {/* Progress */}
-      <div className="w-full flex-shrink-0 pb-6 sm:pb-8 md:pb-10">
+      <div className="w-full flex-shrink-0 pb-4 sm:pb-6 md:pb-10">
         <OnboardingProgress 
           currentSlide={17} 
           totalSlides={12} 
@@ -96,12 +96,12 @@ export default function Slide17Page() {
       </div>
 
       {/* Title */}
-      <div className="space-y-3 sm:space-y-4 flex-shrink-0 pb-6 sm:pb-8">
+      <div className="space-y-2 sm:space-y-4 flex-shrink-0 pb-4 sm:pb-6">
         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#001433] leading-tight">
           One payment.<br />Your entire exam season sorted.
         </h1>
         <p className="text-sm sm:text-base md:text-lg text-[#003D99] leading-relaxed">
-          Full access until July. No subscriptions. 7-day money-back guarantee.
+          Full access until July. No subscriptions.<br />7-day money-back guarantee.
         </p>
       </div>
 
@@ -215,19 +215,19 @@ export default function Slide17Page() {
       </div>
 
       {/* Navigation */}
-      <div className="flex justify-between items-center w-full flex-shrink-0 pt-6 sm:pt-8">
+      <div className="flex justify-center items-center w-full flex-shrink-0 pt-4 sm:pt-6">
         <button
           onClick={() => router.push("/onboarding/slide-16-5")}
-          className="bg-[#E5F0FF] border border-[#0066FF]/20 text-[#003D99] px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg text-xs font-medium hover:bg-[#0066FF]/10 hover:border-[#0066FF]/40 transition-colors"
+          className="bg-white border-2 border-[#0066FF] text-[#0066FF] px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg text-sm sm:text-base font-medium hover:bg-[#0066FF] hover:text-white transition-colors"
         >
-          ← Back
+          Back
         </button>
         
         {/* Dev-only skip button */}
         {isDev && (
           <button
             onClick={handleSkip}
-            className="text-gray-500 hover:text-gray-700 text-xs underline opacity-50 hover:opacity-100"
+            className="ml-4 text-[#003D99]/50 hover:text-[#0066FF] text-xs transition-colors"
           >
             [DEV] Skip
           </button>

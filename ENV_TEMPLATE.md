@@ -60,6 +60,14 @@ RESEND_API_KEY=re_your_resend_api_key_here
 # ============================================
 # Get this from: https://platform.openai.com/api-keys
 OPENAI_API_KEY=sk-your_openai_api_key_here
+
+# ============================================
+# UPSTASH REDIS (Rate Limiting)
+# ============================================
+# Get these from: https://console.upstash.com/
+# See RATE_LIMITING_SETUP.md for detailed setup instructions
+UPSTASH_REDIS_REST_URL=https://your-db-name.upstash.io
+UPSTASH_REDIS_REST_TOKEN=your_upstash_token_here
 ```
 
 ---
@@ -148,6 +156,18 @@ Copy the output → `NEXTAUTH_SECRET`
 1. Go to https://platform.openai.com/api-keys
 2. Create API key
 3. Copy → `OPENAI_API_KEY`
+
+### 8. Upstash Redis (Rate Limiting)
+
+1. Go to https://console.upstash.com/
+2. Create account (free)
+3. Create Redis database (Regional, free tier)
+4. Copy:
+   - **REST URL** → `UPSTASH_REDIS_REST_URL`
+   - **REST TOKEN** → `UPSTASH_REDIS_REST_TOKEN`
+5. See `RATE_LIMITING_SETUP.md` for detailed instructions
+
+**Note:** Rate limiting is optional for local development. If credentials are missing, rate limiting will be disabled automatically.
 
 ---
 

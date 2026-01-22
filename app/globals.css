@@ -57,12 +57,99 @@
     50% { transform: scale(1.1); opacity: 1; }
     100% { transform: scale(1); opacity: 1; }
   }
+
+  @keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
 }
 
-html,
+/* Mobile viewport height fix - uses dynamic viewport height for better mobile support */
+/* This handles iOS Safari URL bar and other mobile browser chrome */
+html {
+  height: 100%;
+  /* Fallback for browsers that don't support dvh */
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
 body {
+  min-height: 100%;
+  min-height: 100dvh;
   scroll-behavior: smooth !important;
   font-family: var(--font-dm-sans), "DM Sans", sans-serif;
+}
+
+/* Safe area utilities for notched devices (iPhone X+, etc.) */
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.safe-left {
+  padding-left: env(safe-area-inset-left);
+}
+
+.safe-right {
+  padding-right: env(safe-area-inset-right);
+}
+
+.safe-x {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+.safe-y {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.safe-all {
+  padding-top: env(safe-area-inset-top);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+}
+
+/* Adaptive padding that scales with viewport size */
+/* Ensures content always has breathing room on any device */
+.px-adaptive {
+  padding-left: max(clamp(1rem, 4vw, 3rem), env(safe-area-inset-left));
+  padding-right: max(clamp(1rem, 4vw, 3rem), env(safe-area-inset-right));
+}
+
+.pb-adaptive {
+  padding-bottom: max(clamp(1rem, 5vh, 3rem), env(safe-area-inset-bottom));
+}
+
+.pt-adaptive {
+  padding-top: max(clamp(1rem, 3vh, 2rem), env(safe-area-inset-top));
+}
+
+.py-adaptive {
+  padding-top: max(clamp(1rem, 3vh, 2rem), env(safe-area-inset-top));
+  padding-bottom: max(clamp(1rem, 5vh, 3rem), env(safe-area-inset-bottom));
+}
+
+/* Adaptive vertical spacing for slide content */
+/* Smaller vertical padding that adapts to screen height */
+.py-adaptive-sm {
+  padding-top: clamp(1rem, 2vh, 2rem);
+  padding-bottom: clamp(1rem, 3vh, 3rem);
+}
+
+/* Mobile-friendly full height containers */
+.h-screen-safe {
+  height: 100vh;
+  height: 100dvh;
+}
+
+.min-h-screen-safe {
+  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 progress::-webkit-progress-value {
@@ -103,4 +190,9 @@ progress::-webkit-progress-value {
 
 .bg-brand-light {
   background-color: #E5F0FF; /* Background Light - section backgrounds and card backgrounds */
+}
+
+/* Subtle page transition for onboarding */
+.page-fade {
+  animation: fadeIn 0.25s ease-out;
 }

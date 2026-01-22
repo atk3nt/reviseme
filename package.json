@@ -23,6 +23,8 @@
     "@headlessui/react": "^2.2.0",
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.75.0",
+    "@upstash/ratelimit": "^2.0.8",
+    "@upstash/redis": "^1.36.1",
     "axios": "^1.7.9",
     "crisp-sdk-web": "^1.0.25",
     "eslint": "^9.17.0",

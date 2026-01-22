@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/libs/auth";
 import { supabaseAdmin } from "@/libs/supabase";
+import { mediumLimit, checkRateLimit } from "@/libs/ratelimit";
 
 export async function POST(req) {
   try {
@@ -10,6 +11,19 @@ export async function POST(req) {
       return NextResponse.json(
         { error: "Authentication required" },
         { status: 401 }
+      );
+    }
+
+    // Check rate limit (50 requests per hour)
+    const rateLimitCheck = await checkRateLimit(mediumLimit, session.user.id);
+    if (!rateLimitCheck.success) {
+      console.log(`[RATE LIMIT] Skip blocked for user ${session.user.id}`);
+      return NextResponse.json(
+        rateLimitCheck.response,
+        { 
+          status: 429,
+          headers: rateLimitCheck.headers
+        }
       );
     }
 

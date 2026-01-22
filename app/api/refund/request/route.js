@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/libs/auth";
 import { supabaseAdmin } from "@/libs/supabase";
 import Stripe from "stripe";
+import { dailyLimit, checkRateLimit } from "@/libs/ratelimit";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -13,6 +14,19 @@ export async function POST(req) {
       return NextResponse.json(
         { error: "Authentication required" },
         { status: 401 }
+      );
+    }
+
+    // Check rate limit (5 requests per day)
+    const rateLimitCheck = await checkRateLimit(dailyLimit, session.user.id);
+    if (!rateLimitCheck.success) {
+      console.log(`[RATE LIMIT] Refund request blocked for user ${session.user.id}`);
+      return NextResponse.json(
+        rateLimitCheck.response,
+        { 
+          status: 429,
+          headers: rateLimitCheck.headers
+        }
       );
     }
 

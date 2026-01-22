@@ -2,7 +2,8 @@
 
 export default function OnboardingProgress({ currentSlide, totalSlides, showProgressBar = false }) {
   // Map actual slide numbers to sequential positions (handles gaps in numbering)
-  const SLIDE_SEQUENCE = [1, 2, 4, 5, 9, 16, 16.5, 17, 18, 19, 20, 21, 22];
+  // Actual slides: 1, 2, 4, 5, 9, 16, 16.5, 17, 19, 20, 21, 22 (12 total)
+  const SLIDE_SEQUENCE = [1, 2, 4, 5, 9, 16, 16.5, 17, 19, 20, 21, 22];
   
   // Find the position of the current slide in the sequence (1-based)
   const currentPosition = SLIDE_SEQUENCE.indexOf(currentSlide) + 1;

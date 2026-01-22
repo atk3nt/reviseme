@@ -760,8 +760,8 @@ function RerateTopicsPageContent() {
                                         >
                                           <div className="card-body px-6 pt-6 pb-6 flex flex-col">
                                             {/* Topic Header - Fixed height container */}
-                                            <div className="flex items-start justify-between mb-3 min-h-[60px]">
-                                              <h4 className={`font-semibold text-brand-dark flex-1 leading-tight text-xs sm:text-base truncate ${
+                                            <div className="flex items-start justify-between mb-3">
+                                              <h4 className={`font-semibold text-brand-dark flex-1 leading-tight text-xs sm:text-base break-words ${
                                                 ratings[topic.id] === -2 ? 'line-through text-base-content/50' : ''
                                               }`}>
                                                 {topic.name}

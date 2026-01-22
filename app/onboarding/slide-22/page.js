@@ -337,28 +337,30 @@ export default function Slide22Page() {
   // isDev is now a state variable set in useEffect above
 
   return (
-    <div className="text-center space-y-8">
+    <div className="text-center space-y-4 sm:space-y-8 pt-adaptive">
       <OnboardingProgress 
         currentSlide={22} 
         totalSlides={12} 
         showProgressBar={true}
       />
 
-      <div className="space-y-6">
-        <h1 className="text-4xl font-bold text-[#001433]">
-          Time to create your plan.<br />We've got everything we need.
+      <div className="space-y-3 sm:space-y-6">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#001433] leading-tight">
+          Time to create your plan.
+          <br />
+          We've got everything we need.
         </h1>
-        <p className="text-xl text-[#003D99]">
+        <p className="text-base sm:text-lg md:text-xl text-[#003D99]">
           Let's create your personalised revision schedule.
         </p>
       </div>
 
       {/* Summary Card */}
-      <div className="max-w-lg mx-auto bg-white border-2 border-[#0066FF]/20 rounded-xl p-8 shadow-lg">
-        <div className="space-y-6">
+      <div className="max-w-lg mx-auto bg-white border-2 border-[#0066FF]/20 rounded-xl p-4 sm:p-6 md:p-8 shadow-lg">
+        <div className="space-y-4 sm:space-y-6">
           {/* Subjects */}
           <div>
-            <h3 className="text-sm font-medium text-gray-500 mb-3">Your Subjects</h3>
+            <h3 className="text-sm font-medium text-[#003D99] mb-3">Your Subjects</h3>
             <div className="space-y-2">
               {summary.subjects.map((subject, index) => {
                 const subjectColor = getSubjectColor(subject.id);
@@ -378,7 +380,7 @@ export default function Slide22Page() {
                       <span className="text-xl">{subjectIcon}</span>
                       <span className="font-medium text-[#001433]">{subject.name}</span>
                     </div>
-                    <span className="text-sm text-[#003D99] font-medium">{subject.board}</span>
+                    <span className="text-xs text-[#003D99] font-medium">{subject.board}</span>
                   </div>
                 );
               })}
@@ -390,7 +392,6 @@ export default function Slide22Page() {
             <div>
               <h3 className="text-sm font-medium text-gray-500 mb-2">Topics Rated</h3>
               <p className="text-2xl font-bold text-[#001433]">{summary.totalTopics}</p>
-              <p className="text-xs text-gray-500 mt-1">Need 40% per subject (min 5)</p>
             </div>
             <div>
               <h3 className="text-sm font-medium text-gray-500 mb-2">Weekly Availability</h3>
@@ -425,12 +426,12 @@ export default function Slide22Page() {
       </div>
 
       {/* Navigation */}
-      <div className="flex justify-start pt-6 sm:pt-8">
+      <div className="flex justify-center pt-2 sm:pt-3">
         <button
           onClick={() => router.push("/onboarding/slide-21")}
-          className="bg-[#E5F0FF] border border-[#0066FF]/20 text-[#003D99] px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg text-xs font-medium hover:bg-[#0066FF]/10 hover:border-[#0066FF]/40 transition-colors"
+          className="bg-white border-2 border-[#0066FF] text-[#0066FF] px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium hover:bg-[#0066FF] hover:text-white transition-colors"
         >
-          ← Back
+          Back
         </button>
       </div>
     </div>

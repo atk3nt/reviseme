@@ -45,7 +45,7 @@ export default function FamilyPage() {
   
   if (status === 'loading') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="min-h-screen-safe flex items-center justify-center bg-white safe-bottom">
         <span className="loading loading-spinner loading-lg text-primary"></span>
       </div>
     );
@@ -53,10 +53,10 @@ export default function FamilyPage() {
   
   if (status === 'unauthenticated') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white p-8">
+      <div className="min-h-screen-safe flex items-center justify-center bg-white p-4 sm:p-8 safe-bottom">
         <div className="text-center space-y-4 max-w-md">
-          <h1 className="text-2xl font-bold text-[#001433]">Family Access Activation</h1>
-          <p className="text-[#003D99]">Please sign in first to activate your family access.</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-[#001433]">Family Access Activation</h1>
+          <p className="text-sm sm:text-base text-[#003D99]">Please sign in first to activate your family access.</p>
           <button 
             onClick={() => router.push('/api/auth/signin?callbackUrl=/family')}
             className="btn bg-[#0066FF] text-white hover:bg-[#0052CC] border-0"
@@ -69,16 +69,16 @@ export default function FamilyPage() {
   }
   
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white p-8">
-      <div className="max-w-md w-full space-y-6 text-center">
+    <div className="min-h-screen-safe flex items-center justify-center bg-white p-4 sm:p-8 safe-bottom">
+      <div className="max-w-md w-full space-y-4 sm:space-y-6 text-center">
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold text-[#001433]">
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#001433]">
             Family Access Activation
           </h1>
-          <p className="text-[#003D99]">
+          <p className="text-sm sm:text-base text-[#003D99] break-all">
             Signed in as: <strong>{session?.user?.email}</strong>
           </p>
-          <p className="text-sm text-[#003D99]/70">
+          <p className="text-xs sm:text-sm text-[#003D99]/70">
             Click the button below to activate your free family access.
           </p>
         </div>

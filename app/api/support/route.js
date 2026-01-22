@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/libs/auth";
 import { sendEmail } from "@/libs/resend";
 import config from "@/config";
+import { strictLimit, checkRateLimit } from "@/libs/ratelimit";
 
 export async function POST(req) {
   try {
@@ -15,6 +16,20 @@ export async function POST(req) {
       return NextResponse.json(
         { error: "Authentication required" },
         { status: 401 }
+      );
+    }
+
+    // Check rate limit (10 requests per hour)
+    const userId = session?.user?.id || 'anonymous';
+    const rateLimitCheck = await checkRateLimit(strictLimit, userId);
+    if (!rateLimitCheck.success) {
+      console.log(`[RATE LIMIT] Support request blocked for user ${userId}`);
+      return NextResponse.json(
+        rateLimitCheck.response,
+        { 
+          status: 429,
+          headers: rateLimitCheck.headers
+        }
       );
     }
 

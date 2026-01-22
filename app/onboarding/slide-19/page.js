@@ -371,7 +371,7 @@ export default function Slide19Page() {
           <p className="text-lg text-brand-medium mb-4">No topics found. Please complete previous steps first.</p>
           <button
             onClick={() => router.push("/onboarding/slide-17")}
-            className="bg-[#E5F0FF] border border-[#0066FF]/20 text-[#003D99] px-4 py-2 rounded-lg font-medium hover:bg-[#0066FF]/10 hover:border-[#0066FF]/40 transition-colors"
+            className="bg-white border-2 border-[#0066FF] text-[#0066FF] px-4 py-2 rounded-lg font-medium hover:bg-[#0066FF] hover:text-white transition-colors"
           >
             Go Back
           </button>
@@ -381,22 +381,22 @@ export default function Slide19Page() {
   }
 
   return (
-    <div className="text-center space-y-8 pt-10 pb-20 px-2 sm:px-6">
+    <div className="text-center space-y-4 sm:space-y-8 pt-adaptive pb-20">
       <OnboardingProgress 
         currentSlide={19} 
-        totalSlides={13} 
+        totalSlides={12} 
         showProgressBar={true}
       />
 
-      <div className="space-y-3 px-2 sm:px-0 pt-12 sm:pt-0 w-[92.5%] sm:w-auto mx-auto">
-        <h1 className="text-5xl font-bold text-brand-dark">
+      <div className="space-y-2 sm:space-y-3 px-2 sm:px-0 pt-6 sm:pt-0 w-[92.5%] sm:w-auto mx-auto">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-brand-dark">
           Rate your topics.
         </h1>
-        <p className="text-lg text-brand-medium max-w-2xl mx-auto">
+        <p className="text-sm sm:text-base md:text-lg text-brand-medium max-w-2xl mx-auto">
           Rate each topic so we can focus your time where it matters most.
         </p>
         
-        <p className="text-sm text-brand-medium max-w-2xl mx-auto">
+        <p className="text-xs sm:text-sm text-brand-medium max-w-2xl mx-auto">
           <span className="font-semibold">1</span> = Weak | <span className="font-semibold">3</span> = OK | <span className="font-semibold">5</span> = Strong
         </p>
         
@@ -584,9 +584,9 @@ export default function Slide19Page() {
                                       >
                                         <div className="card-body px-6 pt-6 pb-6 flex flex-col">
                                           {/* Topic Header - Fixed height container */}
-                                          <div className="flex items-start justify-between mb-3 min-h-[60px]">
+                                          <div className="flex items-start justify-between mb-3">
                                             <h4 
-                                              className={`font-semibold text-brand-dark flex-1 leading-tight text-xs sm:text-base truncate ${
+                                              className={`font-semibold text-brand-dark flex-1 leading-tight text-xs sm:text-base break-words ${
                                                 ratings[topic.id] === -2 ? 'line-through text-base-content/50' : ''
                                               }`}
                                             >
@@ -707,9 +707,9 @@ export default function Slide19Page() {
       <div className="flex justify-between items-center pt-8">
         <button
           onClick={() => router.push("/onboarding/slide-17")}
-          className="bg-[#E5F0FF] border border-[#0066FF]/20 text-[#003D99] px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg text-xs font-medium hover:bg-[#0066FF]/10 hover:border-[#0066FF]/40 transition-colors"
+          className="bg-white border-2 border-[#0066FF] text-[#0066FF] px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg text-sm sm:text-base font-medium hover:bg-[#0066FF] hover:text-white transition-colors"
         >
-          ← Back
+          Back
         </button>
         
         <div className="flex items-center space-x-4">

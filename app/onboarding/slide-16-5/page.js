@@ -50,9 +50,9 @@ export default function Slide16Dot5Page() {
   };
 
   return (
-    <div className="text-center w-full h-full flex flex-col justify-between py-8 sm:py-10 md:py-12">
+    <div className="text-center w-full h-full flex flex-col justify-between py-adaptive-sm min-h-0">
       {/* Progress */}
-      <div className="w-full flex-shrink-0 pb-6 sm:pb-8 md:pb-10">
+      <div className="w-full flex-shrink-0 pb-4 sm:pb-6 md:pb-10">
         <OnboardingProgress 
           currentSlide={16} 
           totalSlides={12} 
@@ -61,7 +61,7 @@ export default function Slide16Dot5Page() {
       </div>
 
       {/* Question */}
-      <div className="space-y-4 sm:space-y-5 flex-grow flex flex-col justify-center pb-6 sm:pb-8 md:pb-10">
+      <div className="space-y-3 sm:space-y-5 flex-grow flex flex-col justify-center pb-4 sm:pb-6 md:pb-10 min-h-0">
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#001433] leading-tight">
           One last thing!
         </h1>
@@ -80,25 +80,25 @@ export default function Slide16Dot5Page() {
       </div>
 
       {/* Navigation */}
-      <div className="flex justify-between items-center w-full flex-shrink-0 pt-6 sm:pt-8">
+      <div className="flex justify-between items-center w-full flex-shrink-0 pt-4 sm:pt-6">
         <button
           onClick={() => router.push("/onboarding/slide-16")}
-          className="bg-[#E5F0FF] border border-[#0066FF]/20 text-[#003D99] px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg text-xs font-medium hover:bg-[#0066FF]/10 hover:border-[#0066FF]/40 transition-colors"
+          className="bg-white border-2 border-[#0066FF] text-[#0066FF] px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium hover:bg-[#0066FF] hover:text-white transition-colors"
         >
-          ← Back
+          Back
         </button>
         
         <div className="flex space-x-3 sm:space-x-4">
           <button
             onClick={handleSkip}
-            className="text-gray-500 hover:text-gray-700 text-xs sm:text-sm underline"
+            className="text-[#003D99]/50 hover:text-[#0066FF] text-xs sm:text-sm transition-colors"
           >
             Skip
           </button>
           <button
             onClick={handleNext}
             disabled={!selectedOption || isLoading}
-            className="bg-[#0066FF] hover:bg-[#0052CC] text-white px-4 sm:px-6 py-1.5 sm:py-2 rounded-lg text-sm sm:text-base font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-[#0066FF] hover:bg-[#0052CC] text-white px-5 sm:px-8 py-2 sm:py-2.5 rounded-lg text-sm sm:text-base font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? "Next..." : "Continue"}
           </button>

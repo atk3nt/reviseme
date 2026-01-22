@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/libs/auth";
 import { supabaseAdmin } from "@/libs/supabase";
+import { moderateLimit, checkRateLimit } from "@/libs/ratelimit";
 
 const DEV_USER_EMAIL = 'appmarkrai@gmail.com';
 
@@ -86,6 +87,19 @@ export async function POST(req) {
       return NextResponse.json(
         { error: "Authentication required" },
         { status: 401 }
+      );
+    }
+
+    // Check rate limit (30 requests per hour)
+    const rateLimitCheck = await checkRateLimit(moderateLimit, userId);
+    if (!rateLimitCheck.success) {
+      console.log(`[RATE LIMIT] Availability save blocked for user ${userId}`);
+      return NextResponse.json(
+        rateLimitCheck.response,
+        { 
+          status: 429,
+          headers: rateLimitCheck.headers
+        }
       );
     }
 

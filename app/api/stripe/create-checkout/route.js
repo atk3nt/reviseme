@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/libs/auth";
 import { createCheckout } from "@/libs/stripe";
 import { supabaseAdmin } from "@/libs/supabase";
+import { checkoutLimit, checkRateLimit } from "@/libs/ratelimit";
 
 // This function is used to create a Stripe Checkout Session (one-time payment or subscription)
 // It's called by slide-17 to initiate payment flow
@@ -22,6 +23,20 @@ export async function POST(req) {
 
   try {
     const session = await auth();
+
+    // Check rate limit (20 requests per hour)
+    const userId = session?.user?.id || 'anonymous';
+    const rateLimitCheck = await checkRateLimit(checkoutLimit, userId);
+    if (!rateLimitCheck.success) {
+      console.log(`[RATE LIMIT] Checkout blocked for user ${userId}`);
+      return NextResponse.json(
+        rateLimitCheck.response,
+        { 
+          status: 429,
+          headers: rateLimitCheck.headers
+        }
+      );
+    }
 
     // Get user from Supabase
     let user = null;
