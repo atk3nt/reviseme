@@ -107,21 +107,16 @@ export const renderSchemaTags = () => {
           image: `https://${config.domainName}/icon.png`,
           url: `https://${config.domainName}/`,
           author: {
-            "@type": "Person",
-            name: "Marc Lou",
+            "@type": "Organization",
+            name: "ReviseMe",
           },
-          datePublished: "2023-08-01",
+          datePublished: "2026-01-22",
           applicationCategory: "EducationalApplication",
-          aggregateRating: {
-            "@type": "AggregateRating",
-            ratingValue: "4.8",
-            ratingCount: "12",
-          },
           offers: [
             {
               "@type": "Offer",
-              price: "9.00",
-              priceCurrency: "USD",
+              price: "29.99",
+              priceCurrency: "GBP",
             },
           ],
         }),

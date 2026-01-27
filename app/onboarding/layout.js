@@ -16,12 +16,14 @@ export default function OnboardingLayout({ children }) {
   const [isCheckingAccess, setIsCheckingAccess] = useState(true);
 
   useEffect(() => {
-    // Check if dev mode
+    // Check if dev mode - explicitly exclude production domain
+    const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
+    const isProduction = hostname === 'reviseme.co' || hostname.endsWith('.reviseme.co');
     setIsDev(
-      typeof window !== 'undefined' && (
-        window.location.hostname === 'localhost' ||
-        window.location.hostname === '127.0.0.1' ||
-        window.location.hostname.includes('.local')
+      !isProduction && (
+        hostname === 'localhost' ||
+        hostname === '127.0.0.1' ||
+        hostname.includes('.local')
       )
     );
   }, []);

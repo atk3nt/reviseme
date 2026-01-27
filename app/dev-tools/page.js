@@ -10,13 +10,14 @@ export default function DevToolsPage() {
   const [storageData, setStorageData] = useState({});
 
   useEffect(() => {
-    // Check if dev mode
-    const dev = 
-      typeof window !== 'undefined' && (
-        window.location.hostname === 'localhost' ||
-        window.location.hostname === '127.0.0.1' ||
-        window.location.hostname.includes('.local')
-      );
+    // Check if dev mode - explicitly exclude production domain
+    const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
+    const isProduction = hostname === 'reviseme.co' || hostname.endsWith('.reviseme.co');
+    const dev = !isProduction && (
+      hostname === 'localhost' ||
+      hostname === '127.0.0.1' ||
+      hostname.includes('.local')
+    );
     setIsDev(dev);
     updateStorageData();
   }, []);

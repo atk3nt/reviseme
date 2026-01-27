@@ -20,9 +20,13 @@ export default function DevPanel() {
   useEffect(() => {
     setIsMounted(true);
     const hostname = window.location.hostname;
-    const dev = hostname === 'localhost' || 
-                hostname === '127.0.0.1' ||
-                hostname.includes('.local');
+    // Explicitly exclude production domain (app.reviseme.co and any reviseme.co subdomain)
+    const isProduction = hostname === 'reviseme.co' || hostname.endsWith('.reviseme.co');
+    const dev = !isProduction && (
+      hostname === 'localhost' || 
+      hostname === '127.0.0.1' ||
+      hostname.includes('.local')
+    );
     setIsDev(dev);
   }, []);
 

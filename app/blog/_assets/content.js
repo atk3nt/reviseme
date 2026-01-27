@@ -23,18 +23,18 @@ export const categories = [
     titleShort: "Features",
     // The description of the category to display in the category page. Up to 160 characters.
     description:
-      "Here are the latest features we've added to ShipFast. I'm constantly improving our product to help you ship faster.",
+      "Here are the latest features we've added to ReviseMe. We're constantly improving our product to help you revise smarter.",
     // A short version of the description above, only displayed in the <Header /> on mobile. Up to 60 characters.
-    descriptionShort: "Latest features added to ShipFast.",
+    descriptionShort: "Latest features added to ReviseMe.",
   },
   {
     slug: categorySlugs.tutorial,
     title: "How Tos & Tutorials",
     titleShort: "Tutorials",
     description:
-      "Learn how to use ShipFast with these step-by-step tutorials. I'll show you how to ship faster and save time.",
+      "Learn how to use ReviseMe with these step-by-step tutorials. We'll show you how to optimize your revision and ace your exams.",
     descriptionShort:
-      "Learn how to use ShipFast with these step-by-step tutorials.",
+      "Learn how to use ReviseMe with these step-by-step tutorials.",
   },
 ];
 
@@ -104,32 +104,16 @@ export const authors = [
     // The slug to use in the URL, from the authorSlugs object above.
     slug: authorSlugs.marc,
     // The name to display in the author's bio. Up to 60 characters.
-    name: "Marc Lou",
+    name: "ReviseMe Team",
     // The job to display in the author's bio. Up to 60 characters.
-    job: "Maker of ByeDispute",
+    job: "ReviseMe",
     // The description of the author to display in the author's bio. Up to 160 characters.
     description:
-      "Marc is a developer and an entrepreneur. He's built 20 startups in the last 3 years. 6 were profitable and 3 were acquired. He's currently building ByeDispute, the #1 Stripe Chargebacks Protection tool.",
+      "The ReviseMe team is dedicated to helping A-Level students achieve their academic goals through AI-powered revision planning and smart scheduling.",
     // The avatar of the author to display in the author's bio and avatar badge. It's better to use a local image, but you can also use an external image (https://...)
     avatar: marcImg,
     // A list of social links to display in the author's bio.
-    socials: [
-      {
-        name: socialIcons.twitter.name,
-        icon: socialIcons.twitter.svg,
-        url: "https://twitter.com/marc_louvion",
-      },
-      {
-        name: socialIcons.linkedin.name,
-        icon: socialIcons.linkedin.svg,
-        url: "https://www.linkedin.com/in/marclouvion/",
-      },
-      {
-        name: socialIcons.github.name,
-        icon: socialIcons.github.svg,
-        url: "https://github.com/Marc-Lou-Org/ship-fast",
-      },
-    ],
+    socials: [],
   },
 ];
 
@@ -156,10 +140,10 @@ export const articles = [
     // The unique slug to use in the URL. It's also used to generate the canonical URL.
     slug: "introducing-supabase",
     // The title to display in the article page (h1). Less than 60 characters. It's also used to generate the meta title.
-    title: "Introducing Supabase to ShipFast",
+    title: "Introducing Supabase to ReviseMe",
     // The description of the article to display in the article page. Up to 160 characters. It's also used to generate the meta description.
     description:
-      "Supabase is an open-source Firebase alternative. It's a great tool for building a backend for your app. It's now integrated with ShipFast!",
+      "Supabase is an open-source Firebase alternative. It's a great tool for building a backend for your app. It's now integrated with ReviseMe!",
     // An array of categories of the article. It's used to generate the category badges, the category filter, and more.
     categories: [
       categories.find((category) => category.slug === categorySlugs.feature),
@@ -180,7 +164,7 @@ export const articles = [
       <>
         <Image
           src={introducingSupabaseImg}
-          alt="Supabase and ShipFast logo combined"
+          alt="Supabase and ReviseMe logo combined"
           width={700}
           height={500}
           priority={true}
@@ -192,7 +176,7 @@ export const articles = [
           <p className={styles.p}>
             Supabase is an open-source Firebase alternative. It&apos;s a great
             tool for building a backend for your app. It&apos;s now integrated
-            with ShipFast!
+            with ReviseMe!
           </p>
         </section>
 
@@ -225,11 +209,11 @@ export const articles = [
         </section>
 
         <section>
-          <h3 className={styles.h3}>2. Add your credentials to ShipFast</h3>
+          <h3 className={styles.h3}>2. Add your credentials to ReviseMe</h3>
           <p className={styles.p}>
             Copy the <span className={styles.codeInline}>API URL</span> and{" "}
             <span className={styles.codeInline}>API Key</span> from your
-            Supabase project settings and add them to your ShipFast project
+            Supabase project settings and add them to your ReviseMe project
             settings. Add these files to your project:
           </p>
 

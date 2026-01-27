@@ -11,7 +11,8 @@ const FAMILY_EMAILS = [
   'ppk3nt@gmail.com',
   'jmk3nt@gmail.com',
   'owk3nt@gmail.com',
-];
+  'atk3nt@gmail.com',
+];do they 
 
 /**
  * Endpoint to set has_access for dev testing and family members

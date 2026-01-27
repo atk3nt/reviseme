@@ -14,11 +14,15 @@ export default function Slide17Page() {
   const router = useRouter();
 
   useEffect(() => {
-    // Check if we're in development (localhost or dev environment)
+    // Check if we're in development - explicitly exclude production domain
+    const hostname = window.location.hostname;
+    const isProduction = hostname === 'reviseme.co' || hostname.endsWith('.reviseme.co');
     setIsDev(
-      window.location.hostname === 'localhost' ||
-      window.location.hostname === '127.0.0.1' ||
-      window.location.hostname.includes('.local')
+      !isProduction && (
+        hostname === 'localhost' ||
+        hostname === '127.0.0.1' ||
+        hostname.includes('.local')
+      )
     );
   }, []);
 

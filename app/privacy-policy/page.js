@@ -12,16 +12,16 @@ import config from "@/config";
 // You are an excellent lawyer.
 
 // I need your help to write a simple privacy policy for my website. Here is some context:
-// - Website: https://shipfa.st
-// - Name: ShipFast
-// - Description: A JavaScript code boilerplate to help entrepreneurs launch their startups faster
-// - User data collected: name, email and payment information
+// - Website: https://reviseme.co
+// - Name: ReviseMe
+// - Description: An AI-powered revision scheduling platform for A-Level students
+// - User data collected: name, email, payment information, revision schedules, subject preferences, and study progress
 // - Non-personal data collection: web cookies
-// - Purpose of Data Collection: Order processing
-// - Data sharing: we do not share the data with any other parties
-// - Children's Privacy: we do not collect any data from children
+// - Purpose of Data Collection: Service delivery, personalized revision planning, and payment processing
+// - Data sharing: we do not share the data with any other parties except payment processors
+// - Children's Privacy: we do not collect any data from children under 13
 // - Updates to the Privacy Policy: users will be updated by email
-// - Contact information: marc@shipfa.st
+// - Contact information: support@reviseme.co
 
 // Please write a simple privacy policy for my site. Add the current date.  Do not add or explain your reasoning. Answer:
 
@@ -57,9 +57,9 @@ const PrivacyPolicy = () => {
           className="leading-relaxed whitespace-pre-wrap"
           style={{ fontFamily: "sans-serif" }}
         >
-          {`Last Updated: 2023-08-25
+          {`Last Updated: January 22, 2026
 
-Thank you for visiting ShipFast ("we," "us," or "our"). This Privacy Policy outlines how we collect, use, and protect your personal and non-personal information when you use our website located at https://shipfa.st (the "Website").
+Thank you for visiting ReviseMe ("we," "us," or "our"). This Privacy Policy outlines how we collect, use, and protect your personal and non-personal information when you use our website located at https://reviseme.co (the "Website").
 
 By accessing or using the Website, you agree to the terms of this Privacy Policy. If you do not agree with the practices described in this policy, please do not use the Website.
 
@@ -70,8 +70,9 @@ By accessing or using the Website, you agree to the terms of this Privacy Policy
 We collect the following personal information from you:
 
 Name: We collect your name to personalize your experience and communicate with you effectively.
-Email: We collect your email address to send you important information regarding your orders, updates, and communication.
-Payment Information: We collect payment details to process your orders securely. However, we do not store your payment information on our servers. Payments are processed by trusted third-party payment processors.
+Email: We collect your email address to send you important information regarding your account, updates, and communication.
+Payment Information: We collect payment details to process your subscription securely. However, we do not store your payment information on our servers. Payments are processed by trusted third-party payment processors (Stripe).
+Revision Data: We collect information about your subjects, exam boards, revision schedules, progress, and study preferences to provide you with personalized AI-powered revision planning.
 
 1.2 Non-Personal Data
 
@@ -79,15 +80,15 @@ We may use web cookies and similar technologies to collect non-personal informat
 
 2. Purpose of Data Collection
 
-We collect and use your personal data for the sole purpose of order processing. This includes processing your orders, sending order confirmations, providing customer support, and keeping you updated about the status of your orders.
+We collect and use your personal data to provide our revision planning services. This includes processing payments, generating personalized revision schedules, tracking your progress, sending service updates, providing customer support, and improving our AI algorithms to better serve you.
 
 3. Data Sharing
 
-We do not share your personal data with any third parties except as required for order processing (e.g., sharing your information with payment processors). We do not sell, trade, or rent your personal information to others.
+We do not share your personal data with any third parties except as required for payment processing (e.g., sharing your information with Stripe). We do not sell, trade, or rent your personal information to others.
 
 4. Children's Privacy
 
-ShipFast is not intended for children under the age of 13. We do not knowingly collect personal information from children. If you are a parent or guardian and believe that your child has provided us with personal information, please contact us at the email address provided below.
+ReviseMe is intended for students aged 13 and above. We do not knowingly collect personal information from children under the age of 13. If you are a parent or guardian and believe that your child under 13 has provided us with personal information, please contact us at the email address provided below.
 
 5. Updates to the Privacy Policy
 
@@ -97,11 +98,11 @@ We may update this Privacy Policy from time to time to reflect changes in our pr
 
 If you have any questions, concerns, or requests related to this Privacy Policy, you can contact us at:
 
-Email: marc@shipfa.st
+Email: support@reviseme.co
 
 For all other inquiries, please visit our Contact Us page on the Website.
 
-By using ShipFast, you consent to the terms of this Privacy Policy.`}
+By using ReviseMe, you consent to the terms of this Privacy Policy.`}
         </pre>
       </div>
     </main>

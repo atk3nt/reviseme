@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
@@ -25,11 +25,23 @@ function RerateTopicsPageContent() {
   const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
   const [selectedSubjects, setSelectedSubjects] = useState([]);
   const [subjectBoards, setSubjectBoards] = useState({});
+  
+  // Use ref to store timeouts per topic ID (fixes issue where changing one topic cancels another's save)
+  const saveTimeoutsRef = useRef({});
 
   // Close sidebar when route changes
   useEffect(() => {
     setSidebarOpen(false);
   }, [searchParams, pathname]);
+
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    return () => {
+      Object.values(saveTimeoutsRef.current).forEach(timeout => {
+        if (timeout) clearTimeout(timeout);
+      });
+    };
+  }, []);
 
   useEffect(() => {
     // Check if dev mode (computed inline to avoid race conditions)
@@ -213,17 +225,20 @@ function RerateTopicsPageContent() {
       [topicId]: rating
     }));
     
-    // Auto-save after a delay
-    clearTimeout(window.autoSaveTimeout);
-    window.autoSaveTimeout = setTimeout(() => {
+    // Clear any existing timeout for this specific topic
+    if (saveTimeoutsRef.current[topicId]) {
+      clearTimeout(saveTimeoutsRef.current[topicId]);
+      delete saveTimeoutsRef.current[topicId];
+    }
+    
+    // Set a new timeout for this specific topic (auto-save after 1 second)
+    saveTimeoutsRef.current[topicId] = setTimeout(() => {
       saveRating(topicId, rating);
+      delete saveTimeoutsRef.current[topicId];
     }, 1000);
   };
 
   const saveRating = async (topicId, rating) => {
-    if (isSaving) return;
-    
-    setIsSaving(true);
     try {
       const response = await fetch('/api/topics/save-rating', {
         method: 'POST',
@@ -247,8 +262,6 @@ function RerateTopicsPageContent() {
     } catch (error) {
       console.error('Error saving rating:', error);
       toast.error('Failed to save rating');
-    } finally {
-      setIsSaving(false);
     }
   };
 
