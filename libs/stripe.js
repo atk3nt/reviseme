@@ -9,6 +9,7 @@ export const createCheckout = async ({
   couponId,
   clientReferenceId,
   user,
+  metadata,
 }) => {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -48,6 +49,7 @@ export const createCheckout = async ({
       : [],
     success_url: successUrl,
     cancel_url: cancelUrl,
+    ...(metadata && Object.keys(metadata).length > 0 && { metadata }),
     ...extraParams,
   });
 

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { auth } from "@/libs/auth";
 import { createCheckout } from "@/libs/stripe";
 import { supabaseAdmin } from "@/libs/supabase";
@@ -59,6 +60,11 @@ export async function POST(req) {
     // For one-time payment, mode is always 'payment'
     const mode = 'payment';
 
+    // Get DataFast cookies for revenue attribution
+    const cookieStore = await cookies();
+    const datafastVisitorId = cookieStore.get('datafast_visitor_id')?.value;
+    const datafastSessionId = cookieStore.get('datafast_session_id')?.value;
+
     const stripeSessionURL = await createCheckout({
       priceId,
       mode,
@@ -72,6 +78,11 @@ export async function POST(req) {
         name: user.name,
         customerId: user.customer_id
       } : null,
+      // Pass DataFast metadata for revenue attribution
+      metadata: {
+        ...(datafastVisitorId && { datafast_visitor_id: datafastVisitorId }),
+        ...(datafastSessionId && { datafast_session_id: datafastSessionId }),
+      },
     });
 
     return NextResponse.json({ url: stripeSessionURL });

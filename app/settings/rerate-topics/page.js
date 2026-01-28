@@ -239,6 +239,7 @@ function RerateTopicsPageContent() {
   };
 
   const saveRating = async (topicId, rating) => {
+    setIsSaving(true);
     try {
       const response = await fetch('/api/topics/save-rating', {
         method: 'POST',
@@ -262,6 +263,8 @@ function RerateTopicsPageContent() {
     } catch (error) {
       console.error('Error saving rating:', error);
       toast.error('Failed to save rating');
+    } finally {
+      setIsSaving(false);
     }
   };
 
