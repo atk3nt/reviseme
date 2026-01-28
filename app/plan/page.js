@@ -936,9 +936,19 @@ function PlanPageContent() {
     // This bypasses the onboarding check to prevent redirect while session is updating
     const freshGeneration = searchParams.get('freshGeneration') === 'true';
 
+    // Set a bypass flag when they land with freshGeneration so future visits don't redirect
+    // This prevents the "first revisit" redirect issue where session hasn't updated yet
+    if (typeof window !== 'undefined' && freshGeneration) {
+      sessionStorage.setItem('planRevisitBypass', '1');
+    }
+    
+    // Check if they've visited the plan page with freshGeneration in this session
+    const hasRevisitBypass = typeof window !== 'undefined' && sessionStorage.getItem('planRevisitBypass');
+
     // Check if user has completed onboarding (skip in dev mode)
     // Only redirect if they're authenticated, haven't completed onboarding, AND didn't just generate a plan
-    if (!devMode && status === 'authenticated' && session?.user && !session?.user?.hasCompletedOnboarding && !freshGeneration) {
+    // AND they don't have the revisit bypass flag (prevents redirect on first revisit after generation)
+    if (!devMode && status === 'authenticated' && session?.user && !session?.user?.hasCompletedOnboarding && !freshGeneration && !hasRevisitBypass) {
       console.log('⚠️ Onboarding not completed, redirecting to onboarding');
       router.push('/onboarding/slide-19');
       return;
