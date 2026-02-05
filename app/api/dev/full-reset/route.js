@@ -53,9 +53,10 @@ async function resolveUser() {
 }
 
 /**
- * Reset Onboarding - Clear onboarding progress and ratings
- * Keeps blocks and basic user data
- * POST /api/dev/reset-onboarding
+ * Full Reset - Delete ALL user data
+ * Deletes: blocks, ratings, onboarding, preferences, unavailable times, repeatable events
+ * Keeps: basic user account (email, name)
+ * POST /api/dev/full-reset
  */
 export async function POST(req) {
   try {
@@ -79,47 +80,107 @@ export async function POST(req) {
     }
 
     const userId = user.id;
+    const errors = [];
+
+    // Delete blocks
+    const { error: blocksError } = await supabaseAdmin
+      .from('blocks')
+      .delete()
+      .eq('user_id', userId);
+    if (blocksError) {
+      console.error('Error deleting blocks:', blocksError);
+      errors.push('blocks');
+    }
 
     // Delete user_topic_confidence (ratings)
     const { error: ratingsError } = await supabaseAdmin
       .from('user_topic_confidence')
       .delete()
       .eq('user_id', userId);
-
     if (ratingsError) {
       console.error('Error deleting ratings:', ratingsError);
+      errors.push('ratings');
     }
 
-    // Reset onboarding status in users table
+    // Delete unavailable_times
+    const { error: unavailableError } = await supabaseAdmin
+      .from('unavailable_times')
+      .delete()
+      .eq('user_id', userId);
+    if (unavailableError) {
+      console.error('Error deleting unavailable times:', unavailableError);
+      errors.push('unavailable_times');
+    }
+
+    // Delete repeatable_events
+    const { error: eventsError } = await supabaseAdmin
+      .from('repeatable_events')
+      .delete()
+      .eq('user_id', userId);
+    if (eventsError) {
+      console.error('Error deleting repeatable events:', eventsError);
+      errors.push('repeatable_events');
+    }
+
+    // Delete week_time_preferences
+    const { error: weekPrefsError } = await supabaseAdmin
+      .from('week_time_preferences')
+      .delete()
+      .eq('user_id', userId);
+    if (weekPrefsError) {
+      console.error('Error deleting week preferences:', weekPrefsError);
+      errors.push('week_time_preferences');
+    }
+
+    // Delete logs (optional - keeps history clean)
+    const { error: logsError } = await supabaseAdmin
+      .from('logs')
+      .delete()
+      .eq('user_id', userId);
+    if (logsError) {
+      console.error('Error deleting logs:', logsError);
+      // Don't add to errors - logs are optional
+    }
+
+    // Reset user data (keep email and name, reset everything else)
     const { error: userError } = await supabaseAdmin
       .from('users')
       .update({
         has_completed_onboarding: false,
+        has_access: false,
         weekday_earliest_time: null,
         weekday_latest_time: null,
         weekend_earliest_time: null,
         weekend_latest_time: null,
-        use_same_weekend_times: true
+        use_same_weekend_times: true,
+        stripe_customer_id: null,
+        stripe_price_id: null
       })
       .eq('id', userId);
 
     if (userError) {
-      console.error('Error resetting user onboarding:', userError);
-      return NextResponse.json(
-        { error: "Failed to reset onboarding" },
-        { status: 500 }
-      );
+      console.error('Error resetting user data:', userError);
+      errors.push('user_data');
     }
 
-    console.log(`✅ Reset onboarding for user: ${user.email}`);
+    if (errors.length > 0) {
+      console.warn(`⚠️ Full reset completed with errors in: ${errors.join(', ')}`);
+      return NextResponse.json({
+        success: true,
+        message: "Full reset completed with some errors",
+        errors: errors
+      });
+    }
+
+    console.log(`✅ Full reset completed for user: ${user.email}`);
 
     return NextResponse.json({
       success: true,
-      message: "Onboarding reset successfully"
+      message: "Full reset completed successfully"
     });
 
   } catch (error) {
-    console.error('Error in reset-onboarding:', error);
+    console.error('Error in full-reset:', error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

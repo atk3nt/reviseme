@@ -89,6 +89,16 @@ export default function GeneratingPlanPage() {
           throw new Error(errorData.error || `Failed to save data (${saveResponse.status})`);
         }
 
+        const saveData = await saveResponse.json();
+        console.log('✅ Onboarding data saved successfully:', {
+          hasBlockedTimes: !!(quizAnswers.blockedTimes && quizAnswers.blockedTimes.length > 0),
+          blockedTimesCount: quizAnswers.blockedTimes?.length || 0
+        });
+
+        // CRITICAL: Add delay to ensure database write is fully committed
+        // This prevents race condition where plan generation starts before unavailable times are saved
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
         // Refresh the session to get updated hasCompletedOnboarding flag
         // This ensures the plan page won't redirect back to onboarding
         if (!devMode && updateSession) {
@@ -187,10 +197,13 @@ export default function GeneratingPlanPage() {
           useSameWeekendTimes: true
         };
         const blockedTimes = quizAnswers.blockedTimes || [];
+        const startToday = quizAnswers.startToday !== undefined ? quizAnswers.startToday : true;
         
         const availability = calculateAvailabilityFromPreferences(timePreferences, blockedTimes);
         quizAnswers.weeklyAvailability = availability;
         localStorage.setItem('quizAnswers', JSON.stringify(quizAnswers));
+        
+        console.log('📅 Plan generation settings:', { startToday });
 
         // Step 3: Generate plan (50-90%)
         setProgress(60);
@@ -216,6 +229,28 @@ export default function GeneratingPlanPage() {
         setProgress(75);
         setStatusText("Generating your study plan...");
 
+        // Check for time override in dev mode
+        const devTimeOverride = typeof window !== 'undefined' && devMode
+          ? localStorage.getItem('devTimeOverride')
+          : null;
+        
+        // Current week Monday (client local) so API uses same week and doesn't derive from server TZ
+        const now = new Date();
+        const day = now.getDay();
+        const diff = now.getDate() - day + (day === 0 ? -6 : 1);
+        const monday = new Date(now);
+        monday.setDate(diff);
+        monday.setHours(0, 0, 0, 0);
+        const targetWeek = monday.toISOString().split('T')[0];
+
+        console.log('🔧 Dev settings:', {
+          devMode,
+          devTimeOverride,
+          startToday,
+          targetWeek,
+          hostname: typeof window !== 'undefined' ? window.location.hostname : 'N/A'
+        });
+
         const planResponse = await fetch('/api/plan/generate', {
           method: 'POST',
           headers: {
@@ -226,7 +261,15 @@ export default function GeneratingPlanPage() {
             ratings: quizAnswers.topicRatings || {},
             topicStatus: quizAnswers.topicStatus || {},
             availability: availability,
-            studyBlockDuration: 0.5
+            studyBlockDuration: 0.5,
+            startToday: startToday,
+            targetWeek,
+            devTimeOverride: devTimeOverride || undefined,
+            clientNow: new Date().toISOString(),
+            clientMinutesFromMidnight: (() => {
+              const d = new Date();
+              return d.getHours() * 60 + d.getMinutes() + d.getSeconds() / 60;
+            })(), // User's "now" as minutes from midnight so first block is next :00 or :30 in their TZ
           }),
         });
 
@@ -276,77 +319,32 @@ export default function GeneratingPlanPage() {
         localStorage.setItem('availability', JSON.stringify(finalQuizAnswers.weeklyAvailability || {}));
         localStorage.setItem('examDates', JSON.stringify(finalQuizAnswers.examDates || {}));
 
-        // Pre-fetch the blocks from the API so the plan page can display immediately
+        // Store plan data from POST response directly (no need for additional GET call)
         setProgress(95);
         setStatusText("Loading your schedule...");
 
-        // Get the week that blocks were actually generated for
-        // This ensures we fetch blocks for the correct week (next week if signed up on Sunday)
-        let weekStartStr;
-        if (planData.blocks && planData.blocks.length > 0) {
-          // Use the first block's scheduled_at date to determine the week
-          const firstBlockDate = new Date(planData.blocks[0].scheduled_at || planData.blocks[0].startDate);
-          if (!isNaN(firstBlockDate.getTime())) {
-            const day = firstBlockDate.getDay();
-            const diff = firstBlockDate.getDate() - day + (day === 0 ? -6 : 1);
-            const monday = new Date(firstBlockDate);
-            monday.setDate(diff);
-            monday.setHours(0, 0, 0, 0);
-            weekStartStr = monday.toISOString().split('T')[0];
-            console.log('📅 Determined week from generated blocks:', weekStartStr);
-          } else {
-            // Fallback: calculate current week start
-            const today = new Date();
-            const day = today.getDay();
-            const diff = today.getDate() - day + (day === 0 ? -6 : 1);
-            const monday = new Date(today);
-            monday.setDate(diff);
-            monday.setHours(0, 0, 0, 0);
-            weekStartStr = monday.toISOString().split('T')[0];
-            console.log('⚠️ Could not determine week from blocks, using current week:', weekStartStr);
-          }
-        } else {
-          // Fallback: calculate current week start (shouldn't happen since we check above)
-          const today = new Date();
-          const day = today.getDay();
-          const diff = today.getDate() - day + (day === 0 ? -6 : 1);
-          const monday = new Date(today);
-          monday.setDate(diff);
-          monday.setHours(0, 0, 0, 0);
-          weekStartStr = monday.toISOString().split('T')[0];
-          console.log('⚠️ No blocks found, using current week:', weekStartStr);
+        // Use the data from the POST response - it already includes blocks, blockedTimes, and weekStart
+        const preloadedData = {
+          blocks: planData.blocks || [],
+          blockedTimes: planData.blockedTimes || [],
+          weekStart: planData.weekStart,
+          timestamp: Date.now()
+        };
+        
+        sessionStorage.setItem('preloadedPlanData', JSON.stringify(preloadedData));
+        
+        // Force a synchronous write by reading it back immediately
+        const verify = sessionStorage.getItem('preloadedPlanData');
+        if (!verify) {
+          console.warn('⚠️ Failed to write pre-loaded data to sessionStorage');
         }
-
-        const blocksResponse = await fetch(`/api/plan/generate?weekStart=${weekStartStr}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          }
+        
+        console.log('✅ Pre-loaded plan data from POST response:', {
+          blocksCount: preloadedData.blocks.length || 0,
+          blockedTimesCount: preloadedData.blockedTimes.length || 0,
+          weekStart: preloadedData.weekStart,
+          verified: !!verify
         });
-
-        if (blocksResponse.ok) {
-          const blocksData = await blocksResponse.json();
-          // Store pre-loaded data in sessionStorage for the plan page to use
-          const preloadedData = {
-            blocks: blocksData.blocks || [],
-            blockedTimes: blocksData.blockedTimes || [],
-            weekStart: blocksData.weekStart || weekStartStr,
-            timestamp: Date.now()
-          };
-          sessionStorage.setItem('preloadedPlanData', JSON.stringify(preloadedData));
-          
-          // Force a synchronous write by reading it back immediately
-          const verify = sessionStorage.getItem('preloadedPlanData');
-          if (!verify) {
-            console.warn('⚠️ Failed to write pre-loaded data to sessionStorage');
-          }
-          
-          console.log('✅ Pre-loaded plan data:', {
-            blocksCount: preloadedData.blocks.length || 0,
-            blockedTimesCount: preloadedData.blockedTimes.length || 0,
-            verified: !!verify
-          });
-        }
 
         setProgress(100);
         setStatusText("Plan generated successfully!");

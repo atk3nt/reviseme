@@ -19,10 +19,22 @@ apiClient.interceptors.response.use(
     let message = "";
 
     if (error.response?.status === 401) {
-      // User not auth, ask to re login
-      toast.error("Please login");
-      // automatically redirect to /dashboard page after login
-      return signIn(undefined, { callbackUrl: config.auth.callbackUrl });
+      // Check if we're in dev mode - don't redirect to signin in dev
+      const isDev = typeof window !== 'undefined' && (
+        window.location.hostname === 'localhost' ||
+        window.location.hostname === '127.0.0.1' ||
+        window.location.hostname.includes('localhost')
+      );
+      
+      if (isDev) {
+        // In dev mode, just show error but don't redirect
+        message = "Authentication required (dev mode - no redirect)";
+      } else {
+        // In production, redirect to signin
+        toast.error("Please login");
+        // automatically redirect to /dashboard page after login
+        return signIn(undefined, { callbackUrl: config.auth.callbackUrl });
+      }
     } else if (error.response?.status === 403) {
       // User not authorized, must subscribe/purchase/pick a plan
       message = "Pick a plan to use this feature";

@@ -139,8 +139,14 @@ export const mediumLimit = isRateLimitEnabled
  * @returns {Object} { success: boolean, response: NextResponse | null }
  */
 export async function checkRateLimit(limiter, identifier) {
-  // If rate limiting is disabled (dev mode), always allow
-  if (!limiter || !isRateLimitEnabled) {
+  // Check if we're in dev mode (localhost)
+  const isDevMode = process.env.NODE_ENV === 'development';
+  
+  // If rate limiting is disabled OR in dev mode, always allow
+  if (!limiter || !isRateLimitEnabled || isDevMode) {
+    if (isDevMode && isRateLimitEnabled) {
+      console.log('[RATE LIMIT] 🔧 Dev mode: Rate limiting bypassed');
+    }
     return { success: true, response: null };
   }
 

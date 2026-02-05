@@ -68,12 +68,23 @@ function SettingsPageContent() {
       return;
     }
 
+    // Collect feedback before proceeding
+    const feedback = prompt('Before we process your refund, please tell us what didn\'t work for you and what we could improve (minimum 10 characters):');
+    
+    if (!feedback || feedback.trim().length < 10) {
+      alert('Please provide feedback (at least 10 characters) to proceed with the refund.');
+      return;
+    }
+
     if (confirm('Are you sure you want to request a refund? This will revoke your access to Markr Planner.')) {
       try {
         const response = await fetch('/api/refund/request', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ paymentId: latestPayment.id })
+          body: JSON.stringify({ 
+            paymentId: latestPayment.id,
+            feedback: feedback.trim()
+          })
         });
 
         if (response.ok) {

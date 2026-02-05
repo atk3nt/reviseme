@@ -11,6 +11,7 @@ import BlockDetailModal from "@/components/BlockDetailModal";
 import SupportModal from "@/components/SupportModal";
 import FeedbackModal from "@/components/FeedbackModal";
 import ConfirmAvailabilityModal from "@/components/ConfirmAvailabilityBanner";
+import { getEffectiveDate, hasSlotsToday } from "@/libs/dev-helpers";
 
 function PlanPageContent() {
   const { data: session, status } = useSession();
@@ -26,7 +27,7 @@ function PlanPageContent() {
     if (preloadedDataStr) {
       try {
         const preloadedData = JSON.parse(preloadedDataStr);
-        const today = new Date();
+        const today = getEffectiveDate();
         const day = today.getDay();
         const diff = today.getDate() - day + (day === 0 ? -6 : 1);
         const monday = new Date(today);
@@ -99,7 +100,7 @@ function PlanPageContent() {
     if (preloadedDataStr) {
       try {
         const preloadedData = JSON.parse(preloadedDataStr);
-        const today = new Date();
+        const today = getEffectiveDate();
         const day = today.getDay();
         const diff = today.getDate() - day + (day === 0 ? -6 : 1);
         const monday = new Date(today);
@@ -140,7 +141,7 @@ function PlanPageContent() {
   const [timerStates, setTimerStates] = useState({});
   const [weekStartDate, setWeekStartDate] = useState(() => {
     // Calculate current week's Monday (not next week)
-    const today = new Date();
+    const today = getEffectiveDate();
     const day = today.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
     const diff = today.getDate() - day + (day === 0 ? -6 : 1); // Monday of current week
     const monday = new Date(today);
@@ -207,7 +208,7 @@ function PlanPageContent() {
 
   // Get current week start (Monday) - Define early to avoid initialization issues
   const getCurrentWeekStart = useCallback(() => {
-    const today = new Date();
+    const today = getEffectiveDate();
     const day = today.getDay();
     const diff = today.getDate() - day + (day === 0 ? -6 : 1);
     const monday = new Date(today);
@@ -264,7 +265,7 @@ function PlanPageContent() {
     }
     
     // Special case: If today is Sunday and viewing next Monday (tomorrow), it's "This Week"
-    const today = new Date();
+    const today = getEffectiveDate();
     const todayDay = today.getDay(); // 0 = Sunday
     const isSunday = todayDay === 0;
     
@@ -332,7 +333,7 @@ function PlanPageContent() {
     }
     
     // Only allow from Saturday onwards (day 6 = Saturday, day 0 = Sunday)
-    const today = new Date();
+    const today = getEffectiveDate();
     const dayOfWeek = today.getDay(); // 0 = Sunday, 6 = Saturday
     const isSaturdayOrLater = dayOfWeek === 6 || dayOfWeek === 0; // Saturday or Sunday
     
@@ -358,8 +359,8 @@ function PlanPageContent() {
         currentWeekStart: currentWeekStart.toISOString().split('T')[0],
         weekStartDateState: weekStartDate.toISOString().split('T')[0],
         targetWeekStart: targetWeekStart ? targetWeekStart.toISOString().split('T')[0] : null,
-        today: new Date().toISOString().split('T')[0],
-        todayDay: new Date().getDay() // 0=Sunday, 1=Monday, etc.
+        today: getEffectiveDate().toISOString().split('T')[0],
+        todayDay: getEffectiveDate().getDay() // 0=Sunday, 1=Monday, etc.
       });
       
       // Check for pre-loaded data from the generating page (only use if it matches the requested week)
@@ -422,7 +423,7 @@ function PlanPageContent() {
                 };
               }).filter(block => block !== null);
 
-              // Deduplicate blocks before setting state
+              // Deduplicate blocks before setting state (no time filter - scheduler only creates slots after signup time)
               const deduplicatedBlocks = deduplicateBlocks(formattedBlocks);
               
               setBlocks(deduplicatedBlocks);
@@ -458,7 +459,8 @@ function PlanPageContent() {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-          }
+          },
+          cache: 'no-store', // Always fetch fresh blocks (e.g. after Delete All Blocks)
         });
 
         if (getResponse.ok) {
@@ -524,13 +526,12 @@ function PlanPageContent() {
               };
             }).filter(block => block !== null);
 
-            // Deduplicate blocks before setting state
+            // Deduplicate blocks before setting state (no filtering by time - scheduler only creates slots after signup time)
             const deduplicatedBlocks = deduplicateBlocks(formattedBlocks);
             
             console.log('✅ Formatted existing blocks:', deduplicatedBlocks.length);
+            setBlocks(deduplicatedBlocks);
             if (deduplicatedBlocks.length > 0) {
-              setBlocks(deduplicatedBlocks);
-              
               // Load time preferences from database
               try {
                 const timePrefResponse = await fetch('/api/user/time-preferences');
@@ -598,7 +599,7 @@ function PlanPageContent() {
             
             // Special case: If today is Sunday and viewing current week with no blocks,
             // check if blocks exist in next week and auto-switch
-            const today = new Date();
+            const today = getEffectiveDate();
             const todayDay = today.getDay(); // 0 = Sunday
             const isSunday = todayDay === 0;
             
@@ -620,7 +621,8 @@ function PlanPageContent() {
               try {
                 const nextWeekResponse = await fetch(`/api/plan/generate?weekStart=${nextWeekStartStr}`, {
                   method: 'GET',
-                  headers: { 'Content-Type': 'application/json' }
+                  headers: { 'Content-Type': 'application/json' },
+                  cache: 'no-store',
                 });
                 
                 if (nextWeekResponse.ok) {
@@ -660,11 +662,24 @@ function PlanPageContent() {
       currentWeekStartDate.setHours(0, 0, 0, 0);
       const isViewingCurrentWeek = viewingWeekStart.getTime() === currentWeekStartDate.getTime();
       
-      if (isViewingCurrentWeek) {
+      // Check for dev bypass flag
+      const devMode = typeof window !== 'undefined' && (
+        window.location.hostname === 'localhost' ||
+        window.location.hostname === '127.0.0.1' ||
+        window.location.hostname.includes('localhost')
+      );
+      const allowRegeneration = devMode && typeof window !== 'undefined' && localStorage.getItem('devAllowRegeneration') === 'true';
+      
+      if (isViewingCurrentWeek && !allowRegeneration) {
         console.log('⚠️ Viewing current week with no blocks found - NOT regenerating to preserve existing blocks');
+        console.log('💡 Dev tip: Set localStorage.setItem("devAllowRegeneration", "true") to allow regeneration');
         setBlocks([]);
         setIsLoading(false);
         return;
+      }
+      
+      if (isViewingCurrentWeek && allowRegeneration) {
+        console.log('🔧 Dev mode: Regeneration allowed via devAllowRegeneration flag');
       }
       
       console.log('📝 No existing blocks found, generating new plan...');
@@ -695,7 +710,28 @@ function PlanPageContent() {
         return;
       }
 
-      // Generate study plan using scheduler - include targetWeek for next week generation
+      // Prior check: only send startToday=true if there are slots left today (next :00 or :30 before latest).
+      // Otherwise force start tomorrow so we never generate blocks in the past on the same day.
+      const effectiveNow = getEffectiveDate();
+      let timePrefs = timePreferences;
+      if (!timePrefs && typeof window !== 'undefined') {
+        try {
+          timePrefs = JSON.parse(localStorage.getItem('timePreferences') || '{}');
+          if (!timePrefs?.weekdayEarliest && !timePrefs?.weekdayLatest) {
+            const quiz = JSON.parse(localStorage.getItem('quizAnswers') || '{}');
+            timePrefs = quiz.timePreferences || timePrefs;
+          }
+        } catch (_) {
+          timePrefs = {};
+        }
+      }
+      const slotsToday = hasSlotsToday(effectiveNow, timePrefs || {});
+      const startToday = slotsToday && (typeof window !== 'undefined' && localStorage.getItem('startToday') !== 'false');
+
+      const devTimeOverride = typeof window !== 'undefined' && (window.location?.hostname === 'localhost' || window.location?.hostname === '127.0.0.1')
+        ? localStorage.getItem('devTimeOverride')
+        : null;
+
       const postResponse = await fetch('/api/plan/generate', {
         method: 'POST',
         headers: {
@@ -708,7 +744,11 @@ function PlanPageContent() {
           availability,
           examDates,
           studyBlockDuration: 0.5,
-          targetWeek: weekStartStr // Pass the target week so it generates for the correct week
+          targetWeek: weekStartStr,
+          startToday,
+          devTimeOverride: devTimeOverride || undefined,
+          clientNow: effectiveNow.toISOString(),
+          clientMinutesFromMidnight: effectiveNow.getHours() * 60 + effectiveNow.getMinutes() + effectiveNow.getSeconds() / 60,
         })
       });
 
@@ -827,14 +867,24 @@ function PlanPageContent() {
   }, [loadBlocksForWeek]);
 
   // Clear pre-loaded data on mount if we already used it (from initial state)
+  // If user just ran "Delete All Blocks" in dev-tools, clear blocks and refetch so we show empty
   useEffect(() => {
+    const justReset = typeof window !== 'undefined' && sessionStorage.getItem('planJustReset') === '1';
+    if (justReset) {
+      sessionStorage.removeItem('planJustReset');
+      setBlocks([]);
+      setBlockedTimeRanges([]);
+      console.log('🔄 Plan was just reset (Delete All Blocks); clearing and refetching.');
+    }
+
     const preloadedDataStr = sessionStorage.getItem('preloadedPlanData');
-    if (preloadedDataStr && blocks.length > 0) {
+    if (preloadedDataStr && blocks.length > 0 && !justReset) {
       // We already have blocks from initial state, so clear the pre-loaded data
       sessionStorage.removeItem('preloadedPlanData');
       console.log('✅ Cleared pre-loaded data after using it in initial state');
-    } else if (!preloadedDataStr && blocks.length === 0) {
-      // No pre-loaded data and no blocks, so load normally
+    }
+    if (!preloadedDataStr || justReset) {
+      // No pre-loaded data, or we just reset: load so we get fresh data (0 blocks after delete)
       loadBlocks();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -1052,7 +1102,7 @@ function PlanPageContent() {
     const viewParam = searchParams?.get('view');
     
     // Check if there are any blocks scheduled for today
-    const today = new Date();
+    const today = getEffectiveDate();
     today.setHours(0, 0, 0, 0);
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -1228,14 +1278,14 @@ function PlanPageContent() {
   };
 
   const getTodayBlocks = () => {
-    const today = new Date().toDateString();
+    const today = getEffectiveDate().toDateString();
     return blocks.filter(block => 
       new Date(block.scheduled_at).toDateString() === today
     );
   };
 
   const getTomorrowBlocks = () => {
-    const tomorrow = new Date();
+    const tomorrow = getEffectiveDate();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const tomorrowDateString = tomorrow.toDateString();
     return blocks.filter(block => 
@@ -2003,7 +2053,7 @@ function PlanPageContent() {
 function TodayView({ blocks, nextDayBlocks = [], onSelectBlock, getSubjectColor, getSubjectBgColor, getSubjectBorderColor, getSubjectIcon, getBlockKey, cleanTopicName }) {
   const hasTodayBlocks = blocks.length > 0;
   const hasNextDayBlocks = nextDayBlocks.length > 0;
-  const tomorrow = new Date();
+  const tomorrow = getEffectiveDate();
   tomorrow.setDate(tomorrow.getDate() + 1);
   const tomorrowDateString = tomorrow.toLocaleDateString([], { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   
@@ -2264,7 +2314,7 @@ function WeekView({
       return date;
     }
     // Fallback: calculate current week's Monday
-    const today = new Date();
+    const today = getEffectiveDate();
     const day = today.getDay();
     const diff = today.getDate() - day + (day === 0 ? -6 : 1);
     const monday = new Date(today);
@@ -2564,7 +2614,7 @@ function WeekView({
               {days.map((day, dayIndex) => {
                 const dayDate = new Date(baseDate);
                 dayDate.setDate(baseDate.getDate() + dayIndex);
-                const isToday = dayDate.toDateString() === new Date().toDateString();
+                const isToday = dayDate.toDateString() === getEffectiveDate().toDateString();
                 const isLastColumn = dayIndex === days.length - 1;
                 
                 // Check if this day is before the plan started
@@ -2640,7 +2690,7 @@ function WeekView({
                     const isUserBlocked = blockedStatus === true; // User explicitly blocked (red)
                     const isOutsideWindow = blockedStatus === 'outside-window'; // Outside study window (different color)
                     const isBlocked = isUserBlocked || isOutsideWindow;
-                    const isToday = dayDate.toDateString() === new Date().toDateString();
+                    const isToday = dayDate.toDateString() === getEffectiveDate().toDateString();
                     const isAvailable = isTimeSlotAvailable(dayIndex, label.minutes);
                     const isLastColumn = dayIndex === days.length - 1;
                     

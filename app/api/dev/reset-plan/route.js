@@ -53,9 +53,9 @@ async function resolveUser() {
 }
 
 /**
- * Reset Onboarding - Clear onboarding progress and ratings
- * Keeps blocks and basic user data
- * POST /api/dev/reset-onboarding
+ * Reset Plan - Delete all blocks for the current user
+ * Keeps ratings, onboarding data, and preferences
+ * POST /api/dev/reset-plan
  */
 export async function POST(req) {
   try {
@@ -80,46 +80,30 @@ export async function POST(req) {
 
     const userId = user.id;
 
-    // Delete user_topic_confidence (ratings)
-    const { error: ratingsError } = await supabaseAdmin
-      .from('user_topic_confidence')
+    // Delete all blocks for this user
+    const { error, count } = await supabaseAdmin
+      .from('blocks')
       .delete()
       .eq('user_id', userId);
 
-    if (ratingsError) {
-      console.error('Error deleting ratings:', ratingsError);
-    }
-
-    // Reset onboarding status in users table
-    const { error: userError } = await supabaseAdmin
-      .from('users')
-      .update({
-        has_completed_onboarding: false,
-        weekday_earliest_time: null,
-        weekday_latest_time: null,
-        weekend_earliest_time: null,
-        weekend_latest_time: null,
-        use_same_weekend_times: true
-      })
-      .eq('id', userId);
-
-    if (userError) {
-      console.error('Error resetting user onboarding:', userError);
+    if (error) {
+      console.error('Error deleting blocks:', error);
       return NextResponse.json(
-        { error: "Failed to reset onboarding" },
+        { error: "Failed to delete blocks" },
         { status: 500 }
       );
     }
 
-    console.log(`✅ Reset onboarding for user: ${user.email}`);
+    console.log(`✅ Deleted all blocks for user: ${user.email} (${count || 0} blocks)`);
 
     return NextResponse.json({
       success: true,
-      message: "Onboarding reset successfully"
+      message: "All blocks deleted successfully",
+      deletedCount: count || 0
     });
 
   } catch (error) {
-    console.error('Error in reset-onboarding:', error);
+    console.error('Error in reset-plan:', error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

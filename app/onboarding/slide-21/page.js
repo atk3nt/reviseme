@@ -45,8 +45,10 @@ export default function Slide21Page() {
   }, [confirmReset]);
 
   // Get this week's Monday (current week)
+  // Use time override in dev mode for testing
   const getThisWeekStart = () => {
-    const today = new Date();
+    const devTimeOverride = typeof window !== 'undefined' ? localStorage.getItem('devTimeOverride') : null;
+    const today = devTimeOverride ? new Date(devTimeOverride) : new Date();
     const day = today.getDay();
     const diff = today.getDate() - day + (day === 0 ? -6 : 1); // This Monday
     const thisMonday = new Date(today.setDate(diff));

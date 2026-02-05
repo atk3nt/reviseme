@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { auth } from "@/libs/auth";
 import { supabaseAdmin } from "@/libs/supabase";
 
+const DEV_USER_EMAIL = 'appmarkrai@gmail.com';
+
 /**
  * Family Access Whitelist
  * Add family member emails here to grant them free access
@@ -14,6 +16,54 @@ const FAMILY_EMAILS = [
   'atk3nt@gmail.com',
 ]; 
 
+async function ensureDevUser() {
+  const { data, error } = await supabaseAdmin
+    .from('users')
+    .select('id, email')
+    .eq('email', DEV_USER_EMAIL)
+    .maybeSingle();
+
+  if (!data && (!error || error.code === 'PGRST116')) {
+    const { data: created, error: createError } = await supabaseAdmin
+      .from('users')
+      .insert({
+        email: DEV_USER_EMAIL,
+        name: 'Dev Tester',
+        has_completed_onboarding: false
+      })
+      .select('id, email')
+      .single();
+
+    if (createError) {
+      console.error('Failed to auto-create dev user:', createError);
+      return null;
+    }
+    return created;
+  }
+
+  if (error) {
+    console.error('Failed to find dev user:', error);
+    return null;
+  }
+
+  return data;
+}
+
+async function resolveUser() {
+  const session = await auth();
+  
+  if (session?.user?.id) {
+    return { id: session.user.id, email: session.user.email };
+  }
+
+  // In dev mode, fall back to dev user
+  if (process.env.NODE_ENV === 'development') {
+    return await ensureDevUser();
+  }
+
+  return null;
+}
+
 /**
  * Endpoint to set has_access for dev testing and family members
  * Works in development mode OR for whitelisted family emails
@@ -21,9 +71,9 @@ const FAMILY_EMAILS = [
  */
 export async function POST(req) {
   try {
-    const session = await auth();
+    const user = await resolveUser();
     
-    if (!session?.user?.id) {
+    if (!user?.id) {
       return NextResponse.json(
         { error: "Authentication required" },
         { status: 401 }
@@ -32,7 +82,7 @@ export async function POST(req) {
 
     // Check if user is allowed (dev mode OR family email)
     const isDevelopment = process.env.NODE_ENV === 'development';
-    const isFamilyMember = FAMILY_EMAILS.includes(session.user.email);
+    const isFamilyMember = FAMILY_EMAILS.includes(user.email);
     
     if (!isDevelopment && !isFamilyMember) {
       return NextResponse.json(
@@ -45,7 +95,7 @@ export async function POST(req) {
     const { error } = await supabaseAdmin
       .from('users')
       .update({ has_access: true })
-      .eq('id', session.user.id);
+      .eq('id', user.id);
 
     if (error) {
       console.error('Error setting access:', error);
@@ -55,7 +105,7 @@ export async function POST(req) {
       );
     }
 
-    console.log(`✅ Access granted to: ${session.user.email}${isFamilyMember ? ' (family member)' : ' (dev mode)'}`);
+    console.log(`✅ Access granted to: ${user.email}${isFamilyMember ? ' (family member)' : ' (dev mode)'}`);
 
     return NextResponse.json({
       success: true,

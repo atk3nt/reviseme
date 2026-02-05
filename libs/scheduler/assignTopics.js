@@ -38,8 +38,8 @@ function getSessionConfig(rating = 3) {
 
 function addDays(date, days) {
   const next = new Date(date);
-  next.setUTCDate(next.getUTCDate() + days);
-  next.setUTCHours(0, 0, 0, 0);
+  next.setDate(next.getDate() + days);
+  next.setHours(0, 0, 0, 0);
   return next;
 }
 
@@ -283,9 +283,9 @@ export function assignTopicsToSlots(slots = [], topics = [], ongoingTopics = {})
     // Calculate when the last session would be
     const lastSessionDate = addDays(firstSessionDate, totalDaysNeeded);
     
-    // Check if last session would be within the week (before or on Sunday end of day)
+    // Check if last session would be within the week (before or on Sunday end of day) - local time
     const weekEndOfDay = new Date(weekEndDate);
-    weekEndOfDay.setUTCHours(23, 59, 59, 999);
+    weekEndOfDay.setHours(23, 59, 59, 999);
     
     const fits = lastSessionDate <= weekEndOfDay;
     
@@ -395,7 +395,8 @@ export function assignTopicsToSlots(slots = [], topics = [], ongoingTopics = {})
         console.warn('⚠️ Skipping slot with invalid startDate in grouping:', slot);
         return;
       }
-      const dayKey = slot.startDate.toISOString().split('T')[0];
+      const d = slot.startDate;
+      const dayKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
       if (!slotsByDay[dayKey]) {
         slotsByDay[dayKey] = [];
       }
@@ -602,16 +603,10 @@ export function assignTopicsToSlots(slots = [], topics = [], ongoingTopics = {})
             // FIX: Enforce gap days for within-week sessions
             // Check if this topic was already scheduled this week
             if (topic.lastScheduledDateThisWeek) {
-              const lastScheduledDay = new Date(Date.UTC(
-                topic.lastScheduledDateThisWeek.getUTCFullYear(),
-                topic.lastScheduledDateThisWeek.getUTCMonth(),
-                topic.lastScheduledDateThisWeek.getUTCDate()
-              ));
-              const slotDay = new Date(Date.UTC(
-                slot.startDate.getUTCFullYear(),
-                slot.startDate.getUTCMonth(),
-                slot.startDate.getUTCDate()
-              ));
+              const lastScheduledDay = new Date(topic.lastScheduledDateThisWeek.getFullYear(), topic.lastScheduledDateThisWeek.getMonth(), topic.lastScheduledDateThisWeek.getDate());
+              lastScheduledDay.setHours(0, 0, 0, 0);
+              const slotDay = new Date(slot.startDate.getFullYear(), slot.startDate.getMonth(), slot.startDate.getDate());
+              slotDay.setHours(0, 0, 0, 0);
               const daysDiff = Math.round((slotDay - lastScheduledDay) / (1000 * 60 * 60 * 24));
               
               // Get the gap required after the last scheduled session
@@ -642,16 +637,10 @@ export function assignTopicsToSlots(slots = [], topics = [], ongoingTopics = {})
               
               // Calculate actual calendar days between last session and this slot
               // Use UTC dates at midnight to compare calendar days, not hours
-              const lastSessionDay = new Date(Date.UTC(
-                lastSession.getUTCFullYear(),
-                lastSession.getUTCMonth(),
-                lastSession.getUTCDate()
-              ));
-              const slotDay = new Date(Date.UTC(
-                slot.startDate.getUTCFullYear(),
-                slot.startDate.getUTCMonth(),
-                slot.startDate.getUTCDate()
-              ));
+              const lastSessionDay = new Date(lastSession.getFullYear(), lastSession.getMonth(), lastSession.getDate());
+              lastSessionDay.setHours(0, 0, 0, 0);
+              const slotDay = new Date(slot.startDate.getFullYear(), slot.startDate.getMonth(), slot.startDate.getDate());
+              slotDay.setHours(0, 0, 0, 0);
               const daysDiff = Math.round((slotDay - lastSessionDay) / (1000 * 60 * 60 * 24));
               
               if (daysDiff < requiredGap) {
@@ -757,8 +746,10 @@ export function assignTopicsToSlots(slots = [], topics = [], ongoingTopics = {})
         if (process.env.NODE_ENV === 'development' && topic.lastSessionDate) {
           const lastSession = new Date(topic.lastSessionDate);
           // Use calendar days for accurate logging
-          const lastSessionDay = new Date(Date.UTC(lastSession.getUTCFullYear(), lastSession.getUTCMonth(), lastSession.getUTCDate()));
-          const slotDay = new Date(Date.UTC(slot.startDate.getUTCFullYear(), slot.startDate.getUTCMonth(), slot.startDate.getUTCDate()));
+          const lastSessionDay = new Date(lastSession.getFullYear(), lastSession.getMonth(), lastSession.getDate());
+          lastSessionDay.setHours(0, 0, 0, 0);
+          const slotDay = new Date(slot.startDate.getFullYear(), slot.startDate.getMonth(), slot.startDate.getDate());
+          slotDay.setHours(0, 0, 0, 0);
           const daysDiff = Math.round((slotDay - lastSessionDay) / (1000 * 60 * 60 * 24));
           console.log(`✅ Gap respected: "${topic.title?.substring(0, 30)}..." Session ${sessionNumber}/${sessionTotal} scheduled on ${slot.startDate.toISOString().split('T')[0]} (${daysDiff} days after last session)`);
         }
@@ -933,16 +924,10 @@ export function assignTopicsToSlots(slots = [], topics = [], ongoingTopics = {})
             
             // FIX: Enforce gap days for within-week sessions
             if (topic.lastScheduledDateThisWeek) {
-              const lastScheduledDay = new Date(Date.UTC(
-                topic.lastScheduledDateThisWeek.getUTCFullYear(),
-                topic.lastScheduledDateThisWeek.getUTCMonth(),
-                topic.lastScheduledDateThisWeek.getUTCDate()
-              ));
-              const slotDay = new Date(Date.UTC(
-                slot.startDate.getUTCFullYear(),
-                slot.startDate.getUTCMonth(),
-                slot.startDate.getUTCDate()
-              ));
+              const lastScheduledDay = new Date(topic.lastScheduledDateThisWeek.getFullYear(), topic.lastScheduledDateThisWeek.getMonth(), topic.lastScheduledDateThisWeek.getDate());
+              lastScheduledDay.setHours(0, 0, 0, 0);
+              const slotDay = new Date(slot.startDate.getFullYear(), slot.startDate.getMonth(), slot.startDate.getDate());
+              slotDay.setHours(0, 0, 0, 0);
               const daysDiff = Math.round((slotDay - lastScheduledDay) / (1000 * 60 * 60 * 24));
               
               const gapIndex = topic.sessionsScheduled - 1;
@@ -970,16 +955,10 @@ export function assignTopicsToSlots(slots = [], topics = [], ongoingTopics = {})
               
               // Calculate actual calendar days between last session and this slot
               // Use UTC dates at midnight to compare calendar days, not hours
-              const lastSessionDay = new Date(Date.UTC(
-                lastSession.getUTCFullYear(),
-                lastSession.getUTCMonth(),
-                lastSession.getUTCDate()
-              ));
-              const slotDay = new Date(Date.UTC(
-                slot.startDate.getUTCFullYear(),
-                slot.startDate.getUTCMonth(),
-                slot.startDate.getUTCDate()
-              ));
+              const lastSessionDay = new Date(lastSession.getFullYear(), lastSession.getMonth(), lastSession.getDate());
+              lastSessionDay.setHours(0, 0, 0, 0);
+              const slotDay = new Date(slot.startDate.getFullYear(), slot.startDate.getMonth(), slot.startDate.getDate());
+              slotDay.setHours(0, 0, 0, 0);
               const daysDiff = Math.round((slotDay - lastSessionDay) / (1000 * 60 * 60 * 24));
               
               if (daysDiff < requiredGap) {

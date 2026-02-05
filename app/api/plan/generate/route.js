@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { appendFileSync } from "fs";
+import { join } from "path";
 import { auth } from "@/libs/auth";
 import { supabaseAdmin } from "@/libs/supabase";
 import { generateStudyPlan } from "@/libs/scheduler";
@@ -54,6 +56,31 @@ async function resolveUserId() {
   return await ensureDevUser();
 }
 
+/**
+ * Get the effective current date/time for plan generation.
+ * In dev mode with time override, returns the overridden time.
+ * Otherwise returns the real current time.
+ */
+function getEffectiveNow(devTimeOverride) {
+  const isDev = process.env.NODE_ENV === 'development';
+  
+  if (isDev && devTimeOverride) {
+    try {
+      const overriddenDate = new Date(devTimeOverride);
+      if (!isNaN(overriddenDate.getTime())) {
+        console.log('⏰ Using dev time override:', overriddenDate.toISOString());
+        return overriddenDate;
+      }
+    } catch (e) {
+      console.error('Invalid devTimeOverride value:', devTimeOverride);
+    }
+  }
+  
+  return new Date();
+}
+
+const DAY_NAMES = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+
 function getMonday(date) {
   const copy = new Date(date);
   const day = copy.getDay();
@@ -63,18 +90,89 @@ function getMonday(date) {
   return copy;
 }
 
-function resolveTargetWeek({ targetWeek, signupDate }) {
-  if (targetWeek) {
-    return { weekStart: targetWeek, actualStartDate: targetWeek };
+/** Parse time string HH:MM to minutes from midnight. */
+function parseTimeToMinutes(timeStr = '00:00') {
+  if (!timeStr || typeof timeStr !== 'string') return 0;
+  const [h, m] = timeStr.split(':').map((p) => Number(p) || 0);
+  return h * 60 + m;
+}
+
+/** Format a Date as YYYY-MM-DD in **local** time (not UTC). Avoids toISOString() giving wrong calendar day in timezones ahead of UTC. */
+function formatDateLocal(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+/**
+ * Returns true if the cutoff day (effectiveNow's date) has no valid slots after the cutoff time
+ * (e.g. user's latest is 8:30 PM and cutoff is 8:56 PM → no slots). When true, we should start from tomorrow.
+ */
+function cutoffDayHasNoValidSlots({ effectiveNow, clientMinutesFromMidnight, useDevOverride, timePreferences, availability }) {
+  const dayIndex = (effectiveNow.getDay() + 6) % 7; // Monday=0
+  const cutoffDayName = DAY_NAMES[dayIndex];
+  const avail = availability[cutoffDayName] ?? 0;
+  if (!avail || avail <= 0) {
+    console.log('📅 cutoffDayHasNoValidSlots: no availability on cutoff day', { cutoffDayName, avail }, '→ start tomorrow');
+    return true;
   }
-  const base = signupDate ? new Date(signupDate) : new Date();
-  base.setDate(base.getDate() + 1); // day after signup/current day
+  const isWeekend = dayIndex >= 5;
+  const weekendSplit = timePreferences.useSameWeekendTimes === false;
+  let earliestStr, latestStr;
+  if (isWeekend && weekendSplit && timePreferences.weekendEarliest && timePreferences.weekendLatest) {
+    earliestStr = timePreferences.weekendEarliest;
+    latestStr = timePreferences.weekendLatest;
+  } else {
+    earliestStr = timePreferences.weekdayEarliest;
+    latestStr = timePreferences.weekdayLatest;
+  }
+  if (!earliestStr || !latestStr) {
+    console.log('📅 cutoffDayHasNoValidSlots: missing earliest/latest', { earliestStr, latestStr }, '→ start tomorrow');
+    return true;
+  }
+  const latestMinutes = parseTimeToMinutes(latestStr);
+  const cutoffMinutes = useDevOverride
+    ? effectiveNow.getHours() * 60 + effectiveNow.getMinutes() + effectiveNow.getSeconds() / 60
+    : (typeof clientMinutesFromMidnight === 'number' && !Number.isNaN(clientMinutesFromMidnight)
+      ? clientMinutesFromMidnight
+      : effectiveNow.getHours() * 60 + effectiveNow.getMinutes() + effectiveNow.getSeconds() / 60);
+  const roundedCutoff = Math.ceil(cutoffMinutes / 30) * 30;
+  const noSlots = roundedCutoff >= latestMinutes;
+  console.log('📅 cutoffDayHasNoValidSlots:', {
+    cutoffDayName,
+    availHours: avail,
+    earliest: earliestStr,
+    latest: latestStr,
+    latestMinutes,
+    cutoffMinutes: Math.floor(cutoffMinutes),
+    roundedCutoff,
+    noSlots,
+    result: noSlots ? '→ start tomorrow' : '→ slots today'
+  });
+  return noSlots;
+}
+
+function resolveTargetWeek({ targetWeek, signupDate, startToday = true, effectiveNow }) {
+  // Always derive actual start from effective/signup time and startToday so "start tomorrow" works
+  // even when client sends targetWeek (current week Monday).
+  // IMPORTANT: copy the Date so we do not mutate effectiveNow.
+  const base = signupDate
+    ? new Date(signupDate)
+    : (effectiveNow ? new Date(effectiveNow) : new Date());
+  if (!startToday) {
+    base.setDate(base.getDate() + 1); // tomorrow — only blocks for next day onward
+  }
   base.setHours(0, 0, 0, 0);
-  
-  const actualStartDate = base.toISOString().split('T')[0];
-  const weekStart = getMonday(base).toISOString().split('T')[0];
-  
-  return { weekStart, actualStartDate };
+
+  const actualStartDate = formatDateLocal(base);
+  const weekStart = formatDateLocal(getMonday(base));
+  // Use client targetWeek only when it matches the computed week (consistency); else use computed weekStart
+  const finalWeekStart = targetWeek && formatDateLocal(getMonday(new Date(targetWeek + 'T00:00:00'))) === weekStart
+    ? targetWeek
+    : weekStart;
+
+  return { weekStart: finalWeekStart, actualStartDate };
 }
 
 function sanitizeBlockedTimes(blockedTimes = []) {
@@ -294,7 +392,15 @@ async function loadLastReratingDates(userId) {
 }
 
 export async function POST(req) {
-  console.log('🔥🔥🔥 POST /api/plan/generate called - NEW CODE VERSION 3 🔥🔥🔥');
+  // Force visibility: raw stderr + file (Next.js dev can run route in a worker where console doesn't show in your terminal)
+  const logPath = join(process.cwd(), "dev-plan-generate.log");
+  const logLine = (message) => {
+    try {
+      appendFileSync(logPath, `${new Date().toISOString()} ${message}\n`, "utf8");
+    } catch (_) {}
+  };
+  process.stderr.write(`\n>>> [PLAN_GENERATE] POST ENTERED ${new Date().toISOString()} <<<\n`);
+  logLine("POST /api/plan/generate entered");
   try {
     const userId = await resolveUserId();
     
@@ -326,8 +432,22 @@ export async function POST(req) {
       unavailableTimes = [],
       studyBlockDuration = 0.5,
       targetWeek,
-      signupDate = null
+      signupDate = null,
+      startToday = true, // NEW FIELD - default true for backward compatibility
+      devTimeOverride = null, // Time override for dev mode testing
+      clientNow = null, // Client's current time (ISO string)
+      clientMinutesFromMidnight = null // Minutes from midnight in user's TZ so first block is next :00 or :30
     } = body || {};
+    
+    console.log('📥 POST request received:', {
+      devTimeOverride,
+      startToday,
+      targetWeek,
+      signupDate,
+      clientNow: !!clientNow,
+      subjectsCount: subjects.length
+    });
+    logLine(`body startToday=${startToday} targetWeek=${targetWeek} devTimeOverride=${devTimeOverride} clientNow=${clientNow} clientMinutesFromMidnight=${clientMinutesFromMidnight}`);
 
     const incomingBlockedTimes = Array.isArray(rawBlockedTimes) && rawBlockedTimes.length > 0
       ? rawBlockedTimes
@@ -339,8 +459,47 @@ export async function POST(req) {
       return NextResponse.json({ error: 'At least one subject is required' }, { status: 400 });
     }
 
-    const { weekStart: targetWeekStart, actualStartDate } = resolveTargetWeek({ targetWeek, signupDate });
-    const weekStartDate = getMonday(new Date(`${targetWeekStart}T00:00:00Z`));
+    // When in dev and override is set, use it for cutoff so blocks are never before the override day/time.
+    // Otherwise use client's "now" so cutoff matches user time (avoids server TZ giving past slots).
+    // Fallback: server time.
+    const useDevOverride = process.env.NODE_ENV === 'development' && !!devTimeOverride;
+    const fromClient = clientNow ? (() => {
+      try {
+        const t = new Date(clientNow);
+        return isNaN(t.getTime()) ? null : t;
+      } catch (e) { return null; }
+    })() : null;
+    const effectiveNow = useDevOverride
+      ? getEffectiveNow(devTimeOverride)
+      : (fromClient || new Date());
+    const effectiveNowSource = useDevOverride ? 'devTimeOverride' : (fromClient ? 'clientNow' : 'server');
+
+    console.log('🕐 Effective time for plan generation (no slots before this):', {
+      effectiveNow: effectiveNow.toLocaleString(),
+      source: effectiveNowSource,
+      startToday
+    });
+    logLine(`effectiveNow=${effectiveNow.toISOString()} source=${effectiveNowSource} startToday=${startToday}`);
+    
+    const { weekStart: targetWeekStart, actualStartDate } = resolveTargetWeek({ 
+      targetWeek, 
+      signupDate,
+      startToday, // Pass the new parameter
+      effectiveNow // Pass the effective time for dev mode
+    });
+    let finalTargetWeekStart = targetWeekStart;
+    let finalActualStartDate = actualStartDate;
+
+    console.log('📅 Plan generation timing:', {
+      startToday,
+      signupDate,
+      targetWeekStart,
+      actualStartDate,
+      message: startToday ? 'Starting plan today' : 'Starting plan tomorrow'
+    });
+    logLine(`timing targetWeekStart=${targetWeekStart} actualStartDate=${actualStartDate} startToday=${startToday}`);
+    
+    let weekStartDate = getMonday(new Date(`${targetWeekStart}T00:00:00Z`));
     const weekEndDate = new Date(weekStartDate);
     weekEndDate.setDate(weekStartDate.getDate() + 7);
     
@@ -348,13 +507,13 @@ export async function POST(req) {
     // DEV BYPASS: Skip this check in development or prelaunch mode
     const isDev = process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'prelaunch';
     if (!isDev) {
-      const today = new Date();
+      const today = new Date(effectiveNow);
       today.setHours(0, 0, 0, 0);
       const targetDate = new Date(targetWeekStart);
       const isNextWeek = targetDate > today;
       
       if (isNextWeek) {
-        const dayOfWeek = new Date().getDay(); // Use current day with time for accurate check
+        const dayOfWeek = effectiveNow.getDay(); // Use effective day with time for accurate check
         const isSaturdayOrLater = dayOfWeek === 6 || dayOfWeek === 0; // Saturday (6) or Sunday (0)
         
         if (!isSaturdayOrLater) {
@@ -491,13 +650,23 @@ export async function POST(req) {
     });
 
     let effectiveBlockedTimes = incomingBlockedTimes;
+    console.log('🚫 Blocked times from frontend:', {
+      count: incomingBlockedTimes.length,
+      sample: incomingBlockedTimes.slice(0, 3)
+    });
+    
     if (!effectiveBlockedTimes || effectiveBlockedTimes.length === 0) {
+      console.log('📥 No blocked times from frontend, loading from database...');
       effectiveBlockedTimes = await loadBlockedTimes(userId, weekStartDate, weekEndDate);
+      console.log('✅ Loaded unavailable times from database:', {
+        count: effectiveBlockedTimes.length,
+        sample: effectiveBlockedTimes.slice(0, 3)
+      });
       
       // If no unavailable times found for target week, and we're generating for a future week,
       // fall back to current week's unavailable times (aligned to target week)
       if (effectiveBlockedTimes.length === 0) {
-        const today = new Date();
+        const today = new Date(effectiveNow);
         today.setHours(0, 0, 0, 0);
         const currentWeekStart = getMonday(today);
         const currentWeekEnd = new Date(currentWeekStart);
@@ -543,12 +712,24 @@ export async function POST(req) {
     }
 
     const repeatableEvents = await loadRepeatableEvents(userId, weekStartDate, weekEndDate);
+    console.log('🔁 Loaded repeatable events:', {
+      count: repeatableEvents.length,
+      sample: repeatableEvents.slice(0, 3)
+    });
+    
     const combinedBlockedTimes = dedupeBlockedTimes(
       sanitizeBlockedTimes([
         ...(effectiveBlockedTimes || []),
         ...repeatableEvents
       ])
     );
+    
+    console.log('🚫 FINAL combined blocked times for scheduler:', {
+      totalCount: combinedBlockedTimes.length,
+      unavailableTimesCount: effectiveBlockedTimes.length,
+      repeatableEventsCount: repeatableEvents.length,
+      sample: combinedBlockedTimes.slice(0, 5)
+    });
 
     // ALWAYS recalculate availability from database time preferences (ignore frontend calculation)
     // This ensures we always use the user's actual preferences from the database, not stale localStorage values
@@ -621,9 +802,95 @@ export async function POST(req) {
     
     console.log('✅ Calculated availability from database:', effectiveAvailability);
 
+    // When the cutoff day (today) has no valid slots after the cutoff time, start from tomorrow
+    const hasTimePrefs = !!(effectiveTimePreferences?.weekdayEarliest && effectiveTimePreferences?.weekdayLatest);
+    console.error('[PLAN_GENERATE] No-slots check: hasTimePrefs=', hasTimePrefs, 'effectiveNow=', effectiveNow.toISOString());
+    console.log('📅 No-slots-on-cutoff-day check: hasTimePrefs=', hasTimePrefs, 'effectiveNow=', effectiveNow.toISOString(), 'cutoff day (local)=', effectiveNow.toDateString());
+    if (hasTimePrefs) {
+      const noSlotsOnCutoffDay = cutoffDayHasNoValidSlots({
+        effectiveNow,
+        clientMinutesFromMidnight,
+        useDevOverride,
+        timePreferences: effectiveTimePreferences,
+        availability: effectiveAvailability
+      });
+      logLine(`noSlotsOnCutoffDay=${noSlotsOnCutoffDay} cutoffDay=${effectiveNow.toDateString()} prefs weekdayEarliest=${effectiveTimePreferences.weekdayEarliest} weekdayLatest=${effectiveTimePreferences.weekdayLatest} weekendEarliest=${effectiveTimePreferences.weekendEarliest} weekendLatest=${effectiveTimePreferences.weekendLatest}`);
+      console.error('[PLAN_GENERATE] No-slots result:', noSlotsOnCutoffDay, noSlotsOnCutoffDay ? '→ WILL start tomorrow' : '→ keep today');
+      console.log('📅 No-slots-on-cutoff-day result:', noSlotsOnCutoffDay, '→', noSlotsOnCutoffDay ? 'will set finalActualStartDate to tomorrow' : 'keep finalActualStartDate');
+      if (noSlotsOnCutoffDay) {
+        const tomorrow = new Date(effectiveNow);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(0, 0, 0, 0);
+        const tomorrowWeekStart = getMonday(tomorrow);
+        const tomorrowDateStr = formatDateLocal(tomorrow);
+        const tomorrowWeekStr = formatDateLocal(tomorrowWeekStart);
+        if (tomorrowWeekStr === targetWeekStart) {
+          finalActualStartDate = tomorrowDateStr;
+          console.error('[PLAN_GENERATE] Set finalActualStartDate to tomorrow:', finalActualStartDate);
+          console.log('📅 No valid slots left on cutoff day — starting from tomorrow (local date):', finalActualStartDate, 'so blocks will be from next day only');
+        } else {
+          finalActualStartDate = tomorrowDateStr;
+          finalTargetWeekStart = tomorrowWeekStr;
+          weekStartDate = getMonday(new Date(`${finalTargetWeekStart}T00:00:00Z`));
+          const weekEndDateNew = new Date(weekStartDate);
+          weekEndDateNew.setDate(weekStartDate.getDate() + 7);
+          console.log('📅 No valid slots on cutoff day — starting from next week:', { finalActualStartDate, finalTargetWeekStart });
+          // Reload blocked times and availability for the new week so scheduler has correct data
+          const effectiveBlockedTimesNext = await loadBlockedTimes(userId, weekStartDate, weekEndDateNew);
+          const repeatableNext = await loadRepeatableEvents(userId, weekStartDate, weekEndDateNew);
+          const combinedBlockedTimesNext = dedupeBlockedTimes(
+            sanitizeBlockedTimes([...(effectiveBlockedTimesNext || []), ...repeatableNext])
+          );
+          // Recompute availability for the new week (replace combinedBlockedTimes and effectiveAvailability for downstream)
+          const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+          effectiveAvailability = {};
+          days.forEach((day, dayIndex) => {
+            const isWeekend = dayIndex >= 5;
+            let earliest, latest;
+            if (isWeekend && !effectiveTimePreferences.useSameWeekendTimes) {
+              earliest = effectiveTimePreferences.weekendEarliest || effectiveTimePreferences.weekdayEarliest;
+              latest = effectiveTimePreferences.weekendLatest || effectiveTimePreferences.weekdayLatest;
+            } else {
+              earliest = effectiveTimePreferences.weekdayEarliest;
+              latest = effectiveTimePreferences.weekdayLatest;
+            }
+            if (!earliest || !latest) return;
+            const [earliestHour, earliestMin] = earliest.split(':').map(Number);
+            const [latestHour, latestMin] = latest.split(':').map(Number);
+            const earliestMinutes = earliestHour * 60 + earliestMin;
+            const latestMinutes = latestHour * 60 + latestMin;
+            const totalMinutes = latestMinutes - earliestMinutes;
+            const dayDate = new Date(weekStartDate);
+            dayDate.setUTCDate(weekStartDate.getUTCDate() + dayIndex);
+            dayDate.setUTCHours(0, 0, 0, 0);
+            let blockedMinutes = 0;
+            combinedBlockedTimesNext.forEach(blocked => {
+              const blockedStart = new Date(blocked.start);
+              const blockedEnd = new Date(blocked.end);
+              if (blockedStart.getUTCFullYear() === dayDate.getUTCFullYear() &&
+                  blockedStart.getUTCMonth() === dayDate.getUTCMonth() &&
+                  blockedStart.getUTCDate() === dayDate.getUTCDate()) {
+                const blockedStartMinutes = blockedStart.getUTCHours() * 60 + blockedStart.getUTCMinutes();
+                const blockedEndMinutes = blockedEnd.getUTCHours() * 60 + blockedEnd.getUTCMinutes();
+                const overlapStart = Math.max(earliestMinutes, blockedStartMinutes);
+                const overlapEnd = Math.min(latestMinutes, blockedEndMinutes);
+                if (overlapStart < overlapEnd) blockedMinutes += overlapEnd - overlapStart;
+              }
+            });
+            effectiveAvailability[day] = Math.max(0, (totalMinutes - blockedMinutes) / 60);
+          });
+          // Replace combinedBlockedTimes for downstream (generateStudyPlan)
+          combinedBlockedTimes.length = 0;
+          combinedBlockedTimes.push(...combinedBlockedTimesNext);
+          weekEndDate.setTime(weekEndDateNew.getTime());
+        }
+      }
+    }
+    logLine(`noSlotsCheck finalActualStartDate=${finalActualStartDate} finalTargetWeekStart=${finalTargetWeekStart}`);
+
     // Determine if this is a future week (for loading latest ratings from database)
     let effectiveTopicStatus = topicStatus || {};
-    const currentWeekStart = getMonday(new Date());
+    const currentWeekStart = getMonday(new Date(effectiveNow));
     currentWeekStart.setHours(0, 0, 0, 0);
     const targetWeekStartDate = new Date(weekStartDate);
     targetWeekStartDate.setHours(0, 0, 0, 0);
@@ -644,7 +911,7 @@ export async function POST(req) {
     }
     
     console.log('🚀 SPACED REPETITION: Starting block counting and ongoing topic tracking');
-    console.log('📅 Target week:', targetWeekStart);
+    console.log('📅 Target week:', finalTargetWeekStart);
     console.log('📅 Week start date:', weekStartDate.toISOString());
     
     // Load re-rating history to detect when topics have been re-rated
@@ -853,8 +1120,9 @@ export async function POST(req) {
         ongoingTopicsCount: Object.keys(ongoingTopics).length,
         reratedTopicsCount: reratedTopicIds.length,
         missedTopicsFromDBCount: missedTopicIdsFromDB.length,
-        targetWeekStart
+        targetWeekStart: finalTargetWeekStart
       });
+      logLine(`generateStudyPlan actualStartDate=${finalActualStartDate} targetWeekStart=${finalTargetWeekStart} clientCutoffMinutes=${useDevOverride ? "null" : (typeof clientMinutesFromMidnight === "number" && !Number.isNaN(clientMinutesFromMidnight) ? clientMinutesFromMidnight : "null")}`);
       
       plan = await generateStudyPlan({
         subjects,
@@ -864,11 +1132,17 @@ export async function POST(req) {
         timePreferences: effectiveTimePreferences,
         blockedTimes: combinedBlockedTimes,
         studyBlockDuration,
-        targetWeekStart,
-        actualStartDate, // For partial weeks - skip days before this date
+        targetWeekStart: finalTargetWeekStart,
+        actualStartDate: finalActualStartDate, // For partial weeks - skip days before this date (or tomorrow when no slots on cutoff day)
         missedTopicIds: missedTopicIdsFromDB, // Only actual missed blocks (same-week catch-up)
         reratedTopicIds, // Rerated topics (prioritized within rating buckets)
-        ongoingTopics // Pass ongoing topics for gap day enforcement and session tracking
+        ongoingTopics, // Pass ongoing topics for gap day enforcement and session tracking
+        effectiveNow,
+        clientCutoffMinutes: useDevOverride
+          ? null
+          : (typeof clientMinutesFromMidnight === 'number' && !Number.isNaN(clientMinutesFromMidnight)
+            ? clientMinutesFromMidnight
+            : null)
       });
       
       console.log('✅ generateStudyPlan returned:', {
@@ -880,6 +1154,7 @@ export async function POST(req) {
           topicId: plan[0].topic_id
         } : 'no blocks'
       });
+      logLine(`plan firstBlock=${plan?.[0]?.scheduled_at || "none"} length=${plan?.length || 0}`);
       
       // Validate plan blocks before processing
       if (plan && Array.isArray(plan)) {
@@ -932,94 +1207,31 @@ export async function POST(req) {
       }, { status: 400 });
     }
 
-    // Only delete existing blocks AFTER confirming we have new ones to insert
-    // CRITICAL: Do NOT delete blocks that were rescheduled to next week
-    // Rescheduled blocks should be preserved - they're already in the correct place
-    console.log(`🗑️ Deleting existing blocks for week ${targetWeekStart} (${records.length} new blocks ready to insert)...`);
+    // Full regeneration: delete ALL blocks in the target week so the new plan replaces them.
+    // (Previously we "preserved" existing blocks, which caused the same old blocks to show
+    // and new blocks to be added on top = duplicates / blocks never changing.)
+    console.log(`🗑️ Deleting ALL existing blocks for week ${finalTargetWeekStart} (${records.length} new blocks ready to insert)...`);
     const deleteStart = new Date(weekStartDate);
     deleteStart.setHours(0, 0, 0, 0);
-    // Calculate Sunday explicitly: Monday (weekStartDate) + 6 days = Sunday
     const deleteEnd = new Date(weekStartDate);
-    deleteEnd.setDate(weekStartDate.getDate() + 6); // Sunday (6 days after Monday)
-    deleteEnd.setHours(23, 59, 59, 999); // End of Sunday to include all Sunday blocks
-    
+    deleteEnd.setDate(weekStartDate.getDate() + 6);
+    deleteEnd.setHours(23, 59, 59, 999);
+
     console.log('🗑️ Deletion range:', {
       deleteStart: deleteStart.toISOString(),
-      deleteEnd: deleteEnd.toISOString(),
-      deleteStartDay: deleteStart.getDay(), // Should be 1 (Monday)
-      deleteEndDay: deleteEnd.getDay() // Should be 0 (Sunday)
+      deleteEnd: deleteEnd.toISOString()
     });
-    
-    // Find ALL blocks that are already scheduled for next week (including rescheduled ones)
-    // These should be preserved - they're already correctly scheduled
-    const { data: existingBlocksInWeek, error: fetchError } = await supabaseAdmin
+
+    const { error: deleteError } = await supabaseAdmin
       .from('blocks')
-      .select('id, topic_id, scheduled_at, status')
+      .delete()
       .eq('user_id', userId)
       .gte('scheduled_at', deleteStart.toISOString())
       .lte('scheduled_at', deleteEnd.toISOString());
-    
-    if (fetchError) {
-      console.error('Error fetching existing blocks:', fetchError);
-      return NextResponse.json({ 
-        error: 'Failed to fetch existing blocks',
-        success: false
-      }, { status: 500 });
+
+    if (!deleteError) {
+      console.log('🗑️ Deleted all blocks in target week (full regeneration).');
     }
-    
-    // Preserve ALL blocks that are already scheduled in next week
-    // This includes:
-    // 1. Blocks rescheduled from previous weeks (Sunday → Monday, etc.)
-    // 2. Blocks that were already scheduled in next week
-    // EXCEPT: Blocks for re-rated topics (they need fresh blocks with new rating)
-    const blocksToPreserve = new Set();
-    const rescheduledBlocks = [];
-    const reratedTopicBlocks = [];
-    
-    if (existingBlocksInWeek && existingBlocksInWeek.length > 0) {
-      existingBlocksInWeek.forEach(block => {
-        // Preserve all scheduled blocks (including rescheduled ones)
-        if (block.status === 'scheduled' && block.topic_id) {
-          // Check if this topic was re-rated - if so, don't preserve it
-          if (reratingHistory[block.topic_id]) {
-            reratedTopicBlocks.push(block);
-            console.log(`🔄 Not preserving block ${block.id.substring(0, 8)}... for re-rated topic ${block.topic_id.substring(0, 8)}... - will be regenerated with new rating`);
-            return; // Skip this block - it will be deleted and regenerated
-          }
-          
-          blocksToPreserve.add(block.id);
-          rescheduledBlocks.push(block);
-        }
-      });
-      
-      if (rescheduledBlocks.length > 0) {
-        console.log(`🛡️ Preserving ${rescheduledBlocks.length} already-scheduled block(s) in next week (including rescheduled ones)`);
-      }
-      
-      if (reratedTopicBlocks.length > 0) {
-        console.log(`🔄 Found ${reratedTopicBlocks.length} block(s) for re-rated topics - will be deleted and regenerated`);
-      }
-    }
-    
-    // Delete blocks in target week, but exclude rescheduled ones
-    const blockIdsToDelete = (existingBlocksInWeek || [])
-      .map(b => b.id)
-      .filter(id => !blocksToPreserve.has(id));
-    
-    let deleteError = null;
-    if (blockIdsToDelete.length > 0) {
-      const { error } = await supabaseAdmin
-        .from('blocks')
-        .delete()
-        .eq('user_id', userId)
-        .in('id', blockIdsToDelete);
-      
-      deleteError = error;
-      console.log(`🗑️ Deleted ${blockIdsToDelete.length} block(s) from target week, preserved ${blocksToPreserve.size} rescheduled block(s)`);
-    } else {
-      console.log(`ℹ️ No blocks to delete in target week (${blocksToPreserve.size} rescheduled blocks preserved)`);
-    }
-    
     if (deleteError) {
       console.error('Error deleting existing blocks:', deleteError);
       return NextResponse.json({ 
@@ -1247,10 +1459,19 @@ export async function POST(req) {
     // Filter out break blocks (they have topic_id === null) - we don't use them anymore
     const studyBlocksOnly = allBlocks.filter(block => block.topic_id !== null);
     
+    // Determine the actual week start from the blocks (in case it differs from targetWeekStart)
+    // This handles cases like Sunday signup generating for next week
+    let actualWeekStart = finalTargetWeekStart;
+    if (studyBlocksOnly.length > 0) {
+      const earliestBlock = new Date(studyBlocksOnly[0].scheduled_at);
+      const earliestWeekStart = getMonday(earliestBlock);
+      actualWeekStart = earliestWeekStart.toISOString().split('T')[0];
+    }
+    
     return NextResponse.json({
       success: true,
       blocks: studyBlocksOnly,
-      weekStart: targetWeekStart,
+      weekStart: actualWeekStart,
       blockedTimes: blockedTimesResponse,
       debug: debugInfo
     });
@@ -1275,6 +1496,7 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const targetWeek = searchParams.get('weekStart');
     const blockId = searchParams.get('blockId'); // Optional: fetch specific block
+    const devTimeOverride = searchParams.get('devTimeOverride'); // Time override for dev mode
     
     // If requesting a specific block, return just that block
     if (blockId) {
@@ -1354,6 +1576,9 @@ export async function GET(request) {
       });
     }
     
+    // Get effective current time (respects dev time override)
+    const effectiveNow = getEffectiveNow(devTimeOverride);
+    
     // Determine which week to fetch blocks for
     let weekStartDate;
     if (targetWeek) {
@@ -1363,8 +1588,8 @@ export async function GET(request) {
       const dateObj = new Date(year, month - 1, day); // month is 0-indexed, creates local date
       weekStartDate = getMonday(dateObj);
     } else {
-      // Default to current week
-      const today = new Date();
+      // Default to current week (using effective time)
+      const today = new Date(effectiveNow);
       today.setHours(0, 0, 0, 0);
       weekStartDate = getMonday(today);
     }
@@ -1598,7 +1823,7 @@ export async function GET(request) {
     // If no unavailable times found for target week, and we're fetching for a future week,
     // fall back to current week's unavailable times (aligned to target week)
     if (unavailableTimes.length === 0) {
-      const today = new Date();
+      const today = new Date(effectiveNow);
       today.setHours(0, 0, 0, 0);
       const currentWeekStart = getMonday(today);
       const currentWeekEnd = new Date(currentWeekStart);

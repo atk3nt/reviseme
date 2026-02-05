@@ -184,6 +184,12 @@ export default function DevPanel() {
           {/* Actions */}
           <div className="space-y-2 border-t pt-2">
             <button
+              onClick={() => router.push('/dev-tools')}
+              className="w-full text-left px-2 py-1 text-xs bg-blue-100 hover:bg-blue-200 rounded font-semibold"
+            >
+              🛠️ Dev Tools Page
+            </button>
+            <button
               onClick={quickReload}
               className="w-full text-left px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded"
             >

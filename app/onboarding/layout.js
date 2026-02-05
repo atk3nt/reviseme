@@ -19,18 +19,31 @@ export default function OnboardingLayout({ children }) {
     // Check if dev mode - explicitly exclude production domain
     const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
     const isProduction = hostname === 'reviseme.co' || hostname.endsWith('.reviseme.co');
-    setIsDev(
-      !isProduction && (
-        hostname === 'localhost' ||
-        hostname === '127.0.0.1' ||
-        hostname.includes('.local')
-      )
+    const devMode = !isProduction && (
+      hostname === 'localhost' ||
+      hostname === '127.0.0.1' ||
+      hostname.includes('.local')
     );
+    setIsDev(devMode);
+    
+    // If dev mode, immediately allow access without waiting for session
+    if (devMode) {
+      setIsCheckingAccess(false);
+    }
   }, []);
 
   useEffect(() => {
+    // Check if dev mode INLINE (don't rely on state to avoid race conditions)
+    const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
+    const isProduction = hostname === 'reviseme.co' || hostname.endsWith('.reviseme.co');
+    const isDevMode = !isProduction && (
+      hostname === 'localhost' ||
+      hostname === '127.0.0.1' ||
+      hostname.includes('.local')
+    );
+    
     // Check slide access (skip in dev mode for easier development)
-    if (isDev) {
+    if (isDevMode) {
       setIsCheckingAccess(false);
       return;
     }
@@ -90,9 +103,17 @@ export default function OnboardingLayout({ children }) {
     
     // SECURITY FIX: Wait for session to load before checking access for regular slides
     // This prevents pages from mounting and unlocking themselves before we can verify access
+    // HOWEVER: If unauthenticated, allow access to slide 1 (start of onboarding)
     if (status === 'loading') {
       console.log('[ONBOARDING LAYOUT] Waiting for session to load...');
       // Keep showing loading spinner, don't allow page to mount yet
+      return;
+    }
+    
+    // If unauthenticated and not on slide 1, redirect to slide 1 (start onboarding)
+    if (status === 'unauthenticated' && slideNumber !== 1) {
+      console.log('[ONBOARDING LAYOUT] Unauthenticated user, redirecting to slide 1');
+      router.replace('/onboarding/slide-1');
       return;
     }
     
@@ -111,10 +132,13 @@ export default function OnboardingLayout({ children }) {
   useEffect(() => {
     // Only redirect if user has paid AND completed onboarding
     // This allows users to complete onboarding after payment
-    if (status === 'authenticated' && session?.user?.hasAccess && session?.user?.hasCompletedOnboarding) {
+    // DEV BYPASS: Allow revisiting onboarding in dev mode
+    const devBypass = typeof window !== 'undefined' && localStorage.getItem('devAllowOnboardingRevisit') === 'true';
+    
+    if (status === 'authenticated' && session?.user?.hasAccess && session?.user?.hasCompletedOnboarding && !isDev && !devBypass) {
       router.push('/plan');
     }
-  }, [status, session, router]);
+  }, [status, session, router, isDev]);
 
   const handleReset = async () => {
     if (!confirm('Are you sure you want to reset everything and start onboarding again? This will delete all your study blocks and preferences.')) {

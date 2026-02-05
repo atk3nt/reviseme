@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import OnboardingProgress from "@/components/OnboardingProgress";
 import config from "@/config";
 import { unlockSlide } from "@/libs/onboarding-progress";
+import { getEffectiveDate, hasSlotsToday } from "@/libs/dev-helpers";
 
 export default function Slide22Page() {
   const router = useRouter();
@@ -16,6 +17,8 @@ export default function Slide22Page() {
     totalHours: 0
   });
   const [isDev, setIsDev] = useState(false);
+  const [showStartToggle, setShowStartToggle] = useState(false);
+  const [startToday, setStartToday] = useState(true);
 
   // Set isDev only on client side to avoid hydration mismatch
   useEffect(() => {
@@ -24,6 +27,41 @@ export default function Slide22Page() {
       window.location.hostname === '127.0.0.1' ||
       window.location.hostname.includes('localhost')
     );
+  }, []);
+
+  // Prior check: only offer "start today" if there are slots left today (next :00 or :30 before latest).
+  // Otherwise force "start tomorrow". Fallback to 9 PM rule when time preferences not yet available.
+  useEffect(() => {
+    const now = getEffectiveDate();
+    let timePreferences = null;
+    try {
+      const quizAnswers = JSON.parse(localStorage.getItem('quizAnswers') || '{}');
+      timePreferences = quizAnswers.timePreferences || null;
+    } catch (_) {
+      // ignore
+    }
+
+    const hasPrefs = timePreferences?.weekdayEarliest && timePreferences?.weekdayLatest;
+    const slotsToday = hasPrefs ? hasSlotsToday(now, timePreferences) : null;
+    const fallbackAfter9PM = now.getHours() >= 21;
+
+    if (slotsToday === false) {
+      setShowStartToggle(false);
+      setStartToday(false);
+      console.log('📅 No slots left today (prior check) — plan will start tomorrow');
+    } else if (slotsToday === true) {
+      setShowStartToggle(true);
+      setStartToday(true);
+      console.log('📅 Slots available today — user can choose when to start');
+    } else if (fallbackAfter9PM) {
+      setShowStartToggle(false);
+      setStartToday(false);
+      console.log('📅 After 9 PM (no prefs) — plan will start tomorrow');
+    } else {
+      setShowStartToggle(true);
+      setStartToday(true);
+      console.log('📅 Before 9 PM (no prefs) — user can choose when to start');
+    }
   }, []);
 
   const sanitizeQuizAnswers = (answers) => {
@@ -290,7 +328,8 @@ export default function Slide22Page() {
       hostname: typeof window !== 'undefined' ? window.location.hostname : 'N/A',
       status,
       hasSession: !!session,
-      userId: session?.user?.id
+      userId: session?.user?.id,
+      startToday
     });
     
     // Check if user is authenticated (skip in dev mode)
@@ -326,6 +365,13 @@ export default function Slide22Page() {
       router.push("/onboarding/slide-19");
       return;
     }
+
+    // Save the startToday preference to localStorage
+    const savedAnswers = sanitizeQuizAnswers(JSON.parse(localStorage.getItem('quizAnswers') || '{}'));
+    savedAnswers.startToday = startToday;
+    localStorage.setItem('quizAnswers', JSON.stringify(savedAnswers));
+    
+    console.log('💾 Saved startToday preference:', startToday);
 
     // Unlock the plan generation page (not a numbered slide, but allows access to /plan/generating)
     unlockSlide(23);
@@ -366,10 +412,10 @@ export default function Slide22Page() {
                 const subjectColor = getSubjectColor(subject.id);
                 const subjectIcon = getSubjectIcon(subject.id);
                 const subtleColor = getSubtleColor(subjectColor);
-                
+
                 return (
-                  <div 
-                    key={index} 
+                  <div
+                    key={index}
                     className="flex items-center justify-between p-3 rounded-lg border-2 transition-all"
                     style={{
                       backgroundColor: subtleColor,
@@ -400,6 +446,56 @@ export default function Slide22Page() {
           </div>
         </div>
       </div>
+
+      {/* Start Time Toggle (conditional) */}
+      {showStartToggle && (
+        <div className="max-w-md mx-auto bg-blue-50 border-2 border-blue-200 rounded-xl p-4 sm:p-6">
+          <h3 className="text-sm font-medium text-[#003D99] mb-3">When would you like to start studying?</h3>
+          <div className="space-y-2">
+            <label
+              className="flex items-center p-3 rounded-lg border-2 cursor-pointer transition-all hover:bg-blue-100"
+              style={{
+                backgroundColor: startToday ? '#e0f2fe' : 'white',
+                borderColor: startToday ? '#0066FF' : '#cbd5e1'
+              }}
+            >
+              <input
+                type="radio"
+                name="startTime"
+                checked={startToday}
+                onChange={() => setStartToday(true)}
+                className="w-4 h-4 text-[#0066FF] focus:ring-[#0066FF]"
+              />
+              <span className="ml-3 text-sm font-medium text-[#001433]">Start today</span>
+            </label>
+            <label
+              className="flex items-center p-3 rounded-lg border-2 cursor-pointer transition-all hover:bg-blue-100"
+              style={{
+                backgroundColor: !startToday ? '#e0f2fe' : 'white',
+                borderColor: !startToday ? '#0066FF' : '#cbd5e1'
+              }}
+            >
+              <input
+                type="radio"
+                name="startTime"
+                checked={!startToday}
+                onChange={() => setStartToday(false)}
+                className="w-4 h-4 text-[#0066FF] focus:ring-[#0066FF]"
+              />
+              <span className="ml-3 text-sm font-medium text-[#001433]">Start tomorrow</span>
+            </label>
+          </div>
+        </div>
+      )}
+
+      {/* Message when no choice (no slots today or after 9 PM) */}
+      {!showStartToggle && (
+        <div className="max-w-md mx-auto bg-amber-50 border-2 border-amber-200 rounded-xl p-4 sm:p-6">
+          <p className="text-sm text-amber-800">
+            Your study plan will start tomorrow morning so you can get a fresh start.
+          </p>
+        </div>
+      )}
 
       {/* Generate Button */}
       <div className="flex flex-col items-center space-y-3">

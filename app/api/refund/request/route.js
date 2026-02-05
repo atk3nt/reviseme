@@ -31,11 +31,19 @@ export async function POST(req) {
     }
 
     const body = await req.json();
-    const { paymentId } = body;
+    const { paymentId, feedback } = body;
 
     if (!paymentId) {
       return NextResponse.json(
         { error: "Payment ID is required" },
+        { status: 400 }
+      );
+    }
+
+    // Validate feedback is provided
+    if (!feedback || typeof feedback !== 'string' || feedback.trim().length < 10) {
+      return NextResponse.json(
+        { error: "Feedback is required (minimum 10 characters)" },
         { status: 400 }
       );
     }
@@ -200,7 +208,7 @@ export async function POST(req) {
 
     console.log('✅ User data cleaned up. Referral source preserved:', referralSource);
 
-    // Log the event (include referral source for analytics)
+    // Log the event (include referral source and feedback for analytics)
     await supabaseAdmin
       .from('logs')
       .insert({
@@ -211,9 +219,12 @@ export async function POST(req) {
           refund_id: refund.id,
           amount: payment.amount,
           referral_source: referralSource, // Preserve for analytics
+          feedback: feedback.trim(), // Store user feedback
           data_cleaned: true // Indicates hybrid cleanup was performed
         }
       });
+
+    console.log('📝 Refund feedback stored:', feedback.trim().substring(0, 50) + '...');
 
     // Send confirmation email
     try {

@@ -46,6 +46,7 @@ export default function SupportModal({ isOpen, onClose }) {
   const [payments, setPayments] = useState([]);
   const [isCheckingRefund, setIsCheckingRefund] = useState(false);
   const [refundEligibility, setRefundEligibility] = useState(null);
+  const [refundFeedback, setRefundFeedback] = useState("");
 
   // Reset state when modal closes
   useEffect(() => {
@@ -54,6 +55,7 @@ export default function SupportModal({ isOpen, onClose }) {
       setMessage("");
       setRefundEligibility(null);
       setPayments([]);
+      setRefundFeedback("");
     }
   }, [isOpen]);
 
@@ -139,12 +141,21 @@ export default function SupportModal({ isOpen, onClose }) {
       return;
     }
 
+    // Validate feedback is provided
+    if (!refundFeedback.trim() || refundFeedback.trim().length < 10) {
+      toast.error("Please provide feedback (at least 10 characters) before requesting a refund.");
+      return;
+    }
+
     setIsCheckingRefund(true);
     try {
       const response = await fetch("/api/refund/request", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ paymentId: refundEligibility.payment.id })
+        body: JSON.stringify({ 
+          paymentId: refundEligibility.payment.id,
+          feedback: refundFeedback.trim()
+        })
       });
 
       const data = await response.json();
@@ -153,6 +164,7 @@ export default function SupportModal({ isOpen, onClose }) {
         toast.success("Refund processed successfully! You will receive a confirmation email shortly.");
         setSelectedType(null);
         setRefundEligibility(null);
+        setRefundFeedback("");
         onClose();
         // Sign out the user and redirect to home after a short delay
         setTimeout(async () => {
@@ -310,39 +322,81 @@ export default function SupportModal({ isOpen, onClose }) {
                 </div>
               ) : refundEligibility.eligible ? (
                 <div className="space-y-6">
-                  <div className="bg-white rounded-lg p-6 border-2 border-gray-200">
-                    <h3 className="text-lg font-semibold mb-4">Refund Details</h3>
+                  {/* Refund Details Card */}
+                  <div className="bg-white rounded-lg p-6 border-2" style={{ borderColor: '#E5F0FF' }}>
+                    <h3 className="text-lg font-semibold mb-4" style={{ color: '#001433' }}>Refund Details</h3>
                     <div className="space-y-3">
                       <div className="flex justify-between">
-                        <span className="text-base-content/70">Amount:</span>
-                        <span className="font-semibold">£{(refundEligibility.payment.amount / 100).toFixed(2)}</span>
+                        <span style={{ color: '#003D99' }}>Amount:</span>
+                        <span className="font-semibold" style={{ color: '#001433' }}>£{(refundEligibility.payment.amount / 100).toFixed(2)}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-base-content/70">Payment Date:</span>
-                        <span>{new Date(refundEligibility.payment.paid_at).toLocaleDateString()}</span>
+                        <span style={{ color: '#003D99' }}>Payment Date:</span>
+                        <span style={{ color: '#001433' }}>{new Date(refundEligibility.payment.paid_at).toLocaleDateString()}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-base-content/70">Days Remaining:</span>
-                        <span className="font-semibold text-success">{refundEligibility.daysRemaining} days</span>
+                        <span style={{ color: '#003D99' }}>Days Remaining:</span>
+                        <span className="font-semibold" style={{ color: '#10b981' }}>{refundEligibility.daysRemaining} days</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-warning/10 border border-warning rounded-lg p-4">
-                    <p className="text-sm text-warning-content">
-                      <strong>Important:</strong> This will immediately revoke your access to Markr Planner. 
+                  {/* Feedback Section */}
+                  <div className="rounded-lg p-6 border-2" style={{ backgroundColor: '#E5F0FF', borderColor: '#0066FF' }}>
+                    <h3 className="text-lg font-semibold mb-3" style={{ color: '#001433' }}>Help us improve ReviseMe</h3>
+                    <p className="mb-4 text-sm" style={{ color: '#003D99' }}>
+                      We're sorry to see you go. Your honest feedback helps us make ReviseMe better for future students. What could we have done differently?
+                    </p>
+                    
+                    <textarea
+                      value={refundFeedback}
+                      onChange={(e) => setRefundFeedback(e.target.value)}
+                      className="textarea w-full h-32 text-base bg-white"
+                      style={{ 
+                        borderColor: refundFeedback.length >= 10 ? '#10b981' : '#E5F0FF',
+                        borderWidth: '2px',
+                        color: '#001433'
+                      }}
+                      placeholder="e.g., The scheduling didn't fit my timetable, I found it hard to use, I needed different features..."
+                      autoFocus
+                    />
+                    <div className="flex items-center justify-between mt-2">
+                      <p className="text-xs" style={{ color: '#003D99' }}>
+                        Required — minimum 10 characters
+                      </p>
+                      <p className="text-xs font-medium" style={{ 
+                        color: refundFeedback.length >= 10 ? '#10b981' : '#003D99' 
+                      }}>
+                        {refundFeedback.length}/10
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Warning Message */}
+                  <div className="rounded-lg p-4 border-2" style={{ 
+                    backgroundColor: '#FEF3C7', 
+                    borderColor: '#F59E0B' 
+                  }}>
+                    <p className="text-sm" style={{ color: '#92400E' }}>
+                      <strong>Important:</strong> This will immediately revoke your access to ReviseMe. 
                       The refund will appear on your original payment method within 5-10 business days.
                     </p>
                   </div>
 
+                  {/* Action Buttons */}
                   <div className="flex justify-center gap-4">
                     <button
                       type="button"
                       onClick={() => {
                         setSelectedType(null);
                         setRefundEligibility(null);
+                        setRefundFeedback("");
                       }}
                       className="btn btn-outline px-8"
+                      style={{ 
+                        borderColor: '#003D99',
+                        color: '#003D99'
+                      }}
                       disabled={isCheckingRefund}
                     >
                       Cancel
@@ -350,8 +404,20 @@ export default function SupportModal({ isOpen, onClose }) {
                     <button
                       type="button"
                       onClick={handleRefundRequest}
-                      className="btn btn-error px-8"
-                      disabled={isCheckingRefund}
+                      className="px-8 py-3 rounded-lg font-semibold transition-all"
+                      style={{ 
+                        backgroundColor: isCheckingRefund || !refundFeedback.trim() || refundFeedback.trim().length < 10 
+                          ? '#D1D5DB' 
+                          : '#EF4444',
+                        color: 'white',
+                        cursor: isCheckingRefund || !refundFeedback.trim() || refundFeedback.trim().length < 10 
+                          ? 'not-allowed' 
+                          : 'pointer',
+                        opacity: isCheckingRefund || !refundFeedback.trim() || refundFeedback.trim().length < 10 
+                          ? 0.5 
+                          : 1
+                      }}
+                      disabled={isCheckingRefund || !refundFeedback.trim() || refundFeedback.trim().length < 10}
                     >
                       {isCheckingRefund ? (
                         <>
@@ -366,14 +432,17 @@ export default function SupportModal({ isOpen, onClose }) {
                 </div>
               ) : (
                 <div className="space-y-6">
-                  <div className="bg-error/10 border border-error rounded-lg p-6">
+                  <div className="rounded-lg p-6 border-2" style={{ 
+                    backgroundColor: '#FEE2E2', 
+                    borderColor: '#EF4444' 
+                  }}>
                     <div className="flex items-center gap-3 mb-3">
-                      <svg className="w-6 h-6 text-error" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-6 h-6" style={{ color: '#DC2626' }} fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                       </svg>
-                      <h3 className="text-lg font-semibold text-error">Not Eligible for Refund</h3>
+                      <h3 className="text-lg font-semibold" style={{ color: '#991B1B' }}>Not Eligible for Refund</h3>
                     </div>
-                    <p className="text-base-content/80">{refundEligibility.reason}</p>
+                    <p style={{ color: '#7F1D1D' }}>{refundEligibility.reason}</p>
                   </div>
 
                   <div className="flex justify-center">
@@ -384,6 +453,10 @@ export default function SupportModal({ isOpen, onClose }) {
                         setRefundEligibility(null);
                       }}
                       className="btn btn-outline px-8"
+                      style={{ 
+                        borderColor: '#003D99',
+                        color: '#003D99'
+                      }}
                     >
                       Back
                     </button>

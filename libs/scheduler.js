@@ -79,7 +79,9 @@ export async function generateStudyPlan({
   actualStartDate, // For partial weeks - skip days before this date
   missedTopicIds = [], // Topic IDs that were missed/incomplete from previous weeks (same-week catch-up)
   reratedTopicIds = [], // Topic IDs that were rerated (prioritized within rating buckets)
-  ongoingTopics = {} // { topicId: { sessionsScheduled: number, sessionsRequired: number, lastSessionDate: Date } }
+  ongoingTopics = {}, // { topicId: { sessionsScheduled: number, sessionsRequired: number, lastSessionDate: Date } }
+  effectiveNow = null, // For dev mode time override
+  clientCutoffMinutes = null // User's "now" as minutes from midnight so first block is next :00 or :30 in their TZ
 } = {}) {
   if (!Array.isArray(subjects) || subjects.length === 0) {
     return [];
@@ -104,15 +106,16 @@ export async function generateStudyPlan({
     ongoingTopicsCount: Object.keys(ongoingTopics).length
   }, null, 2));
 
-  const targetIso = `${weekStart}T00:00:00Z`;
-
+  // Pass date-only (YYYY-MM-DD) so buildSlots parses as local time throughout
   const slots = buildWeeklySlots({
     availability,
     timePreferences,
     blockedTimes: alignedBlockedTimes,
     blockDuration: studyBlockDuration,
-    targetWeekStart: targetIso,
-    actualStartDate // For partial weeks
+    targetWeekStart: weekStart, // date-only string for local-time parsing
+    actualStartDate, // For partial weeks
+    effectiveNow,
+    clientCutoffMinutes
   });
 
   if (slots.length === 0) {
