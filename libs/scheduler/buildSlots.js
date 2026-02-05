@@ -2,17 +2,7 @@
  * Build available time slots for a week given availability and time preferences.
  */
 
-import { appendFileSync } from "fs";
-import { join } from "path";
 const DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-
-const logPath = join(process.cwd(), "dev-plan-generate.log");
-const logLine = (message) => {
-  if (process.env.NODE_ENV !== 'development') return;
-  try {
-    appendFileSync(logPath, `${new Date().toISOString()} buildSlots ${message}\n`, "utf8");
-  } catch (_) {}
-};
 
 function parseTimeToMinutes(timeString = '00:00') {
   const [hours, minutes] = timeString.split(':').map((part) => Number(part) || 0);
@@ -124,7 +114,6 @@ export function buildWeeklySlots({
     : cutoff.getHours() * 60 + cutoff.getMinutes() + cutoff.getSeconds() / 60 + cutoff.getMilliseconds() / 60000;
   const roundedCutoffMinutes = Math.ceil(cutoffMinutesWithSeconds / 30) * 30;
   const cutoffTime = cutoffDateOnly.getTime() + roundedCutoffMinutes * 60 * 1000;
-  logLine(`cutoff cutoffDay=${cutoffDayStr} source=${useClientCutoff ? "clientMinutesFromMidnight" : "effectiveNow"} rawMinutes=${formatMinutesToTime(Math.floor(cutoffMinutesWithSeconds))} roundedTo=${formatMinutesToTime(roundedCutoffMinutes)} cutoffTime=${new Date(cutoffTime).toISOString()}`);
 
   if (process.env.NODE_ENV === 'development') {
     console.log('🕐 buildSlots cutoff (first slot at next :00 or :30):', {
@@ -216,7 +205,6 @@ export function buildWeeklySlots({
           actualStartTime: formatMinutesToTime(candidateMinutes)
         });
       }
-      logLine(`cutoffDay=${dayName} earliest=${formatMinutesToTime(earliestMinutes)} latest=${formatMinutesToTime(latestMinutes)} candidate=${formatMinutesToTime(candidateMinutes)}`);
     }
     // Snap to next :00 or :30 so we never schedule at :15, :45, etc.
     candidateMinutes = Math.ceil(candidateMinutes / slotGranularityMinutes) * slotGranularityMinutes;
@@ -357,12 +345,6 @@ export function buildWeeklySlots({
   });
   if (process.env.NODE_ENV === 'development' && beforeFilter !== finalSlots.length) {
     console.log('🚫 buildSlots: Dropped', beforeFilter - finalSlots.length, 'slot(s) that were before cutoff (effectiveNow or now)');
-  }
-  if (finalSlots.length > 0) {
-    const first = finalSlots[0].startDate;
-    logLine(`finalSlots count=${finalSlots.length} droppedBeforeCutoff=${beforeFilter - finalSlots.length} firstSlotLocal=${first.toLocaleString()} firstSlotIso=${first.toISOString()}`);
-  } else {
-    logLine(`finalSlots count=0 droppedBeforeCutoff=${beforeFilter - finalSlots.length}`);
   }
 
   return finalSlots;

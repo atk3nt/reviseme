@@ -1,6 +1,4 @@
 import { NextResponse } from "next/server";
-import { appendFileSync } from "fs";
-import { join } from "path";
 import { auth } from "@/libs/auth";
 import { supabaseAdmin } from "@/libs/supabase";
 import { generateStudyPlan } from "@/libs/scheduler";
@@ -392,15 +390,6 @@ async function loadLastReratingDates(userId) {
 }
 
 export async function POST(req) {
-  // Force visibility: raw stderr + file (Next.js dev can run route in a worker where console doesn't show in your terminal)
-  const logPath = join(process.cwd(), "dev-plan-generate.log");
-  const logLine = (message) => {
-    try {
-      appendFileSync(logPath, `${new Date().toISOString()} ${message}\n`, "utf8");
-    } catch (_) {}
-  };
-  process.stderr.write(`\n>>> [PLAN_GENERATE] POST ENTERED ${new Date().toISOString()} <<<\n`);
-  logLine("POST /api/plan/generate entered");
   try {
     const userId = await resolveUserId();
     
@@ -447,7 +436,6 @@ export async function POST(req) {
       clientNow: !!clientNow,
       subjectsCount: subjects.length
     });
-    logLine(`body startToday=${startToday} targetWeek=${targetWeek} devTimeOverride=${devTimeOverride} clientNow=${clientNow} clientMinutesFromMidnight=${clientMinutesFromMidnight}`);
 
     const incomingBlockedTimes = Array.isArray(rawBlockedTimes) && rawBlockedTimes.length > 0
       ? rawBlockedTimes
@@ -479,7 +467,6 @@ export async function POST(req) {
       source: effectiveNowSource,
       startToday
     });
-    logLine(`effectiveNow=${effectiveNow.toISOString()} source=${effectiveNowSource} startToday=${startToday}`);
     
     const { weekStart: targetWeekStart, actualStartDate } = resolveTargetWeek({ 
       targetWeek, 
@@ -497,7 +484,6 @@ export async function POST(req) {
       actualStartDate,
       message: startToday ? 'Starting plan today' : 'Starting plan tomorrow'
     });
-    logLine(`timing targetWeekStart=${targetWeekStart} actualStartDate=${actualStartDate} startToday=${startToday}`);
     
     let weekStartDate = getMonday(new Date(`${targetWeekStart}T00:00:00Z`));
     const weekEndDate = new Date(weekStartDate);
@@ -814,7 +800,6 @@ export async function POST(req) {
         timePreferences: effectiveTimePreferences,
         availability: effectiveAvailability
       });
-      logLine(`noSlotsOnCutoffDay=${noSlotsOnCutoffDay} cutoffDay=${effectiveNow.toDateString()} prefs weekdayEarliest=${effectiveTimePreferences.weekdayEarliest} weekdayLatest=${effectiveTimePreferences.weekdayLatest} weekendEarliest=${effectiveTimePreferences.weekendEarliest} weekendLatest=${effectiveTimePreferences.weekendLatest}`);
       console.error('[PLAN_GENERATE] No-slots result:', noSlotsOnCutoffDay, noSlotsOnCutoffDay ? '→ WILL start tomorrow' : '→ keep today');
       console.log('📅 No-slots-on-cutoff-day result:', noSlotsOnCutoffDay, '→', noSlotsOnCutoffDay ? 'will set finalActualStartDate to tomorrow' : 'keep finalActualStartDate');
       if (noSlotsOnCutoffDay) {
@@ -886,7 +871,6 @@ export async function POST(req) {
         }
       }
     }
-    logLine(`noSlotsCheck finalActualStartDate=${finalActualStartDate} finalTargetWeekStart=${finalTargetWeekStart}`);
 
     // Determine if this is a future week (for loading latest ratings from database)
     let effectiveTopicStatus = topicStatus || {};
@@ -1122,7 +1106,6 @@ export async function POST(req) {
         missedTopicsFromDBCount: missedTopicIdsFromDB.length,
         targetWeekStart: finalTargetWeekStart
       });
-      logLine(`generateStudyPlan actualStartDate=${finalActualStartDate} targetWeekStart=${finalTargetWeekStart} clientCutoffMinutes=${useDevOverride ? "null" : (typeof clientMinutesFromMidnight === "number" && !Number.isNaN(clientMinutesFromMidnight) ? clientMinutesFromMidnight : "null")}`);
       
       plan = await generateStudyPlan({
         subjects,
@@ -1154,7 +1137,6 @@ export async function POST(req) {
           topicId: plan[0].topic_id
         } : 'no blocks'
       });
-      logLine(`plan firstBlock=${plan?.[0]?.scheduled_at || "none"} length=${plan?.length || 0}`);
       
       // Validate plan blocks before processing
       if (plan && Array.isArray(plan)) {

@@ -10,10 +10,23 @@ import {
   clearTimeOverride,
   setTimeOverride,
   formatDevDate,
+  isDevelopmentMode,
 } from "@/libs/dev-helpers";
 
 export default function DevTools() {
   const router = useRouter();
+  const [isDev, setIsDev] = useState(null);
+
+  // Only allow dev-tools in development; redirect otherwise (no flash of content in prod)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (isDevelopmentMode()) {
+      setIsDev(true);
+    } else {
+      router.replace('/');
+    }
+  }, [router]);
+
   const { data: session, status } = useSession();
   const [isCreatingPayment, setIsCreatingPayment] = useState(false);
   const [paymentResult, setPaymentResult] = useState(null);
