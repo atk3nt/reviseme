@@ -9,7 +9,7 @@ Use this as the “Finish setup and get your plan” link in Resend (or any emai
 **Example – email campaign 1 (non-paying signups):**
 
 ```
-https://reviseme.co/onboarding/slide-1?utm_source=resend&utm_medium=email&utm_campaign=email-campaign-1
+https://app.reviseme.co/onboarding/slide-1?utm_source=resend&utm_medium=email&utm_campaign=email-campaign-1
 ```
 
 For other campaigns, keep `utm_source=resend` and `utm_medium=email`, and change `utm_campaign` (e.g. `email-campaign-2`, `re-engagement-mar-2025`).
