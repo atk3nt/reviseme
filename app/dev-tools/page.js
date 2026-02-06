@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import apiClient from "@/libs/api";
@@ -46,6 +46,42 @@ export default function DevTools() {
   
   // Onboarding Revisit State
   const [allowOnboardingRevisit, setAllowOnboardingRevisit] = useState(false);
+
+  // Stats Dashboard State
+  const [dashboardData, setDashboardData] = useState(null);
+  const [dashboardLoading, setDashboardLoading] = useState(false);
+  const [dashboardError, setDashboardError] = useState(null);
+  const [dashboardExpanded, setDashboardExpanded] = useState({
+    users: true,
+    feedback: true,
+    activity: false,
+    cron: false,
+  });
+  const [usersTab, setUsersTab] = useState("all"); // "all" | "paying" | "refunded"
+
+  const fetchDashboard = useCallback(async () => {
+    setDashboardLoading(true);
+    setDashboardError(null);
+    try {
+      const res = await fetch("/api/dev/dashboard");
+      const data = await res.json();
+      if (res.ok) {
+        setDashboardData(data);
+      } else {
+        setDashboardError(data.error || "Failed to load dashboard");
+      }
+    } catch (err) {
+      setDashboardError(err.message || "Network error");
+    } finally {
+      setDashboardLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isDev && status === "authenticated") {
+      fetchDashboard();
+    }
+  }, [isDev, status, fetchDashboard]);
 
   const createTestPayment = async () => {
     setIsCreatingPayment(true);
@@ -333,6 +369,356 @@ export default function DevTools() {
             <span>{statusMessage}</span>
           </div>
         )}
+
+        {/* Stats Dashboard Section */}
+        <div className="card bg-base-200 shadow-xl mb-6">
+          <div className="card-body">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="card-title text-2xl">📊 Stats Dashboard</h2>
+              <button
+                onClick={fetchDashboard}
+                className="btn btn-sm btn-outline"
+                disabled={dashboardLoading}
+              >
+                {dashboardLoading ? (
+                  <span className="loading loading-spinner loading-xs"></span>
+                ) : (
+                  "Refresh"
+                )}
+              </button>
+            </div>
+            <p className="text-base-content/70 mb-4 text-sm">
+              User data, feedback, and activity for informed product decisions
+            </p>
+
+            {dashboardError && (
+              <div className="alert alert-error mb-4">
+                <span>{dashboardError}</span>
+              </div>
+            )}
+
+            {dashboardLoading && !dashboardData && (
+              <div className="flex justify-center py-8">
+                <span className="loading loading-spinner loading-lg"></span>
+              </div>
+            )}
+
+            {dashboardData && !dashboardLoading && (
+              <>
+                {/* Summary Stats */}
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-4">
+                  <div className="stats shadow bg-base-300">
+                    <div className="stat py-3 px-4">
+                      <div className="stat-title text-xs">Users</div>
+                      <div className="stat-value text-xl">{dashboardData.summary.total_users}</div>
+                    </div>
+                  </div>
+                  <div className="stats shadow bg-base-300">
+                    <div className="stat py-3 px-4">
+                      <div className="stat-title text-xs">Onboarded</div>
+                      <div className="stat-value text-xl">{dashboardData.summary.users_completed_onboarding}</div>
+                    </div>
+                  </div>
+                  <div className="stats shadow bg-base-300">
+                    <div className="stat py-3 px-4">
+                      <div className="stat-title text-xs">Paying</div>
+                      <div className="stat-value text-xl">{dashboardData.summary.paying_users_count}</div>
+                    </div>
+                  </div>
+                  <div className="stats shadow bg-base-300">
+                    <div className="stat py-3 px-4">
+                      <div className="stat-title text-xs">Current Revenue</div>
+                      <div className="stat-value text-xl">£{((dashboardData.summary.current_revenue_pence ?? (dashboardData.summary.paying_users_count ?? 0) * 3000) / 100).toFixed(0)}</div>
+                      <div className="stat-desc text-xs">Paying × £30</div>
+                    </div>
+                  </div>
+                  <div className="stats shadow bg-base-300">
+                    <div className="stat py-3 px-4">
+                      <div className="stat-title text-xs">Blocks Done</div>
+                      <div className="stat-value text-xl">{dashboardData.summary.blocks_done}</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Key Metrics */}
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-6">
+                  <div className="stats shadow bg-base-300">
+                    <div className="stat py-3 px-4">
+                      <div className="stat-title text-xs">Refund rate (users)</div>
+                      <div className="stat-value text-lg">{dashboardData.summary.refund_rate_pct ?? 0}%</div>
+                      <div className="stat-desc text-xs">{dashboardData.summary.refunded_users_count ?? 0} refunded of {dashboardData.summary.ever_paid_users_count ?? 0} ever paid</div>
+                    </div>
+                  </div>
+                  <div className="stats shadow bg-base-300">
+                    <div className="stat py-3 px-4">
+                      <div className="stat-title text-xs">Conversion (all users)</div>
+                      <div className="stat-value text-lg">{dashboardData.summary.conversion_rate_pct ?? 0}%</div>
+                    </div>
+                  </div>
+                  <div className="stats shadow bg-base-300">
+                    <div className="stat py-3 px-4">
+                      <div className="stat-title text-xs">Block completion</div>
+                      <div className="stat-value text-lg">{dashboardData.summary.completion_rate_pct ?? 0}%</div>
+                      <div className="stat-desc text-xs">{dashboardData.summary.blocks_done ?? 0}/{dashboardData.summary.total_blocks ?? 0}</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Campaign tracking */}
+                {dashboardData.campaign_stats && (
+                  <div className="collapse collapse-arrow bg-base-300 mb-4">
+                    <input
+                      type="checkbox"
+                      checked={dashboardExpanded.campaign !== false}
+                      onChange={(e) => setDashboardExpanded((p) => ({ ...p, campaign: e.target.checked }))}
+                    />
+                    <div className="collapse-title font-semibold">
+                      📧 Campaign tracking
+                      {(dashboardData.campaign_stats.total_attributed ?? 0) > 0 && (
+                        <span className="ml-2 text-base-content/70 font-normal">
+                          {dashboardData.campaign_stats.total_attributed} attributed
+                        </span>
+                      )}
+                    </div>
+                    <div className="collapse-content">
+                      {!dashboardData.campaign_stats.by_campaign?.length ? (
+                        <p className="text-base-content/60 text-sm">No campaign attribution yet. Use UTM params in email links (see CAMPAIGN_TRACKING.md).</p>
+                      ) : (
+                        <div className="overflow-x-auto">
+                          <table className="table table-sm">
+                            <thead>
+                              <tr>
+                                <th>Campaign</th>
+                                <th>Users</th>
+                                <th>Paying</th>
+                                <th>Conversion</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {dashboardData.campaign_stats.by_campaign.map((row) => (
+                                <tr key={row.campaign}>
+                                  <td className="font-mono text-sm">{row.campaign}</td>
+                                  <td>{row.users}</td>
+                                  <td>{row.paying}</td>
+                                  <td>{row.conversion_pct}%</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Refund Feedback */}
+                <div className="collapse collapse-arrow bg-base-300 mb-4">
+                  <input
+                    type="checkbox"
+                    checked={dashboardExpanded.feedback}
+                    onChange={(e) => setDashboardExpanded((p) => ({ ...p, feedback: e.target.checked }))}
+                  />
+                  <div className="collapse-title font-semibold">
+                    💬 Refund Feedback ({dashboardData.refund_feedback.length})
+                  </div>
+                  <div className="collapse-content">
+                    {dashboardData.refund_feedback.length === 0 ? (
+                      <p className="text-base-content/60 text-sm">No refund feedback yet</p>
+                    ) : (
+                      <div className="space-y-3 max-h-60 overflow-y-auto">
+                        {dashboardData.refund_feedback.map((r) => (
+                          <div key={r.id} className="p-3 bg-base-100 rounded-lg border border-base-300">
+                            <div className="text-xs text-base-content/60 mb-1">
+                              {new Date(r.created_at).toLocaleString()} · {r.referral_source ? `Ref: ${r.referral_source}` : ""} · £{((r.amount || 0) / 100).toFixed(2)}
+                            </div>
+                            <p className="text-sm">{r.feedback}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Users Table */}
+                <div className="collapse collapse-arrow bg-base-300 mb-4">
+                  <input
+                    type="checkbox"
+                    checked={dashboardExpanded.users}
+                    onChange={(e) => setDashboardExpanded((p) => ({ ...p, users: e.target.checked }))}
+                  />
+                  <div className="collapse-title font-semibold">
+                    👤 Users (
+                      {usersTab === "paying"
+                        ? dashboardData.users.filter((u) => u.total_paid_pence > 0 && (u.total_refunded_pence || 0) === 0).length
+                        : usersTab === "refunded"
+                          ? dashboardData.users.filter((u) => (u.total_refunded_pence || 0) > 0).length
+                          : dashboardData.users.length}
+                    )
+                  </div>
+                  <div className="collapse-content overflow-x-auto">
+                    <div role="tablist" className="tabs tabs-boxed tabs-sm mb-3">
+                      <button
+                        role="tab"
+                        type="button"
+                        className={`tab ${usersTab === "all" ? "tab-active" : ""}`}
+                        onClick={() => setUsersTab("all")}
+                      >
+                        All ({dashboardData.users.length})
+                      </button>
+                      <button
+                        role="tab"
+                        type="button"
+                        className={`tab ${usersTab === "paying" ? "tab-active" : ""}`}
+                        onClick={() => setUsersTab("paying")}
+                      >
+                        Paying ({dashboardData.users.filter((u) => u.total_paid_pence > 0 && (u.total_refunded_pence || 0) === 0).length})
+                      </button>
+                      <button
+                        role="tab"
+                        type="button"
+                        className={`tab ${usersTab === "refunded" ? "tab-active" : ""}`}
+                        onClick={() => setUsersTab("refunded")}
+                      >
+                        Refunded ({dashboardData.users.filter((u) => (u.total_refunded_pence || 0) > 0).length})
+                      </button>
+                    </div>
+                    {(() => {
+                      const displayUsers =
+                        usersTab === "paying"
+                          ? dashboardData.users.filter((u) => u.total_paid_pence > 0 && (u.total_refunded_pence || 0) === 0)
+                          : usersTab === "refunded"
+                            ? dashboardData.users.filter((u) => (u.total_refunded_pence || 0) > 0)
+                            : dashboardData.users;
+                      if (displayUsers.length === 0) {
+                        return (
+                          <p className="text-base-content/60 text-sm py-4">
+                            {usersTab === "paying"
+                              ? "No paying users yet."
+                              : usersTab === "refunded"
+                                ? "No refunded users yet."
+                                : "No users yet."}
+                          </p>
+                        );
+                      }
+                      return (
+                    <table className="table table-sm table-pin-rows">
+                      <thead>
+                        <tr>
+                          <th>Email</th>
+                          <th>Created</th>
+                          <th>Payment Date</th>
+                          <th>Guarantee</th>
+                          <th>Access</th>
+                          <th>Done</th>
+                          <th>Missed</th>
+                          <th>Days</th>
+                          <th>Events</th>
+                          <th>Last Active</th>
+                          <th>Paid</th>
+                          <th>Ref</th>
+                          <th>Campaign</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {displayUsers.map((u) => {
+                          const paidAt = u.earliest_paid_at ? new Date(u.earliest_paid_at) : null;
+                          const daysSincePaid = paidAt ? (Date.now() - paidAt.getTime()) / (1000 * 60 * 60 * 24) : 0;
+                          const pastGuarantee = paidAt && u.total_paid_pence > (u.total_refunded_pence || 0) && daysSincePaid > 7;
+                          return (
+                          <tr
+                            key={u.id}
+                            className={pastGuarantee ? "bg-green-500/10" : ""}
+                          >
+                            <td className="font-mono text-xs">{u.email}</td>
+                            <td className="text-xs">{new Date(u.created_at).toLocaleDateString()}</td>
+                            <td className="text-xs">{u.earliest_paid_at ? new Date(u.earliest_paid_at).toLocaleDateString() : "—"}</td>
+                            <td className="text-xs">
+                              {paidAt && u.total_paid_pence > (u.total_refunded_pence || 0)
+                                ? pastGuarantee
+                                  ? "Secured"
+                                  : (() => {
+                                      const d = Math.max(0, Math.ceil(7 - daysSincePaid));
+                                      return d === 1 ? "1 day left" : `${d} days left`;
+                                    })()
+                                : "—"}
+                            </td>
+                            <td>{u.has_access ? "✓" : "—"}</td>
+                            <td>{u.blocks_done}</td>
+                            <td>{u.blocks_missed}</td>
+                            <td>{u.active_days}</td>
+                            <td>{u.total_activity_events}</td>
+                            <td className="text-xs">
+                              {u.last_activity ? new Date(u.last_activity).toLocaleDateString() : "—"}
+                            </td>
+                            <td className="text-xs">
+                              {u.total_paid_pence > 0 ? `£${(u.total_paid_pence / 100).toFixed(0)}` : "—"}
+                            </td>
+                            <td className="text-xs">{u.referral_source || "—"}</td>
+                            <td className="text-xs font-mono">{u.utm_campaign || "—"}</td>
+                          </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                      );
+                    })()}
+                  </div>
+                </div>
+
+                {/* Recent Activity */}
+                <div className="collapse collapse-arrow bg-base-300 mb-4">
+                  <input
+                    type="checkbox"
+                    checked={dashboardExpanded.activity}
+                    onChange={(e) => setDashboardExpanded((p) => ({ ...p, activity: e.target.checked }))}
+                  />
+                  <div className="collapse-title font-semibold">
+                    📋 Recent Activity ({dashboardData.recent_activity.length})
+                  </div>
+                  <div className="collapse-content">
+                    <div className="space-y-1 max-h-48 overflow-y-auto text-sm font-mono">
+                      {dashboardData.recent_activity.slice(0, 30).map((a) => (
+                        <div key={a.id} className="flex gap-2 flex-wrap">
+                          <span className="text-base-content/60">{new Date(a.created_at).toLocaleString()}</span>
+                          <span>{a.user_email}</span>
+                          <span className="badge badge-sm badge-outline">{a.event_type}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Cron History */}
+                <div className="collapse collapse-arrow bg-base-300">
+                  <input
+                    type="checkbox"
+                    checked={dashboardExpanded.cron}
+                    onChange={(e) => setDashboardExpanded((p) => ({ ...p, cron: e.target.checked }))}
+                  />
+                  <div className="collapse-title font-semibold">
+                    ⏰ Cron History ({dashboardData.cron_history.length})
+                  </div>
+                  <div className="collapse-content">
+                    {dashboardData.cron_history.length === 0 ? (
+                      <p className="text-base-content/60 text-sm">No cron runs logged yet</p>
+                    ) : (
+                      <div className="space-y-2 max-h-40 overflow-y-auto text-sm">
+                        {dashboardData.cron_history.map((c) => (
+                          <div key={c.id} className="p-2 bg-base-100 rounded border border-base-300">
+                            <span className="text-base-content/60">{new Date(c.created_at).toLocaleString()}</span>
+                            <pre className="text-xs mt-1 overflow-x-auto">
+                              {JSON.stringify(c.event_data, null, 1)}
+                            </pre>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
 
         {/* Time Override Section */}
         <div className="card bg-base-200 shadow-xl mb-6">

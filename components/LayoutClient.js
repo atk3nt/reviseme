@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Crisp } from "crisp-sdk-web";
@@ -10,6 +10,20 @@ import { Toaster } from "react-hot-toast";
 import { Tooltip } from "react-tooltip";
 import config from "@/config";
 import DevButton from "@/components/DevButton";
+
+// Campaign attribution: when user is logged in and has UTM cookie (from email link), save to profile
+const AttributionTracker = () => {
+  const { data } = useSession();
+  const called = useRef(false);
+
+  useEffect(() => {
+    if (!data?.user || called.current) return;
+    called.current = true;
+    fetch("/api/attribution", { credentials: "include" }).catch(() => {});
+  }, [data?.user]);
+
+  return null;
+};
 
 // Crisp customer chat support:
 // This component is separated from ClientLayout because it needs to be wrapped with <SessionProvider> to use useSession() hook
@@ -95,6 +109,9 @@ const ClientLayout = ({ children }) => {
 
         {/* Set Crisp customer chat support */}
         <CrispChat />
+
+        {/* Campaign attribution: save UTM from email links to user record */}
+        <AttributionTracker />
 
         {/* Dev Tools Button (only visible in dev mode) */}
         <DevButton />
