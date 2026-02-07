@@ -33,7 +33,7 @@ export async function GET() {
       const { data, error } = await supabaseAdmin
         .from("users")
         .select(
-          "id, email, name, created_at, has_access, has_completed_onboarding, onboarding_data, utm_source, utm_medium, utm_campaign, utm_captured_at"
+          "id, email, name, created_at, has_access, has_completed_onboarding, onboarding_data, utm_source, utm_medium, utm_campaign, utm_captured_at, reached_payment_at"
         )
         .order("created_at", { ascending: false })
         .range(from, to);
@@ -220,6 +220,7 @@ export async function GET() {
         utm_medium: u.utm_medium ?? null,
         utm_campaign: u.utm_campaign ?? null,
         utm_captured_at: u.utm_captured_at ?? null,
+        reached_payment_at: u.reached_payment_at ?? null,
         // Stats
         blocks_done: stats.blocks_done ?? bc.done ?? 0,
         blocks_missed: stats.blocks_missed ?? bc.missed ?? 0,
@@ -289,6 +290,13 @@ export async function GET() {
     const onboardedCount = users.filter(
       (u) => u.has_completed_onboarding
     ).length;
+    const reachedPaymentCount = users.filter(
+      (u) => u.reached_payment_at
+    ).length;
+    const conversionFromReachedPaymentPct =
+      reachedPaymentCount > 0
+        ? (payingUsersCount / reachedPaymentCount) * 100
+        : 0;
     const conversionFromOnboardedPct =
       onboardedCount > 0 ? (payingUsersCount / onboardedCount) * 100 : 0;
     const totalBlocks = blocks.length;
@@ -326,6 +334,10 @@ export async function GET() {
         total_users: users.length,
         users_with_access: users.filter((u) => u.has_access).length,
         users_completed_onboarding: onboardedCount,
+        reached_payment_count: reachedPaymentCount,
+        conversion_from_reached_payment_pct: Math.round(
+          conversionFromReachedPaymentPct * 10
+        ) / 10,
         total_revenue_pence: totalRevenue,
         total_refunded_pence: totalRefunded,
         current_revenue_pence: currentRevenuePence,

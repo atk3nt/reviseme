@@ -32,6 +32,12 @@ export default function Slide17Page() {
       console.log('[Slide 17] User has access, skipping to Slide 19');
       unlockSlide(19);
       router.push("/onboarding/slide-19");
+      return;
+    }
+
+    // Track when user reaches payment page (for funnel analytics) - only when they need to pay
+    if (status === 'authenticated' && !session?.user?.hasAccess) {
+      fetch("/api/onboarding/reached-payment", { method: "POST" }).catch(() => {});
     }
   }, [session, status, router]);
 

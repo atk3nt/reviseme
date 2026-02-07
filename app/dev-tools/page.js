@@ -415,6 +415,12 @@ export default function DevTools() {
                   </div>
                   <div className="stats shadow bg-base-300">
                     <div className="stat py-3 px-4">
+                      <div className="stat-title text-xs">Reached payment</div>
+                      <div className="stat-value text-xl">{dashboardData.summary.reached_payment_count ?? 0}</div>
+                    </div>
+                  </div>
+                  <div className="stats shadow bg-base-300">
+                    <div className="stat py-3 px-4">
                       <div className="stat-title text-xs">Onboarded</div>
                       <div className="stat-value text-xl">{dashboardData.summary.users_completed_onboarding}</div>
                     </div>
@@ -447,6 +453,13 @@ export default function DevTools() {
                       <div className="stat-title text-xs">Refund rate (users)</div>
                       <div className="stat-value text-lg">{dashboardData.summary.refund_rate_pct ?? 0}%</div>
                       <div className="stat-desc text-xs">{dashboardData.summary.refunded_users_count ?? 0} refunded of {dashboardData.summary.ever_paid_users_count ?? 0} ever paid</div>
+                    </div>
+                  </div>
+                  <div className="stats shadow bg-base-300">
+                    <div className="stat py-3 px-4">
+                      <div className="stat-title text-xs">Conversion (reached → paid)</div>
+                      <div className="stat-value text-lg">{dashboardData.summary.conversion_from_reached_payment_pct ?? 0}%</div>
+                      <div className="stat-desc text-xs">{dashboardData.summary.paying_users_count ?? 0} paid of {dashboardData.summary.reached_payment_count ?? 0} reached</div>
                     </div>
                   </div>
                   <div className="stats shadow bg-base-300">
@@ -552,7 +565,11 @@ export default function DevTools() {
                         ? dashboardData.users.filter((u) => u.total_paid_pence > 0 && (u.total_refunded_pence || 0) === 0).length
                         : usersTab === "refunded"
                           ? dashboardData.users.filter((u) => (u.total_refunded_pence || 0) > 0).length
-                          : dashboardData.users.length}
+                          : usersTab === "reached"
+                            ? dashboardData.users.filter((u) => u.reached_payment_at).length
+                            : usersTab === "reached_not_paid"
+                              ? dashboardData.users.filter((u) => u.reached_payment_at && !(u.total_paid_pence > 0)).length
+                              : dashboardData.users.length}
                     )
                   </div>
                   <div className="collapse-content overflow-x-auto">
@@ -576,6 +593,22 @@ export default function DevTools() {
                       <button
                         role="tab"
                         type="button"
+                        className={`tab ${usersTab === "reached" ? "tab-active" : ""}`}
+                        onClick={() => setUsersTab("reached")}
+                      >
+                        Reached payment ({dashboardData.users.filter((u) => u.reached_payment_at).length})
+                      </button>
+                      <button
+                        role="tab"
+                        type="button"
+                        className={`tab ${usersTab === "reached_not_paid" ? "tab-active" : ""}`}
+                        onClick={() => setUsersTab("reached_not_paid")}
+                      >
+                        Reached (not paid) ({dashboardData.users.filter((u) => u.reached_payment_at && !(u.total_paid_pence > 0)).length})
+                      </button>
+                      <button
+                        role="tab"
+                        type="button"
                         className={`tab ${usersTab === "refunded" ? "tab-active" : ""}`}
                         onClick={() => setUsersTab("refunded")}
                       >
@@ -588,7 +621,11 @@ export default function DevTools() {
                           ? dashboardData.users.filter((u) => u.total_paid_pence > 0 && (u.total_refunded_pence || 0) === 0)
                           : usersTab === "refunded"
                             ? dashboardData.users.filter((u) => (u.total_refunded_pence || 0) > 0)
-                            : dashboardData.users;
+                            : usersTab === "reached"
+                              ? dashboardData.users.filter((u) => u.reached_payment_at)
+                              : usersTab === "reached_not_paid"
+                                ? dashboardData.users.filter((u) => u.reached_payment_at && !(u.total_paid_pence > 0))
+                                : dashboardData.users;
                       if (displayUsers.length === 0) {
                         return (
                           <p className="text-base-content/60 text-sm py-4">
@@ -596,7 +633,11 @@ export default function DevTools() {
                               ? "No paying users yet."
                               : usersTab === "refunded"
                                 ? "No refunded users yet."
-                                : "No users yet."}
+                                : usersTab === "reached"
+                                  ? "No users have reached the payment page yet."
+                                  : usersTab === "reached_not_paid"
+                                    ? "No users reached payment without paying yet."
+                                    : "No users yet."}
                           </p>
                         );
                       }
@@ -606,6 +647,7 @@ export default function DevTools() {
                         <tr>
                           <th>Email</th>
                           <th>Created</th>
+                          <th>Reached payment</th>
                           <th>Payment Date</th>
                           <th>Guarantee</th>
                           <th>Access</th>
@@ -631,6 +673,7 @@ export default function DevTools() {
                           >
                             <td className="font-mono text-xs">{u.email}</td>
                             <td className="text-xs">{new Date(u.created_at).toLocaleDateString()}</td>
+                            <td className="text-xs">{u.reached_payment_at ? new Date(u.reached_payment_at).toLocaleDateString() : "—"}</td>
                             <td className="text-xs">{u.earliest_paid_at ? new Date(u.earliest_paid_at).toLocaleDateString() : "—"}</td>
                             <td className="text-xs">
                               {paidAt && u.total_paid_pence > (u.total_refunded_pence || 0)
