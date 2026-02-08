@@ -58,10 +58,6 @@ export default function Slide1Page() {
       } else if (result?.ok) {
         // Magic link sent successfully
         setEmailSent(true);
-        // DataFast: track signup initiated
-        if (typeof window !== 'undefined' && window.datafast) {
-          window.datafast('signup');
-        }
       }
     } catch (error) {
       console.error('Sign-in error:', error);
@@ -78,10 +74,6 @@ export default function Slide1Page() {
     try {
       // Unlock slide 16 so the OAuth callback can access it (subject selection)
       unlockSlide(16);
-      // DataFast: track signup initiated (before redirect)
-      if (typeof window !== 'undefined' && window.datafast) {
-        window.datafast('signup');
-      }
       const result = await signIn("google", {
         redirect: true,
         callbackUrl: "/onboarding/slide-16"
@@ -161,6 +153,7 @@ export default function Slide1Page() {
         {googleAvailable && (
           <>
             <button
+              data-fast-goal="signup"
               onClick={handleGoogleSignIn}
               disabled={isGoogleLoading}
               className="w-full flex items-center justify-center gap-2 sm:gap-3 bg-white border-2 border-[#0066FF]/20 text-[#003D99] py-2.5 sm:py-3 px-4 sm:px-6 rounded-lg text-sm sm:text-base font-medium hover:border-[#0066FF]/40 hover:bg-[#E5F0FF] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -219,6 +212,7 @@ export default function Slide1Page() {
           
           <button
             type="submit"
+            data-fast-goal="signup"
             disabled={isLoading}
             className="bg-[#0066FF] hover:bg-[#0052CC] text-white w-full py-2.5 sm:py-3 px-4 sm:px-6 rounded-lg text-sm sm:text-base font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >

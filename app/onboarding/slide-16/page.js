@@ -37,13 +37,6 @@ export default function Slide16Page() {
     }
   }, []);
 
-  // DataFast: track when user reaches subject selection step
-  useEffect(() => {
-    if (typeof window !== 'undefined' && window.datafast) {
-      window.datafast('onboarding_subject_selection');
-    }
-  }, []);
-
   const handleSubjectToggle = (subjectId) => {
     const newSelected = selectedSubjects.includes(subjectId)
       ? selectedSubjects.filter(id => id !== subjectId)
@@ -116,7 +109,7 @@ export default function Slide16Page() {
 
       {/* Title */}
       <div className="space-y-2 sm:space-y-4 flex-shrink-0 pb-3 sm:pb-6">
-        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#001433] leading-tight">
+        <h1 data-fast-scroll="onboarding_subject_selection" className="text-xl sm:text-2xl md:text-3xl font-bold text-[#001433] leading-tight">
           What are you studying?
         </h1>
         <p className="text-sm sm:text-base md:text-lg text-[#003D99] leading-relaxed">

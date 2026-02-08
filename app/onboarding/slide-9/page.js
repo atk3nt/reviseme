@@ -20,13 +20,6 @@ export default function Slide9Page() {
     if (savedAnswers.year) setYear(savedAnswers.year);
   }, []);
 
-  // DataFast: track when user reaches name/year step
-  useEffect(() => {
-    if (typeof window !== 'undefined' && window.datafast) {
-      window.datafast('onboarding_name_year');
-    }
-  }, []);
-
   const handleNext = async () => {
     if (!name || !year) return;
     
@@ -62,7 +55,7 @@ export default function Slide9Page() {
 
       {/* Question */}
       <div className="space-y-3 sm:space-y-5 flex-grow flex flex-col justify-center pb-4 sm:pb-6 md:pb-10 min-h-0">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#001433] leading-tight">
+        <h1 data-fast-scroll="onboarding_name_year" className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#001433] leading-tight">
           Let's personalise your plan.
         </h1>
         <p className="text-base sm:text-lg md:text-xl text-[#003D99] leading-relaxed">

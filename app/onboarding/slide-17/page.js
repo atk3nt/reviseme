@@ -38,19 +38,11 @@ export default function Slide17Page() {
     // Track when user reaches payment page (for funnel analytics) - only when they need to pay
     if (status === 'authenticated' && !session?.user?.hasAccess) {
       fetch("/api/onboarding/reached-payment", { method: "POST" }).catch(() => {});
-      // DataFast: track when user reaches payment step
-      if (typeof window !== 'undefined' && window.datafast) {
-        window.datafast('onboarding_payment_page');
-      }
     }
   }, [session, status, router]);
 
   const handleStartTrial = async () => {
     setIsLoading(true);
-    // DataFast: track when user clicks pay button
-    if (typeof window !== 'undefined' && window.datafast) {
-      window.datafast('payment_button_clicked');
-    }
     try {
       // Unlock slide-19 before redirecting to payment (so return URL works)
       unlockSlide(19);
@@ -114,7 +106,10 @@ export default function Slide17Page() {
 
       {/* Title */}
       <div className="space-y-2 sm:space-y-4 flex-shrink-0 pb-4 sm:pb-6">
-        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#001433] leading-tight">
+        <h1
+          data-fast-scroll="onboarding_payment_page"
+          className="text-xl sm:text-2xl md:text-3xl font-bold text-[#001433] leading-tight"
+        >
           One payment.<br />Your entire exam season sorted.
         </h1>
         <p className="text-sm sm:text-base md:text-lg text-[#003D99] leading-relaxed">
@@ -143,6 +138,7 @@ export default function Slide17Page() {
 
           {/* CTA Button */}
           <button
+            data-fast-goal="payment_button_clicked"
             onClick={handleStartTrial}
             disabled={isLoading}
             className="w-full bg-[#0066FF] text-white py-2 sm:py-2.5 px-6 rounded-lg font-medium text-base hover:bg-[#0052CC] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
