@@ -37,6 +37,13 @@ export default function Slide16Page() {
     }
   }, []);
 
+  // DataFast: track when user reaches subject selection step
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.datafast) {
+      window.datafast('onboarding_subject_selection');
+    }
+  }, []);
+
   const handleSubjectToggle = (subjectId) => {
     const newSelected = selectedSubjects.includes(subjectId)
       ? selectedSubjects.filter(id => id !== subjectId)
@@ -88,10 +95,10 @@ export default function Slide16Page() {
     savedAnswers.subjectBoards = subjectBoards;
     localStorage.setItem('quizAnswers', JSON.stringify(savedAnswers));
     
-    unlockSlide(16.5);
+    unlockSlide(9);
     
     setTimeout(() => {
-      router.push("/onboarding/slide-16-5");
+      router.push("/onboarding/slide-9");
     }, 300);
   };
 
@@ -101,8 +108,8 @@ export default function Slide16Page() {
       {/* Progress */}
       <div className="w-full flex-shrink-0 pb-3 sm:pb-6 md:pb-10">
         <OnboardingProgress 
-          currentSlide={16} 
-          totalSlides={12} 
+          currentSlide={2} 
+          totalSlides={4} 
           showProgressBar={true}
         />
       </div>
@@ -256,7 +263,7 @@ export default function Slide16Page() {
       {/* Navigation - Fixed at bottom */}
       <div className="flex justify-between items-center w-full flex-shrink-0 pt-3 sm:pt-6 md:pt-10">
         <button
-          onClick={() => router.push("/onboarding/slide-9")}
+          onClick={() => router.push("/onboarding/slide-1")}
           className="bg-white border-2 border-[#0066FF] text-[#0066FF] px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium hover:bg-[#0066FF] hover:text-white transition-colors"
         >
           Back

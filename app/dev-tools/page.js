@@ -459,7 +459,7 @@ export default function DevTools() {
                     <div className="stat py-3 px-4">
                       <div className="stat-title text-xs">Conversion (reached → paid)</div>
                       <div className="stat-value text-lg">{dashboardData.summary.conversion_from_reached_payment_pct ?? 0}%</div>
-                      <div className="stat-desc text-xs">{dashboardData.summary.paying_users_count ?? 0} paid of {dashboardData.summary.reached_payment_count ?? 0} reached</div>
+                      <div className="stat-desc text-xs">{dashboardData.summary.reached_and_paid_count ?? 0} paid of {dashboardData.summary.reached_payment_total_count ?? 0} reached</div>
                     </div>
                   </div>
                   <div className="stats shadow bg-base-300">

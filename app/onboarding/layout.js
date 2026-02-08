@@ -65,11 +65,11 @@ export default function OnboardingLayout({ children }) {
       return;
     }
     
-    // Special case: Allow slide-2 if user is authenticated OR still loading session
-    // This handles the case where user clicks magic link in email and arrives at slide-2
+    // Special case: Allow slide-16 if user is authenticated OR still loading session
+    // This handles the case where user clicks magic link in email and arrives at slide-16
     // We allow access while loading to prevent premature redirects during auth callback
-    if (slideNumber === 2 && (status === 'authenticated' || status === 'loading')) {
-      console.log('[ONBOARDING LAYOUT] Allowing slide-2 access (auth callback)');
+    if (slideNumber === 16 && (status === 'authenticated' || status === 'loading')) {
+      console.log('[ONBOARDING LAYOUT] Allowing slide-16 access (auth callback)');
       setIsCheckingAccess(false);
       return;
     }

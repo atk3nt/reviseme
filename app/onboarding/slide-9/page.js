@@ -20,6 +20,13 @@ export default function Slide9Page() {
     if (savedAnswers.year) setYear(savedAnswers.year);
   }, []);
 
+  // DataFast: track when user reaches name/year step
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.datafast) {
+      window.datafast('onboarding_name_year');
+    }
+  }, []);
+
   const handleNext = async () => {
     if (!name || !year) return;
     
@@ -30,16 +37,16 @@ export default function Slide9Page() {
     savedAnswers.year = year;
     localStorage.setItem('quizAnswers', JSON.stringify(savedAnswers));
     
-    unlockSlide(16);
+    unlockSlide(17);
     
     setTimeout(() => {
-      router.push("/onboarding/slide-16");
+      router.push("/onboarding/slide-17");
     }, 300);
   };
 
   const handleSkip = () => {
-    unlockSlide(16);
-    router.push("/onboarding/slide-16");
+    unlockSlide(17);
+    router.push("/onboarding/slide-17");
   };
 
   return (
@@ -47,8 +54,8 @@ export default function Slide9Page() {
       {/* Progress */}
       <div className="w-full flex-shrink-0 pb-4 sm:pb-6 md:pb-10">
         <OnboardingProgress 
-          currentSlide={9} 
-          totalSlides={12} 
+          currentSlide={3} 
+          totalSlides={4} 
           showProgressBar={true}
         />
       </div>
@@ -83,7 +90,7 @@ export default function Slide9Page() {
       {/* Navigation */}
       <div className="flex justify-between items-center w-full flex-shrink-0 pt-4 sm:pt-6">
         <button
-          onClick={() => router.push("/onboarding/slide-5")}
+          onClick={() => router.push("/onboarding/slide-16")}
           className="bg-white border-2 border-[#0066FF] text-[#0066FF] px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium hover:bg-[#0066FF] hover:text-white transition-colors"
         >
           Back

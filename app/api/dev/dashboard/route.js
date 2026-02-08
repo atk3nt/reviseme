@@ -290,12 +290,19 @@ export async function GET() {
     const onboardedCount = users.filter(
       (u) => u.has_completed_onboarding
     ).length;
-    const reachedPaymentCount = users.filter(
+    // Reached payment (exclude already-paid: only users we tracked from implementation, who haven't paid)
+    const reachedPaymentNotPaidCount = users.filter(
+      (u) => u.reached_payment_at && !(u.total_paid_pence > 0)
+    ).length;
+    const reachedPaymentTotalCount = users.filter(
       (u) => u.reached_payment_at
     ).length;
+    const reachedAndPaidCount = users.filter(
+      (u) => u.reached_payment_at && u.total_paid_pence > 0
+    ).length;
     const conversionFromReachedPaymentPct =
-      reachedPaymentCount > 0
-        ? (payingUsersCount / reachedPaymentCount) * 100
+      reachedPaymentTotalCount > 0
+        ? (reachedAndPaidCount / reachedPaymentTotalCount) * 100
         : 0;
     const conversionFromOnboardedPct =
       onboardedCount > 0 ? (payingUsersCount / onboardedCount) * 100 : 0;
@@ -334,7 +341,9 @@ export async function GET() {
         total_users: users.length,
         users_with_access: users.filter((u) => u.has_access).length,
         users_completed_onboarding: onboardedCount,
-        reached_payment_count: reachedPaymentCount,
+        reached_payment_count: reachedPaymentNotPaidCount,
+        reached_payment_total_count: reachedPaymentTotalCount,
+        reached_and_paid_count: reachedAndPaidCount,
         conversion_from_reached_payment_pct: Math.round(
           conversionFromReachedPaymentPct * 10
         ) / 10,

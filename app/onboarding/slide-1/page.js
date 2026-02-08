@@ -43,14 +43,14 @@ export default function Slide1Page() {
     setEmailAddress(email);
     
     try {
-      // Unlock slide 2 so the magic link callback can access it
-      unlockSlide(2);
+      // Unlock slide 16 so the magic link callback can access it (subject selection)
+      unlockSlide(16);
       
       // Use EmailProvider which sends magic link
       const result = await signIn("email", {
         email,
         redirect: false,
-        callbackUrl: "/onboarding/slide-2"
+        callbackUrl: "/onboarding/slide-16"
       });
       
       if (result?.error) {
@@ -58,6 +58,10 @@ export default function Slide1Page() {
       } else if (result?.ok) {
         // Magic link sent successfully
         setEmailSent(true);
+        // DataFast: track signup initiated
+        if (typeof window !== 'undefined' && window.datafast) {
+          window.datafast('signup');
+        }
       }
     } catch (error) {
       console.error('Sign-in error:', error);
@@ -72,12 +76,15 @@ export default function Slide1Page() {
     setError("");
     
     try {
-      // Unlock slide 2 so the OAuth callback can access it
-      unlockSlide(2);
-      
+      // Unlock slide 16 so the OAuth callback can access it (subject selection)
+      unlockSlide(16);
+      // DataFast: track signup initiated (before redirect)
+      if (typeof window !== 'undefined' && window.datafast) {
+        window.datafast('signup');
+      }
       const result = await signIn("google", {
         redirect: true,
-        callbackUrl: "/onboarding/slide-2"
+        callbackUrl: "/onboarding/slide-16"
       });
       
       // Note: signIn with redirect: true will navigate away, so this code may not execute
@@ -100,7 +107,7 @@ export default function Slide1Page() {
         <div className="w-full flex-shrink-0 pb-4 sm:pb-6 md:pb-10">
           <OnboardingProgress 
             currentSlide={1} 
-            totalSlides={12} 
+            totalSlides={4} 
             showProgressBar={true}
           />
         </div>
@@ -133,7 +140,7 @@ export default function Slide1Page() {
       <div className="w-full flex-shrink-0 pb-4 sm:pb-6 md:pb-10">
         <OnboardingProgress 
           currentSlide={1} 
-          totalSlides={12} 
+          totalSlides={4} 
           showProgressBar={true}
         />
       </div>

@@ -38,12 +38,19 @@ export default function Slide17Page() {
     // Track when user reaches payment page (for funnel analytics) - only when they need to pay
     if (status === 'authenticated' && !session?.user?.hasAccess) {
       fetch("/api/onboarding/reached-payment", { method: "POST" }).catch(() => {});
+      // DataFast: track when user reaches payment step
+      if (typeof window !== 'undefined' && window.datafast) {
+        window.datafast('onboarding_payment_page');
+      }
     }
   }, [session, status, router]);
 
   const handleStartTrial = async () => {
     setIsLoading(true);
-    
+    // DataFast: track when user clicks pay button
+    if (typeof window !== 'undefined' && window.datafast) {
+      window.datafast('payment_button_clicked');
+    }
     try {
       // Unlock slide-19 before redirecting to payment (so return URL works)
       unlockSlide(19);
@@ -99,8 +106,8 @@ export default function Slide17Page() {
       {/* Progress */}
       <div className="w-full flex-shrink-0 pb-4 sm:pb-6 md:pb-10">
         <OnboardingProgress 
-          currentSlide={17} 
-          totalSlides={12} 
+          currentSlide={4} 
+          totalSlides={4} 
           showProgressBar={true}
         />
       </div>
@@ -227,7 +234,7 @@ export default function Slide17Page() {
       {/* Navigation */}
       <div className="flex justify-center items-center w-full flex-shrink-0 pt-4 sm:pt-6">
         <button
-          onClick={() => router.push("/onboarding/slide-16-5")}
+          onClick={() => router.push("/onboarding/slide-9")}
           className="bg-white border-2 border-[#0066FF] text-[#0066FF] px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg text-sm sm:text-base font-medium hover:bg-[#0066FF] hover:text-white transition-colors"
         >
           Back
