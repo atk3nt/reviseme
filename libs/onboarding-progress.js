@@ -30,6 +30,13 @@ export function unlockSlide(slideNumber) {
     if (slideNumber > currentMax) {
       const progress = { maxSlide: slideNumber };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+      // Persist to DB so paid users can resume on another device (fire-and-forget)
+      fetch('/api/onboarding/progress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ maxUnlockedSlide: slideNumber }),
+      }).catch(() => {});
     }
   } catch (error) {
     console.error('Error updating onboarding progress:', error);

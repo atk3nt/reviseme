@@ -610,6 +610,25 @@ export async function POST(req) {
       }
     }
 
+    // When user saved availability for next week, record confirmation (for consistency with confirm flow)
+    if (weekStartDate) {
+      const nextMonday = getNextMonday();
+      const nextWeekStr = nextMonday.toISOString().split('T')[0];
+      const savedWeekStr = new Date(weekStartDate).toISOString().split('T')[0];
+      if (savedWeekStr === nextWeekStr) {
+        const { error: confirmError } = await supabaseAdmin
+          .from('week_availability_confirmed')
+          .upsert({
+            user_id: userId,
+            week_start_date: savedWeekStr,
+            confirmed_at: new Date().toISOString()
+          }, { onConflict: 'user_id,week_start_date' });
+        if (confirmError) {
+          console.warn('Optional: could not upsert week_availability_confirmed:', confirmError.message);
+        }
+      }
+    }
+
     return NextResponse.json({
       success: true,
       message: "Availability preferences saved",

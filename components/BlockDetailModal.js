@@ -332,7 +332,7 @@ export default function BlockDetailModal({
 
   return (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="fixed inset-0 z-50 flex items-center justify-center px-4 py-6 sm:p-4 safe-x">
         {/* Backdrop */}
         <div 
           className="fixed inset-0 bg-black/60 backdrop-blur-md transition-opacity duration-300 ease-out"
@@ -342,65 +342,64 @@ export default function BlockDetailModal({
           onClick={onClose}
         />
         
-        {/* Modal - Full screen gradient background */}
+        {/* Modal - tall but with equal top/bottom margin (centered); no scrolling */}
         <div 
-          className="relative rounded-3xl shadow-2xl max-w-3xl w-full max-h-[95vh] overflow-hidden flex flex-col" 
+          className="relative w-full max-w-full sm:max-w-3xl sm:rounded-3xl shadow-2xl flex flex-col min-h-0 max-h-[94dvh] sm:max-h-[95vh] overflow-hidden rounded-2xl"
           style={{
             background: isStudyPhase 
               ? 'linear-gradient(135deg, #001433 0%, #003D99 40%, #0066FF 70%, #0052CC 100%)'
               : 'linear-gradient(135deg, #0066FF 0%, #3B9AE1 50%, #5DADE2 100%)',
             animation: 'modalPopIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
             transformOrigin: 'center'
-          }}>
+          }}
+        >
           
-          {/* Header - Minimalist with close button */}
-          <div className="px-6 py-5 flex items-center justify-between relative z-10">
-            <div className="flex items-center gap-3">
+          {/* Header - compact on mobile */}
+          <div className="flex-shrink-0 px-4 py-3 sm:px-6 sm:py-5 flex items-center justify-between relative z-10">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
               <div
-                className="w-4 h-4 rounded-full shadow-lg"
+                className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full shadow-lg flex-shrink-0"
                 style={{ backgroundColor: getSubjectColor(subject) }}
               />
-              <span className="text-white/90 text-sm font-medium uppercase tracking-wide">{subject}</span>
+              <span className="text-white/90 text-xs sm:text-sm font-medium uppercase tracking-wide truncate">{subject}</span>
             </div>
             <button
               onClick={onClose}
-              className="btn btn-sm btn-circle bg-white/20 hover:bg-white/30 border-0 text-white backdrop-blur-sm"
+              className="btn btn-sm btn-circle bg-white/20 hover:bg-white/30 border-0 text-white backdrop-blur-sm flex-shrink-0"
               aria-label="Close"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
 
-          {/* Content - Centered timer design */}
-          <div className="flex-1 overflow-y-auto px-6 pb-6">
-            <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-8">
+          {/* Content - compact on mobile so it fits without scroll */}
+          <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-4 pb-2 sm:px-6 sm:pb-6">
+            <div className="flex flex-col items-center justify-center min-h-0 space-y-3 sm:space-y-8 py-2 sm:py-0">
               
-              {/* Task Display - Top */}
-              <div className="text-center space-y-2 w-full max-w-md">
-                <div className="flex items-center justify-center gap-2 text-white/90 text-lg mb-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              {/* Task Display - compact on mobile */}
+              <div className="text-center space-y-0.5 sm:space-y-2 w-full max-w-md">
+                <div className="flex items-center justify-center gap-1.5 sm:gap-2 text-white/90 text-sm sm:text-lg mb-1 sm:mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
-                  <span className="font-medium">{mainTopicName}</span>
+                  <span className="font-medium truncate">{mainTopicName}</span>
                 </div>
                 
-                {/* Hierarchy context - subtle */}
                 {hierarchyContext && (
-                  <p className="text-white/60 text-xs">{hierarchyContext}</p>
+                  <p className="text-white/60 text-[10px] sm:text-xs line-clamp-2">{hierarchyContext}</p>
                 )}
                 
-                {/* Session Indicator */}
                 {rationaleData.sessionNumber && rationaleData.sessionTotal && (
-                  <div className="text-white/70 text-sm font-medium">
+                  <div className="text-white/70 text-xs sm:text-sm font-medium">
                     {rationaleData.sessionNumber}/{rationaleData.sessionTotal}
                   </div>
                 )}
               </div>
 
-              {/* Phase Selection Buttons */}
-              <div className="flex gap-3 justify-center">
+              {/* Phase Selection Buttons - smaller on mobile */}
+              <div className="flex gap-2 sm:gap-3 justify-center">
                 <button
                   onClick={() => {
                     if (onTimerStateChange && timerState) {
@@ -410,7 +409,7 @@ export default function BlockDetailModal({
                       });
                     }
                   }}
-                  className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all ${
+                  className={`px-4 py-2 sm:px-6 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium transition-all ${
                     isStudyPhase
                       ? 'bg-white/30 text-white backdrop-blur-sm shadow-lg'
                       : 'bg-white/10 text-white/70 hover:bg-white/20'
@@ -427,7 +426,7 @@ export default function BlockDetailModal({
                       });
                     }
                   }}
-                  className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all ${
+                  className={`px-4 py-2 sm:px-6 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium transition-all ${
                     !isStudyPhase
                       ? 'bg-white/30 text-white backdrop-blur-sm shadow-lg'
                       : 'bg-white/10 text-white/70 hover:bg-white/20'
@@ -437,30 +436,30 @@ export default function BlockDetailModal({
                 </button>
               </div>
 
-              {/* Timer Display - Hero Element */}
-              <div className="text-center space-y-6">
-                <div className={`text-8xl md:text-9xl font-bold tracking-tight text-white drop-shadow-2xl`} style={{ 
+              {/* Timer Display - smaller on mobile */}
+              <div className="text-center space-y-2 sm:space-y-6">
+                <div className="text-6xl sm:text-8xl md:text-9xl font-bold tracking-tight text-white drop-shadow-2xl" style={{ 
                   fontFamily: 'system-ui, -apple-system, sans-serif', 
                   letterSpacing: '-0.02em',
                   textShadow: '0 10px 40px rgba(0,0,0,0.3)'
                 }}>
                   {displayTime}
                 </div>
-                <p className="text-white/80 text-sm max-w-md">
+                <p className="text-white/80 text-xs sm:text-sm max-w-md">
                   {isStudyPhase 
                     ? 'Focus on your revision for 25 minutes' 
                     : 'Take a 5-minute break to recharge'}
                 </p>
               </div>
 
-              {/* Timer Controls - Centered */}
-              <div className="flex gap-3 justify-center flex-wrap">
+              {/* Timer Controls - smaller on mobile */}
+              <div className="flex gap-2 sm:gap-3 justify-center flex-wrap">
                 {!timerState || (!isRunning && !isPaused) ? (
                   <button
                     onClick={handleStartTimer}
-                    className="btn gap-2 rounded-full px-10 py-3 text-white bg-white/25 hover:bg-white/35 backdrop-blur-md border-white/30 shadow-xl transition-all hover:scale-105"
+                    className="btn gap-1.5 sm:gap-2 rounded-full px-6 py-2.5 sm:px-10 sm:py-3 text-sm sm:text-base text-white bg-white/25 hover:bg-white/35 backdrop-blur-md border-white/30 shadow-xl transition-all hover:scale-105"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
@@ -471,9 +470,9 @@ export default function BlockDetailModal({
                     {isRunning ? (
                       <button
                         onClick={handlePauseTimer}
-                        className="btn gap-2 rounded-full px-10 py-3 text-white bg-white/25 hover:bg-white/35 backdrop-blur-md border-white/30 shadow-xl transition-all hover:scale-105"
+                        className="btn gap-1.5 sm:gap-2 rounded-full px-6 py-2.5 sm:px-10 sm:py-3 text-sm sm:text-base text-white bg-white/25 hover:bg-white/35 backdrop-blur-md border-white/30 shadow-xl transition-all hover:scale-105"
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         Pause
@@ -481,9 +480,9 @@ export default function BlockDetailModal({
                     ) : (
                       <button
                         onClick={handleResumeTimer}
-                        className="btn gap-2 rounded-full px-10 py-3 text-white bg-white/25 hover:bg-white/35 backdrop-blur-md border-white/30 shadow-xl transition-all hover:scale-105"
+                        className="btn gap-1.5 sm:gap-2 rounded-full px-6 py-2.5 sm:px-10 sm:py-3 text-sm sm:text-base text-white bg-white/25 hover:bg-white/35 backdrop-blur-md border-white/30 shadow-xl transition-all hover:scale-105"
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
@@ -492,9 +491,9 @@ export default function BlockDetailModal({
                     )}
                     <button
                       onClick={handleResetTimer}
-                      className="btn gap-2 rounded-full px-6 py-3 text-white/90 bg-white/10 hover:bg-white/20 backdrop-blur-md border-white/20 transition-all hover:scale-105"
+                      className="btn gap-1.5 sm:gap-2 rounded-full px-4 py-2.5 sm:px-6 sm:py-3 text-sm sm:text-base text-white/90 bg-white/10 hover:bg-white/20 backdrop-blur-md border-white/20 transition-all hover:scale-105"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                       </svg>
                     </button>
@@ -502,12 +501,10 @@ export default function BlockDetailModal({
                 )}
               </div>
 
-              {/* Additional Info - Collapsible */}
-              <div className="w-full max-w-md space-y-4 pt-4 border-t border-white/20">
-                
-                {/* Session Info */}
+              {/* Additional Info - compact on mobile, hidden by default in details */}
+              <div className="w-full max-w-md space-y-2 sm:space-y-4 pt-2 sm:pt-4 border-t border-white/20">
                 {(isLowConfidenceTopic || rationaleData.rating !== null) && (
-                  <div className="text-center text-white/70 text-xs">
+                  <div className="text-center text-white/70 text-[10px] sm:text-xs">
                     {isLowConfidenceTopic && !isFinalSession && rationaleData.sessionNumber && rationaleData.sessionTotal ? (
                       <span>Session {rationaleData.sessionNumber} of {rationaleData.sessionTotal} • Re-rate on final session</span>
                     ) : !isLowConfidenceTopic && rationaleData.rating !== null ? (
@@ -521,12 +518,11 @@ export default function BlockDetailModal({
                   </div>
                 )}
 
-                {/* Block Details - Expandable */}
                 <details className="text-white/80">
-                  <summary className="cursor-pointer text-sm font-medium text-center hover:text-white transition-colors">
+                  <summary className="cursor-pointer text-xs sm:text-sm font-medium text-center hover:text-white transition-colors">
                     View Details
                   </summary>
-                  <div className="mt-4 space-y-3 text-xs bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                  <div className="mt-2 sm:mt-4 space-y-2 sm:space-y-3 text-xs bg-white/10 backdrop-blur-sm rounded-xl p-3 sm:p-4">
                     <div className="flex items-center justify-between">
                       <span className="text-white/70">Date & Time</span>
                       <span>{new Date(block.scheduled_at).toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' })} • {formattedTime}</span>
@@ -536,74 +532,74 @@ export default function BlockDetailModal({
                       <span>{block.duration_minutes} minutes</span>
                     </div>
                     {rationaleData.explanation && (
-                      <div className="pt-3 border-t border-white/20">
+                      <div className="pt-2 sm:pt-3 border-t border-white/20">
                         <p className="text-white/90 leading-relaxed">{rationaleData.explanation}</p>
                       </div>
                     )}
                   </div>
                 </details>
-
-                {/* Action Buttons */}
-                <div className="flex gap-3 pt-2">
-                  {/* RE-RATE TOPIC BUTTON */}
-                  {isLowConfidenceTopic && isFinalSession && (
-                    <button
-                      onClick={() => {
-                        if (isFutureWeek) return;
-                        setShowReRating(true);
-                      }}
-                      disabled={isFutureWeek}
-                      className="btn flex-1 gap-2 rounded-full px-4 py-2.5 text-white bg-white/20 hover:bg-white/30 backdrop-blur-md border-white/30 text-xs sm:text-sm whitespace-nowrap"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                      </svg>
-                      Re-rate
-                    </button>
-                  )}
-                  
-                  <button
-                    onClick={() => {
-                      if (isFutureWeek) return;
-                      if (!confirmMissed) {
-                        setConfirmMissed(true);
-                      } else {
-                        onBlockAction(blockKey, 'missed');
-                        onClose();
-                      }
-                    }}
-                    className={`btn flex-1 gap-2 rounded-full px-4 py-2.5 text-sm ${
-                      confirmMissed 
-                        ? 'bg-red-500/80 hover:bg-red-500 text-white' 
-                        : 'bg-white/10 hover:bg-white/20 text-white/90 backdrop-blur-md border-white/20'
-                    }`}
-                    disabled={block.status === 'missed' || block.status === 'done' || isFutureWeek}
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                    {confirmMissed ? 'Confirm?' : 'Missed'}
-                  </button>
-                  <button
-                    onClick={handleMarkDone}
-                    disabled={isFutureWeek}
-                    className={`btn flex-1 gap-2 rounded-full px-4 py-2.5 text-sm ${
-                      block.status === 'done' 
-                        ? 'bg-white/20 hover:bg-white/30 text-white backdrop-blur-md border-white/30' 
-                        : 'bg-white/30 hover:bg-white/40 text-white backdrop-blur-md border-white/40 shadow-lg'
-                    }`}
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      {block.status === 'done' ? (
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                      ) : (
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      )}
-                    </svg>
-                    {block.status === 'done' ? 'Undo' : 'Done'}
-                  </button>
-                </div>
               </div>
+            </div>
+          </div>
+
+          {/* Fixed footer - Missed/Done always visible on screen, no scrolling needed */}
+          <div className="flex-shrink-0 px-4 sm:px-6 py-3 pt-2 border-t border-white/20 bg-gradient-to-t from-black/10 to-transparent" style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}>
+            <div className="flex gap-2 sm:gap-3">
+              {isLowConfidenceTopic && isFinalSession && (
+                <button
+                  onClick={() => {
+                    if (isFutureWeek) return;
+                    setShowReRating(true);
+                  }}
+                  disabled={isFutureWeek}
+                  className="btn flex-1 gap-1.5 sm:gap-2 rounded-full px-3 py-2 sm:px-4 sm:py-2.5 text-white bg-white/20 hover:bg-white/30 backdrop-blur-md border-white/30 text-xs sm:text-sm whitespace-nowrap"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 sm:h-4 sm:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                  </svg>
+                  Re-rate
+                </button>
+              )}
+              <button
+                onClick={() => {
+                  if (isFutureWeek) return;
+                  if (!confirmMissed) {
+                    setConfirmMissed(true);
+                  } else {
+                    onBlockAction(blockKey, 'missed');
+                    onClose();
+                  }
+                }}
+                className={`btn flex-1 gap-1.5 sm:gap-2 rounded-full px-3 py-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm ${
+                  confirmMissed 
+                    ? 'bg-red-500/80 hover:bg-red-500 text-white' 
+                    : 'bg-white/10 hover:bg-white/20 text-white/90 backdrop-blur-md border-white/20'
+                }`}
+                disabled={block.status === 'missed' || block.status === 'done' || isFutureWeek}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 sm:h-4 sm:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                {confirmMissed ? 'Confirm?' : 'Missed'}
+              </button>
+              <button
+                onClick={handleMarkDone}
+                disabled={isFutureWeek}
+                className={`btn flex-1 gap-1.5 sm:gap-2 rounded-full px-3 py-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm ${
+                  block.status === 'done' 
+                    ? 'bg-white/20 hover:bg-white/30 text-white backdrop-blur-md border-white/30' 
+                    : 'bg-white/30 hover:bg-white/40 text-white backdrop-blur-md border-white/40 shadow-lg'
+                }`}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 sm:h-4 sm:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  {block.status === 'done' ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  )}
+                </svg>
+                {block.status === 'done' ? 'Undo' : 'Done'}
+              </button>
             </div>
           </div>
         </div>

@@ -6,6 +6,7 @@ import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import SupportModal from "@/components/SupportModal";
 import FeedbackModal from "@/components/FeedbackModal";
+import SidebarDevToolsLink from "@/components/SidebarDevToolsLink";
 import toast from "react-hot-toast";
 import config from "@/config";
 
@@ -522,6 +523,7 @@ function RerateTopicsPageContent() {
                   </div>
                 </Link>
               </li>
+              <SidebarDevToolsLink pathname={pathname} onNavigate={() => setSidebarOpen(false)} />
               <li>
                 <div>
                   <button
@@ -688,7 +690,7 @@ function RerateTopicsPageContent() {
 
                     {/* Subject Content */}
                     {expandedSections[subject] && (
-                      <div className="px-8 py-6 space-y-4">
+                      <div className="px-6 sm:px-8 py-6 sm:py-8 space-y-6">
                         {Object.entries(subjectData)
                           .sort(([a], [b]) => {
                             const getNumericPrefix = (topic) => {
@@ -759,8 +761,8 @@ function RerateTopicsPageContent() {
 
                               {/* Main Topic Content */}
                               {expandedSections[`${subject}-${mainTopic}`] && (
-                                <div className="p-6">
-                                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <div className="p-6 sm:p-8">
+                                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-7 gap-x-6 sm:gap-8">
                                     {mainTopicItems.map(item => {
                                       const topic = item.topics;
                                       const spec = topic.specs;
@@ -799,8 +801,8 @@ function RerateTopicsPageContent() {
                                               )}
                                             </div>
                                             
-                                            {/* Content area - Standardized spacing */}
-                                            <div className="flex flex-col">
+                                            {/* Content area - Standardized spacing, constrained within sub-topic card */}
+                                            <div className="flex flex-col min-w-0">
                                               {ratings[topic.id] === -2 ? (
                                                 <div className="text-center py-3">
                                                   <span className="badge badge-error badge-outline mb-2">Not Doing (Optional)</span>
@@ -813,8 +815,8 @@ function RerateTopicsPageContent() {
                                                 </div>
                                               ) : (
                                                 <>
-                                                  {/* Rating Buttons - Consistent spacing */}
-                                                  <div className="flex justify-center gap-3 mb-3 mt-1">
+                                                  {/* Rating Buttons - Grid layout, same block dimensions within each sub-topic */}
+                                                  <div className="grid grid-cols-5 gap-2 sm:gap-2 mb-3 mt-1 w-full min-w-0">
                                                     {[1, 2, 3, 4, 5].map(rating => {
                                                       const isSelected = ratings[topic.id] === rating;
                                                       const getRatingColor = (r) => {
@@ -827,11 +829,11 @@ function RerateTopicsPageContent() {
                                                         <button
                                                           key={rating}
                                                           type="button"
-                                                          onClick={() => handleRatingChange(topic.id, rating)}
-                                                          className={`w-12 h-12 rounded-lg font-bold text-base transition-all ${
+                                                          onClick={() => handleRatingChange(topic.id, isSelected ? undefined : rating)}
+                                                          className={`aspect-square w-full min-w-[44px] min-h-[44px] sm:min-w-[40px] sm:min-h-[40px] rounded-lg sm:rounded-md font-bold text-lg sm:text-base flex items-center justify-center transition-colors ${
                                                             isSelected
-                                                              ? 'scale-110 shadow-lg'
-                                                              : 'hover:scale-105 hover:shadow-md'
+                                                              ? 'scale-110 sm:scale-100 shadow-lg'
+                                                              : 'hover:shadow-md'
                                                           }`}
                                                           style={{
                                                             backgroundColor: isSelected ? getRatingColor(rating) : 'transparent',

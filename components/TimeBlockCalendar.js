@@ -41,48 +41,60 @@ export default function TimeBlockCalendar({
   const isDraggingRef = useRef(false); // Track dragging state with ref for event handlers
   const savedScrollYRef = useRef(0); // Store scroll position
 
-  // Generate time slots based on time preferences
-  // If timePreferences is provided, only show times within the study window
-  // Otherwise, show all times from 4am to 12am
+  // Generate time slots based on time preferences (and existing blocked times so they're visible)
+  // If timePreferences is provided, show study window; extend range to include any blocked times for this week
   const generateTimeSlots = () => {
+    const parseTime = (timeStr) => {
+      const [hour, minute] = (timeStr || '').split(':').map(Number);
+      return (hour || 0) * 60 + (minute || 0);
+    };
+
     if (!timePreferences) {
       // Default: 4am to 12am (40 blocks)
       const slots = [];
-  for (let hour = 4; hour < 24; hour++) {
+      for (let hour = 4; hour < 24; hour++) {
         slots.push(`${hour.toString().padStart(2, '0')}:00`);
-    if (hour < 23) {
+        if (hour < 23) {
           slots.push(`${hour.toString().padStart(2, '0')}:30`);
         }
       }
       return slots;
     }
 
-    // Generate slots based on time preferences
-    // We need to find the earliest and latest times across all days
+    // Start from time preferences
     const weekdayEarliest = timePreferences.weekdayEarliest || '4:30';
     const weekdayLatest = timePreferences.weekdayLatest || '23:30';
     const weekendEarliest = timePreferences.weekendEarliest || '8:00';
     const weekendLatest = timePreferences.weekendLatest || '23:30';
     const useSameWeekendTimes = timePreferences.useSameWeekendTimes !== false;
 
-    // Find the overall earliest and latest times
-    const parseTime = (timeStr) => {
-      const [hour, minute] = timeStr.split(':').map(Number);
-      return hour * 60 + minute;
-    };
-
     const times = [
       parseTime(weekdayEarliest),
       parseTime(weekdayLatest),
     ];
-
     if (!useSameWeekendTimes) {
       times.push(parseTime(weekendEarliest));
       times.push(parseTime(weekendLatest));
     }
 
-    const earliestMinutes = Math.min(...times);
-    const latestMinutes = Math.max(...times);
+    let earliestMinutes = Math.min(...times);
+    let latestMinutes = Math.max(...times);
+
+    // Extend range to include any existing blocked times so they're visible and editable
+    if (Array.isArray(blockedTimes) && blockedTimes.length > 0) {
+      blockedTimes.forEach((bt) => {
+        if (!bt || !bt.start || !bt.end) return;
+        const startDate = new Date(bt.start);
+        const endDate = new Date(bt.end);
+        if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) return;
+        const startMin = startDate.getHours() * 60 + startDate.getMinutes();
+        const endMin = endDate.getHours() * 60 + endDate.getMinutes();
+        const slotStart = Math.floor(startMin / 30) * 30;
+        const slotEnd = Math.ceil(endMin / 30) * 30;
+        earliestMinutes = Math.min(earliestMinutes, slotStart);
+        latestMinutes = Math.max(latestMinutes, slotEnd);
+      });
+    }
 
     // Generate slots from earliest to latest
     const slots = [];

@@ -11,13 +11,29 @@ import BlockDetailModal from "@/components/BlockDetailModal";
 import SupportModal from "@/components/SupportModal";
 import FeedbackModal from "@/components/FeedbackModal";
 import ConfirmAvailabilityModal from "@/components/ConfirmAvailabilityBanner";
+import SidebarDevToolsLink from "@/components/SidebarDevToolsLink";
 import { getEffectiveDate, hasSlotsToday } from "@/libs/dev-helpers";
+
+// Mobile vertical only: 767px matches Tailwind md breakpoint (768px - 1)
+function useMediaQuery(query) {
+  const [matches, setMatches] = useState(false);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const m = window.matchMedia(query);
+    setMatches(m.matches);
+    const listener = (e) => setMatches(e.matches);
+    m.addEventListener("change", listener);
+    return () => m.removeEventListener("change", listener);
+  }, [query]);
+  return matches;
+}
 
 function PlanPageContent() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const isMobileVertical = useMediaQuery("(max-width: 767px)");
   const [activeTab, setActiveTab] = useState('today'); // Default to today, will be updated after blocks load
   
   // Initialize blocks and loading state from pre-loaded data if available
@@ -115,6 +131,8 @@ function PlanPageContent() {
     }
     return true; // Show loading if no pre-loaded data
   });
+
+  const [checkingOnboardingStatus, setCheckingOnboardingStatus] = useState(false);
   
   // Initialize blocked times from pre-loaded data if available
   const [blockedTimeRanges, setBlockedTimeRanges] = useState(() => {
@@ -158,6 +176,7 @@ function PlanPageContent() {
   const [timePreferences, setTimePreferences] = useState(null); // Load from database
   const [showAvailabilityModal, setShowAvailabilityModal] = useState(false);
   const [nextWeekStart, setNextWeekStart] = useState(null);
+  const [isGeneratingCurrentWeek, setIsGeneratingCurrentWeek] = useState(false);
   const hasSetInitialView = useRef(false); // Track if we've set the initial view based on blocks
 
   // Deduplicate blocks by topic_id + scheduled_at to prevent duplicate display
@@ -471,6 +490,26 @@ function PlanPageContent() {
             hasBlocks: !!getData.blocks && getData.blocks.length > 0,
             responseStatus: getResponse.status
           });
+
+          // Always load time preferences for the viewed week (per-week prefs so week view shows correct study window e.g. 10:30)
+          try {
+            const timePrefResponse = await fetch(`/api/availability/save?weekStartDate=${weekStartStr}`);
+            if (timePrefResponse.ok) {
+              const timePrefData = await timePrefResponse.json();
+              if (timePrefData.success && timePrefData.timePreferences) {
+                const prefs = timePrefData.timePreferences;
+                setTimePreferences({
+                  weekdayEarliest: prefs.weekdayEarliest || null,
+                  weekdayLatest: prefs.weekdayLatest || null,
+                  weekendEarliest: prefs.weekendEarliest || null,
+                  weekendLatest: prefs.weekendLatest || null,
+                  useSameWeekendTimes: prefs.useSameWeekendTimes !== false
+                });
+              }
+            }
+          } catch (err) {
+            console.error('Failed to load time preferences for week:', err);
+          }
           
           // Log Sunday blocks specifically for debugging
           if (getData.blocks && getData.blocks.length > 0) {
@@ -532,26 +571,6 @@ function PlanPageContent() {
             console.log('✅ Formatted existing blocks:', deduplicatedBlocks.length);
             setBlocks(deduplicatedBlocks);
             if (deduplicatedBlocks.length > 0) {
-              // Load time preferences from database
-              try {
-                const timePrefResponse = await fetch('/api/user/time-preferences');
-                if (timePrefResponse.ok) {
-                  const timePrefData = await timePrefResponse.json();
-                  if (timePrefData.success && timePrefData.timePreferences) {
-                    const prefs = timePrefData.timePreferences;
-                    setTimePreferences({
-                      weekdayEarliest: prefs.weekdayEarliest !== 'NOT SET' ? prefs.weekdayEarliest : null,
-                      weekdayLatest: prefs.weekdayLatest !== 'NOT SET' ? prefs.weekdayLatest : null,
-                      weekendEarliest: prefs.weekendEarliest !== 'NOT SET' ? prefs.weekendEarliest : null,
-                      weekendLatest: prefs.weekendLatest !== 'NOT SET' ? prefs.weekendLatest : null,
-                      useSameWeekendTimes: prefs.useSameWeekendTimes
-                    });
-                  }
-                }
-              } catch (error) {
-                console.error('Failed to load time preferences:', error);
-              }
-
               // Load blocked times - use from GET response if available (already aligned to target week)
               // Otherwise fall back to loading from availability API
               if (getData.blockedTimes && Array.isArray(getData.blockedTimes) && getData.blockedTimes.length > 0) {
@@ -568,9 +587,14 @@ function PlanPageContent() {
                   });
                 }
               } else {
-                // Fall back to loading from availability API (for current week)
+                // Fall back to loading from availability API for the viewed week only
                 try {
-                  const blockedResponse = await fetch('/api/availability/save');
+                  const weekEnd = new Date(weekStart);
+                  weekEnd.setDate(weekStart.getDate() + 7);
+                  const weekEndStr = weekEnd.toISOString().split('T')[0];
+                  const blockedResponse = await fetch(
+                    `/api/availability/save?startDate=${weekStartStr}&endDate=${weekEndStr}`
+                  );
                   if (blockedResponse.ok) {
                     const blockedData = await blockedResponse.json();
                     const blockedTimes = (blockedData.blockedTimes || []).map(bt => ({
@@ -579,7 +603,8 @@ function PlanPageContent() {
                     }));
                     setBlockedTimeRanges(blockedTimes);
                     if (process.env.NODE_ENV === 'development') {
-                      console.log('🚫 Loaded blocked times from availability API:', {
+                      console.log('🚫 Loaded blocked times from availability API (for week):', {
+                        weekStart: weekStartStr,
                         count: blockedTimes.length,
                         sample: blockedTimes.slice(0, 3)
                       });
@@ -683,7 +708,19 @@ function PlanPageContent() {
       }
       
       console.log('📝 No existing blocks found, generating new plan...');
-      
+
+      let subjectsFromApi = [];
+      if (session?.user) {
+        try {
+          const udRes = await fetch('/api/topics/get-user-data', { credentials: 'include' });
+          if (udRes.ok) {
+            const ud = await udRes.json();
+            const raw = ud.selectedSubjects || [];
+            subjectsFromApi = Array.isArray(raw) ? raw : Object.keys(raw || {}).filter(k => raw[k]);
+          }
+        } catch (_) {}
+      }
+
       // Load data from localStorage (from onboarding)
       const selectedSubjects = JSON.parse(localStorage.getItem('selectedSubjects') || '{}');
       const topicRatings = JSON.parse(localStorage.getItem('topicRatings') || '{}');
@@ -699,8 +736,8 @@ function PlanPageContent() {
         examDates: Object.keys(examDates).length
       });
 
-      // Convert selectedSubjects to array format expected by scheduler
-      const subjects = Object.keys(selectedSubjects).filter(subject => selectedSubjects[subject]);
+      const subjectsLocal = Object.keys(selectedSubjects).filter(subject => selectedSubjects[subject]);
+      const subjects = subjectsFromApi.length > 0 ? subjectsFromApi : subjectsLocal;
 
       console.log('📚 Subjects found:', subjects);
 
@@ -831,9 +868,14 @@ function PlanPageContent() {
           });
         }
       } else {
-        // Fall back to loading from availability API (for current week)
+        // Fall back to loading from availability API for the viewed week only
         try {
-          const blockedResponse = await fetch('/api/availability/save');
+          const weekEnd = new Date(weekStart);
+          weekEnd.setDate(weekStart.getDate() + 7);
+          const weekEndStr = weekEnd.toISOString().split('T')[0];
+          const blockedResponse = await fetch(
+            `/api/availability/save?startDate=${weekStartStr}&endDate=${weekEndStr}`
+          );
           if (blockedResponse.ok) {
             const blockedData = await blockedResponse.json();
             const blockedTimes = (blockedData.blockedTimes || []).map(bt => ({
@@ -842,7 +884,8 @@ function PlanPageContent() {
             }));
             setBlockedTimeRanges(blockedTimes);
             if (process.env.NODE_ENV === 'development') {
-              console.log('🚫 Loaded blocked times from availability API:', {
+              console.log('🚫 Loaded blocked times from availability API (for week):', {
+                weekStart: weekStartStr,
                 count: blockedTimes.length,
                 sample: blockedTimes.slice(0, 3)
               });
@@ -906,21 +949,23 @@ function PlanPageContent() {
     }
   }, [loadBlocksForWeek]);
 
-  // Load time preferences on component mount
+  // Load time preferences for current week on mount (per-week so study window matches availability)
   useEffect(() => {
     const loadTimePreferences = async () => {
       try {
-        const timePrefResponse = await fetch('/api/user/time-preferences');
+        const currentMonday = getCurrentWeekStart();
+        const weekStartStr = currentMonday.toISOString().split('T')[0];
+        const timePrefResponse = await fetch(`/api/availability/save?weekStartDate=${weekStartStr}`);
         if (timePrefResponse.ok) {
           const timePrefData = await timePrefResponse.json();
           if (timePrefData.success && timePrefData.timePreferences) {
             const prefs = timePrefData.timePreferences;
             setTimePreferences({
-              weekdayEarliest: prefs.weekdayEarliest !== 'NOT SET' ? prefs.weekdayEarliest : null,
-              weekdayLatest: prefs.weekdayLatest !== 'NOT SET' ? prefs.weekdayLatest : null,
-              weekendEarliest: prefs.weekendEarliest !== 'NOT SET' ? prefs.weekendEarliest : null,
-              weekendLatest: prefs.weekendLatest !== 'NOT SET' ? prefs.weekendLatest : null,
-              useSameWeekendTimes: prefs.useSameWeekendTimes
+              weekdayEarliest: prefs.weekdayEarliest || null,
+              weekdayLatest: prefs.weekdayLatest || null,
+              weekendEarliest: prefs.weekendEarliest || null,
+              weekendLatest: prefs.weekendLatest || null,
+              useSameWeekendTimes: prefs.useSameWeekendTimes !== false
             });
           }
         }
@@ -968,44 +1013,189 @@ function PlanPageContent() {
     setWeekStartDate(newWeekStart);
   }, [weekStartDate, canGoToNextWeek]);
 
+  // Generate plan for current week when empty (self-serve when cron didn't run or failed)
+  const handleGenerateCurrentWeek = useCallback(async () => {
+    const currentWeekStart = getCurrentWeekStart();
+    const currentWeekStr = currentWeekStart.toISOString().split('T')[0];
+    const subjectMapping = {
+      maths: 'Mathematics', psychology: 'Psychology', biology: 'Biology', chemistry: 'Chemistry',
+      business: 'Business', sociology: 'Sociology', physics: 'Physics', economics: 'Economics',
+      history: 'History', geography: 'Geography', computerscience: 'Computer Science'
+    };
+    setIsGeneratingCurrentWeek(true);
+    try {
+      const [userDataRes, ratingsRes] = await Promise.all([
+        fetch('/api/topics/get-user-data'),
+        fetch('/api/topics/get-ratings')
+      ]);
+      if (!userDataRes.ok || !ratingsRes.ok) {
+        toast.error('Could not load your data. Please try again.');
+        return;
+      }
+      const userData = await userDataRes.json();
+      const ratingsData = await ratingsRes.json();
+      const rawSubjects = userData.selectedSubjects || [];
+      const selectedSubjects = Array.isArray(rawSubjects) ? rawSubjects : Object.keys(rawSubjects || {});
+      const subjectBoards = userData.subjectBoards || {};
+      if (selectedSubjects.length === 0) {
+        toast.error('No subjects selected. Please complete onboarding.');
+        return;
+      }
+      const subjects = selectedSubjects
+        .filter(subj => subjectBoards[subj])
+        .map(subj => {
+          const dbSubject = subjectMapping[subj] || subj;
+          const board = subjectBoards[subj];
+          return `${dbSubject} ${(board || 'AQA').toUpperCase()}`;
+        });
+      if (subjects.length === 0) {
+        toast.error('No subjects with boards selected. Please check settings.');
+        return;
+      }
+      const ratingsArray = ratingsData.ratings || [];
+      const ratings = {};
+      ratingsArray.forEach(r => { ratings[r.topic_id] = r.rating; });
+      const effectiveNow = getEffectiveDate();
+      const postRes = await fetch('/api/plan/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          subjects,
+          ratings,
+          topicStatus: {},
+          availability: {},
+          targetWeek: currentWeekStr,
+          startToday: true,
+          clientNow: effectiveNow.toISOString(),
+          clientMinutesFromMidnight: effectiveNow.getHours() * 60 + effectiveNow.getMinutes() + effectiveNow.getSeconds() / 60
+        })
+      });
+      const postData = await postRes.json();
+      if (!postRes.ok) {
+        console.error('[Plan generate failed]', postRes.status, postData);
+        const msg = postData.errorCode
+          ? `${postData.error || 'Failed to generate plan'} (${postData.errorCode})`
+          : (postData.error || 'Failed to generate plan');
+        toast.error(msg);
+        return;
+      }
+      if (!postData.blocks || postData.blocks.length === 0) {
+        toast.error(postData.error || 'No blocks were generated. Check your availability and topics.');
+        return;
+      }
+      const formattedBlocks = postData.blocks.map(block => {
+        let scheduled_at = block.scheduled_at || (block.week_start && block.start_time
+          ? new Date(`${block.week_start}T${block.start_time}:00`).toISOString()
+          : null);
+        if (!scheduled_at) return null;
+        return {
+          id: block.id,
+          scheduled_at,
+          duration_minutes: block.duration_minutes || 30,
+          status: block.status || 'scheduled',
+          ai_rationale: block.ai_rationale || null,
+          hierarchy: block.hierarchy || null,
+          topics: block.topics || { name: block.topic_name || 'Topic', specs: { subject: block.subject } },
+          topic_id: block.topic_id,
+          day: block.day,
+          priority_score: block.priority_score
+        };
+      }).filter(B => B);
+      setBlocks(deduplicateBlocks(formattedBlocks));
+      if (postData.blockedTimes?.length) {
+        setBlockedTimeRanges(postData.blockedTimes.map(bt => ({
+          start_time: bt.start || bt.start_datetime,
+          end_time: bt.end || bt.end_datetime
+        })));
+      }
+      toast.success('Your plan for this week has been generated.');
+    } catch (err) {
+      console.error('Generate current week error:', err);
+      toast.error(err.message || 'Something went wrong. Please try again.');
+    } finally {
+      setIsGeneratingCurrentWeek(false);
+    }
+  }, [getCurrentWeekStart, deduplicateBlocks]);
+
   useEffect(() => {
-    // Check if we're in dev mode
     const devMode = typeof window !== 'undefined' && (
       window.location.hostname === 'localhost' ||
       window.location.hostname === '127.0.0.1' ||
       window.location.hostname.includes('localhost')
     );
-    
+
     if (!devMode && status === 'unauthenticated') {
       console.log('⚠️ Not authenticated, redirecting to sign in');
       router.push('/api/auth/signin');
       return;
     }
 
-    // Check if user just came from plan generation (freshGeneration flag in URL)
-    // This bypasses the onboarding check to prevent redirect while session is updating
     const freshGeneration = searchParams.get('freshGeneration') === 'true';
-
-    // Set a bypass flag when they land with freshGeneration so future visits don't redirect
-    // This prevents the "first revisit" redirect issue where session hasn't updated yet
     if (typeof window !== 'undefined' && freshGeneration) {
       sessionStorage.setItem('planRevisitBypass', '1');
     }
-    
-    // Check if they've visited the plan page with freshGeneration in this session
+
     const hasRevisitBypass = typeof window !== 'undefined' && sessionStorage.getItem('planRevisitBypass');
 
-    // Check if user has completed onboarding (skip in dev mode)
-    // Only redirect if they're authenticated, haven't completed onboarding, AND didn't just generate a plan
-    // AND they don't have the revisit bypass flag (prevents redirect on first revisit after generation)
-    if (!devMode && status === 'authenticated' && session?.user && !session?.user?.hasCompletedOnboarding && !freshGeneration && !hasRevisitBypass) {
-      console.log('⚠️ Onboarding not completed, redirecting to onboarding');
-      router.push('/onboarding/slide-19');
+    if (devMode || hasRevisitBypass || status !== 'authenticated' || !session?.user) {
       return;
     }
-    
-    // Note: loadBlocks is now called in the pre-loaded data check useEffect above
-    // Only call it here if we don't have pre-loaded data (which is handled above)
+    if (session.user.hasCompletedOnboarding) {
+      return;
+    }
+    if (freshGeneration) {
+      return;
+    }
+
+    setCheckingOnboardingStatus(true);
+    let cancelled = false;
+
+    function getResumePath(resumeSlide) {
+      const n = Number(resumeSlide);
+      if (Number.isNaN(n) || n < 1 || n > 23) return '/onboarding/slide-19';
+      if (n === 16.5) return '/onboarding/slide-16-5';
+      return `/onboarding/slide-${Math.floor(n)}`;
+    }
+
+    async function checkAndRedirect(retry = false) {
+      const res = await fetch('/api/topics/get-user-data', { credentials: 'include' });
+      if (cancelled) return;
+
+      if (res.status === 401) {
+        router.push('/api/auth/signin');
+        setCheckingOnboardingStatus(false);
+        return;
+      }
+
+      if (!res.ok) {
+        if (!retry) {
+          await new Promise(r => setTimeout(r, 1500));
+          if (cancelled) return;
+          return checkAndRedirect(true);
+        }
+        const hasAccess = session?.user?.hasAccess;
+        router.push(hasAccess ? '/onboarding/slide-19' : '/onboarding/slide-2');
+        setCheckingOnboardingStatus(false);
+        return;
+      }
+
+      const data = await res.json();
+      if (cancelled) return;
+      setCheckingOnboardingStatus(false);
+
+      if (data.hasCompletedOnboarding) {
+        sessionStorage.setItem('planRevisitBypass', '1');
+        return;
+      }
+      if (data.hasAccess) {
+        router.push(getResumePath(data.resumeSlide));
+        return;
+      }
+      router.push('/onboarding/slide-2');
+    }
+
+    checkAndRedirect();
+    return () => { cancelled = true; };
   }, [status, session, router, searchParams]);
 
   // Ensure weekStartDate is synced to current week on mount
@@ -1595,7 +1785,7 @@ function PlanPageContent() {
     return (state) => updateTimerState(blockKey, state);
   }, [activeBlock, deriveBlockKey, updateTimerState]);
 
-  if (status === 'loading' || isLoading) {
+  if (status === 'loading' || isLoading || checkingOnboardingStatus) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -1650,14 +1840,14 @@ function PlanPageContent() {
               {/* Header text removed */}
             </div>
             
-            <div className="flex items-center gap-0 sm:gap-2">
-              {/* Navigation Arrows - Always show */}
-              <div className="flex items-center gap-0 sm:gap-1 bg-base-100 rounded-lg p-0 sm:p-1">
-                {/* Previous Week Arrow */}
+            <div className="flex items-center gap-2 sm:gap-2">
+              {/* Week navigation - desktop only; on mobile it's in content above Today/Week buttons */}
+              {!isMobileVertical && (
+              <div className="flex items-center gap-1 sm:gap-1 bg-base-100 rounded-lg p-0 sm:p-1">
                 <button
                   onClick={navigateToPreviousWeek}
                   disabled={!canGoToPreviousWeek}
-                  className={`btn btn-ghost btn-circle btn-xs sm:btn-sm ${!canGoToPreviousWeek ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className={`btn btn-ghost btn-circle btn-xs sm:btn-sm ${!canGoToPreviousWeek ? "opacity-50 cursor-not-allowed" : ""}`}
                   aria-label="Previous week"
                   title={canGoToPreviousWeek ? "Go to previous week" : "Already at current week"}
                 >
@@ -1665,8 +1855,6 @@ function PlanPageContent() {
                     <path fillRule="evenodd" clipRule="evenodd" d="M16.0001 1.58576L5.58588 12L16.0001 22.4142L17.4143 21L8.41431 12L17.4143 2.99997L16.0001 1.58576Z" fill="currentColor"></path>
                   </svg>
                 </button>
-                
-                {/* Week Label */}
                 <div className="px-0 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm font-medium min-w-[50px] sm:min-w-[120px] text-center">
                   {(() => {
                     const label = getWeekLabel();
@@ -1682,12 +1870,10 @@ function PlanPageContent() {
                     return label;
                   })()}
                 </div>
-                
-                {/* Next Week Arrow */}
                 <button
                   onClick={navigateToNextWeek}
                   disabled={!canGoToNextWeek}
-                  className={`btn btn-ghost btn-circle btn-xs sm:btn-sm ${!canGoToNextWeek ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className={`btn btn-ghost btn-circle btn-xs sm:btn-sm ${!canGoToNextWeek ? "opacity-50 cursor-not-allowed" : ""}`}
                   aria-label="Next week"
                   title={canGoToNextWeek ? "Go to next week" : isViewingNextWeek ? "Already viewing next week" : "Next week's plan is available from Saturday"}
                 >
@@ -1701,32 +1887,35 @@ function PlanPageContent() {
                   </span>
                 )}
               </div>
+              )}
               
-              {/* Today/Week Tabs - Hide Today tab when viewing next week */}
-              <div className="flex flex-col sm:flex-row items-center gap-0.5 sm:gap-1 bg-base-100 rounded-lg p-0 sm:p-1">
-                {!isViewingNextWeek && !isViewingPreviousWeek && (
+              {/* Today/Week Tabs - hidden on mobile (shown in content below week nav) */}
+              {!isMobileVertical && (
+                <div className="flex flex-col sm:flex-row items-center gap-0.5 sm:gap-1 bg-base-100 rounded-lg p-0 sm:p-1">
+                  {!isViewingNextWeek && !isViewingPreviousWeek && (
+                    <button
+                      onClick={() => setActiveTab('today')}
+                      className={`h-7 sm:h-8 px-2 sm:px-3 rounded-md text-xs sm:text-sm font-medium transition-all flex items-center justify-center ${
+                        activeTab === 'today' 
+                          ? 'bg-[#0066FF] text-white shadow-[0_1px_2px_0_rgba(0,102,255,0.15)]' 
+                          : 'text-base-content hover:bg-base-200'
+                      }`}
+                    >
+                      Today
+                    </button>
+                  )}
                   <button
-                    onClick={() => setActiveTab('today')}
+                    onClick={() => setActiveTab('week')}
                     className={`h-7 sm:h-8 px-2 sm:px-3 rounded-md text-xs sm:text-sm font-medium transition-all flex items-center justify-center ${
-                      activeTab === 'today' 
-                        ? 'bg-[#0066FF] text-white shadow-[0_1px_2px_0_rgba(0,102,255,0.15)]' 
-                        : 'text-base-content hover:bg-base-200'
+                        activeTab === 'week' 
+                          ? 'bg-[#0066FF] text-white shadow-[0_1px_2px_0_rgba(0,102,255,0.15)]' 
+                          : 'text-base-content hover:bg-base-200'
                     }`}
                   >
-                    Today
+                    Week
                   </button>
-                )}
-                <button
-                  onClick={() => setActiveTab('week')}
-                  className={`h-7 sm:h-8 px-2 sm:px-3 rounded-md text-xs sm:text-sm font-medium transition-all flex items-center justify-center ${
-                      activeTab === 'week' 
-                        ? 'bg-[#0066FF] text-white shadow-[0_1px_2px_0_rgba(0,102,255,0.15)]' 
-                        : 'text-base-content hover:bg-base-200'
-                    }`}
-                >
-                  Week
-                </button>
-              </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -1829,6 +2018,7 @@ function PlanPageContent() {
                   </div>
                 </Link>
               </li>
+              <SidebarDevToolsLink pathname={pathname} onNavigate={() => setSidebarOpen(false)} />
               <li>
                 <div>
                   <button
@@ -1905,6 +2095,78 @@ function PlanPageContent() {
 
       {/* Content */}
       <div className="max-w-[95vw] mx-auto pl-0 pr-1 sm:px-4 py-8">
+        {/* On mobile: This week nav first, then Today/Week tabs, then view */}
+        {isMobileVertical && (
+          <>
+            {/* Spacer so controls start lower and don't overlap header */}
+            <div className="h-6 sm:h-8 flex-shrink-0" aria-hidden />
+            {/* This week nav - compact */}
+            <div className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl shadow-sm border border-base-300 bg-base-100 mb-3 w-full">
+              <button
+                onClick={navigateToPreviousWeek}
+                disabled={!canGoToPreviousWeek}
+                className={`btn btn-ghost btn-circle h-9 w-9 min-h-[36px] min-w-[36px] flex-shrink-0 ${!canGoToPreviousWeek ? "opacity-50 cursor-not-allowed" : ""}`}
+                aria-label="Previous week"
+                title={canGoToPreviousWeek ? "Go to previous week" : "Already at current week"}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20px" height="20px" viewBox="0 0 24 24" className="w-5 h-5">
+                  <path fillRule="evenodd" clipRule="evenodd" d="M16.0001 1.58576L5.58588 12L16.0001 22.4142L17.4143 21L8.41431 12L17.4143 2.99997L16.0001 1.58576Z" fill="currentColor"></path>
+                </svg>
+              </button>
+              <div className="font-semibold text-center px-2 py-0.5 text-sm min-w-[72px] flex-1" style={{ color: config.colors.brand.textMedium }}>
+                {(() => {
+                  const label = getWeekLabel();
+                  const words = label.split(' ');
+                  if (words.length === 2) {
+                    return (
+                      <div className="leading-tight">
+                        <span>{words[0]}</span>
+                        <span>{words[1]}</span>
+                      </div>
+                    );
+                  }
+                  return label;
+                })()}
+              </div>
+              <button
+                onClick={navigateToNextWeek}
+                disabled={!canGoToNextWeek}
+                className={`btn btn-ghost btn-circle h-9 w-9 min-h-[36px] min-w-[36px] flex-shrink-0 ${!canGoToNextWeek ? "opacity-50 cursor-not-allowed" : ""}`}
+                aria-label="Next week"
+                title={canGoToNextWeek ? "Go to next week" : isViewingNextWeek ? "Already viewing next week" : "Next week's plan is available from Saturday"}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20px" height="20px" viewBox="0 0 24 24" className="w-5 h-5">
+                  <path fillRule="evenodd" clipRule="evenodd" d="M7.99991 1.58576L18.4141 12L7.99991 22.4142L6.58569 21L15.5857 12L6.58569 2.99997L7.99991 1.58576Z" fill="currentColor"></path>
+                </svg>
+              </button>
+            </div>
+            {/* Today/Week tabs - compact */}
+            <div className="flex items-center gap-1.5 mb-4 p-1 bg-base-200 rounded-xl w-full">
+              {!isViewingNextWeek && !isViewingPreviousWeek && (
+                <button
+                  onClick={() => setActiveTab('today')}
+                  className={`flex-1 py-2.5 px-3 rounded-lg text-sm font-semibold transition-all ${
+                    activeTab === 'today'
+                      ? 'bg-[#0066FF] text-white shadow-sm'
+                      : 'text-base-content hover:bg-base-300'
+                  }`}
+                >
+                  Today
+                </button>
+              )}
+              <button
+                onClick={() => setActiveTab('week')}
+                className={`flex-1 py-2.5 px-3 rounded-lg text-sm font-semibold transition-all ${
+                  activeTab === 'week'
+                    ? 'bg-[#0066FF] text-white shadow-sm'
+                    : 'text-base-content hover:bg-base-300'
+                }`}
+              >
+                Week
+              </button>
+            </div>
+          </>
+        )}
         {activeTab === 'today' ? (
           <TodayView 
             blocks={getTodayBlocks()} 
@@ -1940,6 +2202,8 @@ function PlanPageContent() {
               return blockDate < earliest ? blockDate : earliest;
             }, new Date(blocks[0].scheduled_at)) : null}
             isViewingNextWeek={isViewingNextWeek}
+            onGenerateCurrentWeek={handleGenerateCurrentWeek}
+            isGeneratingCurrentWeek={isGeneratingCurrentWeek}
           />
         )}
       </div>
@@ -2284,6 +2548,240 @@ function TodayView({ blocks, nextDayBlocks = [], onSelectBlock, getSubjectColor,
   );
 }
 
+// Mobile vertical only: day picker + single day column (no week table)
+function WeekViewMobileDayView({
+  baseDate,
+  days,
+  allTimeLabels,
+  blocksBySlot,
+  blockedSlotMap,
+  isTimeSlotAvailable,
+  planStartDate,
+  onSelectBlock,
+  getSubjectColor,
+  getSubjectBgColor,
+  getSubjectBorderColor,
+  getSubjectIcon,
+  getStatusColor,
+  getStatusIcon,
+  getBlockKey,
+  cleanTopicName,
+  isViewingNextWeek,
+}) {
+  const todayStr = getEffectiveDate().toDateString();
+  const todayDayIndex = useMemo(() => {
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(baseDate);
+      d.setDate(baseDate.getDate() + i);
+      if (d.toDateString() === todayStr) return i;
+    }
+    return 0;
+  }, [baseDate, todayStr]);
+
+  const [selectedDayIndex, setSelectedDayIndex] = useState(() => todayDayIndex);
+
+  // When week changes, show today if this week contains it, else Monday
+  useEffect(() => {
+    setSelectedDayIndex(todayDayIndex);
+  }, [todayDayIndex]);
+
+  const dayLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const selectedDayDate = useMemo(() => {
+    const d = new Date(baseDate);
+    d.setDate(baseDate.getDate() + selectedDayIndex);
+    return d;
+  }, [baseDate, selectedDayIndex]);
+  const selectedDayKey = selectedDayDate.toDateString();
+  const isToday = selectedDayKey === todayStr;
+  const isBeforePlanStart = planStartDate && (() => {
+    const planStart = new Date(planStartDate);
+    planStart.setHours(0, 0, 0, 0);
+    const currentDay = new Date(selectedDayDate);
+    currentDay.setHours(0, 0, 0, 0);
+    return currentDay < planStart;
+  })();
+
+  return (
+    <div className="w-full pb-adaptive-nav pb-24">
+      {/* Day picker - horizontal scroll on very small screens */}
+      <div className="flex gap-2 overflow-x-auto pb-3 -mx-1 px-1" style={{ WebkitOverflowScrolling: "touch" }}>
+        {days.map((_, dayIndex) => {
+          const d = new Date(baseDate);
+          d.setDate(baseDate.getDate() + dayIndex);
+          const label = `${dayLabels[dayIndex]} ${d.getDate()}`;
+          const isSelected = dayIndex === selectedDayIndex;
+          const isTodayDay = d.toDateString() === todayStr;
+          return (
+            <button
+              key={dayIndex}
+              type="button"
+              onClick={() => setSelectedDayIndex(dayIndex)}
+              className={`flex-shrink-0 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                isSelected
+                  ? "text-white shadow-md"
+                  : isTodayDay
+                    ? "bg-base-200 border-2 text-base-content"
+                    : "bg-base-200/80 text-base-content/80 border-2 border-transparent"
+              }`}
+              style={isSelected ? { backgroundColor: config.colors.brand.primary, borderColor: config.colors.brand.primary } : isTodayDay ? { borderColor: config.colors.brand.primary } : {}}
+            >
+              {label}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Single day column - time slots */}
+      <div className="space-y-2">
+        {allTimeLabels.map((label, timeIndex) => {
+          const slotKey = `${selectedDayKey}-${timeIndex}`;
+          const slotBlocks = blocksBySlot.get(slotKey) || [];
+          const blockedStatus = blockedSlotMap.get(slotKey);
+          const isUserBlocked = blockedStatus === true;
+          const isOutsideWindow = blockedStatus === "outside-window";
+          const isBlocked = isUserBlocked || isOutsideWindow;
+          const isAvailable = isTimeSlotAvailable(selectedDayIndex, label.minutes);
+
+          return (
+            <div key={slotKey} className="flex gap-2 items-stretch min-h-[56px]">
+              <div
+                className="w-14 flex-shrink-0 flex items-center justify-end text-xs font-medium pr-2"
+                style={{ color: config.colors.brand.textMedium }}
+              >
+                {label.time}
+              </div>
+              <div className="flex-1 min-w-0 rounded-xl border border-base-300 overflow-hidden flex items-stretch">
+                {isUserBlocked && slotBlocks.length === 0 ? (
+                  <div
+                    role={isBeforePlanStart ? "presentation" : "button"}
+                    tabIndex={isBeforePlanStart ? -1 : 0}
+                    onClick={() => {
+                      if (!isBeforePlanStart) toast("This block is unavailable as you are busy", { icon: "🚫", duration: 3000 });
+                    }}
+                    onKeyDown={(e) => {
+                      if (!isBeforePlanStart && (e.key === "Enter" || e.key === " ")) {
+                        e.preventDefault();
+                        toast("This block is unavailable as you are busy", { icon: "🚫", duration: 3000 });
+                      }
+                    }}
+                    className={`flex-1 p-3 rounded-lg border border-error/30 bg-error/10 ${isBeforePlanStart ? "opacity-60" : "cursor-pointer hover:opacity-80"}`}
+                  />
+                ) : slotBlocks.length > 0 ? (
+                  (() => {
+                    const block = slotBlocks[0];
+                    const blockKey = block.id || `fallback-${block.scheduled_at || "unknown"}`;
+                    const subject = block.topics?.specs?.subject || block.subject || "Subject";
+                    const hierarchy = block.hierarchy ||
+                      (block.topics?.hierarchy) ||
+                      (block.level_1_parent && block.level_2_parent && block.level_3_topic
+                        ? [block.level_1_parent, block.level_2_parent, block.level_3_topic]
+                        : [block.topics?.name || block.topic_name || "Topic"]);
+                    const topicName = cleanTopicName(
+                      hierarchy[hierarchy.length - 1] || block.topics?.name || block.topic_name || "Topic",
+                      null,
+                      false
+                    );
+                    const isDone = block.status === "done";
+                    const isMissed = block.status === "missed";
+                    const isRescheduled = block.status === "rescheduled";
+                    return (
+                      <div
+                        role={isBeforePlanStart || isRescheduled ? "presentation" : "button"}
+                        tabIndex={isBeforePlanStart || isRescheduled ? -1 : 0}
+                        onClick={() => {
+                          if (isBeforePlanStart || isRescheduled) return;
+                          onSelectBlock({ kind: "study", key: blockKey });
+                        }}
+                        onKeyDown={(e) => {
+                          if (isBeforePlanStart || isRescheduled) return;
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            onSelectBlock({ kind: "study", key: blockKey });
+                          }
+                        }}
+                        className={`flex-1 p-3 rounded-lg text-left transition ${
+                          isRescheduled
+                            ? "cursor-default opacity-50 border border-gray-300 bg-gray-100"
+                            : isBeforePlanStart
+                              ? "cursor-default opacity-60"
+                              : isDone
+                                ? "opacity-60 border border-success/50 bg-success/10 cursor-pointer"
+                                : isMissed
+                                  ? "border border-error/50 bg-error/10 cursor-pointer"
+                                  : "cursor-pointer hover:opacity-80"
+                        }`}
+                        style={!isDone && !isMissed && !isBeforePlanStart && !isRescheduled ? (() => {
+                          const color = getSubjectColor(subject);
+                          const hex = color.replace("#", "");
+                          const r = parseInt(hex.slice(0, 2), 16);
+                          const g = parseInt(hex.slice(2, 4), 16);
+                          const b = parseInt(hex.slice(4, 6), 16);
+                          return {
+                            backgroundColor: `rgba(${r}, ${g}, ${b}, 0.20)`,
+                            borderColor: getSubjectBorderColor(subject),
+                            borderWidth: "1px",
+                            borderStyle: "solid",
+                          };
+                        })() : undefined}
+                      >
+                        <div className={`flex items-center gap-2 mb-1 ${isRescheduled ? "line-through" : ""}`}>
+                          <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: getSubjectColor(subject) }} />
+                          <span className="text-xs">{getSubjectIcon(subject)}</span>
+                          <span className={`text-xs ${getStatusColor(block.status)}`}>{getStatusIcon(block.status)}</span>
+                        </div>
+                        <p className={`font-medium truncate text-sm leading-tight ${isRescheduled ? "line-through" : ""}`}>{topicName}</p>
+                        <div className={`flex items-center gap-1 mt-0.5 text-xs text-base-content/70 ${isRescheduled ? "line-through" : ""}`}>
+                          <span>{new Date(block.scheduled_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
+                          {isRescheduled && block.rescheduledTo && (
+                            <span className="badge badge-info badge-xs">↪️ {new Date(block.rescheduledTo).toLocaleDateString([], { weekday: "short" })}</span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })()
+                ) : (
+                  <div
+                    role={isBeforePlanStart ? "presentation" : "button"}
+                    tabIndex={isBeforePlanStart ? -1 : 0}
+                    onClick={() => {
+                      if (isBeforePlanStart) return;
+                      if (isOutsideWindow) toast("This time slot is outside your available study window.", { icon: "⏰", duration: 3000 });
+                      else if (isUserBlocked) toast("Unavailable - You are busy during this time.", { icon: "🚫", duration: 3000 });
+                      else toast("Free buffer slot - Available for rescheduling if needed.", { icon: "✨", duration: 3000 });
+                    }}
+                    onKeyDown={(e) => {
+                      if (isBeforePlanStart) return;
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        if (isOutsideWindow) toast("This time slot is outside your available study window.", { icon: "⏰", duration: 3000 });
+                        else if (isUserBlocked) toast("Unavailable - You are busy during this time.", { icon: "🚫", duration: 3000 });
+                        else toast("Free buffer slot - Available for rescheduling if needed.", { icon: "✨", duration: 3000 });
+                      }
+                    }}
+                    className={`flex-1 min-h-[52px] rounded-lg border border-dashed transition-all ${
+                      isBeforePlanStart
+                        ? "cursor-default opacity-60 border-base-300/70 bg-base-300/5"
+                        : isToday && !isBlocked
+                          ? "cursor-pointer border-base-300/70 bg-transparent hover:bg-base-300/10"
+                          : !isAvailable
+                            ? "cursor-pointer border-base-300/70 bg-base-300/5 hover:bg-base-300/25"
+                            : isBlocked
+                              ? "cursor-pointer border-base-300/70 bg-base-300/8 hover:bg-base-300/30"
+                              : "cursor-pointer border-base-200/10 hover:bg-base-200/35 border-base-300/70"
+                    }`}
+                  />
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      {/* Extra bottom spacing so last slots scroll fully into view */}
+      <div className="min-h-[120px] w-full flex-shrink-0" style={{ minHeight: "max(120px, 15vh, calc(env(safe-area-inset-bottom) + 80px))" }} aria-hidden />
+    </div>
+  );
+}
+
 function WeekView({ 
   blocks, 
   onSelectBlock, 
@@ -2302,7 +2800,9 @@ function WeekView({
   cleanTopicName,
   timePreferences,
   planStartDate, // The date when the user's plan started (first scheduled block)
-  isViewingNextWeek // Whether we're viewing a future week (blocks should not be interactive)
+  isViewingNextWeek, // Whether we're viewing a future week (blocks should not be interactive)
+  onGenerateCurrentWeek, // When current week has no blocks, allow user to generate
+  isGeneratingCurrentWeek
 }) {
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   
@@ -2368,7 +2868,12 @@ function WeekView({
     
     const labels = [];
     let currentMin = startHour * 60 + startMin;
-    const endMinTotal = endHour * 60 + endMin;
+    let endMinTotal = endHour * 60 + (endMin || 0);
+    // If end is on the hour (e.g. 22:00), include the next half-hour slot so the row for 22:00–22:30 shows
+    // (avoids week view cutting off when user's window is "until 10:30" but stored as 10:00)
+    if (endMinTotal > 0 && (endMin || 0) === 0) {
+      endMinTotal += 30;
+    }
     
     while (currentMin < endMinTotal) {
       const hours = Math.floor(currentMin / 60);
@@ -2383,12 +2888,11 @@ function WeekView({
     return labels;
   }, [effectiveTimePreferences]);
   
-  // Get all unique time labels (union of weekday and weekend times)
+  // Get all unique time labels (union of weekday and weekend times, plus any slot that has a block)
   const allTimeLabels = useMemo(() => {
     const weekdayLabels = getTimeLabelsForDay(0); // Monday
     const weekendLabels = getTimeLabelsForDay(5); // Saturday
     
-    // Ensure both are arrays before spreading
     const weekdayArray = Array.isArray(weekdayLabels) ? weekdayLabels : [];
     const weekendArray = Array.isArray(weekendLabels) ? weekendLabels : [];
     
@@ -2397,6 +2901,15 @@ function WeekView({
     [...weekdayArray, ...weekendArray].forEach(label => {
       if (label && typeof label === 'object' && 'minutes' in label) {
         allMinutes.add(label.minutes);
+      }
+    });
+    
+    // Include any 30-min slot that has a block, so week view never cuts off before blocks
+    (blocks || []).forEach(block => {
+      const at = block.scheduled_at ? new Date(block.scheduled_at) : null;
+      if (at && !isNaN(at.getTime())) {
+        const slotStartMin = Math.floor((at.getHours() * 60 + at.getMinutes()) / 30) * 30;
+        allMinutes.add(slotStartMin);
       }
     });
     
@@ -2410,7 +2923,7 @@ function WeekView({
           minutes
         };
       });
-  }, [getTimeLabelsForDay]);
+  }, [getTimeLabelsForDay, blocks]);
   
   // Create a map of blocked slots for quick lookup - using same key format as blocksBySlot
   // Values: true = user-blocked (red), 'outside-window' = outside study window (different color)
@@ -2487,10 +3000,15 @@ function WeekView({
           if (startTime && endTime) {
             const [startHour, startMin] = startTime.split(':').map(Number);
             const [endHour, endMin] = endTime.split(':').map(Number);
-            const startMinutes = startHour * 60 + startMin;
-            const endMinutes = endHour * 60 + endMin;
-            
-            // Check if slot is outside study window
+            let startMinutes = startHour * 60 + (startMin || 0);
+            let endMinutes = endHour * 60 + (endMin || 0);
+            // Align with getTimeLabelsForDay: if end is on the hour (e.g. 22:00), treat window as
+            // including the slot that ends at that hour (22:00–22:30), so slot starting at endMinutes is still inside
+            if (endMinutes > 0 && (endMin || 0) === 0) {
+              endMinutes += 30;
+            }
+
+            // Check if slot is outside study window (same bounds as time labels)
             if (label.minutes < startMinutes || label.minutes >= endMinutes) {
               map.set(slotKey, 'outside-window'); // 'outside-window' = outside study window
             }
@@ -2568,14 +3086,21 @@ function WeekView({
     if (!startTime || !endTime) {
       return false; // No valid time preferences
     }
-    
+
     const [startHour, startMin] = startTime.split(':').map(Number);
     const [endHour, endMin] = endTime.split(':').map(Number);
-    const startMinutes = startHour * 60 + startMin;
-    const endMinutes = endHour * 60 + endMin;
-    
+    const startMinutes = startHour * 60 + (startMin || 0);
+    let endMinutes = endHour * 60 + (endMin || 0);
+    // Align with getTimeLabelsForDay: if end is on the hour, treat window as including the next 30-min slot
+    if (endMinutes > 0 && (endMin || 0) === 0) {
+      endMinutes += 30;
+    }
+
     return timeMinutes >= startMinutes && timeMinutes < endMinutes;
   }, [effectiveTimePreferences]);
+  
+  // Must be called unconditionally (before any early return) to satisfy Rules of Hooks
+  const isMobileVertical = useMediaQuery("(max-width: 767px)");
   
   if (isLoading) {
     return (
@@ -2591,15 +3116,66 @@ function WeekView({
       <div className="text-center py-12">
         <div className="text-6xl mb-4">📅</div>
         <h3 className="text-2xl font-bold mb-2">No blocks scheduled this week</h3>
-        <p className="text-base-content/70">Your revision plan will appear here once generated.</p>
+        <p className="text-base-content/70 mb-6">
+          Please check your availability is correct in availability settings before generating this week&apos;s plan. Thanks.
+        </p>
+        {!isViewingNextWeek && typeof onGenerateCurrentWeek === 'function' && (
+          <button
+            type="button"
+            className="bg-[#0066FF] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#0052CC] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            onClick={onGenerateCurrentWeek}
+            disabled={isGeneratingCurrentWeek}
+          >
+            {isGeneratingCurrentWeek ? (
+              <>
+                <span className="loading loading-spinner loading-sm"></span>
+                Generating…
+              </>
+            ) : (
+              'Generate this week\'s plan'
+            )}
+          </button>
+        )}
       </div>
+    );
+  }
+
+  if (isMobileVertical) {
+    return (
+      <WeekViewMobileDayView
+        baseDate={baseDate}
+        days={days}
+        allTimeLabels={allTimeLabels}
+        blocksBySlot={blocksBySlot}
+        blockedSlotMap={blockedSlotMap}
+        isTimeSlotAvailable={isTimeSlotAvailable}
+        planStartDate={planStartDate}
+        onSelectBlock={onSelectBlock}
+        getSubjectColor={getSubjectColor}
+        getSubjectBgColor={getSubjectBgColor}
+        getSubjectBorderColor={getSubjectBorderColor}
+        getSubjectIcon={getSubjectIcon}
+        getStatusColor={getStatusColor}
+        getStatusIcon={getStatusIcon}
+        getBlockKey={getBlockKey}
+        cleanTopicName={cleanTopicName}
+        isViewingNextWeek={isViewingNextWeek}
+      />
     );
   }
   
   return (
-    <div className="w-full overflow-hidden">
-      <div className="w-full">
-        <table className="table-fixed w-full border-separate" style={{ borderSpacing: '0.5px 2px', tableLayout: 'fixed' }}>
+    <div className="w-full pb-8">
+      <div
+        className="w-full overflow-y-auto overflow-x-hidden rounded-lg border border-base-300 bg-white"
+        style={{
+          maxHeight: 'min(calc(100vh - 12rem), calc(100dvh - 12rem))',
+          minHeight: '24rem',
+          WebkitOverflowScrolling: 'touch',
+        }}
+      >
+        <div className="w-full">
+          <table className="table-fixed w-full border-separate" style={{ borderSpacing: '0.5px 2px', tableLayout: 'fixed' }}>
           <colgroup>
             <col className="w-[60px]" />
             {days.map(() => (
@@ -2939,6 +3515,7 @@ function WeekView({
             })}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );

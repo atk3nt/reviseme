@@ -8,6 +8,7 @@ import Link from "next/link";
 import { toast } from "react-hot-toast";
 import SupportModal from "@/components/SupportModal";
 import FeedbackModal from "@/components/FeedbackModal";
+import SidebarDevToolsLink from "@/components/SidebarDevToolsLink";
 import config from "@/config";
 
 function InsightsPageContent() {
@@ -1053,6 +1054,7 @@ function InsightsPageContent() {
                   </div>
                 </Link>
               </li>
+              <SidebarDevToolsLink pathname={pathname} onNavigate={() => setSidebarOpen(false)} />
               <li>
                 <div>
                   <button

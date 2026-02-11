@@ -680,7 +680,14 @@ export default function DevTools() {
                                 ? pastGuarantee
                                   ? "Secured"
                                   : (() => {
+                                      const guaranteeEndMs = paidAt.getTime() + 7 * 24 * 60 * 60 * 1000;
+                                      const hoursLeft = (guaranteeEndMs - Date.now()) / (1000 * 60 * 60);
                                       const d = Math.max(0, Math.ceil(7 - daysSincePaid));
+                                      if (d === 0) return "Secured";
+                                      if (hoursLeft < 24 && hoursLeft > 0) {
+                                        const h = Math.max(1, Math.ceil(hoursLeft));
+                                        return h === 1 ? "1h left" : `${h}h left`;
+                                      }
                                       return d === 1 ? "1 day left" : `${d} days left`;
                                     })()
                                 : "—"}

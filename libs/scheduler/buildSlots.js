@@ -166,24 +166,21 @@ export function buildWeeklySlots({
     const isWeekend = dayIndex >= 5;
     const weekendSplit = timePreferences.useSameWeekendTimes === false;
 
-    // Use user's actual preferences - NO DEFAULTS
-    // If weekend times are set and we're on a weekend, use them; otherwise use weekday times
+    // Use user's actual preferences; fall back to defaults if missing so we don't produce zero slots
     let earliestStr, latestStr;
     if (isWeekend && weekendSplit && timePreferences.weekendEarliest && timePreferences.weekendLatest) {
       earliestStr = timePreferences.weekendEarliest;
       latestStr = timePreferences.weekendLatest;
     } else {
-      // Use weekday times (required)
       earliestStr = timePreferences.weekdayEarliest;
       latestStr = timePreferences.weekdayLatest;
     }
-    
-    // Validate we have times - skip this day if missing
     if (!earliestStr || !latestStr) {
+      earliestStr = earliestStr || '08:00';
+      latestStr = latestStr || '21:00';
       if (process.env.NODE_ENV === 'development') {
-        console.warn(`⚠️ Skipping ${dayName}: Missing time preferences (earliest: ${earliestStr}, latest: ${latestStr})`);
+        console.warn(`⚠️ buildSlots: Using default times for ${dayName} (08:00–21:00)`);
       }
-      continue;
     }
 
     const earliestMinutes = parseTimeToMinutes(earliestStr);

@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import OnboardingProgress from "@/components/OnboardingProgress";
 import TimeBlockCalendar from "@/components/TimeBlockCalendar";
 import { unlockSlide } from "@/libs/onboarding-progress";
 
 export default function Slide21Page() {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
   
@@ -186,8 +188,23 @@ export default function Slide21Page() {
       // Save to localStorage
       const savedAnswers = JSON.parse(localStorage.getItem('quizAnswers') || '{}');
       savedAnswers.blockedTimes = blockedTimes;
+      savedAnswers.timePreferences = timePreferences;
       localStorage.setItem('quizAnswers', JSON.stringify(savedAnswers));
       console.log('Slide 21: Saved blocked times:', blockedTimes.length);
+
+      if (status === 'authenticated' && session?.user) {
+        const weekStartDateStr = weekStart.toISOString().split('T')[0];
+        fetch('/api/availability/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            timePreferences,
+            blockedTimes,
+            weekStartDate: weekStartDateStr,
+          }),
+        }).catch(() => {});
+      }
       
       unlockSlide(22);
       
@@ -203,22 +220,27 @@ export default function Slide21Page() {
   };
 
   return (
-    <div className="text-center space-y-4 sm:space-y-8 max-w-none sm:max-w-6xl mx-auto pt-12 sm:pt-20 md:pt-24 pb-12 sm:pb-20 md:pb-24">
-      <OnboardingProgress 
-        currentSlide={21} 
-        totalSlides={12} 
-        showProgressBar={true}
-      />
+    <div className="text-center h-full flex flex-col min-h-0 max-w-none sm:max-w-6xl mx-auto">
+      {/* Fixed header */}
+      <div className="flex-shrink-0 pt-adaptive sm:pt-6 space-y-2 sm:space-y-4">
+        <OnboardingProgress 
+          currentSlide={21} 
+          totalSlides={12} 
+          showProgressBar={true}
+        />
 
-      <div className="space-y-2 sm:space-y-4 px-2 sm:px-0">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#001433]">
-          Mark your commitments.
-        </h1>
-        <p className="text-sm sm:text-base md:text-xl text-[#003D99]">
-          Block times you're busy. We'll schedule study blocks in the remaining free time, leaving buffer slots for rescheduling and other school assignments or breaks.
-        </p>
+        <div className="space-y-2 sm:space-y-4 px-2 sm:px-0">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#001433]">
+            Mark your commitments.
+          </h1>
+          <p className="text-sm sm:text-base md:text-xl text-[#003D99]">
+            Block times you're busy. We'll schedule study blocks in the remaining free time, leaving buffer slots for rescheduling and other school assignments or breaks.
+          </p>
+        </div>
       </div>
 
+      {/* Scrollable content */}
+      <div className="flex-1 overflow-y-auto min-h-0 py-2 sm:py-4">
       {/* Calendar Section */}
       <div className="bg-white border-2 border-[#0066FF]/20 rounded-xl p-2 sm:p-6 overflow-hidden">
         <p className="text-xs sm:text-sm text-[#003D99] mb-3 sm:mb-6 text-left px-1 sm:px-0 leading-relaxed">
@@ -238,28 +260,41 @@ export default function Slide21Page() {
       </div>
 
       {/* Summary */}
-      <div className="text-center px-2 sm:px-0">
+      <div className="text-center px-2 sm:px-0 pt-2 sm:pt-4">
         <p className="text-xs sm:text-sm text-[#003D99]">
           <span className="font-medium text-[#001433]">{blockedTimes.length}</span> time blocks marked as unavailable
         </p>
       </div>
+      </div>
 
-      {/* Navigation */}
-      <div className="flex justify-between items-center pt-3 sm:pt-6 md:pt-10 gap-2 sm:gap-0 px-2 sm:px-0">
-        <button
-          onClick={() => router.push("/onboarding/slide-20")}
-          className="bg-white border-2 border-[#0066FF] text-[#0066FF] px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg text-sm sm:text-base font-medium hover:bg-[#0066FF] hover:text-white transition-colors"
-        >
-          Back
-        </button>
-        
-        <button
-          onClick={handleContinue}
-          disabled={isLoading}
-          className="bg-[#0066FF] text-white px-4 sm:px-8 py-2.5 sm:py-3 rounded-lg font-medium hover:bg-[#0052CC] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-lg"
-        >
-          {isLoading ? "Next..." : "Continue to Summary"}
-        </button>
+      {/* Fixed bottom nav - extra spacing on this slide so buttons are always clickable */}
+      <div
+        className="flex-shrink-0 flex flex-col justify-center items-center pt-5 sm:pt-8 px-2 sm:px-0 border-t border-[#0066FF]/10 bg-white"
+        style={{
+          paddingBottom: 'max(3.5rem, 14vh, calc(env(safe-area-inset-bottom) + 2rem))'
+        }}
+      >
+        <div className="flex justify-center items-center gap-3 sm:gap-6">
+          <button
+            onClick={() => router.push("/onboarding/slide-20")}
+            className="bg-white border-2 border-[#0066FF] text-[#0066FF] px-3 sm:px-6 py-2 sm:py-2.5 rounded-lg text-xs sm:text-base font-medium hover:bg-[#0066FF] hover:text-white transition-colors"
+          >
+            Back
+          </button>
+          <button
+            onClick={handleContinue}
+            disabled={isLoading}
+            className="bg-[#0066FF] text-white px-4 sm:px-8 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base font-medium hover:bg-[#0052CC] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isLoading ? "Next..." : "Continue to Summary"}
+          </button>
+        </div>
+        {/* Generous spacer below buttons so they're never flush with the bottom */}
+        <div
+          className="w-full flex-shrink-0"
+          style={{ minHeight: 'max(3.5rem, calc(env(safe-area-inset-bottom) + 1.5rem))' }}
+          aria-hidden
+        />
       </div>
     </div>
   );

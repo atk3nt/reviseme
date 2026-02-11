@@ -81,14 +81,15 @@ export async function generateStudyPlan({
   reratedTopicIds = [], // Topic IDs that were rerated (prioritized within rating buckets)
   ongoingTopics = {}, // { topicId: { sessionsScheduled: number, sessionsRequired: number, lastSessionDate: Date } }
   effectiveNow = null, // For dev mode time override
-  clientCutoffMinutes = null // User's "now" as minutes from midnight so first block is next :00 or :30 in their TZ
+  clientCutoffMinutes = null, // User's "now" as minutes from midnight so first block is next :00 or :30 in their TZ
+  allowUnratedTopics = false // When true (e.g. generate current week when empty), include topics with no rating so they get default priority
 } = {}) {
   if (!Array.isArray(subjects) || subjects.length === 0) {
     return [];
   }
 
   const topics = await loadTopicsForSubjects(subjects);
-  const filteredTopics = filterTopics(topics, ratings, topicStatus);
+  const filteredTopics = filterTopics(topics, ratings, topicStatus, { allowUnratedTopics });
   if (filteredTopics.length === 0) {
     return [];
   }

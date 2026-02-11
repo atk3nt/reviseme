@@ -410,19 +410,38 @@ export async function GET(req) {
           ratings[r.topic_id] = r.rating;
         });
 
-        // Load time preferences
+        // Load time preferences: use per-week preferences for next week when present (matches manual generate)
         const formatTime = (timeStr) => {
           if (!timeStr) return null;
           return timeStr.substring(0, 5); // Extract HH:MM from HH:MM:SS
         };
 
-        const timePreferences = {
-          weekdayEarliest: formatTime(userData.weekday_earliest_time) || '08:00',
-          weekdayLatest: formatTime(userData.weekday_latest_time) || '21:00',
-          weekendEarliest: formatTime(userData.weekend_earliest_time) || '08:00',
-          weekendLatest: formatTime(userData.weekend_latest_time) || '21:00',
-          useSameWeekendTimes: userData.use_same_weekend_times !== false
-        };
+        let timePreferences;
+        const { data: weekPrefs } = await supabaseAdmin
+          .from('week_time_preferences')
+          .select('weekday_earliest_time, weekday_latest_time, weekend_earliest_time, weekend_latest_time, use_same_weekend_times')
+          .eq('user_id', userId)
+          .eq('week_start_date', nextWeekStartStr)
+          .maybeSingle();
+
+        if (weekPrefs) {
+          console.log(`📅 User ${userId}: Using per-week time preferences for ${nextWeekStartStr}`);
+          timePreferences = {
+            weekdayEarliest: formatTime(weekPrefs.weekday_earliest_time) || formatTime(userData.weekday_earliest_time) || '08:00',
+            weekdayLatest: formatTime(weekPrefs.weekday_latest_time) || formatTime(userData.weekday_latest_time) || '21:00',
+            weekendEarliest: formatTime(weekPrefs.weekend_earliest_time) || formatTime(userData.weekend_earliest_time) || '08:00',
+            weekendLatest: formatTime(weekPrefs.weekend_latest_time) || formatTime(userData.weekend_latest_time) || '21:00',
+            useSameWeekendTimes: weekPrefs.use_same_weekend_times !== undefined ? weekPrefs.use_same_weekend_times : (userData.use_same_weekend_times !== false)
+          };
+        } else {
+          timePreferences = {
+            weekdayEarliest: formatTime(userData.weekday_earliest_time) || '08:00',
+            weekdayLatest: formatTime(userData.weekday_latest_time) || '21:00',
+            weekendEarliest: formatTime(userData.weekend_earliest_time) || '08:00',
+            weekendLatest: formatTime(userData.weekend_latest_time) || '21:00',
+            useSameWeekendTimes: userData.use_same_weekend_times !== false
+          };
+        }
 
         // Load blocked times for next week
         const unavailableTimes = await loadBlockedTimes(userId, nextWeekStart, nextWeekEnd);

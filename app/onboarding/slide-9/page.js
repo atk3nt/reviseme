@@ -80,16 +80,15 @@ export default function Slide9Page() {
         />
       </div>
 
-      {/* Navigation */}
-      <div className="flex justify-between items-center w-full flex-shrink-0 pt-4 sm:pt-6">
-        <button
-          onClick={() => router.push("/onboarding/slide-16")}
-          className="bg-white border-2 border-[#0066FF] text-[#0066FF] px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium hover:bg-[#0066FF] hover:text-white transition-colors"
-        >
-          Back
-        </button>
-        
-        <div className="flex space-x-3 sm:space-x-4">
+      {/* Navigation - centered, explicit space below for clickability */}
+      <div className="flex flex-col justify-center items-center w-full flex-shrink-0 pt-4 sm:pt-6 pb-adaptive-nav">
+        <div className="flex justify-center items-center gap-3 sm:gap-6 flex-wrap">
+          <button
+            onClick={() => router.push("/onboarding/slide-16")}
+            className="bg-white border-2 border-[#0066FF] text-[#0066FF] px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium hover:bg-[#0066FF] hover:text-white transition-colors"
+          >
+            Back
+          </button>
           <button
             onClick={handleSkip}
             className="text-[#003D99]/50 hover:text-[#0066FF] text-xs sm:text-sm transition-colors"
@@ -104,6 +103,7 @@ export default function Slide9Page() {
             {isLoading ? "Next..." : "Next"}
           </button>
         </div>
+        <div className="w-full min-h-[2.5rem] sm:min-h-[3rem] flex-shrink-0" style={{ minHeight: 'max(2.5rem, env(safe-area-inset-bottom))' }} aria-hidden />
       </div>
     </div>
   );

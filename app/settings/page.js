@@ -7,6 +7,7 @@ import { signOut } from "next-auth/react";
 import Link from "next/link";
 import SupportModal from "@/components/SupportModal";
 import FeedbackModal from "@/components/FeedbackModal";
+import SidebarDevToolsLink from "@/components/SidebarDevToolsLink";
 import config from "@/config";
 
 function SettingsPageContent() {
@@ -403,6 +404,7 @@ function SettingsPageContent() {
                   </div>
                 </Link>
               </li>
+              <SidebarDevToolsLink pathname={pathname} onNavigate={() => setSidebarOpen(false)} />
               <li>
                 <div>
                   <button

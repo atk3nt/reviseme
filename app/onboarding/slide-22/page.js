@@ -383,24 +383,29 @@ export default function Slide22Page() {
   // isDev is now a state variable set in useEffect above
 
   return (
-    <div className="text-center space-y-4 sm:space-y-8 pt-adaptive">
-      <OnboardingProgress 
-        currentSlide={22} 
-        totalSlides={12} 
-        showProgressBar={true}
-      />
+    <div className="text-center h-full flex flex-col min-h-0">
+      {/* Fixed header */}
+      <div className="flex-shrink-0 pt-adaptive space-y-3 sm:space-y-4">
+        <OnboardingProgress 
+          currentSlide={22} 
+          totalSlides={12} 
+          showProgressBar={true}
+        />
 
-      <div className="space-y-3 sm:space-y-6">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#001433] leading-tight">
-          Time to create your plan.
-          <br />
-          We've got everything we need.
-        </h1>
-        <p className="text-base sm:text-lg md:text-xl text-[#003D99]">
-          Let's create your personalised revision schedule.
-        </p>
+        <div className="space-y-3 sm:space-y-6">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#001433] leading-tight">
+            Time to create your plan.
+            <br />
+            We've got everything we need.
+          </h1>
+          <p className="text-base sm:text-lg md:text-xl text-[#003D99]">
+            Let's create your personalised revision schedule.
+          </p>
+        </div>
       </div>
 
+      {/* Scrollable content */}
+      <div className="flex-1 overflow-y-auto min-h-0 py-2 sm:py-4 space-y-4 sm:space-y-6">
       {/* Summary Card */}
       <div className="max-w-lg mx-auto bg-white border-2 border-[#0066FF]/20 rounded-xl p-4 sm:p-6 md:p-8 shadow-lg">
         <div className="space-y-4 sm:space-y-6">
@@ -497,38 +502,50 @@ export default function Slide22Page() {
         </div>
       )}
 
-      {/* Generate Button */}
-      <div className="flex flex-col items-center space-y-3">
-        {!isDev && status === 'unauthenticated' ? (
-          <p className="text-sm text-amber-600 bg-amber-50 px-4 py-2 rounded-lg">
-            You'll need to sign in to save your plan. We'll redirect you after you click the button.
-          </p>
-        ) : isDev ? (
-          <p className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded opacity-75">
-            🔧 Dev mode: Authentication check bypassed
-          </p>
-        ) : null}
-        <button
-          onClick={handleGeneratePlan}
-          disabled={!isDev && status === 'loading'}
-          className="bg-[#0066FF] text-white px-12 py-4 rounded-lg font-medium hover:bg-[#0052CC] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-lg"
-        >
-          {(!isDev && status === 'loading') ? (
-            "Checking authentication..."
-          ) : (
-            "Generate My Study Plan"
-          )}
-        </button>
+      {/* Auth messages (in scroll area) */}
+      {!isDev && status === 'unauthenticated' ? (
+        <p className="text-sm text-amber-600 bg-amber-50 px-4 py-2 rounded-lg max-w-md mx-auto">
+          You'll need to sign in to save your plan. We'll redirect you after you click the button.
+        </p>
+      ) : isDev ? (
+        <p className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded opacity-75 max-w-md mx-auto">
+          🔧 Dev mode: Authentication check bypassed
+        </p>
+      ) : null}
       </div>
 
-      {/* Navigation */}
-      <div className="flex justify-center pt-2 sm:pt-3">
-        <button
-          onClick={() => router.push("/onboarding/slide-21")}
-          className="bg-white border-2 border-[#0066FF] text-[#0066FF] px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium hover:bg-[#0066FF] hover:text-white transition-colors"
-        >
-          Back
-        </button>
+      {/* Fixed bottom nav - extra spacing so buttons are always clickable */}
+      <div
+        className="flex-shrink-0 flex flex-col justify-center items-center pt-5 sm:pt-8 border-t border-[#0066FF]/10 bg-white"
+        style={{
+          paddingBottom: 'max(3.5rem, 14vh, calc(env(safe-area-inset-bottom) + 2rem))'
+        }}
+      >
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-6 w-full">
+          <button
+            onClick={handleGeneratePlan}
+            disabled={!isDev && status === 'loading'}
+            className="w-full sm:w-auto bg-[#0066FF] text-white px-6 sm:px-12 py-3 sm:py-4 rounded-lg text-base sm:text-lg font-medium hover:bg-[#0052CC] transition-colors disabled:opacity-50 disabled:cursor-not-allowed order-1"
+          >
+            {(!isDev && status === 'loading') ? (
+              "Checking authentication..."
+            ) : (
+              "Generate My Study Plan"
+            )}
+          </button>
+          <button
+            onClick={() => router.push("/onboarding/slide-21")}
+            className="w-full sm:w-auto bg-white border-2 border-[#0066FF] text-[#0066FF] px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium hover:bg-[#0066FF] hover:text-white transition-colors order-2"
+          >
+            Back
+          </button>
+        </div>
+        {/* Generous spacer below buttons so they're never flush with the bottom */}
+        <div
+          className="w-full flex-shrink-0"
+          style={{ minHeight: 'max(3.5rem, calc(env(safe-area-inset-bottom) + 1.5rem))' }}
+          aria-hidden
+        />
       </div>
     </div>
   );

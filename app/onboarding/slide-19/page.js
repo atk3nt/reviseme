@@ -41,9 +41,42 @@ export default function Slide19Page() {
     try {
       setIsLoading(true);
       const savedAnswers = JSON.parse(localStorage.getItem('quizAnswers') || '{}');
-      const subjects = savedAnswers.selectedSubjects || [];
-      const boards = savedAnswers.subjectBoards || {};
-      
+
+      // Load ratings and optionally subjects from DB (for cross-device resume)
+      let dbRatings = {};
+      let dbSubjects = null;
+      let dbBoards = null;
+      try {
+        const [getRatingsRes, getUserDataRes] = await Promise.all([
+          fetch('/api/topics/get-ratings'),
+          fetch('/api/topics/get-user-data')
+        ]);
+        if (getRatingsRes.ok) {
+          const data = await getRatingsRes.json();
+          const list = data.ratings || [];
+          if (Array.isArray(list)) {
+            dbRatings = list.reduce((acc, r) => {
+              if (r && r.topic_id != null && r.rating != null) acc[r.topic_id] = r.rating;
+              return acc;
+            }, {});
+          }
+        }
+        if (getUserDataRes.ok) {
+          const userData = await getUserDataRes.json();
+          const apiSubjects = userData.selectedSubjects || [];
+          const apiBoards = userData.subjectBoards || {};
+          if (apiSubjects.length > 0) {
+            dbSubjects = apiSubjects;
+            dbBoards = apiBoards;
+          }
+        }
+      } catch {
+        // Proceed with localStorage only
+      }
+
+      const subjects = (dbSubjects && dbSubjects.length > 0) ? dbSubjects : (savedAnswers.selectedSubjects || []);
+      const boards = (dbBoards && Object.keys(dbBoards).length > 0) ? dbBoards : (savedAnswers.subjectBoards || {});
+
       if (subjects.length === 0) {
         console.log('No subjects selected');
         setIsLoading(false);
@@ -52,7 +85,7 @@ export default function Slide19Page() {
 
       setSelectedSubjects(subjects);
       setSubjectBoards(boards);
-      
+
       // Convert subject names to match database format
       const subjectMapping = {
         'maths': 'Mathematics',
@@ -124,20 +157,18 @@ export default function Slide19Page() {
       }));
       
       setTopics(topics);
-      
-      // Initialize ratings - load from localStorage if available
+
+      // Initialize ratings: DB first (cross-device), then localStorage
       const savedRatings = savedAnswers.topicRatings || {};
       const initialRatings = {};
       topics.forEach(item => {
-        // Use saved rating if exists, otherwise undefined
-        initialRatings[item.topics.id] = savedRatings[item.topics.id] ?? undefined;
+        initialRatings[item.topics.id] = dbRatings[item.topics.id] ?? savedRatings[item.topics.id] ?? undefined;
       });
       setRatings(initialRatings);
-      
-      // Log restoration info for debugging
+
       const restoredCount = Object.values(initialRatings).filter(r => r !== undefined).length;
       if (restoredCount > 0) {
-        console.log(`✅ Restored ${restoredCount} ratings from localStorage`);
+        console.log(`✅ Restored ${restoredCount} ratings (DB + localStorage)`);
       }
       
       setIsLoading(false);
@@ -162,21 +193,32 @@ export default function Slide19Page() {
 
   const saveRatings = async () => {
     if (isSaving) return;
-    
+
+    const ratingsToSave = ratings;
     setIsSaving(true);
     try {
-      // Save ratings to localStorage
+      // Save ratings to localStorage first (UI and offline behavior unchanged)
       const savedAnswers = JSON.parse(localStorage.getItem('quizAnswers') || '{}');
-      savedAnswers.topicRatings = ratings;
+      savedAnswers.topicRatings = ratingsToSave;
       localStorage.setItem('quizAnswers', JSON.stringify(savedAnswers));
-      
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 300));
     } catch (error) {
       console.error('Error saving ratings:', error);
     } finally {
       setIsSaving(false);
     }
+
+    // Persist to DB in background so user can stop and come back on any device
+    fetch('/api/topics/save-ratings-bulk', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ratings: ratingsToSave })
+    }).then(res => {
+      if (!res.ok && res.status !== 401) {
+        console.warn('Could not sync ratings to server:', res.status);
+      }
+    }).catch(() => {
+      // Offline or network error; ratings are in localStorage
+    });
   };
 
   const handleBulkRating = (rating) => {
@@ -381,53 +423,60 @@ export default function Slide19Page() {
   }
 
   return (
-    <div className="text-center space-y-4 sm:space-y-8 pt-adaptive pb-20">
-      <OnboardingProgress 
-        currentSlide={19} 
-        totalSlides={12} 
-        showProgressBar={true}
-      />
+    <div className="text-center h-full flex flex-col min-h-0">
+      {/* Fixed header */}
+      <div className="flex-shrink-0 pt-adaptive space-y-3 sm:space-y-4">
+        <OnboardingProgress 
+          currentSlide={19} 
+          totalSlides={12} 
+          showProgressBar={true}
+        />
 
-      <div className="space-y-2 sm:space-y-3 px-2 sm:px-0 pt-6 sm:pt-0 w-[92.5%] sm:w-auto mx-auto">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-brand-dark">
-          Rate your topics.
-        </h1>
-        <p className="text-sm sm:text-base md:text-lg text-brand-medium max-w-2xl mx-auto">
-          Rate each topic so we can focus your time where it matters most.
-        </p>
-        
-        <p className="text-xs sm:text-sm text-brand-medium max-w-2xl mx-auto">
-          <span className="font-semibold">1</span> = Weak | <span className="font-semibold">3</span> = OK | <span className="font-semibold">5</span> = Strong
-        </p>
-        
-        {/* Progress Bar */}
-        <div className="flex items-center justify-center space-x-4 max-w-md mx-auto">
-          <div className="text-sm font-medium text-brand-medium">
-            {Math.round(progress)}% complete
+        <div className="space-y-2 sm:space-y-3 px-2 sm:px-0 w-[92.5%] sm:w-auto mx-auto">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-brand-dark">
+            Rate your topics.
+          </h1>
+          <p className="text-sm sm:text-base md:text-lg text-brand-medium max-w-2xl mx-auto">
+            Rate each topic so we can focus your time where it matters most.
+          </p>
+          
+          <p className="text-xs sm:text-sm text-brand-medium max-w-2xl mx-auto">
+            <span className="font-semibold">1</span> = Weak | <span className="font-semibold">3</span> = OK | <span className="font-semibold">5</span> = Strong
+          </p>
+          <p className="text-xs sm:text-sm text-brand-medium/90 max-w-2xl mx-auto">
+            Optional topics: leave them unrated and they won&apos;t be included in your schedule.
+          </p>
+          
+          {/* Progress Bar */}
+          <div className="flex items-center justify-center space-x-3 sm:space-x-4 max-w-md mx-auto">
+            <div className="text-xs sm:text-sm font-medium text-brand-medium">
+              {Math.round(progress)}% complete
+            </div>
+            <div className="flex-1 bg-base-200 rounded-full h-2.5 sm:h-3 overflow-hidden">
+              <div 
+                className="h-full rounded-full transition-all duration-500 ease-out"
+                style={{ 
+                  width: `${progress}%`,
+                  background: 'linear-gradient(90deg, #0066FF 0%, #0052CC 100%)'
+                }}
+              />
+            </div>
           </div>
-          <div className="flex-1 bg-base-200 rounded-full h-3 overflow-hidden">
-            <div 
-              className="h-full rounded-full transition-all duration-500 ease-out"
-              style={{ 
-                width: `${progress}%`,
-                background: 'linear-gradient(90deg, #0066FF 0%, #0052CC 100%)'
-              }}
-            />
-          </div>
+        </div>
+
+        {/* Bulk actions - Temporarily enabled in prod */}
+        <div className="flex flex-wrap gap-2 justify-center">
+          <button
+            onClick={fillRandomRatings}
+            className="btn btn-sm bg-yellow-500 text-white hover:bg-yellow-600 border-0"
+          >
+            [DEV] Fill Random Ratings
+          </button>
         </div>
       </div>
 
-      {/* Bulk actions - Temporarily enabled in prod */}
-      <div className="flex flex-wrap gap-2 justify-center">
-        <button
-          onClick={fillRandomRatings}
-          className="btn btn-sm bg-yellow-500 text-white hover:bg-yellow-600 border-0"
-        >
-          [DEV] Fill Random Ratings
-        </button>
-      </div>
-
-      {/* Topics by subject */}
+      {/* Scrollable topics */}
+      <div className="flex-1 overflow-y-auto min-h-0 py-2 sm:py-4">
       <div className="w-[92.5%] sm:max-w-7xl mx-auto px-0 sm:px-0">
         <div className="space-y-6">
           {Object.entries(groupedTopics)
@@ -496,7 +545,7 @@ export default function Slide19Page() {
 
                   {/* Subject Content */}
                   {expandedSections[subject] && (
-                    <div className="px-8 py-6 space-y-4">
+                    <div className="px-6 sm:px-8 py-6 sm:py-8 space-y-6">
                       {Object.entries(subjectData)
                         .sort(([a], [b]) => {
                           const getNumericPrefix = (topic) => {
@@ -567,8 +616,8 @@ export default function Slide19Page() {
 
                             {/* Main Topic Content */}
                             {expandedSections[`${subject}-${mainTopic}`] && (
-                              <div className="p-6">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                              <div className="p-6 sm:p-8">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-y-7 gap-x-6 sm:gap-8">
                                   {mainTopicItems.map(item => {
                                     const topic = item.topics;
                                     const spec = topic.specs;
@@ -609,8 +658,8 @@ export default function Slide19Page() {
                                             )}
                                           </div>
                                           
-                                          {/* Content area - Standardized spacing */}
-                                          <div className="flex flex-col">
+                                          {/* Content area - Standardized spacing, constrained within sub-topic card */}
+                                          <div className="flex flex-col min-w-0">
                                             {ratings[topic.id] === -2 ? (
                                               <div className="text-center py-3">
                                                 <span className="badge badge-error badge-outline mb-2">Not Doing (Optional)</span>
@@ -623,8 +672,8 @@ export default function Slide19Page() {
                                               </div>
                                             ) : (
                                               <>
-                                                {/* Rating Buttons - Consistent spacing */}
-                                                <div className="flex justify-center gap-3 mb-3 mt-1">
+                                                {/* Rating Buttons - Grid layout, same block dimensions within each sub-topic */}
+                                                <div className="grid grid-cols-5 gap-2 sm:gap-2 mb-3 mt-1 w-full min-w-0">
                                                   {[1, 2, 3, 4, 5].map(rating => {
                                                     const isSelected = ratings[topic.id] === rating;
                                                     const getRatingColor = (r) => {
@@ -637,11 +686,11 @@ export default function Slide19Page() {
                                                       <button
                                                         key={rating}
                                                         type="button"
-                                                        onClick={() => handleRatingChange(topic.id, rating)}
-                                                        className={`w-12 h-12 rounded-lg font-bold text-base transition-all ${
+                                                        onClick={() => handleRatingChange(topic.id, isSelected ? undefined : rating)}
+                                                        className={`aspect-square w-full min-w-[44px] min-h-[44px] sm:min-w-[40px] sm:min-h-[40px] rounded-lg sm:rounded-md font-bold text-lg sm:text-base flex items-center justify-center transition-colors ${
                                                           isSelected
-                                                            ? 'scale-110 shadow-lg'
-                                                            : 'hover:scale-105 hover:shadow-md'
+                                                            ? 'scale-110 sm:scale-100 shadow-lg'
+                                                            : 'hover:shadow-md'
                                                         }`}
                                                         style={{
                                                           backgroundColor: isSelected ? getRatingColor(rating) : 'transparent',
@@ -694,9 +743,10 @@ export default function Slide19Page() {
             })}
         </div>
       </div>
+      </div>
 
       {isSaving && (
-        <div className="fixed bottom-4 right-4 bg-base-100 px-4 py-3 rounded-lg shadow-lg border border-primary/20">
+        <div className="fixed bottom-4 right-4 z-10 bg-base-100 px-4 py-3 rounded-lg shadow-lg border border-primary/20">
           <div className="flex items-center gap-2">
             <span className="loading loading-spinner loading-xs text-primary"></span>
             <span className="text-sm text-brand-medium">Saving...</span>
@@ -704,26 +754,30 @@ export default function Slide19Page() {
         </div>
       )}
 
-      <div className="flex justify-between items-center pt-8">
-        <button
-          onClick={() => router.push("/onboarding/slide-17")}
-          className="bg-white border-2 border-[#0066FF] text-[#0066FF] px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg text-sm sm:text-base font-medium hover:bg-[#0066FF] hover:text-white transition-colors"
-        >
-          Back
-        </button>
-        
-        <div className="flex items-center space-x-4">
+      {/* Fixed bottom nav - extra spacing so buttons are always clickable */}
+      <div
+        className="flex-shrink-0 flex flex-col justify-center items-center pt-5 sm:pt-8 border-t border-base-200 bg-white"
+        style={{
+          paddingBottom: 'max(3.5rem, 14vh, calc(env(safe-area-inset-bottom) + 2rem))'
+        }}
+      >
+        <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-6">
+          <button
+            onClick={() => router.push("/onboarding/slide-17")}
+            className="bg-white border-2 border-[#0066FF] text-[#0066FF] px-3 sm:px-6 py-2 sm:py-2.5 rounded-lg text-xs sm:text-base font-medium hover:bg-[#0066FF] hover:text-white transition-colors"
+          >
+            Back
+          </button>
           {isSaving && (
-            <span className="text-sm text-[#003D99]">
+            <span className="text-xs sm:text-sm text-[#003D99]">
               <span className="loading loading-spinner loading-xs"></span>
               Saving...
             </span>
           )}
-          
           <button
             onClick={handleContinue}
             disabled={isLoading}
-            className="bg-[#0066FF] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#0052CC] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+            className="bg-[#0066FF] text-white px-5 sm:px-8 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base font-medium hover:bg-[#0052CC] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? (
               <>
@@ -735,6 +789,12 @@ export default function Slide19Page() {
             )}
           </button>
         </div>
+        {/* Generous spacer below buttons so they're never flush with the bottom */}
+        <div
+          className="w-full flex-shrink-0"
+          style={{ minHeight: 'max(3.5rem, calc(env(safe-area-inset-bottom) + 1.5rem))' }}
+          aria-hidden
+        />
       </div>
     </div>
   );

@@ -100,6 +100,14 @@ export default function OnboardingLayout({ children }) {
         return;
       }
     }
+
+    // Paid user on new device: allow post-payment slides 19–22 without requiring localStorage progress
+    // so plan page can send them to their resume slide (e.g. slide-20/21) and they are not kicked to slide-1
+    if (slideNumber >= 19 && slideNumber <= 22 && status === 'authenticated' && session?.user?.hasAccess) {
+      console.log('[ONBOARDING LAYOUT] Allowing slide', slideNumber, 'access (paid user, post-payment slides)');
+      setIsCheckingAccess(false);
+      return;
+    }
     
     // SECURITY FIX: Wait for session to load before checking access for regular slides
     // This prevents pages from mounting and unlocking themselves before we can verify access

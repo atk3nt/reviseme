@@ -66,9 +66,9 @@
 
 /* Mobile viewport height fix - uses dynamic viewport height for better mobile support */
 /* This handles iOS Safari URL bar and other mobile browser chrome */
+/* Use min-height only (not height: 100%) so the document can grow and full-page scroll works (e.g. plan week view) */
 html {
-  height: 100%;
-  /* Fallback for browsers that don't support dvh */
+  min-height: 100%;
   min-height: 100vh;
   min-height: 100dvh;
 }
@@ -123,6 +123,14 @@ body {
 
 .pb-adaptive {
   padding-bottom: max(clamp(1rem, 5vh, 3rem), env(safe-area-inset-bottom));
+}
+
+/* Extra space below bottom nav buttons so they're always clickable and never cut off */
+.pb-adaptive-nav {
+  padding-bottom: max(
+    clamp(2.5rem, 12vh, 5rem),
+    calc(env(safe-area-inset-bottom) + 1.5rem)
+  );
 }
 
 .pt-adaptive {

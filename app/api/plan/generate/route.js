@@ -434,7 +434,10 @@ export async function POST(req) {
       targetWeek,
       signupDate,
       clientNow: !!clientNow,
-      subjectsCount: subjects.length
+      subjectsType: typeof subjects,
+      subjectsIsArray: Array.isArray(subjects),
+      subjectsCount: Array.isArray(subjects) ? subjects.length : 0,
+      subjectsSample: Array.isArray(subjects) ? subjects.slice(0, 2) : subjects
     });
 
     const incomingBlockedTimes = Array.isArray(rawBlockedTimes) && rawBlockedTimes.length > 0
@@ -444,7 +447,12 @@ export async function POST(req) {
         : [];
 
     if (!Array.isArray(subjects) || subjects.length === 0) {
-      return NextResponse.json({ error: 'At least one subject is required' }, { status: 400 });
+      console.error('[PLAN_GENERATE_400] NO_SUBJECTS', { subjectsType: typeof subjects, isArray: Array.isArray(subjects), length: subjects?.length });
+      return NextResponse.json({
+        error: 'At least one subject is required',
+        errorCode: 'NO_SUBJECTS',
+        success: false
+      }, { status: 400 });
     }
 
     // When in dev and override is set, use it for cutoff so blocks are never before the override day/time.
@@ -489,22 +497,23 @@ export async function POST(req) {
     const weekEndDate = new Date(weekStartDate);
     weekEndDate.setDate(weekStartDate.getDate() + 7);
     
-    // Check if target week is in the future - only allow from Saturday onwards
+    // Restrict "next week" generation to Saturday onwards; current week is always allowed (generate from today to end of week)
     // DEV BYPASS: Skip this check in development or prelaunch mode
     const isDev = process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'prelaunch';
+    const currentWeekMonday = getMonday(new Date(effectiveNow));
+    const currentWeekMondayStr = formatDateLocal(currentWeekMonday);
+    const isCurrentWeekOrPast = targetWeekStart <= currentWeekMondayStr;
+
     if (!isDev) {
-      const today = new Date(effectiveNow);
-      today.setHours(0, 0, 0, 0);
-      const targetDate = new Date(targetWeekStart);
-      const isNextWeek = targetDate > today;
-      
-      if (isNextWeek) {
-        const dayOfWeek = effectiveNow.getDay(); // Use effective day with time for accurate check
-        const isSaturdayOrLater = dayOfWeek === 6 || dayOfWeek === 0; // Saturday (6) or Sunday (0)
-        
+      if (!isCurrentWeekOrPast) {
+        const dayOfWeek = effectiveNow.getDay();
+        const isSaturdayOrLater = dayOfWeek === 6 || dayOfWeek === 0;
+
         if (!isSaturdayOrLater) {
+          console.error('[PLAN_GENERATE_400] NEXT_WEEK_SATURDAY_ONLY', { targetWeekStart, currentWeekMondayStr, dayOfWeek: effectiveNow.getDay() });
           return NextResponse.json({
             error: 'Next week\'s plan can only be generated from Saturday onwards. Please wait until Saturday to plan next week.',
+            errorCode: 'NEXT_WEEK_SATURDAY_ONLY',
             success: false
           }, { status: 400 });
         }
@@ -604,21 +613,21 @@ export async function POST(req) {
           ? effectiveTimePreferences.useSameWeekendTimes 
           : dbUseSameWeekendTimes
       };
+
+      // When DB has no time prefs (e.g. user only set next week in availability), use defaults
+      // so "Generate my plan" for current week can still succeed
+      if (!effectiveTimePreferences.weekdayEarliest || !effectiveTimePreferences.weekdayLatest) {
+        console.log('⚠️ No time preferences in DB for this week, using defaults 08:00–21:00');
+        effectiveTimePreferences.weekdayEarliest = effectiveTimePreferences.weekdayEarliest || '08:00';
+        effectiveTimePreferences.weekdayLatest = effectiveTimePreferences.weekdayLatest || '21:00';
+        effectiveTimePreferences.weekendEarliest = effectiveTimePreferences.weekendEarliest || '08:00';
+        effectiveTimePreferences.weekendLatest = effectiveTimePreferences.weekendLatest || '21:00';
+        if (effectiveTimePreferences.useSameWeekendTimes === undefined) {
+          effectiveTimePreferences.useSameWeekendTimes = true;
+        }
+      }
       
       console.log('✅ Final effectiveTimePreferences:', effectiveTimePreferences);
-      
-      // Validate that we have required weekday times
-      if (!effectiveTimePreferences.weekdayEarliest || !effectiveTimePreferences.weekdayLatest) {
-        console.error('❌ Missing time preferences in database for user:', userId, {
-          effectiveTimePreferences,
-          userData,
-          weekPreferences
-        });
-        return NextResponse.json({ 
-          error: 'Time preferences are required. Please complete onboarding to set your study window.',
-          success: false
-        }, { status: 400 });
-      }
     } else {
       // No user data found - this shouldn't happen but handle gracefully
       console.error('❌ User not found:', userId);
@@ -635,65 +644,56 @@ export async function POST(req) {
       blockedSample: incomingBlockedTimes.slice ? incomingBlockedTimes.slice(0, 5) : []
     });
 
-    let effectiveBlockedTimes = incomingBlockedTimes;
-    console.log('🚫 Blocked times from frontend:', {
-      count: incomingBlockedTimes.length,
-      sample: incomingBlockedTimes.slice(0, 3)
+    // Always use this week's (target week's) unavailable blocks from the database for plan generation.
+    // This ensures "this week" generation only uses this week's timings and unavailable blocks, not
+    // client-supplied or another week's data.
+    console.log('🚫 Loading unavailable times for target week from database (ignoring frontend):', weekStartDate.toISOString().split('T')[0]);
+    let effectiveBlockedTimes = await loadBlockedTimes(userId, weekStartDate, weekEndDate);
+    console.log('✅ Loaded unavailable times for target week:', {
+      count: effectiveBlockedTimes.length,
+      sample: effectiveBlockedTimes.slice(0, 3)
     });
-    
-    if (!effectiveBlockedTimes || effectiveBlockedTimes.length === 0) {
-      console.log('📥 No blocked times from frontend, loading from database...');
-      effectiveBlockedTimes = await loadBlockedTimes(userId, weekStartDate, weekEndDate);
-      console.log('✅ Loaded unavailable times from database:', {
-        count: effectiveBlockedTimes.length,
-        sample: effectiveBlockedTimes.slice(0, 3)
-      });
-      
-      // If no unavailable times found for target week, and we're generating for a future week,
-      // fall back to current week's unavailable times (aligned to target week)
-      if (effectiveBlockedTimes.length === 0) {
-        const today = new Date(effectiveNow);
-        today.setHours(0, 0, 0, 0);
-        const currentWeekStart = getMonday(today);
-        const currentWeekEnd = new Date(currentWeekStart);
-        currentWeekEnd.setDate(currentWeekStart.getDate() + 7);
-        
-        // Check if target week is in the future
-        const isFutureWeek = weekStartDate > currentWeekStart;
-        
-        if (isFutureWeek) {
-          console.log('📅 No unavailable times for target week, using current week\'s times (aligned to target week)');
-          const currentWeekUnavailable = await loadBlockedTimes(userId, currentWeekStart, currentWeekEnd);
-          
-          // Align current week blocked times to target week (by day of week)
-          effectiveBlockedTimes = currentWeekUnavailable.map((range) => {
-            const originalStart = new Date(range.start);
-            const originalEnd = new Date(range.end);
-            
-            // Get day of week (0=Sunday, 1=Monday, etc.) and convert to Monday=0
-            const dayIndex = (originalStart.getUTCDay() + 6) % 7; // Monday = 0
-            
-            // Align to target week's same day
-            const alignedStart = new Date(weekStartDate);
-            alignedStart.setUTCDate(weekStartDate.getUTCDate() + dayIndex);
-            alignedStart.setUTCHours(originalStart.getUTCHours(), originalStart.getUTCMinutes(), 0, 0);
-            
-            const alignedEnd = new Date(weekStartDate);
-            alignedEnd.setUTCDate(weekStartDate.getUTCDate() + dayIndex);
-            alignedEnd.setUTCHours(originalEnd.getUTCHours(), originalEnd.getUTCMinutes(), 0, 0);
-            
-            if (alignedEnd <= alignedStart) {
-              alignedEnd.setUTCDate(alignedEnd.getUTCDate() + 1);
-            }
-            
-            return {
-              start: alignedStart.toISOString(),
-              end: alignedEnd.toISOString()
-            };
-          });
-          
-          console.log(`✅ Aligned ${effectiveBlockedTimes.length} unavailable times from current week to target week`);
-        }
+
+    // If no unavailable times for target week and we're generating for a future week,
+    // fall back to current week's unavailable times (aligned to target week)
+    if (effectiveBlockedTimes.length === 0) {
+      const today = new Date(effectiveNow);
+      today.setHours(0, 0, 0, 0);
+      const currentWeekStart = getMonday(today);
+      const currentWeekEnd = new Date(currentWeekStart);
+      currentWeekEnd.setDate(currentWeekStart.getDate() + 7);
+
+      const isFutureWeek = weekStartDate > currentWeekStart;
+
+      if (isFutureWeek) {
+        console.log('📅 No unavailable times for target week, using current week\'s times (aligned to target week)');
+        const currentWeekUnavailable = await loadBlockedTimes(userId, currentWeekStart, currentWeekEnd);
+
+        effectiveBlockedTimes = currentWeekUnavailable.map((range) => {
+          const originalStart = new Date(range.start);
+          const originalEnd = new Date(range.end);
+
+          const dayIndex = (originalStart.getUTCDay() + 6) % 7; // Monday = 0
+
+          const alignedStart = new Date(weekStartDate);
+          alignedStart.setUTCDate(weekStartDate.getUTCDate() + dayIndex);
+          alignedStart.setUTCHours(originalStart.getUTCHours(), originalStart.getUTCMinutes(), 0, 0);
+
+          const alignedEnd = new Date(weekStartDate);
+          alignedEnd.setUTCDate(weekStartDate.getUTCDate() + dayIndex);
+          alignedEnd.setUTCHours(originalEnd.getUTCHours(), originalEnd.getUTCMinutes(), 0, 0);
+
+          if (alignedEnd <= alignedStart) {
+            alignedEnd.setUTCDate(alignedEnd.getUTCDate() + 1);
+          }
+
+          return {
+            start: alignedStart.toISOString(),
+            end: alignedEnd.toISOString()
+          };
+        });
+
+        console.log(`✅ Aligned ${effectiveBlockedTimes.length} unavailable times from current week to target week`);
       }
     }
 
@@ -787,6 +787,16 @@ export async function POST(req) {
     });
     
     console.log('✅ Calculated availability from database:', effectiveAvailability);
+
+    // If no availability hours (e.g. calculation bug or missing prefs), use defaults so "Generate my plan" still produces blocks
+    const totalAvailabilityHours = Object.values(effectiveAvailability).reduce((sum, h) => sum + (Number(h) || 0), 0);
+    if (totalAvailabilityHours <= 0) {
+      console.warn('⚠️ No availability hours calculated — using defaults (8h weekday, 8h weekend) so plan can generate');
+      const defaultHoursPerDay = 8;
+      days.forEach((day, dayIndex) => {
+        effectiveAvailability[day] = defaultHoursPerDay;
+      });
+    }
 
     // When the cutoff day (today) has no valid slots after the cutoff time, start from tomorrow
     const hasTimePrefs = !!(effectiveTimePreferences?.weekdayEarliest && effectiveTimePreferences?.weekdayLatest);
@@ -1092,10 +1102,20 @@ export async function POST(req) {
     // - Rerated topics = next week priorities (prioritized within their rating buckets)
     // Do NOT combine them - they serve different purposes
 
+    // Normalize subjects for DB: client may send "Mathematics AQA" but specs.subject is "Mathematics"
+    const normalizedSubjects = subjects.map((s) => {
+      if (typeof s !== 'string') return s;
+      const parts = s.trim().split(/\s+/);
+      if (parts.length <= 1) return s;
+      return parts.slice(0, -1).join(' ');
+    }).filter(Boolean);
+    const subjectsForScheduler = normalizedSubjects.length > 0 ? normalizedSubjects : subjects;
+
     let plan;
     try {
       console.log('🔍 Calling generateStudyPlan with:', {
-        subjectsCount: subjects.length,
+        subjectsCount: subjectsForScheduler.length,
+        subjectsSample: subjectsForScheduler.slice(0, 3),
         ratingsCount: Object.keys(effectiveRatings).length,
         availabilityKeys: Object.keys(effectiveAvailability || {}),
         hasTimePreferences: !!effectiveTimePreferences,
@@ -1108,7 +1128,7 @@ export async function POST(req) {
       });
       
       plan = await generateStudyPlan({
-        subjects,
+        subjects: subjectsForScheduler,
         ratings: effectiveRatings,
         topicStatus: effectiveTopicStatus,
         availability: effectiveAvailability,
@@ -1125,7 +1145,8 @@ export async function POST(req) {
           ? null
           : (typeof clientMinutesFromMidnight === 'number' && !Number.isNaN(clientMinutesFromMidnight)
             ? clientMinutesFromMidnight
-            : null)
+            : null),
+        allowUnratedTopics: isCurrentWeekOrPast // So "Generate my plan" for current week works even with no/minimal ratings
       });
       
       console.log('✅ generateStudyPlan returned:', {
@@ -1182,9 +1203,17 @@ export async function POST(req) {
     const records = toDatabaseRows(plan, userId);
     
     if (records.length === 0) {
-      console.error('⚠️ Generated plan is empty - NOT deleting existing blocks to prevent data loss');
-      return NextResponse.json({ 
+      console.error('[PLAN_GENERATE_400] NO_BLOCKS_GENERATED', {
+        planLength: plan?.length,
+        subjectsCount: subjects?.length,
+        targetWeekStart: finalTargetWeekStart,
+        actualStartDate: finalActualStartDate,
+        hasTimePreferences: !!effectiveTimePreferences,
+        availabilityKeys: Object.keys(effectiveAvailability || {}).length
+      });
+      return NextResponse.json({
         error: 'No blocks were generated. This might be because:\n- No topics are available to schedule\n- No available time slots match your preferences\n- There was an error during generation',
+        errorCode: 'NO_BLOCKS_GENERATED',
         success: false
       }, { status: 400 });
     }

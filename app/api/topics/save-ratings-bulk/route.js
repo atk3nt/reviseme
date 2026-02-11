@@ -42,7 +42,6 @@ async function resolveUserId() {
   const session = await auth();
   const userId = session?.user?.id;
 
-  // In dev mode, use dev user if no session
   if (!userId && process.env.NODE_ENV === 'development') {
     return await ensureDevUser();
   }
@@ -50,10 +49,14 @@ async function resolveUserId() {
   return userId;
 }
 
-export async function GET(req) {
+const UUID_REGEX = /^[0-9a-fA-F-]{36}$/;
+const VALID_RATING_MIN = -2;
+const VALID_RATING_MAX = 5;
+
+export async function POST(req) {
   try {
     const userId = await resolveUserId();
-    
+
     if (!userId) {
       return NextResponse.json(
         { error: "Authentication required" },
@@ -63,57 +66,68 @@ export async function GET(req) {
 
     const rateLimitCheck = await checkRateLimit(generalLimit, userId);
     if (!rateLimitCheck.success) {
-      console.log(`[RATE LIMIT] Get user data blocked for user ${userId}`);
       return NextResponse.json(
         rateLimitCheck.response,
         { status: 429, headers: rateLimitCheck.headers }
       );
     }
 
-    // Get user's onboarding data and status
-    const { data: userData, error: userError } = await supabaseAdmin
-      .from('users')
-      .select('onboarding_data, has_completed_onboarding, has_access')
-      .eq('id', userId)
-      .single();
+    const body = await req.json();
+    const ratings = body?.ratings;
 
-    if (userError && userError.code !== 'PGRST116') {
-      console.error('Error fetching user data:', userError);
+    if (!ratings || typeof ratings !== 'object' || Array.isArray(ratings)) {
       return NextResponse.json(
-        { error: "Failed to fetch user data", details: userError.message },
+        { error: "Body must include ratings object: { [topicId]: number }" },
+        { status: 400 }
+      );
+    }
+
+    const now = new Date().toISOString();
+    const ratingEntries = Object.entries(ratings)
+      .filter(([topicId, rating]) => {
+        return (
+          UUID_REGEX.test(topicId) &&
+          rating !== undefined &&
+          rating !== null &&
+          Number.isInteger(rating) &&
+          rating >= VALID_RATING_MIN &&
+          rating <= VALID_RATING_MAX
+        );
+      })
+      .map(([topicId, rating]) => ({
+        user_id: userId,
+        topic_id: topicId,
+        rating: Number(rating),
+        last_updated: now
+      }));
+
+    if (ratingEntries.length === 0) {
+      return NextResponse.json({ success: true, savedCount: 0 });
+    }
+
+    const { error: upsertError } = await supabaseAdmin
+      .from('user_topic_confidence')
+      .upsert(ratingEntries, {
+        onConflict: 'user_id,topic_id'
+      });
+
+    if (upsertError) {
+      console.error('save-ratings-bulk error:', upsertError);
+      return NextResponse.json(
+        { error: "Failed to save ratings", details: upsertError.message },
         { status: 500 }
       );
     }
 
-    const onboarding = userData?.onboarding_data || {};
-    // Onboarding saves as snake_case, but also check camelCase for compatibility
-    const selectedSubjects = onboarding.selected_subjects || onboarding.selectedSubjects || [];
-    const subjectBoards = onboarding.subject_boards || onboarding.subjectBoards || {};
-    const resumeSlide = onboarding.max_unlocked_slide ?? onboarding.maxUnlockedSlide ?? null;
-
-    console.log('📊 User data loaded:', { 
-      userId, 
-      subjectCount: selectedSubjects.length, 
-      subjects: selectedSubjects,
-      boards: Object.keys(subjectBoards).length 
-    });
-
-    return NextResponse.json({ 
+    return NextResponse.json({
       success: true,
-      userId,
-      selectedSubjects,
-      subjectBoards,
-      hasCompletedOnboarding: userData?.has_completed_onboarding ?? false,
-      hasAccess: userData?.has_access ?? false,
-      resumeSlide: resumeSlide != null ? Number(resumeSlide) : null
+      savedCount: ratingEntries.length
     });
-
   } catch (error) {
-    console.error("Get user data error:", error);
+    console.error("Save ratings bulk error:", error);
     return NextResponse.json(
-      { error: error.message || "Failed to get user data" },
+      { error: error.message || "Failed to save ratings" },
       { status: 500 }
     );
   }
 }
-

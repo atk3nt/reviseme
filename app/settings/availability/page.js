@@ -7,6 +7,7 @@ import Link from "next/link";
 import TimeBlockCalendar from "@/components/TimeBlockCalendar";
 import SupportModal from "@/components/SupportModal";
 import FeedbackModal from "@/components/FeedbackModal";
+import SidebarDevToolsLink from "@/components/SidebarDevToolsLink";
 import config from "@/config";
 
 function AvailabilitySettingsPageContent() {
@@ -70,10 +71,8 @@ function AvailabilitySettingsPageContent() {
     loadTimePreferencesForWeek(weekOffset);
   };
 
-  // Reset blocked times for current week (keep repeatable events)
+  // Reset blocked times for the selected week (keep repeatable events)
   const handleResetWeek = () => {
-    if (selectedWeek === 0) return; // Can't reset current week
-    
     // Clear all blocked times for this week (repeatable events are handled separately)
     setBlockedTimesByWeek(prev => ({
       ...prev,
@@ -86,10 +85,8 @@ function AvailabilitySettingsPageContent() {
     setTimeout(() => setShowSuccessModal(false), 3000);
   };
 
-  // Copy blocked times from previous week
+  // Copy blocked times from previous week (e.g. Last week → This week, or This week → Week 2)
   const handleCopyFromPreviousWeek = () => {
-    if (selectedWeek === 0) return; // Can't copy to week 0 (current week)
-    
     const previousWeek = selectedWeek - 1;
     const previousWeekBlockedTimes = blockedTimesByWeek[previousWeek] || [];
     
@@ -249,25 +246,22 @@ function AvailabilitySettingsPageContent() {
       await loadTimePreferencesForWeek(selectedWeek);
       
       // Then try to load from API (this will override localStorage if available)
-      // Load ALL blocked times (not just weeks 0-3) so we can see everything
-      // We'll filter them by week in the frontend for display
-      const response = await fetch(`/api/availability/save`);
+      // Only request blocked times for the weeks we display: last week (-1) through week +3
+      const rangeStart = getWeekStart(-1);
+      const week3End = getWeekStart(3);
+      week3End.setDate(week3End.getDate() + 6); // Sunday of week 3
+      const startDate = rangeStart.toISOString().split('T')[0];
+      const endDate = week3End.toISOString().split('T')[0];
+      const response = await fetch(`/api/availability/save?startDate=${startDate}&endDate=${endDate}`);
       if (response.ok) {
         const data = await response.json();
-        if (data.success && data.timePreferences) {
-          // Only update if we haven't loaded per-week preferences
-          if (!data.isScheduled) {
-            setTimePreferences({
-              weekdayEarliest: data.timePreferences.weekdayEarliest || onboardingTimePrefs.weekdayEarliest || '4:30',
-              weekdayLatest: data.timePreferences.weekdayLatest || onboardingTimePrefs.weekdayLatest || '23:30',
-              useSameWeekendTimes: data.timePreferences.useSameWeekendTimes !== false,
-              weekendEarliest: data.timePreferences.weekendEarliest || onboardingTimePrefs.weekendEarliest || '8:00',
-              weekendLatest: data.timePreferences.weekendLatest || onboardingTimePrefs.weekendLatest || '23:30',
-            });
-          }
+        if (data.success) {
+          // Do NOT overwrite time preferences here: we already have the correct ones for the
+          // selected week from loadTimePreferencesForWeek(selectedWeek). This fetch is for
+          // blocked times only; overwriting would revert the user's study window to global prefs.
           setTimePreferencesLoaded(true);
-          
-          // Map loaded blocked times to their respective weeks (0-3)
+
+          // Map loaded blocked times to their respective weeks (-1 to 3)
           // Filter out repeatable events - they're handled separately
           if (data.blockedTimes && data.blockedTimes.length > 0) {
             console.log('📅 Loaded blocked times from database:', data.blockedTimes.length, data.blockedTimes);
@@ -296,24 +290,15 @@ function AvailabilitySettingsPageContent() {
                 
                 const daysDiff = Math.floor((blockedDate - currentWeekStart) / (1000 * 60 * 60 * 24));
                 const weekOffset = Math.floor(daysDiff / 7);
-                
-                console.log('📅 Blocked time mapping:', {
-                  blockedStart: blocked.start,
-                  blockedDate: blockedDate.toISOString(),
-                  currentWeekStart: currentWeekStart.toISOString(),
-                  daysDiff,
-                  weekOffset,
-                  blocked
-                });
-                
-                // Only include weeks 0-3 (current week and next 3 weeks)
-                if (weekOffset >= 0 && weekOffset <= 3) {
+
+                // Include last week (-1) through next 3 weeks (0-3) so blocked times from last week show up
+                if (weekOffset >= -1 && weekOffset <= 3) {
                   if (!blockedByWeek[weekOffset]) {
                     blockedByWeek[weekOffset] = [];
                   }
                   blockedByWeek[weekOffset].push(blocked);
                 } else {
-                  console.warn('⚠️ Blocked time outside week range 0-3:', { weekOffset, blockedStart: blocked.start });
+                  console.warn('⚠️ Blocked time outside week range -1 to 3:', { weekOffset, blockedStart: blocked.start });
                 }
               });
               
@@ -474,6 +459,29 @@ function AvailabilitySettingsPageContent() {
         [selectedWeek]: newBlockedTimes
       };
     });
+  };
+
+  // Copy selected week's study window and blocked times to this week (week 0)
+  const handleCopyToThisWeek = () => {
+    const sourceWeekStart = getWeekStart(selectedWeek);
+    const thisWeekStart = getWeekStart(0);
+    const sourceBlocks = blockedTimesByWeek[selectedWeek] || [];
+    const shifted = sourceBlocks
+      .filter(b => b && b.start && b.end && (!b.source || b.source !== 'repeatable_event'))
+      .map(blocked => {
+        const start = new Date(blocked.start);
+        const end = new Date(blocked.end);
+        const dayOffset = Math.round((start - new Date(sourceWeekStart)) / (1000 * 60 * 60 * 24));
+        const newStart = new Date(thisWeekStart);
+        newStart.setDate(thisWeekStart.getDate() + dayOffset);
+        newStart.setHours(start.getHours(), start.getMinutes(), start.getSeconds(), 0);
+        const newEnd = new Date(thisWeekStart);
+        newEnd.setDate(thisWeekStart.getDate() + dayOffset);
+        newEnd.setHours(end.getHours(), end.getMinutes(), end.getSeconds(), 0);
+        return { start: newStart.toISOString(), end: newEnd.toISOString(), source: blocked.source || 'manual' };
+      });
+    setBlockedTimesByWeek(prev => ({ ...prev, 0: shifted }));
+    setSelectedWeek(0);
   };
 
   const handleBlockToggle = (dayOrToggles, timeSlotOrUndefined, isBlockedOrUndefined) => {
@@ -1398,7 +1406,7 @@ function AvailabilitySettingsPageContent() {
                 Click or drag to block times when you can't study. These will be excluded from your schedule.
               </p>
             </div>
-            {selectedWeek > 0 && (
+            {selectedWeek >= 0 && (
               <div className="flex gap-3">
                 <button
                   onClick={handleCopyFromPreviousWeek}
@@ -1410,7 +1418,7 @@ function AvailabilitySettingsPageContent() {
                 <button
                   onClick={() => setShowResetConfirm(true)}
                   className="px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors text-sm font-medium"
-                  title="Reset all blocked times for this week"
+                  title="Clear all blocked times for this week"
                 >
                   Reset Week
                 </button>
@@ -1427,30 +1435,43 @@ function AvailabilitySettingsPageContent() {
           )}
 
           {/* Week Tabs */}
-          <div className="flex space-x-2 mb-6 border-b border-gray-200">
-            {[0, 1, 2, 3].map(weekOffset => {
-              const weekStart = getWeekStart(weekOffset);
-              const weekLabel = weekOffset === 0 
-                ? 'This Week' 
-                : `Week ${weekOffset + 1}`;
-              
-              return (
-                <button
-                  key={weekOffset}
-                  onClick={() => handleWeekChange(weekOffset)}
-                  className={`px-4 py-2 font-medium text-sm border-b-2 transition-colors ${
-                    selectedWeek === weekOffset
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700'
-                  }`}
-                >
-                  {weekLabel}
-                  <span className="ml-2 text-xs text-gray-400">
-                    ({weekStart.getDate()}/{weekStart.getMonth() + 1})
-                  </span>
-                </button>
-              );
-            })}
+          <div className="flex flex-wrap items-center gap-3 mb-6 border-b border-gray-200 pb-4">
+            <div className="flex space-x-2">
+              {[-1, 0, 1, 2, 3].map(weekOffset => {
+                const weekStart = getWeekStart(weekOffset);
+                const weekLabel = weekOffset === -1 
+                  ? 'Last week' 
+                  : weekOffset === 0 
+                  ? 'This Week' 
+                  : `Week ${weekOffset + 1}`;
+                
+                return (
+                  <button
+                    key={weekOffset}
+                    onClick={() => handleWeekChange(weekOffset)}
+                    className={`px-4 py-2 font-medium text-sm border-b-2 transition-colors ${
+                      selectedWeek === weekOffset
+                        ? 'border-blue-500 text-blue-600'
+                        : 'border-transparent text-gray-500 hover:text-gray-700'
+                    }`}
+                  >
+                    {weekLabel}
+                    <span className="ml-2 text-xs text-gray-400">
+                      ({weekStart.getDate()}/{weekStart.getMonth() + 1})
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+            {selectedWeek !== 0 && (
+              <button
+                type="button"
+                onClick={handleCopyToThisWeek}
+                className="px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 border border-blue-200"
+              >
+                Copy to this week
+              </button>
+            )}
           </div>
 
           {/* Calendar */}
@@ -1774,6 +1795,7 @@ function AvailabilitySettingsPageContent() {
                   </div>
                 </Link>
               </li>
+              <SidebarDevToolsLink pathname={pathname} onNavigate={() => setSidebarOpen(false)} />
               <li>
                 <div>
                   <button

@@ -253,16 +253,15 @@ export default function Slide16Page() {
         </div>
       </div>
 
-      {/* Navigation - Fixed at bottom */}
-      <div className="flex justify-between items-center w-full flex-shrink-0 pt-3 sm:pt-6 md:pt-10">
-        <button
-          onClick={() => router.push("/onboarding/slide-1")}
-          className="bg-white border-2 border-[#0066FF] text-[#0066FF] px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium hover:bg-[#0066FF] hover:text-white transition-colors"
-        >
-          Back
-        </button>
-        
-        <div className="flex space-x-3 sm:space-x-4">
+      {/* Navigation - Fixed at bottom, centered, explicit space below for clickability */}
+      <div className="flex flex-col justify-center items-center w-full flex-shrink-0 pt-3 sm:pt-6 md:pt-10 pb-adaptive-nav border-t border-[#0066FF]/10 bg-white">
+        <div className="flex justify-center items-center gap-3 sm:gap-6">
+          <button
+            onClick={() => router.push("/onboarding/slide-1")}
+            className="bg-white border-2 border-[#0066FF] text-[#0066FF] px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium hover:bg-[#0066FF] hover:text-white transition-colors"
+          >
+            Back
+          </button>
           <button
             onClick={handleNext}
             disabled={selectedSubjects.length === 0 || isLoading}
@@ -271,6 +270,7 @@ export default function Slide16Page() {
             {isLoading ? "Next..." : "Continue"}
           </button>
         </div>
+        <div className="w-full min-h-[2.5rem] sm:min-h-[3rem] flex-shrink-0" style={{ minHeight: 'max(2.5rem, env(safe-area-inset-bottom))' }} aria-hidden />
       </div>
     </div>
   );
