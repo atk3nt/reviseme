@@ -22,24 +22,35 @@ export default function Slide9Page() {
 
   const handleNext = async () => {
     if (!name || !year) return;
-    
+
     setIsLoading(true);
-    
-    const savedAnswers = JSON.parse(localStorage.getItem('quizAnswers') || '{}');
+
+    const savedAnswers = JSON.parse(localStorage.getItem("quizAnswers") || "{}");
     savedAnswers.name = name;
     savedAnswers.year = year;
-    localStorage.setItem('quizAnswers', JSON.stringify(savedAnswers));
-    
+    localStorage.setItem("quizAnswers", JSON.stringify(savedAnswers));
+
+    // Save name and year to DB immediately for marketing (Year 12s to target next year)
+    // Saves regardless of whether they complete full onboarding
+    try {
+      const res = await fetch("/api/onboarding/save-name-year", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ name: name.trim(), year }),
+      });
+      if (!res.ok) {
+        console.warn("save-name-year failed:", res.status, await res.text());
+      }
+    } catch (err) {
+      console.warn("Could not save name/year for marketing:", err);
+    }
+
     unlockSlide(17);
-    
+
     setTimeout(() => {
       router.push("/onboarding/slide-17");
     }, 300);
-  };
-
-  const handleSkip = () => {
-    unlockSlide(17);
-    router.push("/onboarding/slide-17");
   };
 
   return (
@@ -88,12 +99,6 @@ export default function Slide9Page() {
             className="bg-white border-2 border-[#0066FF] text-[#0066FF] px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium hover:bg-[#0066FF] hover:text-white transition-colors"
           >
             Back
-          </button>
-          <button
-            onClick={handleSkip}
-            className="text-[#003D99]/50 hover:text-[#0066FF] text-xs sm:text-sm transition-colors"
-          >
-            Skip
           </button>
           <button
             onClick={handleNext}

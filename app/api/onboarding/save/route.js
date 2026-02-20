@@ -144,6 +144,8 @@ export async function POST(req) {
       selected_subjects: quizAnswers.selectedSubjects,
       subject_boards: quizAnswers.subjectBoards,
       weekly_availability: quizAnswers.weeklyAvailability,
+      name: quizAnswers.name,
+      year: quizAnswers.year,
     };
 
     // Only mark as completed if we have all required data
